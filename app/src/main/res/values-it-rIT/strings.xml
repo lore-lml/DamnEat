@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_name">Nome</string>
+    <string name="profile_email">Indirizzo Mail</string>
+    <string name="profile_desc">Breve descrizione</string>
+    <string name="profile_address">Indirizzo</string>
+    <string name="profile_restaurant_address">Indirizzo ristorante</string>
+</resources>

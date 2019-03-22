@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp"
+    tools:context=".Profile">
+
+    <TextView
+        android:id="@+id/profile_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_toStartOf="@id/profile_edit"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <ImageView
+        android:id="@+id/profile_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:padding="12dp"
+        app:srcCompat="@drawable/ic_edit" />
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_image"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="80dp"
+        android:text="@string/profile_name"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/editText_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_name"
+        android:enabled="false"
+        android:ems="10" />
+
+    <TextView
+        android:id="@+id/profile_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editText_name"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/profile_email"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/editText_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_email"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/profile_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editText_email"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/profile_desc"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/editText_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_desc"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/profile_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editText_desc"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/profile_address"
+        android:textColor="#000"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/editText_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_address"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="text" />
+</RelativeLayout>
