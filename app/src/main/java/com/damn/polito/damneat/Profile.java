@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -65,17 +68,7 @@ public class Profile extends AppCompatActivity {
         }
 
         //Se precedentemente salvate, ricarica le informazioni del profilo
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        List<String> values = new ArrayList<>(pref.getStringSet(typeId(),new HashSet<>()));
-
-        if(!values.isEmpty()){
-            name.setText(stringOrDefault(values.get(0)));
-            mail.setText(stringOrDefault(values.get(1)));
-            description.setText(stringOrDefault(values.get(2)));
-            if(type != MainActivity.DELIVERER)
-                address.setText(stringOrDefault(values.get(3)));
-            empty = false;
-        }
+        loadData();
     }
 
     private void editProfile() {
@@ -124,28 +117,53 @@ public class Profile extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1 && resultCode == RESULT_OK){
-            String name = data.getStringExtra("name");
-            String mail = data.getStringExtra("mail");
-            String description = data.getStringExtra("description");
+            storeData(data);
+        }
+    }
 
-            Set<String> values = new LinkedHashSet<>();
-            values.add(name);
-            values.add(mail);
-            values.add(description);
+    private void storeData(Intent data) {
+        String name = data.getStringExtra("name");
+        String mail = data.getStringExtra("mail");
+        String description = data.getStringExtra("description");
 
+        JSONObject values = new JSONObject();
+        try {
+            values.put("name", name);
+            values.put("mail", mail);
+            values.put("description", description);
             if(type != MainActivity.DELIVERER) {
                 String address = data.getStringExtra("address");
-                values.add(address);
+                values.put("address", address);
                 this.address.setText(address);
             }
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            pref.edit().putStringSet(typeId(), values).apply();
+            pref.edit().putString(typeId(), values.toString()).apply();
 
             this.name.setText(name);
             this.mail.setText(mail);
             this.description.setText(description);
 
             empty = false;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadData(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String s = pref.getString(typeId(), null);
+        if(s == null) return;
+
+        try {
+            JSONObject values = new JSONObject(s);
+            name.setText(values.getString("name"));
+            mail.setText(values.getString("mail"));
+            description.setText(values.getString("description"));
+            if(type != MainActivity.DELIVERER)
+                address.setText(values.getString("address"));
+            empty = false;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
