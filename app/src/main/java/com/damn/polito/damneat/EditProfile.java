@@ -3,6 +3,11 @@ package com.damn.polito.damneat;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -15,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.util.BitSet;
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
@@ -84,6 +91,7 @@ public class EditProfile extends AppCompatActivity {
                     case R.id.item_snap:
                         return true;
                     case R.id.item_gallery:
+                        itemGallery();
                         return true;
                     default:
                         return super.onContextItemSelected(item);
@@ -103,6 +111,33 @@ public class EditProfile extends AppCompatActivity {
             i.putExtra("address", address.getText().toString().trim());
 
         setResult(RESULT_OK, i);
+    }
+
+    private void itemGallery(){
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("scale", true);
+        intent.putExtra("outputX", 256);
+        intent.putExtra("outputY", 256);
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("return-data", true);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == 1) {
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                Bitmap newPhoto = extras.getParcelable("data");
+                profile.setImageBitmap(newPhoto);
+            }
+        }
     }
 
     private boolean checkField() {

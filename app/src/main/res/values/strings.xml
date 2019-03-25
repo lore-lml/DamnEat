@@ -13,7 +13,7 @@
     <string name="empty_desc">No description has been inserted</string>
     <string name="empty_address">No address has been inserted</string>
     <string name="invalid_mail">Invalid mail</string>
-    <string name="alert_edit_profile">Are you sure you want to exit?\nData will be lost</string>
+    <string name="alert_edit_profile">Are you sure you want to exit? Data will be lost...</string>
     <string name="alert_edit_profile_title">Profile</string>
     <string name="alert_edit_profile_positive">I\'m sure</string>
     <string name="alert_edit_profile_negative">Cancel</string>

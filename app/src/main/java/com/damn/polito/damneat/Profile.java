@@ -2,6 +2,8 @@ package com.damn.polito.damneat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,7 +31,8 @@ public class Profile extends AppCompatActivity {
     private TextView name, mail, description, address;
     private TextView profAddress;
     private int type=1;
-    private boolean editable = false, empty = true;
+    private boolean editable = false;
+    private boolean empty = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,7 @@ public class Profile extends AppCompatActivity {
             intent.putExtra("mail", mail.getText().toString().trim());
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("address", address.getText().toString().trim());
+            intent.putExtra("image", profileImage.getDrawable().toString());
         }
         startActivityForResult(intent, 1);
     }
@@ -126,11 +130,13 @@ public class Profile extends AppCompatActivity {
         String mail = data.getStringExtra("mail");
         String description = data.getStringExtra("description");
 
+
         JSONObject values = new JSONObject();
         try {
             values.put("name", name);
             values.put("mail", mail);
             values.put("description", description);
+
             if(type != MainActivity.DELIVERER) {
                 String address = data.getStringExtra("address");
                 values.put("address", address);
