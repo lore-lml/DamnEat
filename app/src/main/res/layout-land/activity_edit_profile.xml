@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".EditProfile">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_height="250dp"
+        android:layout_width="250dp"
+        android:layout_centerVertical="true"
+        app:srcCompat="@drawable/profile_sample" />
+
+    <ImageButton
+        android:id="@+id/btn_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/profile_image"
+        android:layout_alignTop="@id/profile_image"
+        android:background="#00ffffff"
+        app:srcCompat="@drawable/ic_photo_camera" />
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/profile_image"
+        android:hint="@string/profile_name"
+        android:inputType="textPersonName"
+        android:textAppearance="@style/EditText"
+        android:textColor="#fff"
+        android:textColorHint="#88ffffff" />
+
+    <EditText
+        android:id="@+id/edit_mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_name"
+        android:layout_toEndOf="@id/profile_image"
+        android:layout_marginTop="5dp"
+        android:hint="@string/profile_email"
+        android:inputType="textEmailAddress"
+        android:textAppearance="@style/EditText"
+        android:textColor="#fff"
+        android:textColorHint="#88ffffff" />
+
+    <EditText
+        android:id="@+id/edit_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_mail"
+        android:layout_toEndOf="@id/profile_image"
+        android:layout_marginTop="5dp"
+        android:hint="@string/profile_desc"
+        android:inputType="textShortMessage"
+        android:textAppearance="@style/EditText"
+        android:textColor="#fff"
+        android:textColorHint="#88ffffff" />
+
+    <EditText
+        android:id="@+id/edit_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_desc"
+        android:layout_toEndOf="@id/profile_image"
+        android:layout_marginTop="5dp"
+        android:hint="@string/profile_address"
+        android:inputType="text"
+        android:textAppearance="@style/EditText"
+        android:textColor="#fff"
+        android:textColorHint="#88ffffff" />
+
+    <Button
+        android:id="@+id/edit_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_address"
+        android:layout_toEndOf="@id/profile_image"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textColor="#fff"
+        android:background="@drawable/buttons"
+        android:text="@string/save" />
+</RelativeLayout>

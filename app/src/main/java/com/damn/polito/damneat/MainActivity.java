@@ -7,9 +7,9 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final int CUSTOMER = 1;
-    private final int RESTAURANT = 2;
-    private final int DELIVERER = 3;
+    public static final int CUSTOMER = 1;
+    public static final int RESTAURANT = 2;
+    public static final int DELIVERER = 3;
 
     private Button customer, restaurant, deliverer;
     @Override

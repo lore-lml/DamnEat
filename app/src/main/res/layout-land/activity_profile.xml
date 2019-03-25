@@ -10,20 +10,18 @@
 
     <ImageView
         android:id="@+id/profile_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_height="250dp"
+        android:layout_width="250dp"
+        android:layout_centerVertical="true"
         app:srcCompat="@drawable/profile_sample" />
 
     <TextView
         android:id="@+id/profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profile_image"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_name"
+        android:layout_marginTop="10dp"
         android:textAppearance="@style/PrimaryText" />
 
     <TextView
@@ -31,8 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/profile_name"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@id/profile_image"
         android:text="@string/nullText"
         android:textAppearance="@style/SecondaryText" />
 
@@ -41,9 +38,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/editText_name"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_email"
+        android:layout_marginTop="10dp"
         android:textAppearance="@style/PrimaryText" />
 
     <TextView
@@ -51,8 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/profile_email"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@id/profile_image"
         android:text="@string/nullText"
         android:textAppearance="@style/SecondaryText" />
 
@@ -61,10 +57,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/editText_email"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_desc"
-        android:textAppearance="@style/PrimaryText" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/PrimaryText"/>
 
     <TextView
         android:id="@+id/editText_desc"
@@ -73,17 +69,16 @@
         android:layout_below="@id/profile_desc"
         android:text="@string/nullText"
         android:textAppearance="@style/SecondaryText"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp" />
+        android:layout_toEndOf="@id/profile_image"/>
 
     <TextView
         android:id="@+id/profile_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/editText_desc"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_address"
+        android:layout_marginTop="10dp"
         android:textAppearance="@style/PrimaryText" />
 
     <TextView
@@ -93,6 +88,5 @@
         android:layout_below="@id/profile_address"
         android:text="@string/nullText"
         android:textAppearance="@style/SecondaryText"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp" />
+        android:layout_toEndOf="@id/profile_image"/>
 </RelativeLayout>
