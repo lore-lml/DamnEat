@@ -1,8 +1,10 @@
 package com.damn.polito.damneat;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -26,6 +28,7 @@ import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
 
+    static final int REQUEST_IMAGE_CAPTURE = 2;
     private ImageView profile;
     private ImageButton camera;
     private EditText name, mail, description, address;
@@ -89,6 +92,7 @@ public class EditProfile extends AppCompatActivity {
             pop.setOnMenuItemClickListener(item->{
                 switch (item.getItemId()){
                     case R.id.item_snap:
+                        itemCamera();
                         return true;
                     case R.id.item_gallery:
                         itemGallery();
@@ -99,6 +103,13 @@ public class EditProfile extends AppCompatActivity {
             });
             pop.show();
         });
+    }
+
+    private void itemCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        }
     }
 
     private void setActivityResult() {
@@ -131,7 +142,7 @@ public class EditProfile extends AppCompatActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == 1) {
+        if (requestCode == 1 || requestCode == REQUEST_IMAGE_CAPTURE) {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 Bitmap newPhoto = extras.getParcelable("data");
