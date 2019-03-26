@@ -33,6 +33,7 @@
         android:inputType="textPersonName"
         android:textAppearance="@style/EditText"
         android:textColor="#fff"
+        android:layout_marginStart="20dp"
         android:textColorHint="#88ffffff" />
 
     <EditText
@@ -46,6 +47,7 @@
         android:inputType="textEmailAddress"
         android:textAppearance="@style/EditText"
         android:textColor="#fff"
+        android:layout_marginStart="20dp"
         android:textColorHint="#88ffffff" />
 
     <EditText
@@ -59,6 +61,7 @@
         android:inputType="textShortMessage"
         android:textAppearance="@style/EditText"
         android:textColor="#fff"
+        android:layout_marginStart="20dp"
         android:textColorHint="#88ffffff" />
 
     <EditText
@@ -72,6 +75,7 @@
         android:inputType="text"
         android:textAppearance="@style/EditText"
         android:textColor="#fff"
+        android:layout_marginStart="20dp"
         android:textColorHint="#88ffffff" />
 
     <Button
@@ -81,7 +85,7 @@
         android:layout_below="@id/edit_address"
         android:layout_toEndOf="@id/profile_image"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="40dp"
         android:layout_marginEnd="20dp"
         android:textColor="#fff"
         android:background="@drawable/buttons"

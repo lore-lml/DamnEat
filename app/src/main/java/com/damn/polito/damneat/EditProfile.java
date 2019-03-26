@@ -1,20 +1,15 @@
 package com.damn.polito.damneat;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
-import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,18 +17,19 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.util.BitSet;
+import com.damn.polito.commonresources.Utility;
+
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
 
-    static final int REQUEST_IMAGE_CAPTURE = 2;
+    private final int REQUEST_PERMISSION_CODE = 1000;
+
     private ImageView profile;
     private ImageButton camera;
     private EditText name, mail, description, address;
     private Button save;
-    int type = 1;
+    private Bitmap profImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,23 +56,17 @@ public class EditProfile extends AppCompatActivity {
         String sName = intent.getStringExtra("name");
         String sMail = intent.getStringExtra("mail");
         String sDesc = intent.getStringExtra("description");
-
-        type = intent.getIntExtra("type", MainActivity.CUSTOMER);
+        String sAddress = intent.getStringExtra("address");
+        profImg = intent.getParcelableExtra("profile");
 
         name.setText(sName);
         mail.setText(sMail);
         description.setText(sDesc);
-
-        //Se di tipo deliverer allora nasconde address altrimenti setta i diversi hint a seconda se sia ristoratore o customer
-        if(type != MainActivity.DELIVERER) {
-            address.setText(intent.getStringExtra("address"));
-            if(type == MainActivity.CUSTOMER)
-                address.setHint(getString(R.string.profile_address));
-            else
-                address.setHint(getString(R.string.profile_restaurant_address));
+        address.setText(sAddress);
+        if(profImg != null){
+            profile.setImageBitmap(profImg);
         }
-        else
-            address.setVisibility(View.GONE);
+
 
         //Imposta la funzione del bottone "SALVA"
         save.setOnClickListener(v->{
@@ -106,9 +96,12 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void itemCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        if(!checkPermissionFromDevice())
+            requestPermission();
+
+        Intent intent = Utility.cameraIntent();
+        if (intent.resolveActivity(getPackageManager()) != null && checkPermissionFromDevice()) {
+            startActivityForResult(intent, Utility.REQUEST_IMAGE_CAPTURE);
         }
     }
 
@@ -117,36 +110,29 @@ public class EditProfile extends AppCompatActivity {
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
-
-        if(type != MainActivity.DELIVERER)
-            i.putExtra("address", address.getText().toString().trim());
-
+        i.putExtra("address", address.getText().toString().trim());
+        if(profImg != null)
+            i.putExtra("profile", profImg);
         setResult(RESULT_OK, i);
     }
 
     private void itemGallery(){
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("scale", true);
-        intent.putExtra("outputX", 256);
-        intent.putExtra("outputY", 256);
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("return-data", true);
-        startActivityForResult(intent, 1);
+        Intent intent = Utility.galleryIntent();
+        startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == 1 || requestCode == REQUEST_IMAGE_CAPTURE) {
+        if (requestCode == Utility.IMAGE_GALLERY_REQUEST || requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
             final Bundle extras = data.getExtras();
             if (extras != null) {
-                Bitmap newPhoto = extras.getParcelable("data");
-                profile.setImageBitmap(newPhoto);
+                profImg = extras.getParcelable("data");
+                profile.setImageBitmap(profImg);
             }
         }
     }
@@ -182,39 +168,50 @@ public class EditProfile extends AppCompatActivity {
             return false;
         }
 
-        String address;
-        if(type != MainActivity.DELIVERER){
-            address = this.address.getText().toString();
-            if(address.trim().isEmpty()){
-                this.address.requestFocus();
-                Toast.makeText(this, getString(R.string.empty_address), Toast.LENGTH_SHORT).show();
-                return false;
-            }
+        String address = this.address.getText().toString();
+        if(address.trim().isEmpty()){
+            this.address.requestFocus();
+            Toast.makeText(this, getString(R.string.empty_address), Toast.LENGTH_SHORT).show();
+            return false;
         }
+
         return true;
     }
 
-    private void showWarning() {
-        //Se l'utente cerca di tornare indietro allora chiede la conferma
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle(R.string.alert_edit_profile_title).setMessage(R.string.alert_edit_profile)
-                .setNegativeButton(R.string.alert_edit_profile_negative, (dialog, which) -> dialog.dismiss())
-                .setPositiveButton(R.string.alert_edit_profile_positive, (dialog, which) -> {
-                    setResult(RESULT_CANCELED);
-                    finish();
-                }).show();
+
+    private boolean checkPermissionFromDevice() {
+
+        int camera_result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        return camera_result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this,new String[]{
+                Manifest.permission.CAMERA
+        },REQUEST_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case REQUEST_PERMISSION_CODE:
+                if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                    Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
+                            Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     @Override
     public void onBackPressed() {
-        showWarning();
+        Utility.showWarning(this);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                showWarning();
+                Utility.showWarning(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name" translatable="false">Damn Eat</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_email">Mail Address</string>
+    <string name="profile_desc">Short description</string>
+    <string name="profile_address">Address</string>
+    <string name="profile_restaurant_address">Restaurant address</string>
+    <string name="action_edit">Edit</string>
+    <string name="nullText" translatable="false">- -</string>
+    <string name="save">Save</string>
+    <string name="empty_name">No name has been inserted</string>
+    <string name="empty_mail">No mail address has been inserted</string>
+    <string name="empty_desc">No description has been inserted</string>
+    <string name="empty_address">No address has been inserted</string>
+    <string name="invalid_mail">Invalid mail</string>
+    <string name="alert_edit_profile">Are you sure you want to exit? Data will be lost...</string>
+    <string name="alert_edit_profile_title">Profile</string>
+    <string name="alert_edit_profile_positive">I\'m sure</string>
+    <string name="alert_edit_profile_negative">Cancel</string>
+    <string name="context_camera_snap">Take a Selfie</string>
+    <string name="context_camera_gallery">Pick from gallery</string>
+    <string name="prova" translatable="false">PROVA</string>
+    <string name="permission_denied">Permission Denied</string>
+</resources>

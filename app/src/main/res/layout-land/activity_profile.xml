@@ -22,6 +22,7 @@
         android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_name"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
         android:textAppearance="@style/PrimaryText" />
 
     <TextView
@@ -31,6 +32,7 @@
         android:layout_below="@id/profile_name"
         android:layout_toEndOf="@id/profile_image"
         android:text="@string/nullText"
+        android:layout_marginStart="20dp"
         android:textAppearance="@style/SecondaryText" />
 
     <TextView
@@ -41,6 +43,7 @@
         android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_email"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
         android:textAppearance="@style/PrimaryText" />
 
     <TextView
@@ -50,6 +53,7 @@
         android:layout_below="@id/profile_email"
         android:layout_toEndOf="@id/profile_image"
         android:text="@string/nullText"
+        android:layout_marginStart="20dp"
         android:textAppearance="@style/SecondaryText" />
 
     <TextView
@@ -60,6 +64,7 @@
         android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_desc"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
         android:textAppearance="@style/PrimaryText"/>
 
     <TextView
@@ -69,6 +74,7 @@
         android:layout_below="@id/profile_desc"
         android:text="@string/nullText"
         android:textAppearance="@style/SecondaryText"
+        android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/profile_image"/>
 
     <TextView
@@ -79,6 +85,7 @@
         android:layout_toEndOf="@id/profile_image"
         android:text="@string/profile_address"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
         android:textAppearance="@style/PrimaryText" />
 
     <TextView
@@ -88,5 +95,6 @@
         android:layout_below="@id/profile_address"
         android:text="@string/nullText"
         android:textAppearance="@style/SecondaryText"
+        android:layout_marginStart="20dp"
         android:layout_toEndOf="@id/profile_image"/>
 </RelativeLayout>
