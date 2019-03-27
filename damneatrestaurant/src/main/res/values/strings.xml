@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">DamnEat - Restaurant</string>
+    <string name="app_name">DamnEat - Restaurant</string>
+    <string name="profile_restaurant_address">Restaurant address</string>
+    <string name="profile_name">Restaurant name</string>
 </resources>

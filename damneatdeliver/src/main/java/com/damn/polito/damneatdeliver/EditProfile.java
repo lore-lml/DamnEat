@@ -1,4 +1,4 @@
-package com.damn.polito.damneat;
+package com.damn.polito.damneatdeliver;
 
 import android.Manifest;
 import android.content.Intent;
@@ -27,7 +27,7 @@ public class EditProfile extends AppCompatActivity {
 
     private ImageView profile;
     private ImageButton camera;
-    private EditText name, mail, description, address;
+    private EditText name, mail, description;
     private Button save;
     private Bitmap profImg;
 
@@ -43,7 +43,6 @@ public class EditProfile extends AppCompatActivity {
         name = findViewById(R.id.edit_name);
         mail = findViewById(R.id.edit_mail);
         description = findViewById(R.id.edit_desc);
-        address = findViewById(R.id.edit_address);
         save = findViewById(R.id.edit_save);
 
         init();
@@ -56,13 +55,11 @@ public class EditProfile extends AppCompatActivity {
         String sName = intent.getStringExtra("name");
         String sMail = intent.getStringExtra("mail");
         String sDesc = intent.getStringExtra("description");
-        String sAddress = intent.getStringExtra("address");
         profImg = intent.getParcelableExtra("profile");
 
         name.setText(sName);
         mail.setText(sMail);
         description.setText(sDesc);
-        address.setText(sAddress);
         if(profImg != null){
             profile.setImageBitmap(profImg);
         }
@@ -110,7 +107,6 @@ public class EditProfile extends AppCompatActivity {
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
-        i.putExtra("address", address.getText().toString().trim());
         if(profImg != null)
             i.putExtra("profile", profImg);
         setResult(RESULT_OK, i);
@@ -158,13 +154,6 @@ public class EditProfile extends AppCompatActivity {
         if(description.trim().isEmpty()){
             Toast.makeText(this, getString(R.string.empty_desc), Toast.LENGTH_SHORT).show();
             this.description.requestFocus();
-            return false;
-        }
-
-        String address = this.address.getText().toString();
-        if(address.trim().isEmpty()){
-            this.address.requestFocus();
-            Toast.makeText(this, getString(R.string.empty_address), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -217,3 +206,4 @@ public class EditProfile extends AppCompatActivity {
         }
     }
 }
+

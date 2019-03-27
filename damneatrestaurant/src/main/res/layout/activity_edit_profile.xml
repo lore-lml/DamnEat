@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/colorBackground"
+    tools:context=".EditProfile">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/profile_sample" />
+
+    <ImageButton
+        android:id="@+id/btn_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/profile_image"
+        android:layout_alignBottom="@id/profile_image"
+        android:background="#00ffffff"
+        app:srcCompat="@drawable/ic_photo_camera" />
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_image"
+        android:layout_marginTop="30dp"
+        android:hint="@string/profile_name"
+        android:inputType="textPersonName"
+        android:textAppearance="@style/EditText"
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
+
+    <EditText
+        android:id="@+id/edit_mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_name"
+        android:layout_marginTop="15dp"
+        android:hint="@string/profile_email"
+        android:inputType="textEmailAddress"
+        android:textAppearance="@style/EditText"
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
+
+
+    <EditText
+        android:id="@+id/edit_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_mail"
+        android:layout_marginTop="15dp"
+        android:hint="@string/profile_desc"
+        android:inputType="textShortMessage"
+        android:textAppearance="@style/EditText"
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
+
+    <EditText
+        android:id="@+id/edit_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_desc"
+        android:layout_marginTop="15dp"
+        android:hint="@string/profile_address"
+        android:inputType="text"
+        android:textAppearance="@style/EditText"
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
+
+
+    <Button
+        android:id="@+id/edit_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_address"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:paddingStart="100dp"
+        android:paddingEnd="100dp"
+        android:textColor="#fff"
+        android:background="@drawable/buttons"
+        android:text="@string/save" />
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.damn.polito.damneat;
+package com.damn.polito.damneatrestaurant;
 
 import android.Manifest;
 import android.content.Intent;
@@ -98,6 +98,8 @@ public class EditProfile extends AppCompatActivity {
     private void itemCamera() {
         if(!checkPermissionFromDevice())
             requestPermission();
+
+
     }
 
     private void itemGallery(){
