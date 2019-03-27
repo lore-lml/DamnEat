@@ -16,8 +16,6 @@ import com.damn.polito.commonresources.Utility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Objects;
-
 public class Profile extends AppCompatActivity {
 
     private String defaultValue;

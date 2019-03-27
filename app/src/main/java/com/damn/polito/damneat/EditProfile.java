@@ -105,6 +105,11 @@ public class EditProfile extends AppCompatActivity {
         }
     }
 
+    private void itemGallery(){
+        Intent intent = Utility.galleryIntent();
+        startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
+    }
+
     private void setActivityResult() {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
@@ -115,13 +120,6 @@ public class EditProfile extends AppCompatActivity {
             i.putExtra("profile", profImg);
         setResult(RESULT_OK, i);
     }
-
-    private void itemGallery(){
-        Intent intent = Utility.galleryIntent();
-        startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
-    }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
