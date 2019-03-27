@@ -34,8 +34,8 @@
         android:hint="@string/profile_name"
         android:inputType="textPersonName"
         android:textAppearance="@style/EditText"
-        android:textColor="#fff"
-        android:textColorHint="#88ffffff" />
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
 
     <EditText
         android:id="@+id/edit_mail"
@@ -46,8 +46,9 @@
         android:hint="@string/profile_email"
         android:inputType="textEmailAddress"
         android:textAppearance="@style/EditText"
-        android:textColor="#fff"
-        android:textColorHint="#88ffffff" />
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
+
 
     <EditText
         android:id="@+id/edit_desc"
@@ -58,8 +59,8 @@
         android:hint="@string/profile_desc"
         android:inputType="textShortMessage"
         android:textAppearance="@style/EditText"
-        android:textColor="#fff"
-        android:textColorHint="#88ffffff" />
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
 
     <EditText
         android:id="@+id/edit_address"
@@ -70,8 +71,9 @@
         android:hint="@string/profile_address"
         android:inputType="text"
         android:textAppearance="@style/EditText"
-        android:textColor="#fff"
-        android:textColorHint="#88ffffff" />
+        android:textColor="@color/colorEditText"
+        android:textColorHint="@color/colorEditTextHint" />
+
 
     <Button
         android:id="@+id/edit_save"
