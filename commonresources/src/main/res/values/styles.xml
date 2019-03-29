@@ -21,12 +21,12 @@
         <item name="android:textSize">15sp</item>
     </style>
 
-    <style name="EditText" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="EditText" parent="Base.TextAppearance.AppCompat.Display1">
         <item name="android:textSize">20sp</item>
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>
         <item name="android:textColor">@color/colorEditText</item>
-        <item name="android:textColorHint">@color/colorEditTextHint</item>
+        <item name="android:textColorHint">@color/colorAccent</item>
     </style>
 
 </resources>

@@ -1,21 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="profile_name">Nome</string>
-    <string name="profile_email">Indirizzo Mail</string>
-    <string name="profile_desc">Breve descrizione</string>
     <string name="profile_address">Indirizzo</string>
-    <string name="profile_restaurant_address">Indirizzo ristorante</string>
-    <string name="action_edit">Modifica</string>
-    <string name="save">Salva</string>
-    <string name="empty_name">Non è stato inserito nessun nome</string>
-    <string name="empty_mail">Non è stato inserito nessun indirizzo mail</string>
-    <string name="empty_desc">Non è stata inserita nessuna descrizione</string>
-    <string name="empty_address">Non è stato inserito nessun indirizzo</string>
-    <string name="invalid_mail">La mail non è valida</string>
-    <string name="alert_edit_profile">Sei sicuro di voler uscire? I dati verranno persi...</string>
-    <string name="alert_edit_profile_title">Profilo</string>
-    <string name="alert_edit_profile_positive">Sono sicuro</string>
-    <string name="alert_edit_profile_negative">Annulla</string>
-    <string name="context_camera_snap">Scatta un Selfie</string>
-    <string name="context_camera_gallery">Scegli dalla galleria</string>
 </resources>

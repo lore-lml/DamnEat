@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ public class Profile extends AppCompatActivity {
         mail = findViewById(R.id.editText_email);
         description = findViewById(R.id.editText_desc);
 
+        findViewById(R.id.card_address).setVisibility(View.GONE);
         loadData();
     }
 

@@ -98,6 +98,15 @@ public class EditProfile extends AppCompatActivity {
     private void itemCamera() {
         if(!checkPermissionFromDevice())
             requestPermission();
+        else
+            photoShot();
+    }
+
+    private void photoShot() {
+        Intent intent = Utility.cameraIntent();
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, Utility.REQUEST_IMAGE_CAPTURE);
+        }
     }
 
     private void itemGallery(){
@@ -191,12 +200,9 @@ public class EditProfile extends AppCompatActivity {
                 if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
                     Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
                             Toast.LENGTH_SHORT).show();
-                else{
-                    Intent intent = Utility.cameraIntent();
-                    if (intent.resolveActivity(getPackageManager()) != null && checkPermissionFromDevice()) {
-                        startActivityForResult(intent, Utility.REQUEST_IMAGE_CAPTURE);
-                    }
-                }
+                else
+                    photoShot();
+
                 break;
         }
     }
@@ -215,5 +221,19 @@ public class EditProfile extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("profile", profImg);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        profImg = savedInstanceState.getParcelable("profile");
+        if(profImg != null)
+            profile.setImageBitmap(profImg);
     }
 }

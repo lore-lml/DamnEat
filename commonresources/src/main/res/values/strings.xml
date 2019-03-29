@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name" translatable="false">Damn Eat</string>
     <string name="profile_name">Name</string>
     <string name="profile_email">Mail Address</string>
     <string name="profile_desc">Short description</string>
     <string name="profile_address">Address</string>
+    <string name="profile_restaurant_address">Restaurant address</string>
     <string name="action_edit">Edit</string>
     <string name="nullText" translatable="false">- -</string>
     <string name="save">Save</string>

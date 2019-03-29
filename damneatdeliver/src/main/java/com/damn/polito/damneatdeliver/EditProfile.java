@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -45,6 +46,7 @@ public class EditProfile extends AppCompatActivity {
         description = findViewById(R.id.edit_desc);
         save = findViewById(R.id.edit_save);
 
+        findViewById(R.id.card_edit_address).setVisibility(View.GONE);
         init();
 
     }
@@ -95,6 +97,15 @@ public class EditProfile extends AppCompatActivity {
     private void itemCamera() {
         if(!checkPermissionFromDevice())
             requestPermission();
+        else
+            photoShot();
+    }
+
+    private void photoShot() {
+        Intent intent = Utility.cameraIntent();
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, Utility.REQUEST_IMAGE_CAPTURE);
+        }
     }
 
     private void itemGallery(){
@@ -181,10 +192,7 @@ public class EditProfile extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
                             Toast.LENGTH_SHORT).show();
                 else{
-                    Intent intent = Utility.cameraIntent();
-                    if (intent.resolveActivity(getPackageManager()) != null && checkPermissionFromDevice()) {
-                        startActivityForResult(intent, Utility.REQUEST_IMAGE_CAPTURE);
-                    }
+                    photoShot();
                 }
                 break;
         }
@@ -204,6 +212,20 @@ public class EditProfile extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("profile", profImg);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        profImg = savedInstanceState.getParcelable("profile");
+        if(profImg != null)
+            profile.setImageBitmap(profImg);
     }
 }
 
