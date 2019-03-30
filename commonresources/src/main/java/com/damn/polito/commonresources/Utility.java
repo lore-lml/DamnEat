@@ -39,7 +39,7 @@ public class Utility {
     public static void showWarning(AppCompatActivity app) {
         //Se l'utente cerca di tornare indietro allora chiede la conferma
         AlertDialog.Builder alert = new AlertDialog.Builder(app);
-        alert.setTitle(R.string.alert_edit_profile_title).setMessage(R.string.alert_edit_profile)
+        alert.setTitle(R.string.profile_text).setMessage(R.string.alert_edit_profile)
                 .setNegativeButton(R.string.alert_edit_profile_negative, (dialog, which) -> dialog.dismiss())
                 .setPositiveButton(R.string.alert_edit_profile_positive, (dialog, which) -> {
                     app.setResult(RESULT_CANCELED);

@@ -13,10 +13,15 @@
     <string name="empty_address">No address has been inserted</string>
     <string name="invalid_mail">Invalid mail</string>
     <string name="alert_edit_profile">Are you sure you want to exit? Data will be lost...</string>
-    <string name="alert_edit_profile_title">Profile</string>
+    <string name="profile_text">Profile</string>
     <string name="alert_edit_profile_positive">I\'m sure</string>
     <string name="alert_edit_profile_negative">Cancel</string>
     <string name="context_camera_snap">Take a Selfie</string>
     <string name="context_camera_gallery">Pick from gallery</string>
     <string name="permission_denied">Permission Denied</string>
+    <string name="settings_text">Settings</string>
+    <string name="reservations_text">Reservations</string>
+    <string name="menu_text" translatable="false">Menu</string>
+    <string name="share_text">Share</string>
+    <string name="dishes_text">Dishes of the day</string>
 </resources>

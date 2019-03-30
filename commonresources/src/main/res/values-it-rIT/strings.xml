@@ -13,10 +13,14 @@
     <string name="empty_address">Non è stato inserito nessun indirizzo</string>
     <string name="invalid_mail">La mail non è valida</string>
     <string name="alert_edit_profile">Sei sicuro di voler uscire? I dati verranno persi...</string>
-    <string name="alert_edit_profile_title">Profilo</string>
+    <string name="profile_text">Profilo</string>
     <string name="alert_edit_profile_positive">Sono sicuro</string>
     <string name="alert_edit_profile_negative">Annulla</string>
     <string name="context_camera_snap">Scatta un Selfie</string>
     <string name="context_camera_gallery">Scegli dalla galleria</string>
     <string name="permission_denied">Permesso Negato</string>
+    <string name="settings_text">Impostazioni</string>
+    <string name="reservations_text">Ordini</string>
+    <string name="dishes_text">Piatti del giorno</string>
+    <string name="share_text">Condividi</string>
 </resources>

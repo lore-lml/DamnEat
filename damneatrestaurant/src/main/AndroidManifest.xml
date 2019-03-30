@@ -9,14 +9,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditProfile"></activity>
-        <activity android:name=".Profile">
+        <activity
+            android:name=".WelcomeActivity"
+            android:label="@string/title_activity_welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".WelcomePage"
+            android:label="@string/title_activity_welcome_page"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".EditProfile" />
+        <activity
+            android:name=".Profile"
+            android:parentActivityName=".WelcomePage" />
     </application>
 
 </manifest>

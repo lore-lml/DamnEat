@@ -16,6 +16,8 @@ import com.damn.polito.commonresources.Utility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class Profile extends AppCompatActivity {
 
     private String defaultValue;
@@ -28,6 +30,8 @@ public class Profile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         defaultValue = getString(R.string.nullText);
 
