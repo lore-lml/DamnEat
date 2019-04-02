@@ -21,7 +21,7 @@
         <activity
             android:name=".WelcomePage"
             android:label="@string/title_activity_welcome_page"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".EditProfile" />
         <activity
             android:name=".Profile"
