@@ -26,6 +26,8 @@
         <activity
             android:name=".Profile"
             android:parentActivityName=".WelcomePage" />
+        <activity android:name=".OrderActivity"
+            android:parentActivityName=".WelcomePage" />
     </application>
 
 </manifest>
