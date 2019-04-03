@@ -240,7 +240,6 @@ public class EditProfile extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //todo: checkchanges
         if(checkChanges())
         // Facciamo comparire il messagio solo se sono stati cambiati dei campi
             Utility.showWarning(this, checkField(), getActivityResult());
