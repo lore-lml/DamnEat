@@ -11,6 +11,7 @@ import android.util.Base64;
 import java.io.ByteArrayOutputStream;
 
 import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 public class Utility {
 
@@ -36,15 +37,29 @@ public class Utility {
         return temp;
     }
 
-    public static void showWarning(AppCompatActivity app) {
+    public static void showWarning(AppCompatActivity app, Boolean checkfield, Intent i) {
         //Se l'utente cerca di tornare indietro allora chiede la conferma
         AlertDialog.Builder alert = new AlertDialog.Builder(app);
-        alert.setTitle(R.string.alert_edit_profile_title).setMessage(R.string.alert_edit_profile)
-                .setNegativeButton(R.string.alert_edit_profile_negative, (dialog, which) -> dialog.dismiss())
-                .setPositiveButton(R.string.alert_edit_profile_positive, (dialog, which) -> {
-                    app.setResult(RESULT_CANCELED);
-                    app.finish();
-                }).show();
+        if (checkfield) {
+            alert.setTitle(R.string.alert_edit_profile_title).setMessage(R.string.alert_edit_profile)
+                    .setNeutralButton(R.string.alert_edit_profile_neutral, (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton(R.string.alert_edit_profile_negative, (dialog, which) -> {
+                        app.setResult(RESULT_CANCELED);
+                        app.finish();
+                    }).setPositiveButton(R.string.alert_edit_profile_positive, (dialog, which) -> {
+                        //app.setResult(i);
+                        app.setResult(RESULT_OK, i);
+                        app.finish();
+                    }
+            ).show();
+        } else {
+            alert.setTitle(R.string.alert_edit_profile_title).setMessage(R.string.alert_edit_profile_invalid_changes)
+                    .setNeutralButton(R.string.alert_edit_profile_neutral, (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton(R.string.alert_edit_profile_positive, (dialog, which) -> {
+                        app.setResult(RESULT_CANCELED);
+                        app.finish();
+                    }).show();
+        }
     }
 
     public static Intent galleryIntent() {

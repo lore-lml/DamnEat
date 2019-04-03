@@ -31,6 +31,9 @@ public class EditProfile extends AppCompatActivity {
     private EditText name, mail, description;
     private Button save;
     private Bitmap profImg;
+    // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
+    private String sName, sMail, sDesc;
+    private Bitmap profImgPrec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +57,11 @@ public class EditProfile extends AppCompatActivity {
     private void init() {
         //Recupera le informazioni passate da Profile
         Intent intent = getIntent();
-        String sName = intent.getStringExtra("name");
-        String sMail = intent.getStringExtra("mail");
-        String sDesc = intent.getStringExtra("description");
+        sName = intent.getStringExtra("name");
+        sMail = intent.getStringExtra("mail");
+        sDesc = intent.getStringExtra("description");
         profImg = intent.getParcelableExtra("profile");
+        profImgPrec = intent.getParcelableExtra("profile");
 
         name.setText(sName);
         mail.setText(sMail);
@@ -114,13 +118,17 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void setActivityResult() {
+        setResult(RESULT_OK, getActivityResult());
+    }
+
+    private Intent getActivityResult() {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
         if(profImg != null)
             i.putExtra("profile", profImg);
-        setResult(RESULT_OK, i);
+        return i;
     }
 
     @Override
@@ -170,6 +178,22 @@ public class EditProfile extends AppCompatActivity {
 
         return true;
     }
+    private boolean checkChanges() {
+        String name = this.name.getText().toString();
+        if(!name.equals(sName))
+            return true;
+
+        String mail = this.mail.getText().toString();
+        if(!(mail.equals(sMail)))
+            return true;
+
+        String description = this.description.getText().toString();
+        if(!(description.equals(sDesc)))
+            return true;
+
+        return (!(profImg.equals(profImgPrec)));
+
+    }
 
 
     private boolean checkPermissionFromDevice() {
@@ -200,14 +224,21 @@ public class EditProfile extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Utility.showWarning(this);
+        if(checkChanges())
+            // Facciamo comparire il messagio solo se sono stati cambiati dei campi
+            Utility.showWarning(this, checkField(), getActivityResult());
+        else
+            this.finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                Utility.showWarning(this);
+                if(checkChanges())
+                    Utility.showWarning(this, checkField(), getActivityResult());
+                else
+                    this.finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
