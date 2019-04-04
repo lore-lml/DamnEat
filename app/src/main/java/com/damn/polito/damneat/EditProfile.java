@@ -1,15 +1,10 @@
 package com.damn.polito.damneat;
 
-import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
-import android.graphics.Rect;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -24,16 +19,13 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import com.damn.polito.commonresources.Utility;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
+import static com.damn.polito.commonresources.Utility.*;
+
 import java.io.IOException;
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
-    private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "com.google.android.apps.photos";
-    private final int REQUEST_PERMISSION_CODE = 1000;
 
     private ImageView profile;
     private ImageButton camera;
@@ -111,59 +103,29 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void itemCamera() {
-        if(!checkPermissionFromDevice())
-            requestPermission();
+        if(!checkPermissionFromDevice(REQUEST_PERM_CAMERA))
+            requestPermission(REQUEST_PERM_CAMERA, PERMISSION_CODE_CAMERA);
         else
             photoShot();
     }
 
     private void photoShot() {
-        Intent intent = Utility.cameraIntent();
+        Intent intent = cameraIntent();
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, Utility.REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
     private void itemGallery(){
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-//        Intent intent = new Intent(Intent.ACTION_PICK,
-//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        //Intent intent = Utility.galleryIntent();
-        startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
+        if(!checkPermissionFromDevice(REQUEST_PERM_WRITE_EXTERNAL))
+            requestPermission(REQUEST_PERM_WRITE_EXTERNAL, PERMISSION_CODE_WRITE_EXTERNAL);
+        else
+            pickFromGallery();
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        if (requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
-            final Bundle extras = data.getExtras();
-            if (extras != null) {
-                profImg = extras.getParcelable("data");
-                profile.setImageBitmap(profImg);
-            }
-        }
-        if (requestCode == Utility.IMAGE_GALLERY_REQUEST ) {
-            Uri imageUri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                float aspectRatio = bitmap.getWidth() / (float) bitmap.getHeight();
-                int height = 200;
-                int width = Math.round(height * aspectRatio);
-                profImg = Bitmap.createScaledBitmap(
-                        bitmap, width, height, false);
-                profile.setImageBitmap(profImg);
-
-            } catch (IOException e) {
-                // todo: toast di errore
-                e.printStackTrace();
-            }
-
-        }
+    private void pickFromGallery() {
+        Intent intent = galleryIntent();
+        startActivityForResult(intent, IMAGE_GALLERY_REQUEST);
     }
 
     private void setActivityResult() {
@@ -181,52 +143,47 @@ public class EditProfile extends AppCompatActivity {
         return i;
     }
 
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode != RESULT_OK) {
-//            return;
-//        }
-//        if (requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
-//            final Bundle extras = data.getExtras();
-//            if (extras != null) {
-//                profImg = extras.getParcelable("data");
-//                profile.setImageBitmap(profImg);
-//            }
-//
-////         if(requestCode == Utility.IMAGE_GALLERY_REQUEST  ){
-////            if(data != null){
-////                Uri uri = data.getData();
-////                //cropImage(uri);
-////                displayImage(uri);
-////            }
-//
-//        }
-//        else if (requestCode == 1000 || requestCode == Utility.REQUEST_IMAGE_CAPTURE){
-//            final Bundle extras = data.getExtras();
-//            if (extras != null) {
-//                profImg = extras.getParcelable("data");
-//                profile.setImageBitmap(profImg);
-//            }
-//        }
-//    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_IMAGE_CAPTURE || requestCode == IMAGE_GALLERY_REQUEST) {
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                profImg = extras.getParcelable("data");
+                profile.setImageBitmap(profImg);
+            }else{
+                copyAndCrop(data.getData());
+            }
+        }
+        if(requestCode == CROP_REQUEST){
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                profImg = extras.getParcelable("data");
+                profile.setImageBitmap(profImg);
+            }else{
+                displayImage(data.getData());
+            }
+        }
+    }
 
-    private void displayImage(Uri uri) {
+    private void displayImage(Uri data) {
         try {
-            ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
-            assert pfd != null;
-            FileDescriptor fd = pfd.getFileDescriptor();
-            profImg = BitmapFactory.decodeFileDescriptor(fd);
-            pfd.close();
+            profImg = MediaStore.Images.Media.getBitmap(getContentResolver(), data);
             profile.setImageBitmap(profImg);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private void copyAndCrop(Uri uri) {
+        assert uri != null;
+        Uri newUri = getImageUrlWithAuthority(this, Objects.requireNonNull(uri));
+        if(newUri != null) {
+            cropImage(newUri);
+        }
     }
 
     private void cropImage(Uri uri) {
@@ -242,7 +199,7 @@ public class EditProfile extends AppCompatActivity {
             cropIntent.putExtra("scaleUpIfNeeded", true);
             cropIntent.putExtra("return-data", true);
 
-            startActivityForResult(cropIntent, 1000);
+            startActivityForResult(cropIntent,CROP_REQUEST);
         }catch (ActivityNotFoundException e){
             e.printStackTrace();
         }
@@ -311,22 +268,22 @@ public class EditProfile extends AppCompatActivity {
     }
 
 
-    private boolean checkPermissionFromDevice() {
+    private boolean checkPermissionFromDevice(String permission) {
 
-        int camera_result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        return camera_result == PackageManager.PERMISSION_GRANTED;
+        int result = ContextCompat.checkSelfPermission(this, permission);
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestPermission() {
+    private void requestPermission(final String permission, final int permission_code) {
         ActivityCompat.requestPermissions(this,new String[]{
-                Manifest.permission.CAMERA
-        },REQUEST_PERMISSION_CODE);
+                permission
+        }, permission_code);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch(requestCode){
-            case REQUEST_PERMISSION_CODE:
+            case PERMISSION_CODE_CAMERA:
                 if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
                     Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
                             Toast.LENGTH_SHORT).show();
@@ -334,6 +291,13 @@ public class EditProfile extends AppCompatActivity {
                     photoShot();
 
                 break;
+
+            case PERMISSION_CODE_WRITE_EXTERNAL:
+                if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                    Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
+                            Toast.LENGTH_SHORT).show();
+                else
+                    pickFromGallery();
         }
     }
 
@@ -341,7 +305,7 @@ public class EditProfile extends AppCompatActivity {
     public void onBackPressed() {
         if(checkChanges())
         // Facciamo comparire il messagio solo se sono stati cambiati dei campi
-            Utility.showWarning(this, checkField(), getActivityResult());
+            showWarning(this, checkField(), getActivityResult());
         else
             this.finish();
     }
@@ -351,7 +315,7 @@ public class EditProfile extends AppCompatActivity {
         switch (item.getItemId()){
             case android.R.id.home:
                 if(checkChanges())
-                    Utility.showWarning(this, checkField(), getActivityResult());
+                    showWarning(this, checkField(), getActivityResult());
                 else
                     this.finish();
                 return true;

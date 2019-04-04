@@ -45,27 +45,27 @@ public class Profile extends AppCompatActivity {
         Intent intent = new Intent(this, EditProfile.class);
 
         //Se il profilo esisteva, passa le informazioni a EditProfile
-        if(!empty){
+        if (!empty) {
             intent.putExtra("name", name.getText().toString().trim());
             intent.putExtra("mail", mail.getText().toString().trim());
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("address", address.getText().toString().trim());
             intent.putExtra("image", profileImage.getDrawable().toString());
-            if(profileBitmap != null)
+            if (profileBitmap != null)
                 intent.putExtra("profile", profileBitmap);
 
         }
         startActivityForResult(intent, 1);
     }
 
-    private String stringOrDefault(String s){
+    private String stringOrDefault(String s) {
         return (s == null || s.trim().isEmpty()) ? defaultValue : s;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == RESULT_OK){
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             storeData(data);
         }
     }
@@ -84,7 +84,7 @@ public class Profile extends AppCompatActivity {
             values.put("mail", mail);
             values.put("description", description);
             values.put("address", address);
-            if(profileBitmap != null) {
+            if (profileBitmap != null) {
                 String bts = Utility.BitMapToString(profileBitmap);
                 values.put("profile", bts);
                 hasProfile = true;
@@ -98,7 +98,7 @@ public class Profile extends AppCompatActivity {
             this.mail.setText(mail);
             this.description.setText(description);
             this.address.setText(address);
-            if(profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
+            if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
 
             empty = false;
         } catch (JSONException e) {
@@ -106,10 +106,10 @@ public class Profile extends AppCompatActivity {
         }
     }
 
-    private void loadData(){
+    private void loadData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String s = pref.getString("info", null);
-        if(s == null) return;
+        if (s == null) return;
 
         try {
             JSONObject values = new JSONObject(s);
@@ -117,10 +117,10 @@ public class Profile extends AppCompatActivity {
             mail.setText(stringOrDefault(values.getString("mail")));
             description.setText(stringOrDefault(values.getString("description")));
             address.setText(stringOrDefault(values.getString("address")));
-            if(values.getBoolean("hasProfile")){
+            if (values.getBoolean("hasProfile")) {
                 String encodedBitmap = values.getString("profile");
                 profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                if(profileBitmap != null)
+                if (profileBitmap != null)
                     profileImage.setImageBitmap(profileBitmap);
             }
 
@@ -140,7 +140,7 @@ public class Profile extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.item_edit:
                 editProfile();
                 return true;
@@ -148,6 +148,4 @@ public class Profile extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 }
