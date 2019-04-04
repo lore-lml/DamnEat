@@ -31,12 +31,10 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         defaultValue = getString(R.string.nullText);
-
         profileImage = findViewById(R.id.profile_image);
         name = findViewById(R.id.editText_name);
         mail = findViewById(R.id.editText_email);
         description = findViewById(R.id.editText_desc);
-
         findViewById(R.id.card_address).setVisibility(View.INVISIBLE);
 
         loadData();
