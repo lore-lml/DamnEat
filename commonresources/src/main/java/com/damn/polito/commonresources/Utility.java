@@ -62,6 +62,10 @@ public class Utility {
         }
     }
 
+//    public static Intent galleryIntent() {
+//        Intent intent = new Intent();
+//        return intent;
+//    }
     public static Intent galleryIntent() {
         /*Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI,"image/*");

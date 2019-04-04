@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -29,7 +32,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
-
+    private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "com.google.android.apps.photos";
     private final int REQUEST_PERMISSION_CODE = 1000;
 
     private ImageView profile;
@@ -122,9 +125,45 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void itemGallery(){
-        Intent intent = Utility.galleryIntent();
-        //startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+//        Intent intent = new Intent(Intent.ACTION_PICK,
+//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        //Intent intent = Utility.galleryIntent();
         startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                profImg = extras.getParcelable("data");
+                profile.setImageBitmap(profImg);
+            }
+        }
+        if (requestCode == Utility.IMAGE_GALLERY_REQUEST ) {
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                float aspectRatio = bitmap.getWidth() / (float) bitmap.getHeight();
+                int height = 200;
+                int width = Math.round(height * aspectRatio);
+                profImg = Bitmap.createScaledBitmap(
+                        bitmap, width, height, false);
+                profile.setImageBitmap(profImg);
+
+            } catch (IOException e) {
+                // todo: toast di errore
+                e.printStackTrace();
+            }
+
+        }
     }
 
     private void setActivityResult() {
@@ -142,35 +181,36 @@ public class EditProfile extends AppCompatActivity {
         return i;
     }
 
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (resultCode != RESULT_OK) {
+//            return;
+//        }
+//        if (requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
+//            final Bundle extras = data.getExtras();
+//            if (extras != null) {
+//                profImg = extras.getParcelable("data");
+//                profile.setImageBitmap(profImg);
+//            }
+//
+////         if(requestCode == Utility.IMAGE_GALLERY_REQUEST  ){
+////            if(data != null){
+////                Uri uri = data.getData();
+////                //cropImage(uri);
+////                displayImage(uri);
+////            }
+//
+//        }
+//        else if (requestCode == 1000 || requestCode == Utility.REQUEST_IMAGE_CAPTURE){
+//            final Bundle extras = data.getExtras();
+//            if (extras != null) {
+//                profImg = extras.getParcelable("data");
+//                profile.setImageBitmap(profImg);
+//            }
+//        }
+//    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        /*if (requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
-            final Bundle extras = data.getExtras();
-            if (extras != null) {
-                profImg = extras.getParcelable("data");
-                profile.setImageBitmap(profImg);
-            }
-        }*/
-         if(requestCode == Utility.IMAGE_GALLERY_REQUEST  ){
-            if(data != null){
-                Uri uri = data.getData();
-                //cropImage(uri);
-                displayImage(uri);
-            }
-
-        }
-        else if (requestCode == 1000 || requestCode == Utility.REQUEST_IMAGE_CAPTURE){
-            final Bundle extras = data.getExtras();
-            if (extras != null) {
-                profImg = extras.getParcelable("data");
-                profile.setImageBitmap(profImg);
-            }
-        }
-    }
 
     private void displayImage(Uri uri) {
         try {
