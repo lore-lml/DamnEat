@@ -1,9 +1,13 @@
 package com.damn.polito.damneatrestaurant;
 
-import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,19 +21,20 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import com.damn.polito.commonresources.Utility;
 
+import static com.damn.polito.commonresources.Utility.*;
+
+import java.io.IOException;
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
-
-    private final int REQUEST_PERMISSION_CODE = 1000;
 
     private ImageView profile;
     private ImageButton camera;
     private EditText name, mail, description, address;
     private Button save;
     private Bitmap profImg;
+
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
     private String sName, sMail, sDesc, sAddress;
     private Bitmap profImgPrec;
@@ -55,13 +60,18 @@ public class EditProfile extends AppCompatActivity {
 
     private void init() {
         //Recupera le informazioni passate da Profile
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Intent intent = getIntent();
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
         sDesc = intent.getStringExtra("description");
         sAddress = intent.getStringExtra("address");
-        profImg = intent.getParcelableExtra("profile");
-        profImgPrec = intent.getParcelableExtra("profile");
+        String bitmapString = pref.getString("profile", null);
+        if(bitmapString != null) {
+            profImg = StringToBitMap(bitmapString);
+            profImgPrec = profImg;
+            pref.edit().remove("profile").apply();
+        }
 
         name.setText(sName);
         mail.setText(sMail);
@@ -100,22 +110,29 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void itemCamera() {
-        if(!checkPermissionFromDevice())
-            requestPermission();
+        if(!checkPermissionFromDevice(REQUEST_PERM_CAMERA))
+            requestPermission(REQUEST_PERM_CAMERA, PERMISSION_CODE_CAMERA);
         else
             photoShot();
     }
 
     private void photoShot() {
-        Intent intent = Utility.cameraIntent();
+        Intent intent = cameraIntent();
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, Utility.REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
     private void itemGallery(){
-        Intent intent = Utility.galleryIntent();
-        startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
+        if(!checkPermissionFromDevice(REQUEST_PERM_WRITE_EXTERNAL))
+            requestPermission(REQUEST_PERM_WRITE_EXTERNAL, PERMISSION_CODE_WRITE_EXTERNAL);
+        else
+            pickFromGallery();
+    }
+
+    private void pickFromGallery() {
+        Intent intent = galleryIntent();
+        startActivityForResult(intent, IMAGE_GALLERY_REQUEST);
     }
 
     private void setActivityResult() {
@@ -128,8 +145,11 @@ public class EditProfile extends AppCompatActivity {
         i.putExtra("mail", mail.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("address", address.getText().toString().trim());
-        if(profImg != null)
-            i.putExtra("profile", profImg);
+        if(profImg != null){
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            pref.edit().putString("profile", BitMapToString(profImg)).apply();
+        }
+
         return i;
     }
 
@@ -139,12 +159,59 @@ public class EditProfile extends AppCompatActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == Utility.IMAGE_GALLERY_REQUEST || requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE || requestCode == IMAGE_GALLERY_REQUEST) {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 profImg = extras.getParcelable("data");
                 profile.setImageBitmap(profImg);
+            }else{
+                copyAndCrop(data.getData());
             }
+        }
+        if(requestCode == CROP_REQUEST){
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                profImg = extras.getParcelable("data");
+                profile.setImageBitmap(profImg);
+            }else{
+                displayImage(data.getData());
+            }
+        }
+    }
+
+    private void displayImage(Uri data) {
+        try {
+            profImg = MediaStore.Images.Media.getBitmap(getContentResolver(), data);
+            profile.setImageBitmap(profImg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyAndCrop(Uri uri) {
+        assert uri != null;
+        Uri newUri = getImageUrlWithAuthority(this, Objects.requireNonNull(uri));
+        if(newUri != null) {
+            cropImage(newUri);
+        }
+    }
+
+    private void cropImage(Uri uri) {
+        try{
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(uri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra("outputX", 256);
+            cropIntent.putExtra("outputY", 256);
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("scaleUpIfNeeded", true);
+            cropIntent.putExtra("return-data", true);
+
+            startActivityForResult(cropIntent,CROP_REQUEST);
+        }catch (ActivityNotFoundException e){
+            e.printStackTrace();
         }
     }
 
@@ -207,24 +274,26 @@ public class EditProfile extends AppCompatActivity {
             return true;
 
         return (!(profImg.equals(profImgPrec)));
+
     }
 
-    private boolean checkPermissionFromDevice() {
 
-        int camera_result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        return camera_result == PackageManager.PERMISSION_GRANTED;
+    private boolean checkPermissionFromDevice(String permission) {
+
+        int result = ContextCompat.checkSelfPermission(this, permission);
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestPermission() {
+    private void requestPermission(final String permission, final int permission_code) {
         ActivityCompat.requestPermissions(this,new String[]{
-                Manifest.permission.CAMERA
-        },REQUEST_PERMISSION_CODE);
+                permission
+        }, permission_code);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch(requestCode){
-            case REQUEST_PERMISSION_CODE:
+            case PERMISSION_CODE_CAMERA:
                 if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
                     Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
                             Toast.LENGTH_SHORT).show();
@@ -232,6 +301,13 @@ public class EditProfile extends AppCompatActivity {
                     photoShot();
 
                 break;
+
+            case PERMISSION_CODE_WRITE_EXTERNAL:
+                if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                    Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
+                            Toast.LENGTH_SHORT).show();
+                else
+                    pickFromGallery();
         }
     }
 
@@ -239,7 +315,7 @@ public class EditProfile extends AppCompatActivity {
     public void onBackPressed() {
         if(checkChanges())
             // Facciamo comparire il messagio solo se sono stati cambiati dei campi
-            Utility.showWarning(this, checkField(), getActivityResult());
+            showWarning(this, checkField(), getActivityResult());
         else
             this.finish();
     }
@@ -249,11 +325,10 @@ public class EditProfile extends AppCompatActivity {
         switch (item.getItemId()){
             case android.R.id.home:
                 if(checkChanges())
-                    Utility.showWarning(this, checkField(), getActivityResult());
+                    showWarning(this, checkField(), getActivityResult());
                 else
                     this.finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -262,14 +337,20 @@ public class EditProfile extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("profile", profImg);
+        if(profImg != null)
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("profile", BitMapToString(profImg)).apply();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        profImg = savedInstanceState.getParcelable("profile");
-        if(profImg != null)
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String bitmap = pref.getString("profile", null);
+        if(bitmap != null) {
+            profImg = StringToBitMap(bitmap);
             profile.setImageBitmap(profImg);
+            pref.edit().remove("profile").apply();
+        }
     }
 }
+

@@ -46,7 +46,7 @@ public class Utility {
 
     public static String BitMapToString(Bitmap bitmap){
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,80, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,90, baos);
         byte [] b=baos.toByteArray();
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
