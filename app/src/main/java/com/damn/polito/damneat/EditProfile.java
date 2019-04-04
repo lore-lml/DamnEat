@@ -1,9 +1,13 @@
 package com.damn.polito.damneat;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +23,9 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity {
@@ -116,6 +123,7 @@ public class EditProfile extends AppCompatActivity {
 
     private void itemGallery(){
         Intent intent = Utility.galleryIntent();
+        //startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
         startActivityForResult(intent, Utility.IMAGE_GALLERY_REQUEST);
     }
 
@@ -140,12 +148,63 @@ public class EditProfile extends AppCompatActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == Utility.IMAGE_GALLERY_REQUEST || requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
+        /*if (requestCode == Utility.REQUEST_IMAGE_CAPTURE) {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 profImg = extras.getParcelable("data");
                 profile.setImageBitmap(profImg);
             }
+        }*/
+         if(requestCode == Utility.IMAGE_GALLERY_REQUEST  ){
+            if(data != null){
+                Uri uri = data.getData();
+                //cropImage(uri);
+                displayImage(uri);
+            }
+
+        }
+        else if (requestCode == 1000 || requestCode == Utility.REQUEST_IMAGE_CAPTURE){
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                profImg = extras.getParcelable("data");
+                profile.setImageBitmap(profImg);
+            }
+        }
+    }
+
+    private void displayImage(Uri uri) {
+        try {
+            ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
+            assert pfd != null;
+            FileDescriptor fd = pfd.getFileDescriptor();
+            profImg = BitmapFactory.decodeFileDescriptor(fd);
+            pfd.close();
+            profile.setImageBitmap(profImg);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void cropImage(Uri uri) {
+        try{
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(uri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra("outputX", 256);
+            cropIntent.putExtra("outputY", 256);
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("scaleUpIfNeeded", true);
+            cropIntent.putExtra("return-data", true);
+
+            startActivityForResult(cropIntent, 1000);
+        }catch (ActivityNotFoundException e){
+            e.printStackTrace();
         }
     }
 

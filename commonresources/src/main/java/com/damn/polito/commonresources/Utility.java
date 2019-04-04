@@ -63,7 +63,7 @@ public class Utility {
     }
 
     public static Intent galleryIntent() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        /*Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI,"image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("scale", true);
@@ -72,7 +72,8 @@ public class Utility {
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
         intent.putExtra("return-data", true);
-        return intent;
+        return intent;*/
+        return new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
     }
 
     public static Intent cameraIntent(){
