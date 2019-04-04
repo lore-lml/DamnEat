@@ -51,8 +51,10 @@ public class Profile extends AppCompatActivity {
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("address", address.getText().toString().trim());
             intent.putExtra("image", profileImage.getDrawable().toString());
-            if (profileBitmap != null)
-                intent.putExtra("profile", profileBitmap);
+            if (profileBitmap != null){
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .edit().putString("profile", Utility.BitMapToString(profileBitmap)).apply();
+            }
 
         }
         startActivityForResult(intent, 1);
@@ -71,15 +73,21 @@ public class Profile extends AppCompatActivity {
     }
 
     private void storeData(Intent data) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
         String description = data.getStringExtra("description");
         String address = data.getStringExtra("address");
-        profileBitmap = data.getParcelableExtra("profile");
+        String bitmapProf = pref.getString("profile", null);
+        if(bitmapProf!= null) {
+            profileBitmap = Utility.StringToBitMap(bitmapProf);
+            hasProfile = true;
+            pref.edit().remove("profile").apply();
+        }
 
         JSONObject values = new JSONObject();
         try {
-            boolean hasProfile = false;
             values.put("name", name);
             values.put("mail", mail);
             values.put("description", description);
@@ -91,7 +99,7 @@ public class Profile extends AppCompatActivity {
             }
             values.put("hasProfile", hasProfile);
 
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
             pref.edit().putString("info", values.toString()).apply();
 
             this.name.setText(name);

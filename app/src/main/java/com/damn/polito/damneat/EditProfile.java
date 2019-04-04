@@ -2,9 +2,11 @@ package com.damn.polito.damneat;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -58,13 +60,18 @@ public class EditProfile extends AppCompatActivity {
 
     private void init() {
         //Recupera le informazioni passate da Profile
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Intent intent = getIntent();
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
         sDesc = intent.getStringExtra("description");
         sAddress = intent.getStringExtra("address");
-        profImg = intent.getParcelableExtra("profile");
-        profImgPrec = intent.getParcelableExtra("profile");
+        String bitmapString = pref.getString("profile", null);
+        if(bitmapString != null) {
+            profImg = StringToBitMap(bitmapString);
+            profImgPrec = profImg;
+            pref.edit().remove("profile").apply();
+        }
 
         name.setText(sName);
         mail.setText(sMail);
@@ -138,8 +145,11 @@ public class EditProfile extends AppCompatActivity {
         i.putExtra("mail", mail.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("address", address.getText().toString().trim());
-        if(profImg != null)
-            i.putExtra("profile", profImg);
+        if(profImg != null){
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            pref.edit().putString("profile", BitMapToString(profImg)).apply();
+        }
+
         return i;
     }
 
@@ -327,14 +337,19 @@ public class EditProfile extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("profile", profImg);
+        if(profImg != null)
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("profile", BitMapToString(profImg)).apply();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        profImg = savedInstanceState.getParcelable("profile");
-        if(profImg != null)
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String bitmap = pref.getString("profile", null);
+        if(bitmap != null) {
+            profImg = StringToBitMap(bitmap);
             profile.setImageBitmap(profImg);
+            pref.edit().remove("profile").apply();
+        }
     }
 }
