@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -13,17 +12,14 @@ import com.damn.polito.damneatrestaurant.beans.Order;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
-
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
+public class RecyclerAdapterOrders extends RecyclerView.Adapter<RecyclerAdapterOrders.MyViewHolder> {
 
     private List<Order> orders;
 
-    public RecyclerAdapter(List<Order> orders){
+    public RecyclerAdapterOrders(List<Order> orders){
         this.orders= orders;
     }
 
@@ -49,7 +45,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
 
     @Override
-    public RecyclerAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerAdapterOrders.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.single_order_layout, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(cardView);

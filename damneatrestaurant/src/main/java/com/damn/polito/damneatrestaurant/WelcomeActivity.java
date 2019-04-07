@@ -18,12 +18,13 @@ public class WelcomeActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.nav_menu:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
                 case R.id.nav_reservations:
+                    //mTextMessage.setText(R.string.title_home);
+//                    Intent intent1 = new Intent(WelcomeActivity.this, DishActivity.class);
+//                    startActivity(intent1);
+                    return true;
+                case R.id.nav_menu:
                     /*mTextMessage.setText(R.string.title_dashboard);*/
-
                     Intent intent2 = new Intent(WelcomeActivity.this,OrderActivity.class);
                     startActivity(intent2);
                     return true;
@@ -40,12 +41,15 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+        setContentView(R.layout.dishes_fragment);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setSelectedItemId(R.id.nav_menu);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        Intent intent1 = new Intent(WelcomeActivity.this, DishActivity.class);
+        startActivity(intent1);
+
+//        mTextMessage = (TextView) findViewById(R.id.message);
+//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+//        navigation.setSelectedItemId(R.id.nav_menu);
+//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
 

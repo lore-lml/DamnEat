@@ -7,16 +7,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".OrderActivity">
-    
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/orders_recyclerview"
         android:scrollbars="vertical"
-        />
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="58dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"/>
 
     <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
+        android:id="@+id/navigation1"
         android:layout_width="0dp"
         android:layout_height="58dp"
         android:background="?android:attr/windowBackground"

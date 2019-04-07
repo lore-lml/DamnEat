@@ -3,7 +3,7 @@ package com.damn.polito.damneatrestaurant.beans;
 public class Dish {
     private String name;
     private String description;
-    private float price;
+    private double price;
     private int disponibility;
     private int photo = 0;
 
@@ -42,7 +42,7 @@ public class Dish {
         return description;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 

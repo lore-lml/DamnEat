@@ -14,7 +14,6 @@
             android:label="@string/title_activity_welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -24,10 +23,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".EditProfile" />
         <activity
+            android:name=".OrderActivity"
+            android:parentActivityName=".WelcomeActivity" />
+        <activity
+            android:name=".DishActivity"
+            android:parentActivityName=".WelcomeActivity" />
+        <activity
             android:name=".Profile"
-            android:parentActivityName=".WelcomePage" />
-        <activity android:name=".OrderActivity"
-            android:parentActivityName=".WelcomePage" />
+            android:parentActivityName=".DishActivity" />
     </application>
 
 </manifest>
