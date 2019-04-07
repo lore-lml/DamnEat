@@ -3,4 +3,8 @@
     <string name="profile_restaurant_address">Restaurant address</string>
     <string name="profile_name">Restaurant name</string>
     <string name="profile_address">Restaurant address</string>
+    <string name="nav_dishes">Dishes</string>
+    <string name="nav_reservations">Reservations</string>
+    <string name="nav_profile">Profile</string>
+    <string name="dish_available">Available: %s</string>
 </resources>

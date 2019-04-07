@@ -4,4 +4,8 @@
     <string name="app_name">DamnEat - Ristoranti</string>
     <string name="profile_name">Nome ristorante</string>
     <string name="profile_address">Indirizzo ristorante</string>
+    <string name="nav_dishes">Piatti</string>
+    <string name="nav_reservations">Ordini</string>
+    <string name="nav_profile">Profilo</string>
+    <string name="dish_available">Disponibile: %s</string>
 </resources>
