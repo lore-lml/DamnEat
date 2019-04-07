@@ -55,37 +55,5 @@ public class OrderActivity extends Activity {
         adapter = new RecyclerAdapterOrders(orders);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
-
-        mTextMessage = findViewById(R.id.message);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setSelectedItemId(R.id.nav_reservations);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
     }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.nav_menu:
-                    //mTextMessage.setText(R.string.title_home);
-                    Intent intent1 = new Intent(OrderActivity.this, DishActivity.class);
-                    startActivity(intent1);
-                    return true;
-                case R.id.nav_reservations:
-                    /*mTextMessage.setText(R.string.title_dashboard);*/
-//                    Intent intent2 = new Intent(OrderActivity.this, OrderActivity.class);
-//                    startActivity(intent2);
-                    return true;
-                case R.id.nav_profile:
-                    //mTextMessage.setText(R.string.title_notifications);
-                    Intent intent3 = new Intent(OrderActivity.this, Profile.class);
-                    startActivity(intent3);
-                    return true;
-            }
-            return false;
-        }
-    };
 }

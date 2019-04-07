@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.damn.polito.damneatrestaurant.beans.Order;
+
 public class WelcomeActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
+    private Intent intent;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -18,20 +21,20 @@ public class WelcomeActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.nav_reservations:
-                    //mTextMessage.setText(R.string.title_home);
-//                    Intent intent1 = new Intent(WelcomeActivity.this, DishActivity.class);
-//                    startActivity(intent1);
-                    return true;
                 case R.id.nav_menu:
-                    /*mTextMessage.setText(R.string.title_dashboard);*/
-                    Intent intent2 = new Intent(WelcomeActivity.this,OrderActivity.class);
-                    startActivity(intent2);
+                    //mTextMessage.setText(R.string.title_home);
+                    intent = new Intent(WelcomeActivity.this, DishActivity.class);
+                    startActivity(intent);
+                    return true;
+                case R.id.nav_reservations:
+                    //mTextMessage.setText(R.string.title_dashboard);
+                    intent = new Intent(WelcomeActivity.this, OrderActivity.class);
+                    startActivity(intent);
                     return true;
                 case R.id.nav_profile:
                     //mTextMessage.setText(R.string.title_notifications);
-                    Intent intent3 = new Intent(WelcomeActivity.this,Profile.class);
-                    startActivity(intent3);
+                    intent = new Intent(WelcomeActivity.this, Profile.class);
+                    startActivity(intent);
                     return true;
             }
             return false;
@@ -41,16 +44,11 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dishes_fragment);
+        setContentView(R.layout.activity_welcome);
 
-        Intent intent1 = new Intent(WelcomeActivity.this, DishActivity.class);
-        startActivity(intent1);
-
-//        mTextMessage = (TextView) findViewById(R.id.message);
-//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-//        navigation.setSelectedItemId(R.id.nav_menu);
-//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setSelectedItemId(R.id.nav_menu);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
-
 }

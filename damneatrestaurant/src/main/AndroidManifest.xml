@@ -30,7 +30,7 @@
             android:parentActivityName=".WelcomeActivity" />
         <activity
             android:name=".Profile"
-            android:parentActivityName=".DishActivity" />
+            android:parentActivityName=".WelcomeActivity" />
     </application>
 
 </manifest>

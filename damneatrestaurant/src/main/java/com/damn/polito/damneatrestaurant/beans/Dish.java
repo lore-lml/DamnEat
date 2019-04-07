@@ -22,6 +22,14 @@ public class Dish {
         this.photo = photo;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setPhoto(int photo){
         this.photo = photo;
     }
