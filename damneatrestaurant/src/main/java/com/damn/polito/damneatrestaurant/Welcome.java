@@ -1,5 +1,6 @@
 package com.damn.polito.damneatrestaurant;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -10,18 +11,22 @@ import android.widget.TextView;
 public class Welcome extends AppCompatActivity {
 
     private TextView mTextMessage;
-
+    Intent i;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = item -> {
                 switch (item.getItemId()) {
                     case R.id.nav_dishes:
-
+                        // a scopo di test
+                        i = new Intent(this, TestDishes.class);
+                        startActivity(i);
                         return true;
                     case R.id.nav_reservations:
 
                         return true;
                     case R.id.nav_profile:
-
+                        // a scopo di test
+                        i = new Intent(this, Profile.class);
+                        startActivity(i);
                         return true;
                 }
                 return false;
