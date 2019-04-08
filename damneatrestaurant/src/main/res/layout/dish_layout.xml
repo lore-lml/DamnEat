@@ -30,7 +30,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/dish_image"
                 android:layout_width="0dp"
                 android:layout_height="180dp"
                 android:adjustViewBounds="true"
@@ -102,10 +102,10 @@
                 android:text="5.50"
                 android:textAppearance="@style/DishPrice"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView" />
+                app:layout_constraintStart_toEndOf="@+id/euro_image" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/euro_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

@@ -59,7 +59,7 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void init() {
-        //Recupera le informazioni passate da Profile
+        //Recupera le informazioni passate da ProfileFragment
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Intent intent = getIntent();
         sName = intent.getStringExtra("name");

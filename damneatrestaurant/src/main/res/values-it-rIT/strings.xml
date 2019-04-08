@@ -11,4 +11,6 @@
     <string name="dish_name">Nome piatto</string>
     <string name="dish_price">Prezzo piatto</string>
     <string name="dish_availability">Disponibilità piatto</string>
+    <string name="profile_opening">Orario di apertura</string>
+    <string name="profile_phone">Numero di telefono</string>
 </resources>
