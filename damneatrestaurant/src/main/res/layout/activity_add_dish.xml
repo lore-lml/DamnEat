@@ -287,13 +287,4 @@
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="_dish"
-        tools:layout_editor_absoluteX="1391dp"
-        tools:layout_editor_absoluteY="0dp" />
-
-
 </android.support.constraint.ConstraintLayout>

@@ -13,12 +13,11 @@ import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.beans.Dish;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder>{
-    private List<Dish> dishesList = new ArrayList<>();
+    private List<Dish> dishesList;
     private Context context;
 
     public DishesAdapter(Context context, List<Dish> dishesList) {
@@ -30,24 +29,26 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dish_layout, viewGroup, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
-        //viewHolder.image.setImageBitmap(dishesList.get(index).getImage());
-        viewHolder.name.setText(dishesList.get(index).getName());
-        viewHolder.description.setText(dishesList.get(index).getDescription());
-        viewHolder.price.setText((String.valueOf(dishesList.get(index).getPrice())));
-        viewHolder.quantity.setText((String.valueOf(dishesList.get(index).getAvailability())));
-        viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, dishesList.get(index).getName(), Toast.LENGTH_SHORT).show());
+        Dish selected = dishesList.get(index);
+
+        //viewHolder.image.setImageBitmap(selected.getImage());
+        viewHolder.name.setText(selected.getName());
+        viewHolder.description.setText(selected.getDescription());
+        viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
+        viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
+        viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
     }
 
     @Override
     public int getItemCount() {
         return dishesList.size();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView image;

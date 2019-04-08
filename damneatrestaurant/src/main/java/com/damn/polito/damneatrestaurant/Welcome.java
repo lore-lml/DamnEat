@@ -4,32 +4,44 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.damn.polito.damneatrestaurant.fragments.DishesFragment;
+
 public class Welcome extends AppCompatActivity {
 
-    private TextView mTextMessage;
-    Intent i;
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+
+    private Intent i;
+    private FragmentManager fragmentManager;
+    private DishesFragment dishesFragment;
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
+        Fragment selected = null;
                 switch (item.getItemId()) {
                     case R.id.nav_dishes:
-                        // a scopo di test
-                        i = new Intent(this, TestDishes.class);
-                        startActivity(i);
-                        return true;
+//                        // a scopo di test
+//                        i = new Intent(this, TestDishes.class);
+//                        startActivity(i);
+                        if(dishesFragment == null)
+                            dishesFragment = new DishesFragment();
+                        selected = dishesFragment;
+                        break;
                     case R.id.nav_reservations:
 
-                        return true;
+                        break;
                     case R.id.nav_profile:
                         // a scopo di test
                         i = new Intent(this, Profile.class);
                         startActivity(i);
-                        return true;
+                        break;
                 }
-                return false;
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commit();
+                return true;
             };
 
     @Override
@@ -37,9 +49,10 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigation.setOnNavigationItemSelectedListener(navListener);
+        fragmentManager = getSupportFragmentManager();
+        navigation.setSelectedItemId(R.id.nav_dishes);
     }
 
 }

@@ -48,7 +48,6 @@ public class Dish {
     public int getAvailability() {
         return availability;
     }
-
     public int getPhoto(){
         return photo;
     }

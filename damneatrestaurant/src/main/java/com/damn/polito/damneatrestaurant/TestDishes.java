@@ -34,12 +34,9 @@ public class TestDishes extends AppCompatActivity {
         initReyclerView();
 
         FloatingActionButton fab = findViewById(R.id.fab_add_dish);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(view.getContext(), AddDish.class);
-                startActivityForResult(i, ADD_DISH);
-            }
+        fab.setOnClickListener(view -> {
+            Intent i = new Intent(view.getContext(), AddDish.class);
+            startActivityForResult(i, ADD_DISH);
         });
     }
 

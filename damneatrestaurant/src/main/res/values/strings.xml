@@ -6,7 +6,7 @@
     <string name="nav_dishes">Dishes</string>
     <string name="nav_reservations">Reservations</string>
     <string name="nav_profile">Profile</string>
-    <string name="dish_available">Available: %s</string>
+    <string name="dish_available">Available:</string>
     <string name="dish_name">Dish name</string>
     <string name="dish_price">Dish price</string>
     <string name="dish_availability">Dish availabity</string>
