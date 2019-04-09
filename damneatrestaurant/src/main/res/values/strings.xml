@@ -12,4 +12,8 @@
     <string name="dish_availability">Dish availabity</string>
     <string name="profile_opening">Opening hours</string>
     <string name="profile_phone">Phone number</string>
+    <string name="order_price">Price:</string>
+    <string name="order_id">Order ID:   #</string>
+    <string name="order_date">Date:</string>
+    <string name="order_num_dishes"># Dishes:</string>>
 </resources>

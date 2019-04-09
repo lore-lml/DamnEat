@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.damn.polito.damneatrestaurant.fragments.DishesFragment;
+import com.damn.polito.damneatrestaurant.fragments.OrderFragment;
 import com.damn.polito.damneatrestaurant.fragments.ProfileFragment;
 
 public class Welcome extends AppCompatActivity {
@@ -14,6 +15,8 @@ public class Welcome extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private DishesFragment dishesFragment;
     private ProfileFragment profileFragment;
+    private OrderFragment orderFragment;
+
     private BottomNavigationView navigation;
     private Integer selectedId = null;
 
@@ -28,10 +31,11 @@ public class Welcome extends AppCompatActivity {
                         selected = dishesFragment;
                         break;
                     case R.id.nav_reservations:
-
+                        if(orderFragment == null)
+                            orderFragment = new OrderFragment();
+                        selected = orderFragment;
                         break;
                     case R.id.nav_profile:
-                        // a scopo di test
                         if(profileFragment == null)
                             profileFragment = new ProfileFragment();
                         selected = profileFragment;

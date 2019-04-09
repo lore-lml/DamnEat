@@ -2,12 +2,12 @@ package com.damn.polito.damneatrestaurant.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +56,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         TextView quantity;
         TextView name;
         TextView description;
-        RelativeLayout parentLayout;
+        CardView parentLayout;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -64,7 +64,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             price = itemView.findViewById(R.id.dish_price);
             quantity = itemView.findViewById(R.id.dish_quantity);
             description = itemView.findViewById(R.id.dish_description);
-            parentLayout = itemView.findViewById(R.id.dish_layout);
+            parentLayout = itemView.findViewById(R.id.dish_root);
 
         }
     }
