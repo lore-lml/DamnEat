@@ -79,7 +79,7 @@ public class DishesFragment extends Fragment {
 
     private void initReyclerView(View view){
         recyclerView = view.findViewById(R.id.recyclerViewDishes);
-        adapter = new DishesAdapter(view.getContext(), dishesList);
+        adapter = new DishesAdapter(view.getContext(), dishesList, false);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     }
