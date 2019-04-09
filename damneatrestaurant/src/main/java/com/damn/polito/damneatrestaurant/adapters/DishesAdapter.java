@@ -37,10 +37,12 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
         Dish selected = dishesList.get(index);
 
-        if(!selected.isDishOtd() && !allDishes){
+        /*GESTIRE IN FASE DI LOAD*/
+        /*if(!selected.isDishOtd() && !allDishes){
             viewHolder.parentLayout.setVisibility(View.GONE);
             return;
-        }
+        }*/
+
         //viewHolder.image.setImageBitmap(selected.getImage());
         viewHolder.name.setText(selected.getName());
         viewHolder.description.setText(selected.getDescription());
