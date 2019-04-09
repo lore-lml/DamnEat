@@ -58,7 +58,7 @@ public class DishesFragment extends Fragment {
 
         fab = view.findViewById(R.id.fab_add_dish);
 
-        //initDishes();
+        initDishes();
         loadData();
         initReyclerView(view);
 
