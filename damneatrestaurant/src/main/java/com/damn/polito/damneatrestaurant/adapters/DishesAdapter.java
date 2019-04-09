@@ -19,8 +19,9 @@ import java.util.Locale;
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder>{
     private List<Dish> dishesList;
     private Context context;
+    private boolean allDishes;
 
-    public DishesAdapter(Context context, List<Dish> dishesList) {
+    public DishesAdapter(Context context, List<Dish> dishesList, boolean allDishes) {
         this.dishesList = dishesList;
         this.context = context;
     }
@@ -36,6 +37,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
         Dish selected = dishesList.get(index);
 
+        if(!selected.isDishOtd() && !allDishes){
+            viewHolder.parentLayout.setVisibility(View.GONE);
+            return;
+        }
         //viewHolder.image.setImageBitmap(selected.getImage());
         viewHolder.name.setText(selected.getName());
         viewHolder.description.setText(selected.getDescription());

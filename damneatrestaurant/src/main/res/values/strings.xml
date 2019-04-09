@@ -15,5 +15,6 @@
     <string name="order_price">Price:</string>
     <string name="order_id">Order ID:   #</string>
     <string name="order_date">Date:</string>
-    <string name="order_num_dishes"># Dishes:</string>>
+    <string name="order_num_dishes"># Dishes:</string>
+    <string name="title_activity_select_menu">SelectMenu</string>>
 </resources>

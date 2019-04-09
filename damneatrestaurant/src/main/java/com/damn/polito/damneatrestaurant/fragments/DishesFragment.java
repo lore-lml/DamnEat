@@ -1,7 +1,10 @@
 package com.damn.polito.damneatrestaurant.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,10 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.AddDish;
 import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.SelectMenu;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
 import com.damn.polito.damneatrestaurant.beans.Dish;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +36,11 @@ import static android.app.Activity.RESULT_OK;
 public class DishesFragment extends Fragment {
 
     private List<Dish> dishesList = new ArrayList<>();
-    private final int ADD_DISH = 101;
+    private final int UPDATE_DISHES_OF_DAY = 100;
     private RecyclerView recyclerView;
     private DishesAdapter adapter;
     private FloatingActionButton fab;
+    private Context ctx;
 
     @Nullable
     @Override
@@ -41,19 +51,20 @@ public class DishesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        ctx = view.getContext();
         AppCompatActivity activity = ((AppCompatActivity)getActivity());
         assert activity != null;
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.app_name);
 
         fab = view.findViewById(R.id.fab_add_dish);
 
-        initDishes();
+        //initDishes();
+        loadData();
         initReyclerView(view);
 
         fab.setOnClickListener(v-> {
-            Intent i = new Intent(view.getContext(), AddDish.class);
-            startActivityForResult(i, ADD_DISH);
+            Intent i = new Intent(view.getContext(), SelectMenu.class);
+            startActivityForResult(i, UPDATE_DISHES_OF_DAY);
         });
     }
 
@@ -76,7 +87,7 @@ public class DishesFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_DISH){
+        if (requestCode == UPDATE_DISHES_OF_DAY){
             if (resultCode == RESULT_OK){
                 String name = data.getStringExtra("name");
                 String description = data.getStringExtra("description");
@@ -86,7 +97,47 @@ public class DishesFragment extends Fragment {
                 // todo: errori in caso di valori negativi di prezzo e disponibilità
                 dishesList.add(new Dish(name, description, price, avaibility, -1));
                 adapter.notifyDataSetChanged();
+                storeData();
             }
+        }
+    }
+
+    private void storeData() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        JSONArray array = new JSONArray();
+        for (Dish element:dishesList) {
+            JSONObject values = new JSONObject();
+            try {
+                values.put("name", element.getName());
+                values.put("description", element.getDescription());
+                values.put("price", element.getPrice());
+                values.put("available", element.getAvailability());
+                values.put("photo", element.getPhoto());
+                values.put("dotd", element.isDishOtd());
+                array.put(values);
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String txt = array.toString();
+            pref.edit().putString("dishes", array.toString()).apply();
+        }
+    }
+
+    private void loadData() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String s = pref.getString("dishes", null);
+        if (s == null) return;
+
+        try {
+            JSONArray array = new JSONArray(s);
+            JSONObject values;
+            for (int i=0; i<array.length(); i++) {
+                values = array.getJSONObject(i);
+                dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available"), values.getInt("photo")));
+                dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

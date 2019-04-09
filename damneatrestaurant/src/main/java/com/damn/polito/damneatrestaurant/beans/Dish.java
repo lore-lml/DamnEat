@@ -7,6 +7,7 @@ public class Dish {
     private float price;
     private int availability;
     private int photo = 0;
+    private boolean dish_otd = false;
 
     public Dish(){}
 
@@ -51,4 +52,17 @@ public class Dish {
     public int getPhoto(){
         return photo;
     }
+
+    public boolean isDishOtd(){
+        return dish_otd;
+    }
+
+    public void setDishOtd(boolean dish_otd){
+        this.dish_otd = dish_otd;
+    }
+
+    public void changeDishOtd(){
+        this.dish_otd = !this.dish_otd;
+    }
+
 }
