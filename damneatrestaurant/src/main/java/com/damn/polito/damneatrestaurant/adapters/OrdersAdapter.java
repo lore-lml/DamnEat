@@ -14,7 +14,10 @@ import com.damn.polito.damneatrestaurant.beans.Order;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     private List<Order> orders;
@@ -33,12 +36,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-
-        holder.id.setText(String.valueOf(orders.get(position).getId()));
-        holder.date.setText(dateFormat.format(orders.get(position).getDate()));
-        holder.nDish.setText(String.valueOf(orders.get(position).getDishes().size()));
-        holder.price.setText(String.valueOf(orders.get(position).getPrice()));
+        DateFormat dateFormat = new SimpleDateFormat(ctx.getString(R.string.date_format), Locale.getDefault());
+        Order selected = orders.get(position);
+        //Calendar ciao= Calendar.getInstance();
+        holder.id.setText(ctx.getString(R.string.order_id, selected.getId()));
+        holder.date.setText(dateFormat.format(selected.getDate()));
+        holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.getDishes().size()));
+        holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
+       // holder.date.setText(dateFormat.format(ciao.getTime()));
     }
 
     @Override
@@ -52,11 +57,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
         public OrderViewHolder(View itemView) {
             super(itemView);
+
             root =itemView.findViewById(R.id.card_order);
-            id= itemView.findViewById(R.id.order_id_value);
+            id= itemView.findViewById(R.id.order_id);
             date = itemView.findViewById(R.id.order_date_value);
             price = itemView.findViewById(R.id.order_price);
-            nDish = itemView.findViewById(R.id.order_num_dishes_value);
+            nDish = itemView.findViewById(R.id.order_num_dishes);
         }
     }
 }

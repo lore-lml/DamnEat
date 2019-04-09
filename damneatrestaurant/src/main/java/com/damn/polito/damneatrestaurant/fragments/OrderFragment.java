@@ -17,7 +17,9 @@ import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
 import com.damn.polito.damneatrestaurant.beans.Order;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -54,17 +56,20 @@ public class OrderFragment extends Fragment {
         tmp.add("pasta");
         tmp.add("mandolino");
         tmp.add("pomodoro");
+
+
+
         orders = new ArrayList<>();
-        orders.add(new Order(123121, tmp, new Date(1994, 8, 6, 15, 12), "via pastrengo 5", "Osvaldo Osvaldi", "IO", 10.5));
-        orders.add(new Order(456551, tmp, new Date(1998, 7, 6, 15, 12), "via pastrengo 180", "Paperino", "LEI", 10.5));
-        orders.add(new Order(454542, tmp, new Date(1995, 7, 6, 15, 12), "via pastrengo 8", "Gigi", "TU", 10.5));
-        orders.add(new Order(845663, tmp, new Date(1996, 8, 4, 15, 12), "via pastrengo 1", "Steve", "ESSI", 10.5));
-        orders.add(new Order(895241, tmp, new Date(1997, 7, 6, 15, 12), "via duca 9", "Pippo", "LUI", 10.5));
-        orders.add(new Order(123121, tmp, new Date(1994, 8, 6, 15, 12), "via pastrengo 5", "Osvaldo Osvaldi", "IO", 10.5));
-        orders.add(new Order(456551, tmp, new Date(1998, 7, 6, 15, 12), "via pastrengo 180", "Paperino", "LEI", 10.5));
-        orders.add(new Order(454542, tmp, new Date(1995, 7, 6, 15, 12), "via pastrengo 8", "Gigi", "TU", 10.5));
-        orders.add(new Order(845663, tmp, new Date(1996, 8, 4, 15, 12), "via pastrengo 1", "Steve", "ESSI", 10.5));
-        orders.add(new Order(895241, tmp, new Date(1997, 7, 6, 15, 12), "via duca 9", "Pippo", "LUI", 10.5));
+        orders.add(new Order(123121, tmp, new Date(), "via pastrengo 5", "Osvaldo Osvaldi", "IO", 10.5));
+        orders.add(new Order(456551, tmp, new Date(), "via pastrengo 180", "Paperino", "LEI", 10.5));
+        orders.add(new Order(454542, tmp, new Date(), "via pastrengo 8", "Gigi", "TU", 10.5));
+        orders.add(new Order(845663, tmp, new Date(), "via pastrengo 1", "Steve", "ESSI", 10.5));
+        orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "LUI", 10.5));
+        orders.add(new Order(123121, tmp, new Date(), "via pastrengo 5", "Osvaldo Osvaldi", "IO", 10.5));
+        orders.add(new Order(456551, tmp, new Date(), "via pastrengo 180", "Paperino", "LEI", 10.5));
+        orders.add(new Order(454542, tmp, new Date(), "via pastrengo 8", "Gigi", "TU", 10.5));
+        orders.add(new Order(845663, tmp, new Date(), "via pastrengo 1", "Steve", "ESSI", 10.5));
+        orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "LUI", 10.5));
 
         adapter = new OrdersAdapter(orders, ctx);
         recyclerView.setHasFixedSize(true);

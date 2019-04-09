@@ -17,4 +17,12 @@
     <string name="order_date">Date:</string>
     <string name="order_num_dishes"># Dishes:</string>
     <string name="title_activity_select_menu">SelectMenu</string>>
+    <string name="order_id">Order ID: # %d</string>
+    <string name="order_num_dishes"># Dishes: %d</string>
+    <string name="order_price">%.2f €</string>
+    <string name="date_format">yyyy/dd/MM - hh:mm</string><![CDATA[
+
+    >
+
+]]>
 </resources>
