@@ -256,6 +256,7 @@ public class EditProfile extends AppCompatActivity {
         return true;
     }
 
+
     private boolean checkChanges() {
         String name = this.name.getText().toString();
         if(!name.equals(sName))

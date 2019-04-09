@@ -4,10 +4,13 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,17 +22,26 @@ import java.util.Locale;
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder>{
     private List<Dish> dishesList;
     private Context context;
-    private boolean allDishes;
+    private boolean select_dishes_layout;
 
-    public DishesAdapter(Context context, List<Dish> dishesList, boolean allDishes) {
+    public DishesAdapter(Context context, List<Dish> dishesList, boolean select_dishes_layout) {
         this.dishesList = dishesList;
         this.context = context;
+        this.select_dishes_layout = select_dishes_layout;
+    }
+
+    public DishesAdapter(Context context, List<Dish> dishesList) {
+        this.dishesList = dishesList;
+        this.context = context;
+        this.select_dishes_layout = false;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dish_layout, viewGroup, false);
+        if(select_dishes_layout)
+            view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.dish_layout_add, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -48,7 +60,19 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         viewHolder.description.setText(selected.getDescription());
         viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
         viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
-        viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
+        //viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
+        if(select_dishes_layout){
+            viewHolder.selected_switch.setChecked(selected.isDishOtd());
+            viewHolder.selected_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    selected.setDishOtd(isChecked);
+                    Log.d("Switch", "Ha cambiato valore a " + isChecked);
+                }
+
+            });
+        }
     }
 
     @Override
@@ -64,6 +88,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         TextView name;
         TextView description;
         CardView parentLayout;
+        Switch selected_switch;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -71,7 +96,12 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             price = itemView.findViewById(R.id.dish_price);
             quantity = itemView.findViewById(R.id.dish_quantity);
             description = itemView.findViewById(R.id.dish_description);
-            parentLayout = itemView.findViewById(R.id.dish_root);
+            if(select_dishes_layout) {
+                parentLayout = itemView.findViewById(R.id.dish_root_add);
+                selected_switch = itemView.findViewById(R.id.selected_switch);
+            } else
+                parentLayout = itemView.findViewById(R.id.dish_root);
+
 
         }
     }

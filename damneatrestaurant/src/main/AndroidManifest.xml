@@ -9,10 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SelectDishes"></activity>
+        <activity android:name=".Test" />
         <activity
             android:name=".SelectMenu"
             android:label="@string/title_activity_select_menu"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AddDish" />
         <activity android:name=".Welcome">
             <intent-filter>
