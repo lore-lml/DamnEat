@@ -1,8 +1,8 @@
 package com.damn.polito.damneatrestaurant;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
 import com.damn.polito.damneatrestaurant.beans.Dish;
 
@@ -42,17 +43,19 @@ public class SelectDishes extends AppCompatActivity {
             Intent i = new Intent(this, AddDish.class);
             startActivityForResult(i, AdD_DISH);
         });
+        dishesList.clear();
         loadData();
         initReyclerView();
 
     }
     private void initDishes(){
-        dishesList.add(new Dish("Pizzaaaaaaa", "Chi non conosce la pizza??", 6,20, 0));
-        dishesList.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10, 1));
-        dishesList.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15, 2));
-        dishesList.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3, 3));
-        dishesList.add(new Dish("Petto di pollo", "Non so cosa dire", 5,12, 4));
-        dishesList.add(new Dish("Insalata", "Altra roba verde", (float)4.50,5, 5));
+        dishesList.add(new Dish("Pizzaaaaaaa", "Chi non conosce la pizza??", 6,20));
+        dishesList.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));
+        dishesList.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
+        dishesList.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+        dishesList.add(new Dish("Petto di pollo", "Non so cosa dire", 5,12));
+        dishesList.add(new Dish("Insalata", "Altra roba verde", (float)4.50,5));
+        Log.d("List", "List Size" + dishesList.size());
     }
     private void storeData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -64,10 +67,12 @@ public class SelectDishes extends AppCompatActivity {
                 values.put("description", element.getDescription());
                 values.put("price", element.getPrice());
                 values.put("available", element.getAvailability());
-                values.put("photo", element.getPhoto());
+                values.put("photo", element.getPhotoStr());
                 values.put("dotd", element.isDishOtd());
                 array.put(values);
+                Log.d("StoreDataDish", "Store: " + array.toString());
             }catch (JSONException e) {
+                Log.d("StoreDataDish", "Errore salavataggio");
                 e.printStackTrace();
             }
             String txt = array.toString();
@@ -85,8 +90,12 @@ public class SelectDishes extends AppCompatActivity {
             JSONObject values;
             for (int i=0; i<array.length(); i++) {
                 values = array.getJSONObject(i);
-                dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available"), values.getInt("photo")));
+                dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available")));
                 dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
+                if(!values.get("photo").equals("NO_PHOTO")){
+                    Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+                    dishesList.get(i).setPhoto(bmp);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -101,10 +110,19 @@ public class SelectDishes extends AppCompatActivity {
                 String description = data.getStringExtra("description");
                 float price =  Float.parseFloat(data.getStringExtra("price"));
                 int avaibility = Integer.parseInt(data.getStringExtra("availabity"));
-                //int photo = data.getIntExtra("photo", -1);
-                // todo: errori in caso di valori negativi di prezzo e disponibilità
-                dishesList.add(new Dish(name, description, price, avaibility, -1));
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+                String s = pref.getString("dish_photo", null);
+                Log.d("ONRESULT", "s value: "+ s);
+                if (s != null){
+                    Bitmap bmp = Utility.StringToBitMap(s);
+                    dishesList.add(new Dish(name, description, price, avaibility, bmp));
+                    pref.edit().remove("dish_photo").apply();
+                } else {
+                    Log.d("ONRESULT", "Adding dish without photo");
+                    dishesList.add(new Dish(name, description, price, avaibility));
+                }
                 adapter.notifyDataSetChanged();
+                Log.d("ONRESULT", "OnresultActivity");
             }
         }
     }
@@ -114,15 +132,13 @@ public class SelectDishes extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewDishes2);
         adapter = new DishesAdapter(this, dishesList, true);
         recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-
-
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    protected void onPause() {
+        super.onPause();
         storeData();
-        this.finish();
     }
 
     @Override
@@ -141,7 +157,7 @@ public class SelectDishes extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                storeData();
+                //storeData();
                 this.finish();
                 return true;
             default:

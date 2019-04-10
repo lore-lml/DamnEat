@@ -7,7 +7,7 @@ import java.util.List;
 public class Order {
 
     private int id;
-    private List<String> dishes;
+    private List<Dish> dishes;
     private Date date;
     private double price;
     private String customerAddress;
@@ -18,8 +18,7 @@ public class Order {
     //private Customer customer;
     //private Deliverer deliverer;
 
-    /*COSTRUTTORE TEMPORANEO, CAMBIARE ARRAYLIST DI STRINGHE CON DISH*/
-    public Order(int id, List<String> dishes, Date date, String customerAddress, String customerName, String delivererName, double price) {
+    public Order(int id, List<Dish> dishes, Date date, String customerAddress, String customerName, String delivererName, double price) {
         this.id = id;
         this.dishes = dishes;
         this.date = date;
@@ -33,8 +32,12 @@ public class Order {
         return id;
     }
 
-    public List<String> getDishes() {
+    public List<Dish> getDishes() {
         return dishes;
+    }
+
+    public int getDishesNumber() {
+        return dishes.size();
     }
 
     public Date getDate() {
