@@ -14,8 +14,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.damneatrestaurant.beans.Dish;
 import java.util.List;
 import java.util.Locale;
@@ -62,17 +64,13 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         }else {
             viewHolder.image.setImageBitmap(default_image);
         }
-        //viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
+        viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
         if(select_dishes_layout){
             viewHolder.selected_switch.setChecked(selected.isDishOtd());
-            viewHolder.selected_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    selected.setDishOtd(isChecked);
-                    Log.d("Switch", "Ha cambiato valore a " + isChecked);
-                }
-
+            viewHolder.selected_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                selected.setDishOtd(isChecked);
+                Log.d("Switch", "Ha cambiato valore a " + isChecked);
+                ((SelectDishes)context).storeData();
             });
         }
     }

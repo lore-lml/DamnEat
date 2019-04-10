@@ -62,7 +62,7 @@ public class DishesFragment extends Fragment {
 
         fab = view.findViewById(R.id.fab_add_dish);
 
-        //loadData();
+        loadData();
         initReyclerView(view);
 
         fab.setOnClickListener(v-> {
@@ -71,13 +71,6 @@ public class DishesFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        dishesList.clear();
-        loadData();
-        adapter.notifyDataSetChanged();
-    }
 
     private void initReyclerView(View view){
         recyclerView = view.findViewById(R.id.recyclerViewDishes);
@@ -86,8 +79,12 @@ public class DishesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     }
 
-
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        loadData();
+        adapter.notifyDataSetChanged();
+    }
 
     private void loadData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);

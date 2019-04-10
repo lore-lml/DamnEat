@@ -17,4 +17,10 @@
     <string name="order_num_dishes"># Piatti: %d</string>
     <string name="date_format">dd/MM/yyyy - hh:mm</string>
     <string name="title_activity_select_menu">Selezione Menu</string>
+    <string name="availabity_too_low">La disponibilità deve essere maggiore o uguale a zero</string>
+    <string name="price_too_low">Il prezzo deve essere maggiore di zero</string>
+    <string name="empty_availabity">Nessuna disponibilità inserita</string>
+    <string name="empty_price">Nessun prezzo inserito</string>
+    <string name="context_delete">Elimina</string>
+    <string name="context_edit">Modifica</string>
 </resources>

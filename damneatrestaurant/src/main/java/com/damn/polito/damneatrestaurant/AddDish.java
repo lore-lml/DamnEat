@@ -12,11 +12,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -29,6 +31,7 @@ import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
 import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
 import static com.damn.polito.commonresources.Utility.galleryIntent16_9;
 import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
+import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class AddDish extends AppCompatActivity {
     private ImageView dish_image;
@@ -51,10 +54,14 @@ public class AddDish extends AppCompatActivity {
         description = findViewById(R.id.edit_desc_dish);
         save = findViewById(R.id.edit_save_dish);
         galley = findViewById(R.id.btn_gallery);
+
+
         //Imposta la funzione del bottone "SALVA"
         save.setOnClickListener(v->{
-            setActivityResult();
-            finish();
+            if(checkField()){
+                setActivityResult();
+                finish();
+            }
         });
 
         galley.setOnClickListener(v-> itemGallery());
@@ -159,5 +166,90 @@ public class AddDish extends AppCompatActivity {
                 permission
         }, permission_code);
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                if(checkChanges())
+                    showWarning(this, checkField(), getActivityResult());
+                else
+                    this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(checkChanges())
+            // Facciamo comparire il messagio solo se sono stati cambiati dei campi
+            showWarning(this, checkField(), getActivityResult());
+        else
+            this.finish();
+    }
+
+    private boolean checkChanges() {
+        String name = this.name.getText().toString();
+        if(!name.equals(""))
+            return true;
+
+        String mail = this.description.getText().toString();
+        if(!(mail.equals("")))
+            return true;
+
+        String description = this.price.getText().toString();
+        if(!(description.equals("")))
+            return true;
+
+        String address = this.availabity.getText().toString();
+        return (!(address.equals("")));
+
+    }
+
+    private boolean checkField() {
+        String name = this.name.getText().toString();
+
+        //Controllo sui campi vuoti
+        if(name.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_name), Toast.LENGTH_SHORT).show();
+            this.name.requestFocus();
+            return false;
+        }
+        String description = this.description.getText().toString();
+        if(description.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_desc), Toast.LENGTH_SHORT).show();
+            this.description.requestFocus();
+            return false;
+        }
+
+        String availabity = this.availabity.getText().toString();
+        if(availabity.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_availabity), Toast.LENGTH_SHORT).show();
+            this.availabity.requestFocus();
+            return false;
+        }
+        if(Integer.parseInt(availabity)<0){
+            Toast.makeText(this, getString(R.string.availabity_too_low), Toast.LENGTH_SHORT).show();
+            this.availabity.requestFocus();
+            return false;
+        }
+        String price = this.price.getText().toString();
+        if(price.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_price), Toast.LENGTH_SHORT).show();
+            this.price.requestFocus();
+            return false;
+        }
+        if(Integer.parseInt(price)<=0){
+            Toast.makeText(this, getString(R.string.price_too_low), Toast.LENGTH_SHORT).show();
+            this.price.requestFocus();
+            return false;
+        }
+
+
+
+        return true;
+    }
+
 
 }

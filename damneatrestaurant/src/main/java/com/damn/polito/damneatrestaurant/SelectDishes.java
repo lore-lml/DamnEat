@@ -28,6 +28,7 @@ import java.util.Objects;
 public class SelectDishes extends AppCompatActivity {
     private List<Dish> dishesList = new ArrayList<>();
     private final int AdD_DISH = 101;
+    private final int UPDATE_DISH = 102;
     private RecyclerView recyclerView;
     private DishesAdapter adapter;
     private FloatingActionButton fab_add;
@@ -57,7 +58,7 @@ public class SelectDishes extends AppCompatActivity {
         dishesList.add(new Dish("Insalata", "Altra roba verde", (float)4.50,5));
         Log.d("List", "List Size" + dishesList.size());
     }
-    private void storeData() {
+    public void storeData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         JSONArray array = new JSONArray();
         for (Dish element:dishesList) {
@@ -123,10 +124,10 @@ public class SelectDishes extends AppCompatActivity {
                 }
                 adapter.notifyDataSetChanged();
                 Log.d("ONRESULT", "OnresultActivity");
+                storeData();
             }
         }
     }
-
 
     private void initReyclerView(){
         recyclerView = findViewById(R.id.recyclerViewDishes2);
@@ -135,12 +136,6 @@ public class SelectDishes extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        storeData();
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
@@ -163,5 +158,26 @@ public class SelectDishes extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void deleteDish(int index){
+        dishesList.remove(index);
+    }
+
+    // todo: da gestire nel add dish
+    private void editDish(int index) {
+        //Crea il corretto intent per l'apertura dell'activity EditProfile
+        Intent intent = new Intent(this, AddDish.class);
+
+        intent.putExtra("name", dishesList.get(index).getName());
+        intent.putExtra("description", dishesList.get(index).getDescription());
+        intent.putExtra("price", dishesList.get(index).getPrice());
+        intent.putExtra("availabity", dishesList.get(index).getAvailability());
+        if (!dishesList.get(index).getPhotoStr().equals("NO_PHOTO")){
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit().putString("photo", Utility.BitMapToString(dishesList.get(index).getPhoto())).apply();
+
+        }
+        startActivityForResult(intent, UPDATE_DISH);
     }
 }

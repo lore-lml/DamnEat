@@ -17,4 +17,10 @@
     <string name="order_num_dishes"># Dishes: %d</string>
     <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
+    <string name="empty_price">No price has been inserted</string>
+    <string name="empty_availabity">No availabity has been inserted</string>
+    <string name="price_too_low">Price must be positive</string>
+    <string name="availabity_too_low">Availabity must be positive or null</string>
+    <string name="context_delete">Delete</string>
+    <string name="context_edit">Edit</string>
 </resources>
