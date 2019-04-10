@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
+import com.damn.polito.damneatrestaurant.beans.Dish;
 import com.damn.polito.damneatrestaurant.beans.Order;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class OrderFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
     private OrdersAdapter adapter;
     private TextView mTextMessage;
     private Context ctx;
@@ -51,28 +52,40 @@ public class OrderFragment extends Fragment {
         recyclerView = view.findViewById(R.id.orders_recyclerview);
         layoutManager = new LinearLayoutManager(ctx);
         recyclerView.setLayoutManager(layoutManager);
-        List<String> tmp = new ArrayList<>();
-        tmp.add("pizza");
-        tmp.add("pasta");
-        tmp.add("mandolino");
-        tmp.add("pomodoro");
 
-
-
-        orders = new ArrayList<>();
-        orders.add(new Order(123121, tmp, new Date(), "via pastrengo 5", "Osvaldo Osvaldi", "IO", 10.5));
-        orders.add(new Order(456551, tmp, new Date(), "via pastrengo 180", "Paperino", "LEI", 10.5));
-        orders.add(new Order(454542, tmp, new Date(), "via pastrengo 8", "Gigi", "TU", 10.5));
-        orders.add(new Order(845663, tmp, new Date(), "via pastrengo 1", "Steve", "ESSI", 10.5));
-        orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "LUI", 10.5));
-        orders.add(new Order(123121, tmp, new Date(), "via pastrengo 5", "Osvaldo Osvaldi", "IO", 10.5));
-        orders.add(new Order(456551, tmp, new Date(), "via pastrengo 180", "Paperino", "LEI", 10.5));
-        orders.add(new Order(454542, tmp, new Date(), "via pastrengo 8", "Gigi", "TU", 10.5));
-        orders.add(new Order(845663, tmp, new Date(), "via pastrengo 1", "Steve", "ESSI", 10.5));
-        orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "LUI", 10.5));
+        initExample();
 
         adapter = new OrdersAdapter(orders, ctx);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void initExample(){
+        List<Dish> tmp = new ArrayList<>();
+        tmp.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
+        tmp.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+
+        List<Dish> tmp2 = new ArrayList<>();
+        tmp2.add(new Dish("Pizzaaaaaaa", "Chi non conosce la pizza??", 6,20));
+        tmp2.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));
+        tmp2.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+
+        List<Dish> tmp3 = new ArrayList<>();
+        tmp3.add(new Dish("Pizzaaaaaaa", "Chi non conosce la pizza??", 6,20));
+        tmp3.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
+        tmp3.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+
+
+        orders.add(new Order(123121, tmp, new Date(), "via pastrengo 5", "Osvaldo Osvaldi", "Mario Rossi", 10.5));
+        orders.add(new Order(456551, tmp2, new Date(), "via pastrengo 180", "Paperino", "Luigi Bianchi", 10.5));
+        orders.add(new Order(454542, tmp3, new Date(), "via pastrengo 8", "Gigi", "Marco Verdi", 10.5));
+        orders.add(new Order(845663, tmp2, new Date(), "via pastrengo 1", "Steve", "Francesco Gialli", 10.5));
+        orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "Stefano Arancioni", 10.5));
+        orders.add(new Order(123121, tmp3, new Date(), "via pastrengo 5", "Osvaldo Osvaldi", "Giuseppe Blu", 10.5));
+        orders.add(new Order(456551, tmp2, new Date(), "via pastrengo 180", "Paperino", "Gianfranco Neri", 10.5));
+        orders.add(new Order(454542, tmp3, new Date(), "via pastrengo 8", "Gigi", "Lorenzo Viola", 10.5));
+        orders.add(new Order(845663, tmp, new Date(), "via pastrengo 1", "Steve", "Matteo Azzurri", 10.5));
+        orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "Alessandro Rosa", 10.5));
+
     }
 }

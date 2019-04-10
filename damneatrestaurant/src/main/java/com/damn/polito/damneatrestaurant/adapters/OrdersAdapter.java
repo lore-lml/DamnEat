@@ -41,8 +41,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         //Calendar ciao= Calendar.getInstance();
         holder.id.setText(ctx.getString(R.string.order_id, selected.getId()));
         holder.date.setText(dateFormat.format(selected.getDate()));
-        holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.getDishes().size()));
+        holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.getDishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
+        holder.deliverer_name.setText(selected.getDelivererName());
        // holder.date.setText(dateFormat.format(ciao.getTime()));
     }
 
@@ -52,7 +53,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     }
 
     public class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView id,date,price,nDish;
+        private TextView id,date,price,nDish, deliverer_name;
         private CardView root;
 
         public OrderViewHolder(View itemView) {
@@ -63,6 +64,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             date = itemView.findViewById(R.id.order_date_value);
             price = itemView.findViewById(R.id.order_price);
             nDish = itemView.findViewById(R.id.order_num_dishes);
+            deliverer_name = itemView.findViewById(R.id.order_deliverer_name_textview);
         }
     }
 }
