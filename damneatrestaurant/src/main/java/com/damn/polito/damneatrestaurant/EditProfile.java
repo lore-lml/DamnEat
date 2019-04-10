@@ -31,12 +31,12 @@ public class EditProfile extends AppCompatActivity {
 
     private ImageView profile;
     private ImageButton camera;
-    private EditText name, mail, description, address;
+    private EditText name, mail, description, address, phone, opening;
     private Button save;
     private Bitmap profImg;
 
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
-    private String sName, sMail, sDesc, sAddress;
+    private String sName, sMail, sDesc, sAddress, sPhone, sOpening;
     private Bitmap profImgPrec;
 
     @Override
@@ -50,8 +50,10 @@ public class EditProfile extends AppCompatActivity {
         camera = findViewById(R.id.btn_camera);
         name = findViewById(R.id.edit_name);
         mail = findViewById(R.id.edit_mail);
+        phone = findViewById(R.id.edit_phone);
         description = findViewById(R.id.edit_desc);
         address = findViewById(R.id.edit_address);
+        opening = findViewById(R.id.edit_opening);
         save = findViewById(R.id.edit_save);
 
         init();
@@ -64,8 +66,14 @@ public class EditProfile extends AppCompatActivity {
         Intent intent = getIntent();
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
+        sPhone = intent.getStringExtra("phone");
+
+        if(sPhone != null && !sPhone.isEmpty())
+            sPhone = sPhone.substring(4);
+
         sDesc = intent.getStringExtra("description");
         sAddress = intent.getStringExtra("address");
+        sOpening = intent.getStringExtra("opening");
         String bitmapString = pref.getString("profile", null);
         if(bitmapString != null) {
             profImg = StringToBitMap(bitmapString);
@@ -75,8 +83,10 @@ public class EditProfile extends AppCompatActivity {
 
         name.setText(sName);
         mail.setText(sMail);
+        phone.setText(sPhone);
         description.setText(sDesc);
         address.setText(sAddress);
+        opening.setText(sOpening);
         if(profImg != null){
             profile.setImageBitmap(profImg);
         }
@@ -143,8 +153,10 @@ public class EditProfile extends AppCompatActivity {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
+        i.putExtra("phone", getString(R.string.phone_prefix) + " " +phone.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("address", address.getText().toString().trim());
+        i.putExtra("opening", opening.getText().toString().trim());
         if(profImg != null){
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
@@ -239,6 +251,17 @@ public class EditProfile extends AppCompatActivity {
             return false;
         }
 
+        String phone = this.phone.getText().toString().trim();
+        if(phone.isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_phone), Toast.LENGTH_SHORT).show();
+            this.phone.requestFocus();
+            return false;
+        }else if(!phone.matches("^3\\d{9}$") && !phone.matches("(0{1}[1-9]{1,3})[\\s|\\.|\\-]?(\\d{4,})")){
+            Toast.makeText(this, getString(R.string.invalid_phone), Toast.LENGTH_SHORT).show();
+            this.phone.requestFocus();
+            return false;
+        }
+
         String description = this.description.getText().toString();
         if(description.trim().isEmpty()){
             Toast.makeText(this, getString(R.string.empty_desc), Toast.LENGTH_SHORT).show();
@@ -250,6 +273,13 @@ public class EditProfile extends AppCompatActivity {
         if(address.trim().isEmpty()){
             this.address.requestFocus();
             Toast.makeText(this, getString(R.string.empty_address), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        String opening = this.opening.getText().toString();
+        if(opening.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_opening), Toast.LENGTH_SHORT).show();
+            this.opening.requestFocus();
             return false;
         }
 
@@ -265,12 +295,20 @@ public class EditProfile extends AppCompatActivity {
         if(!(mail.equals(sMail)))
             return true;
 
+        String phone = this.phone.getText().toString();
+        if(!(phone.equals(sPhone)))
+            return true;
+
         String description = this.description.getText().toString();
         if(!(description.equals(sDesc)))
             return true;
 
         String address = this.address.getText().toString();
         if(!(address.equals(sAddress)))
+            return true;
+
+        String opening = this.opening.getText().toString();
+        if(!(opening.equals(sOpening)))
             return true;
 
         return (!(profImg.equals(profImgPrec)));
