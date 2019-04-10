@@ -19,4 +19,6 @@
     <string name="title_activity_select_menu">Selezione Menu</string>
     <string name="empty_phone">Non è stato inserito nessun numero di telefono</string>
     <string name="empty_opening">Nessuna informazione sull\'apertura è stata inserita</string>
+    <string name="invalid_phone">Il numero di telefono non è valido</string>
+    <string name="close">Chiuso</string>
 </resources>

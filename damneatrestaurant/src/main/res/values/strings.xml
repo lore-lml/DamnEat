@@ -20,4 +20,6 @@
     <string name="empty_phone">No phone number has been inserted</string>
     <string name="empty_opening">No opening info has been inserted</string>
     <string name="phone_prefix" translatable="false">+39</string>
+    <string name="invalid_phone">Invalid phone number</string>
+    <string name="close">Close</string>
 </resources>

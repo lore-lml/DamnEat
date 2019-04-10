@@ -142,7 +142,6 @@
 
         <Switch
             android:id="@+id/selected_switch"
-            style="@style/SCBSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

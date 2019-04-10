@@ -67,6 +67,10 @@ public class EditProfile extends AppCompatActivity {
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
         sPhone = intent.getStringExtra("phone");
+
+        if(sPhone != null && !sPhone.isEmpty())
+            sPhone = sPhone.substring(4);
+
         sDesc = intent.getStringExtra("description");
         sAddress = intent.getStringExtra("address");
         sOpening = intent.getStringExtra("opening");
@@ -149,7 +153,7 @@ public class EditProfile extends AppCompatActivity {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
-        i.putExtra("phone", phone.getText().toString().trim());
+        i.putExtra("phone", getString(R.string.phone_prefix) + " " +phone.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("address", address.getText().toString().trim());
         i.putExtra("opening", opening.getText().toString().trim());
@@ -247,9 +251,13 @@ public class EditProfile extends AppCompatActivity {
             return false;
         }
 
-        String phone = this.phone.getText().toString();
-        if(phone.trim().isEmpty()){
+        String phone = this.phone.getText().toString().trim();
+        if(phone.isEmpty()){
             Toast.makeText(this, getString(R.string.empty_phone), Toast.LENGTH_SHORT).show();
+            this.phone.requestFocus();
+            return false;
+        }else if(!phone.matches("^3\\d{9}$") && !phone.matches("(0{1}[1-9]{1,3})[\\s|\\.|\\-]?(\\d{4,})")){
+            Toast.makeText(this, getString(R.string.invalid_phone), Toast.LENGTH_SHORT).show();
             this.phone.requestFocus();
             return false;
         }
