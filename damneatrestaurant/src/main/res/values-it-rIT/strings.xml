@@ -17,4 +17,6 @@
     <string name="order_num_dishes"># Piatti: %d</string>
     <string name="date_format">dd/MM/yyyy - hh:mm</string>
     <string name="title_activity_select_menu">Selezione Menu</string>
+    <string name="empty_phone">Non è stato inserito nessun numero di telefono</string>
+    <string name="empty_opening">Nessuna informazione sull\'apertura è stata inserita</string>
 </resources>

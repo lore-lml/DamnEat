@@ -34,7 +34,7 @@ public class ProfileFragment extends Fragment {
 
     private String defaultValue;
     private ImageView profileImage;
-    private TextView name, mail, description, address;
+    private TextView name, mail, description, address, phone, opening;
     private Bitmap profileBitmap;
     private boolean empty = true;
     private Context ctx;
@@ -61,8 +61,10 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profile_image);
         name = view.findViewById(R.id.editText_name);
         mail = view.findViewById(R.id.editText_email);
+        phone = view.findViewById(R.id.editText_phone);
         description = view.findViewById(R.id.editText_desc);
         address = view.findViewById(R.id.editText_address);
+        opening = view.findViewById(R.id.editText_opening);
 
         loadData();
     }
@@ -75,8 +77,10 @@ public class ProfileFragment extends Fragment {
         if (!empty) {
             intent.putExtra("name", name.getText().toString().trim());
             intent.putExtra("mail", mail.getText().toString().trim());
+            intent.putExtra("phone", phone.getText().toString().trim());
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("address", address.getText().toString().trim());
+            intent.putExtra("opening", opening.getText().toString().trim());
             intent.putExtra("image", profileImage.getDrawable().toString());
             if (profileBitmap != null){
                 PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -104,8 +108,10 @@ public class ProfileFragment extends Fragment {
         boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
+        String phone = data.getStringExtra("phone");
         String description = data.getStringExtra("description");
         String address = data.getStringExtra("address");
+        String opening = data.getStringExtra("opening");
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
@@ -117,8 +123,10 @@ public class ProfileFragment extends Fragment {
         try {
             values.put("name", name);
             values.put("mail", mail);
+            values.put("phone", phone);
             values.put("description", description);
             values.put("address", address);
+            values.put("opening", opening);
             if (profileBitmap != null) {
                 String bts = Utility.BitMapToString(profileBitmap);
                 values.put("profile", bts);
@@ -131,8 +139,10 @@ public class ProfileFragment extends Fragment {
 
             this.name.setText(name);
             this.mail.setText(mail);
+            this.phone.setText(phone);
             this.description.setText(description);
             this.address.setText(address);
+            this.opening.setText(opening);
             if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
 
             empty = false;
@@ -150,8 +160,10 @@ public class ProfileFragment extends Fragment {
             JSONObject values = new JSONObject(s);
             name.setText(stringOrDefault(values.getString("name")));
             mail.setText(stringOrDefault(values.getString("mail")));
+            phone.setText(stringOrDefault(values.getString("phone")));
             description.setText(stringOrDefault(values.getString("description")));
             address.setText(stringOrDefault(values.getString("address")));
+            opening.setText(stringOrDefault(values.getString("opening")));
             if (values.getBoolean("hasProfile")) {
                 String encodedBitmap = values.getString("profile");
                 profileBitmap = Utility.StringToBitMap(encodedBitmap);

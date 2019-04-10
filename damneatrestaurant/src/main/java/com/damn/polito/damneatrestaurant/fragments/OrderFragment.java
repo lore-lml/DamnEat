@@ -65,11 +65,6 @@ public class OrderFragment extends Fragment {
         orders.add(new Order(454542, tmp, new Date(), "via pastrengo 8", "Gigi", "TU", 10.5));
         orders.add(new Order(845663, tmp, new Date(), "via pastrengo 1", "Steve", "ESSI", 10.5));
         orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "LUI", 10.5));
-        orders.add(new Order(123121, tmp, new Date(), "via pastrengo 5", "Osvaldo Osvaldi", "IO", 10.5));
-        orders.add(new Order(456551, tmp, new Date(), "via pastrengo 180", "Paperino", "LEI", 10.5));
-        orders.add(new Order(454542, tmp, new Date(), "via pastrengo 8", "Gigi", "TU", 10.5));
-        orders.add(new Order(845663, tmp, new Date(), "via pastrengo 1", "Steve", "ESSI", 10.5));
-        orders.add(new Order(895241, tmp, new Date(), "via duca 9", "Pippo", "LUI", 10.5));
 
         adapter = new OrdersAdapter(orders, ctx);
         recyclerView.setHasFixedSize(true);
