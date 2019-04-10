@@ -49,6 +49,9 @@ public class SelectDishes extends AppCompatActivity {
         initReyclerView();
 
     }
+
+
+
     private void initDishes(){
         dishesList.add(new Dish("Pizzaaaaaaa", "Chi non conosce la pizza??", 6,20));
         dishesList.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));

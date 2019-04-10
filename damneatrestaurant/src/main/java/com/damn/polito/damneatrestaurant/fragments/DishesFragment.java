@@ -61,7 +61,7 @@ public class DishesFragment extends Fragment {
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.app_name);
 
         fab = view.findViewById(R.id.fab_add_dish);
-
+        dishesList.clear();
         loadData();
         initReyclerView(view);
 
@@ -81,7 +81,7 @@ public class DishesFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        dishesList.clear();
         loadData();
         adapter.notifyDataSetChanged();
     }
