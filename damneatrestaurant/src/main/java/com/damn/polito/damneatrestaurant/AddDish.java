@@ -1,26 +1,41 @@
 package com.damn.polito.damneatrestaurant;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import static com.damn.polito.commonresources.Utility.BitMapToString;
+import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
+import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
+import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
+import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.galleryIntent16_9;
+import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
 
 public class AddDish extends AppCompatActivity {
     private ImageView dish_image;
-    private ImageButton camera;
+    private ImageButton galley;
     private EditText name, description, availabity, price;
     private Button save;
-    private Bitmap profImg;
+    private Bitmap dishImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,19 +43,93 @@ public class AddDish extends AppCompatActivity {
         setContentView(R.layout.activity_add_dish);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        dish_image = findViewById(R.id.profile_image);
+        dish_image = findViewById(R.id.dish_image);
         name = findViewById(R.id.edit_name_dish);
         description = findViewById(R.id.edit_desc_dish);
         price = findViewById(R.id.edit_price_dish);
         availabity = findViewById(R.id.edit_availabity_dish);
         description = findViewById(R.id.edit_desc_dish);
         save = findViewById(R.id.edit_save_dish);
-
+        galley = findViewById(R.id.btn_gallery);
         //Imposta la funzione del bottone "SALVA"
         save.setOnClickListener(v->{
             setActivityResult();
             finish();
         });
+
+        galley.setOnClickListener(v-> itemGallery());
+    }
+    private void itemGallery(){
+        if(!checkPermissionFromDevice(REQUEST_PERM_WRITE_EXTERNAL))
+            requestPermission(REQUEST_PERM_WRITE_EXTERNAL, PERMISSION_CODE_WRITE_EXTERNAL);
+        else
+            pickFromGallery();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_IMAGE_CAPTURE || requestCode == IMAGE_GALLERY_REQUEST) {
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                dishImg = extras.getParcelable("data");
+                dish_image.setImageBitmap(dishImg);
+            }else{
+                copyAndCrop(data.getData());
+            }
+        }
+        if(requestCode == CROP_REQUEST){
+            final Bundle extras = data.getExtras();
+            if (extras != null) {
+                dishImg = extras.getParcelable("data");
+                dish_image.setImageBitmap(dishImg);
+            }else{
+                displayImage(data.getData());
+            }
+        }
+    }
+
+    private void displayImage(Uri data) {
+        try {
+            dishImg = MediaStore.Images.Media.getBitmap(getContentResolver(), data);
+            dish_image.setImageBitmap(dishImg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyAndCrop(Uri uri) {
+        assert uri != null;
+        Uri newUri = getImageUrlWithAuthority(this, Objects.requireNonNull(uri));
+        if(newUri != null) {
+            cropImage(newUri);
+        }
+    }
+
+    private void cropImage(Uri uri) {
+        try{
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(uri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra("outputX", 1280);
+            cropIntent.putExtra("outputY", 720);
+            cropIntent.putExtra("aspectX", 16);
+            cropIntent.putExtra("aspectY", 9);
+            cropIntent.putExtra("scaleUpIfNeeded", true);
+            cropIntent.putExtra("return-data", true);
+
+            startActivityForResult(cropIntent,CROP_REQUEST);
+        }catch (ActivityNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void pickFromGallery() {
+        Intent intent = galleryIntent16_9();
+        startActivityForResult(intent, IMAGE_GALLERY_REQUEST);
     }
 
     private void setActivityResult() {
@@ -53,10 +142,22 @@ public class AddDish extends AppCompatActivity {
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("price", price.getText().toString().trim());
         i.putExtra("availabity", availabity.getText().toString().trim());
-//        if(profImg != null){
-//            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//            pref.edit().putString("profile", BitMapToString(profImg)).apply();
-//        }
+        if(dishImg != null){
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            pref.edit().putString("dish_photo", BitMapToString(dishImg)).apply();
+        }
         return i;
     }
+    private boolean checkPermissionFromDevice(String permission) {
+
+        int result = ContextCompat.checkSelfPermission(this, permission);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission(final String permission, final int permission_code) {
+        ActivityCompat.requestPermissions(this,new String[]{
+                permission
+        }, permission_code);
+    }
+
 }

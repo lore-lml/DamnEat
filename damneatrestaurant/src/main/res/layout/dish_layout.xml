@@ -37,7 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/dish_preview" />
+            app:srcCompat="@drawable/dishes_empty" />
 
         <android.support.v7.widget.CardView
             android:layout_width="150dp"

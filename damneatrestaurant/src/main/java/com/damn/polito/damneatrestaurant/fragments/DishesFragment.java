@@ -3,6 +3,7 @@ package com.damn.polito.damneatrestaurant.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -104,10 +105,14 @@ public class DishesFragment extends Fragment {
             JSONObject values;
             for (int i=0; i<array.length(); i++) {
                 values = array.getJSONObject(i);
-                if(values.getBoolean("dotd"))
-                    dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available"), values.getInt("photo")));
-                Log.d("shared_pref", "Adding to list: " + values.toString());
-
+                if(values.getBoolean("dotd")) {
+                    dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
+                    if(!values.get("photo").equals("NO_PHOTO")){
+                        Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+                        dishesList.get(i).setPhoto(bmp);
+                    }
+                    Log.d("shared_pref", "Adding to list: " + values.toString());
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

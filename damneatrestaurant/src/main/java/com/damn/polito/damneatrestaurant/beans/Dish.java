@@ -1,12 +1,17 @@
 package com.damn.polito.damneatrestaurant.beans;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.damn.polito.commonresources.Utility;
+
 public class Dish {
 
     private String name;
     private String description;
     private float price;
     private int availability;
-    private int photo = 0;
+    private Bitmap photo;
     private boolean dish_otd = false;
 
     public Dish(){}
@@ -16,13 +21,15 @@ public class Dish {
         this.description = description;
         this.price = price;
         this.availability = availability;
+        this.photo = null;
+
     }
-    public Dish(String name, String description, float price, int availability, int photo) {
+    public Dish(String name, String description, float price, int availability, Bitmap photo) {
         this(name, description, price, availability);
         this.photo = photo;
     }
 
-    public void setPhoto(int photo){
+    public void setPhoto(Bitmap photo){
         this.photo = photo;
     }
 
@@ -49,7 +56,7 @@ public class Dish {
     public int getAvailability() {
         return availability;
     }
-    public int getPhoto(){
+    public Bitmap getPhoto(){
         return photo;
     }
 
@@ -59,6 +66,12 @@ public class Dish {
 
     public void setDishOtd(boolean dish_otd){
         this.dish_otd = dish_otd;
+    }
+
+    public String getPhotoStr(){
+        if (photo == null)
+            return "NO_PHOTO";
+        return Utility.BitMapToString(photo);
     }
 
     public void changeDishOtd(){
