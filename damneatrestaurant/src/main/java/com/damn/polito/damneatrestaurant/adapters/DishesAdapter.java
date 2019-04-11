@@ -142,8 +142,8 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         TextView tv_dish_available;
         ImageView im_euro;
         ImageButton save, edit_img;
-        CardView circle_card, card_opacity, edit_save;
-        TextView edit_price, edit_availabity, edit_name, edit_description;
+        CardView circle_card, card_opacity;
+        TextView edit_price, edit_availabity, edit_name, edit_description, tv_dish_name, tv_dish_desc, tv_dish_price, tv_dish_availabity;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -169,9 +169,12 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
                 edit_description = itemView.findViewById(R.id.description_dish_edit);
                 edit_price = itemView.findViewById(R.id.dish_price_edit);
                 edit_availabity = itemView.findViewById(R.id.dish_availabity_edit);
-                edit_save = itemView.findViewById(R.id.edit_dish_save);
                 save = itemView.findViewById(R.id.edit_dish_save_image);
                 edit_img = itemView.findViewById(R.id.btn_gallery_edit_dish);
+                tv_dish_name = itemView.findViewById(R.id.tv_dish_name);
+                tv_dish_desc = itemView.findViewById(R.id.tv_description);
+                tv_dish_price = itemView.findViewById(R.id.tv_price);
+                tv_dish_availabity = itemView.findViewById(R.id.tv_availabity);
 
             } else
                 parentLayout = itemView.findViewById(R.id.dish_root);
@@ -200,8 +203,12 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             viewHolder.edit_description.setVisibility(View.VISIBLE);
             viewHolder.edit_price.setVisibility(View.VISIBLE);
             viewHolder.edit_availabity.setVisibility(View.VISIBLE);
-            viewHolder.edit_save.setVisibility(View.VISIBLE);
+            viewHolder.save.setVisibility(View.VISIBLE);
             viewHolder.edit_img.setVisibility(View.VISIBLE);
+            viewHolder.tv_dish_availabity.setVisibility(View.VISIBLE);
+            viewHolder.tv_dish_price.setVisibility(View.VISIBLE);
+            viewHolder.tv_dish_name.setVisibility(View.VISIBLE);
+            viewHolder.tv_dish_desc.setVisibility(View.VISIBLE);
 
         } else {
             viewHolder.circle_card.setVisibility(View.VISIBLE);
@@ -216,8 +223,12 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             viewHolder.edit_description.setVisibility(View.GONE);
             viewHolder.edit_price.setVisibility(View.GONE);
             viewHolder.edit_availabity.setVisibility(View.GONE);
-            viewHolder.edit_save.setVisibility(View.GONE);
+            viewHolder.save.setVisibility(View.GONE);
             viewHolder.edit_img.setVisibility(View.GONE);
+            viewHolder.tv_dish_desc.setVisibility(View.GONE);
+            viewHolder.tv_dish_price.setVisibility(View.GONE);
+            viewHolder.tv_dish_name.setVisibility(View.GONE);
+            viewHolder.tv_dish_availabity.setVisibility(View.GONE);
 
         }
 
