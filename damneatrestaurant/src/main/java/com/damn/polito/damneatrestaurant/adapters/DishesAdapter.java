@@ -1,9 +1,17 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +30,15 @@ import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.damneatrestaurant.beans.Dish;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
+import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
+import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
+import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.galleryIntent16_9;
+import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
 
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder>{
     private List<Dish> dishesList;
@@ -96,6 +113,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
                     ((SelectDishes)context).storeData();
                 }
             });
+            viewHolder.edit_img.setOnClickListener(v -> {itemGallery(index);});
             viewHolder.edit_name.setText(selected.getName());
             viewHolder.edit_description.setText(selected.getDescription());
             viewHolder.edit_price.setText(String.valueOf(selected.getPrice()));
@@ -123,7 +141,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         Switch selected_switch;
         TextView tv_dish_available;
         ImageView im_euro;
-        ImageButton save;
+        ImageButton save, edit_img;
         CardView circle_card, card_opacity, edit_save;
         TextView edit_price, edit_availabity, edit_name, edit_description;
 
@@ -135,23 +153,26 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             description = itemView.findViewById(R.id.dish_description);
             image = itemView.findViewById(R.id.dish_image);
 
-            tv_dish_available = itemView.findViewById(R.id.dish_available);
-            im_euro = itemView.findViewById(R.id.euro_image);
-            circle_card = itemView.findViewById(R.id.circle_card);
-            card_opacity = itemView.findViewById(R.id.card_opacity);
-
-            edit_name = itemView.findViewById(R.id.dish_name_edit);
-            edit_description = itemView.findViewById(R.id.description_dish_edit);
-            edit_price = itemView.findViewById(R.id.dish_price_edit);
-            edit_availabity = itemView.findViewById(R.id.dish_availabity_edit);
-            edit_save = itemView.findViewById(R.id.edit_dish_save);
-            save = itemView.findViewById(R.id.edit_dish_save_image);
 
 
             if(select_dishes_layout) {
                 parentLayout = itemView.findViewById(R.id.dish_root_add);
                 selected_switch = itemView.findViewById(R.id.selected_switch);
                 parentLayout.setOnCreateContextMenuListener(this);
+
+                tv_dish_available = itemView.findViewById(R.id.dish_available);
+                im_euro = itemView.findViewById(R.id.euro_image);
+                circle_card = itemView.findViewById(R.id.circle_card);
+                card_opacity = itemView.findViewById(R.id.card_opacity);
+
+                edit_name = itemView.findViewById(R.id.dish_name_edit);
+                edit_description = itemView.findViewById(R.id.description_dish_edit);
+                edit_price = itemView.findViewById(R.id.dish_price_edit);
+                edit_availabity = itemView.findViewById(R.id.dish_availabity_edit);
+                edit_save = itemView.findViewById(R.id.edit_dish_save);
+                save = itemView.findViewById(R.id.edit_dish_save_image);
+                edit_img = itemView.findViewById(R.id.btn_gallery_edit_dish);
+
             } else
                 parentLayout = itemView.findViewById(R.id.dish_root);
 
@@ -180,6 +201,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             viewHolder.edit_price.setVisibility(View.VISIBLE);
             viewHolder.edit_availabity.setVisibility(View.VISIBLE);
             viewHolder.edit_save.setVisibility(View.VISIBLE);
+            viewHolder.edit_img.setVisibility(View.VISIBLE);
 
         } else {
             viewHolder.circle_card.setVisibility(View.VISIBLE);
@@ -195,6 +217,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             viewHolder.edit_price.setVisibility(View.GONE);
             viewHolder.edit_availabity.setVisibility(View.GONE);
             viewHolder.edit_save.setVisibility(View.GONE);
+            viewHolder.edit_img.setVisibility(View.GONE);
 
         }
 
@@ -238,6 +261,29 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             return false;
         }
         return true;
+    }
+    private void itemGallery(int index){
+        if(!checkPermissionFromDevice(REQUEST_PERM_WRITE_EXTERNAL))
+            requestPermission(REQUEST_PERM_WRITE_EXTERNAL, PERMISSION_CODE_WRITE_EXTERNAL);
+        else
+            pickFromGallery(index);
+    }
+    private boolean checkPermissionFromDevice(String permission) {
+
+        int result = ContextCompat.checkSelfPermission(context, permission);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission(final String permission, final int permission_code) {
+        ActivityCompat.requestPermissions((Activity)context,new String[]{
+                permission
+        }, permission_code);
+    }
+
+
+    private void pickFromGallery(int index) {
+        Intent intent = galleryIntent16_9();
+        ((Activity)context).startActivityForResult(intent, 2000+index);
     }
 
 }
