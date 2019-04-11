@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.AddDish;
@@ -72,7 +73,7 @@ public class DishesFragment extends Fragment {
             startActivityForResult(i, UPDATE_DISHES_OF_DAY);
         });
 
-        adapter.setOnLongItemClickListener(position -> {
+        /*adapter.setOnLongItemClickListener(position -> {
              // SET THE MENU LAUNCHER
                 PopupMenu pop = new PopupMenu(ctx, view);
                 pop.getMenuInflater().inflate(R.menu.context_racyclerview_menu, pop.getMenu());
@@ -89,15 +90,15 @@ public class DishesFragment extends Fragment {
                     }
                 });
                 pop.show();
-        });
+        });*/
     }
 
     private void itemDelete() {
-
+        Toast.makeText(ctx, "DELETE", Toast.LENGTH_SHORT ).show();
     }
 
     private void itemEdit() {
-
+        Toast.makeText(ctx, "DELETE", Toast.LENGTH_SHORT ).show();
     }
 
 
@@ -145,5 +146,24 @@ public class DishesFragment extends Fragment {
         }
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        final int pos = item.getGroupId();
+        final Dish dish = dishesList.get(pos);
 
+        switch (item.getItemId()){
+            case DishesAdapter.ViewHolder.EDIT_CODE:
+                itemEdit();
+                return true;
+
+            case DishesAdapter.ViewHolder.DELETE_CODE:
+                itemDelete();
+                return true;
+
+            default:
+                return super.onContextItemSelected(item);
+        }
+
+
+    }
 }

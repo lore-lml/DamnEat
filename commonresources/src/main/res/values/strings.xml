@@ -21,4 +21,5 @@
     <string name="permission_denied">Permission Denied</string>
     <string name="alert_edit_profile_negative" translatable="false">No</string>
     <string name="alert_edit_profile_invalid_changes">Are you sure you want to exit? Data will be lost...</string>
+    <string name="select_option">Select an option</string>
 </resources>

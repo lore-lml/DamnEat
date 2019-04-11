@@ -28,4 +28,7 @@
     <string name="availabity_too_low">Availabity must be positive or null</string>
     <string name="context_delete">Delete</string>
     <string name="context_edit">Edit</string>
+    <string name="second_text" translatable="false">2nd</string>
+    <string name="first_text" translatable="false">1st</string>
+    <string name="slot_text" translatable="false">Slot</string>
 </resources>

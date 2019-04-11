@@ -39,7 +39,7 @@ public class OpeningDialog extends DialogFragment {
         days.add(new DayOfTheWeek("SAB"));
         days.add(new DayOfTheWeek("DOM"));
 
-        adapter = new DayOfTheWeekAdapter(days, v.getContext());
+        adapter = new DayOfTheWeekAdapter(days, getActivity());
         recyclerView.setAdapter(adapter);
 
         this.getDialog().setTitle("Opening");

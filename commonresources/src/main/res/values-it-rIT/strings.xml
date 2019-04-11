@@ -20,4 +20,5 @@
     <string name="context_camera_gallery">Scegli dalla galleria</string>
     <string name="permission_denied">Permesso Negato</string>
     <string name="alert_edit_profile_invalid_changes">Sei sicuro di voler uscire? Le modifiche verrano perse...</string>
+    <string name="select_option">Seleziona un\'opzione</string>
 </resources>

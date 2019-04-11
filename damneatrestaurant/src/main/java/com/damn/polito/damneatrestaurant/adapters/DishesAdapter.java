@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
+        public static final int EDIT_CODE = 121;
+        public static final int DELETE_CODE = 122;
         ImageView image;
         TextView price;
         TextView quantity;
@@ -107,15 +110,14 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             } else
                 parentLayout = itemView.findViewById(R.id.dish_root);
 
-            itemView.setOnLongClickListener(view -> {
-                if (mLongListener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        mLongListener.onLongItemClick(position);
-                    }
-                }
-                return false;
-            });
+            parentLayout.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.setHeaderTitle(context.getString(R.string.select_option));
+            menu.add(this.getAdapterPosition(), EDIT_CODE, 0, context.getString(R.string.context_edit));
+            menu.add(this.getAdapterPosition(), DELETE_CODE, 1, context.getString(R.string.context_delete));
         }
     }
 }
