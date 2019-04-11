@@ -98,8 +98,8 @@ public class Utility {
         intent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI,"image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("scale", true);
-        intent.putExtra("outputX", 1280);
-        intent.putExtra("outputY", 720);
+        intent.putExtra("outputX", 455);
+        intent.putExtra("outputY", 256);
         intent.putExtra("aspectX", 16);
         intent.putExtra("aspectY", 9);
         intent.putExtra("return-data", true);

@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import static com.damn.polito.commonresources.Utility.BitMapToString;
 import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
 import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
+import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_CAMERA;
 import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
 import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
 import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
@@ -78,7 +80,7 @@ public class AddDish extends AppCompatActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == REQUEST_IMAGE_CAPTURE || requestCode == IMAGE_GALLERY_REQUEST) {
+        if (requestCode == IMAGE_GALLERY_REQUEST) {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 dishImg = extras.getParcelable("data");
@@ -121,8 +123,8 @@ public class AddDish extends AppCompatActivity {
             cropIntent.setDataAndType(uri, "image/*");
             cropIntent.putExtra("crop", "true");
             cropIntent.putExtra("scale", true);
-            cropIntent.putExtra("outputX", 1280);
-            cropIntent.putExtra("outputY", 720);
+            cropIntent.putExtra("outputX", 889);
+            cropIntent.putExtra("outputY", 500);
             cropIntent.putExtra("aspectX", 16);
             cropIntent.putExtra("aspectY", 9);
             cropIntent.putExtra("scaleUpIfNeeded", true);
@@ -165,6 +167,18 @@ public class AddDish extends AppCompatActivity {
         ActivityCompat.requestPermissions(this,new String[]{
                 permission
         }, permission_code);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case PERMISSION_CODE_WRITE_EXTERNAL:
+                if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                    Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
+                            Toast.LENGTH_SHORT).show();
+                else
+                    pickFromGallery();
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

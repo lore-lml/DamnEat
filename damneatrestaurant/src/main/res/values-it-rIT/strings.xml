@@ -27,8 +27,10 @@
     <string name="empty_price">Nessun prezzo inserito</string>
     <string name="context_delete">Elimina</string>
     <string name="context_edit">Modifica</string>
-    <string name="order_customer">Cliente:%s</string>
+    <string name="order_customer">Cliente:\n%s</string>
     <string name="undo_string">Annulla</string>
     <string name="dish_deletted">Piatto eliminato</string>
     <string name="invalid_slot">%s dovrebbe avere almeno una fascia oraria</string>
+    <string name="second_text">2°</string>
+    <string name="first_text">1°</string>
 </resources>
