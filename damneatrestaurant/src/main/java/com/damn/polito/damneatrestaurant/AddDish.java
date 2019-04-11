@@ -240,7 +240,7 @@ public class AddDish extends AppCompatActivity {
             this.price.requestFocus();
             return false;
         }
-        if(Integer.parseInt(price)<=0){
+        if(Float.parseFloat(price)<=0){
             Toast.makeText(this, getString(R.string.price_too_low), Toast.LENGTH_SHORT).show();
             this.price.requestFocus();
             return false;
