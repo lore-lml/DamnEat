@@ -61,14 +61,6 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         save = findViewById(R.id.edit_save);
 
         init();
-
-        opening.setOnClickListener(v->{
-            FragmentManager fm = getSupportFragmentManager();
-            DialogFragment opening = new OpeningDialog();
-
-            opening.show(fm, "Opening Dialog");
-        });
-
     }
 
     private void init() {
@@ -127,6 +119,13 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
                 }
             });
             pop.show();
+        });
+
+        opening.setOnClickListener(v->{
+            FragmentManager fm = getSupportFragmentManager();
+            OpeningDialog opening = new OpeningDialog();
+            opening.setDaysText(sOpening);
+            opening.show(fm, "Opening Dialog");
         });
     }
 
