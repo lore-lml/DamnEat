@@ -285,7 +285,9 @@ public class SelectDishes extends AppCompatActivity {
 
     private void itemEdit(int pos) {
         //Toast.makeText(this, "DELETE", Toast.LENGTH_SHORT ).show();
-        editDish(pos);
+        //editDish(pos);
+        dishesList.get(pos).setEditMode(true);
+        adapter.notifyItemChanged(pos);
     }
     @Override
     public boolean onContextItemSelected(MenuItem item) {
