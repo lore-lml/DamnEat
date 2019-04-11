@@ -8,17 +8,17 @@ public class DayOfTheWeek {
     private boolean isClosed;
 
 
-    public DayOfTheWeek(){
+    public DayOfTheWeek(String day){
+        if(day == null)
+            throw new IllegalArgumentException("The day cannot be null");
+        this.day = day;
         open = new String[2];
         close = new String[2];
         isClosed = true;
     }
 
     public DayOfTheWeek(String day, boolean isClosed){
-        this();
-        if(day == null)
-            throw new IllegalArgumentException("The day cannot be null");
-        this.day = day;
+        this(day);
         this.isClosed = isClosed;
     }
 
@@ -33,6 +33,10 @@ public class DayOfTheWeek {
         open[2] = open2;
         close[0] = close1;
         close[1] = close2;
+    }
+
+    public String getDay(){
+        return day;
     }
 
     public boolean isClosed() {
@@ -65,6 +69,12 @@ public class DayOfTheWeek {
         if(isClosed || open[1] == null || close[1] == null) return null;
         if(open[1].trim().isEmpty()|| close[1].trim().isEmpty()) return null;
         return open[1] + "-" + close[1];
+    }
+
+    public void setDay(String day){
+        if(day == null)
+            throw new IllegalArgumentException("The day cannot be null");
+        this.day = day;
     }
 
     public void setClosed(boolean closed) {

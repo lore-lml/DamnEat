@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/opening_dialog_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorBackground"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    android:background="@color/colorBackground">
 
 
     <android.support.constraint.ConstraintLayout
@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/opening_dialog_day"
             android:layout_width="40dp"
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
@@ -25,12 +25,12 @@
             android:textAppearance="@style/PrimaryText"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/switch1"
+            app:layout_constraintEnd_toStartOf="@+id/opening_dialog_switch"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Switch
-            android:id="@+id/switch1"
+            android:id="@+id/opening_dialog_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -39,34 +39,36 @@
             android:text="@string/close"
             android:theme="@style/DialogSwitch"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView3"
+            app:layout_constraintStart_toEndOf="@+id/opening_dialog_day"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/opening_dialog_open1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/spinner2"
+            app:layout_constraintBottom_toTopOf="@+id/opening_dialog_open2"
+            app:layout_constraintEnd_toStartOf="@+id/opening_dialog_close1"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/switch1"
+            app:layout_constraintStart_toEndOf="@+id/opening_dialog_switch"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/spinner2"
+            android:id="@+id/opening_dialog_close1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/opening_dialog_close2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/spinner"
+            app:layout_constraintStart_toEndOf="@+id/opening_dialog_open1"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/spinner3"
+            android:id="@+id/opening_dialog_open2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -74,21 +76,21 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/spinner4"
-            app:layout_constraintStart_toEndOf="@+id/switch1"
-            app:layout_constraintTop_toBottomOf="@+id/spinner" />
+            app:layout_constraintEnd_toStartOf="@+id/opening_dialog_close2"
+            app:layout_constraintStart_toEndOf="@+id/opening_dialog_switch"
+            app:layout_constraintTop_toBottomOf="@+id/opening_dialog_open1" />
 
         <Spinner
-            android:id="@+id/spinner4"
+            android:id="@+id/opening_dialog_close2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/spinner3"
-            app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+            app:layout_constraintStart_toEndOf="@+id/opening_dialog_open2"
+            app:layout_constraintTop_toBottomOf="@+id/opening_dialog_close1" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
