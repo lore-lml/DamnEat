@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/select_dishes_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SelectDishes">
@@ -18,9 +19,9 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:padding="8dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="8dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewDishes2"

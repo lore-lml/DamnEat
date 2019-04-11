@@ -6,12 +6,14 @@ import android.graphics.Bitmap;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
@@ -41,7 +43,6 @@ public class SelectDishes extends AppCompatActivity {
     private DishesAdapter adapter;
     private FloatingActionButton fab_add;
     private String srcFile = "dishes.save";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,6 +204,7 @@ public class SelectDishes extends AppCompatActivity {
                     dishesList.add(new Dish(name, description, price, avaibility));
                 }
                 adapter.notifyDataSetChanged();
+                recyclerView.smoothScrollToPosition(dishesList.size()-1);
                 Log.d("ONRESULT", "OnresultActivity");
                 storeData();
             }
@@ -241,10 +243,23 @@ public class SelectDishes extends AppCompatActivity {
     }
 
     private void deleteDish(int index){
+        Dish dish = dishesList.get(index);
         dishesList.remove(index);
         storeData();
         adapter.notifyItemRemoved(index);
+
+        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.select_dishes_coordinator), R.string.dish_deletted, Snackbar.LENGTH_LONG);
+        mySnackbar.setAction(R.string.undo_string, v -> {
+            if(dish!=null){
+            dishesList.add(index, dish);
+            adapter.notifyItemInserted(index);
+            recyclerView.smoothScrollToPosition(index);
+            storeData();
+
+            }});
+        mySnackbar.show();
     }
+
 
     // todo: da gestire nel add dish
     private void editDish(int index) {
@@ -264,7 +279,7 @@ public class SelectDishes extends AppCompatActivity {
     }
 
     private void itemDelete(int pos) {
-        Toast.makeText(this, "@string/context_delete", Toast.LENGTH_SHORT ).show();
+        //Toast.makeText(this, "@string/context_delete", Toast.LENGTH_SHORT ).show();
         deleteDish(pos);
     }
 

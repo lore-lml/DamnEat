@@ -27,4 +27,6 @@
     <string name="empty_price">Nessun prezzo inserito</string>
     <string name="context_delete">Elimina</string>
     <string name="context_edit">Modifica</string>
+    <string name="undo_string">Annulla</string>
+    <string name="dish_deletted">Piatto eliminato</string>
 </resources>
