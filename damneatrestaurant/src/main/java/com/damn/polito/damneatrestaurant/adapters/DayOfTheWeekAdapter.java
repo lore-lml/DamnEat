@@ -1,11 +1,9 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
+import android.app.TimePickerDialog;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,9 +23,9 @@ import java.util.List;
 public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapter.DayOfTheWeekHolder> {
 
     private List<DayOfTheWeek> days;
-    private Context ctx;
+    private FragmentActivity ctx;
 
-    public DayOfTheWeekAdapter(List<DayOfTheWeek> days, Context ctx) {
+    public DayOfTheWeekAdapter(List<DayOfTheWeek> days, FragmentActivity ctx) {
         this.days = days;
         this.ctx = ctx;
     }
@@ -48,9 +46,9 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
 
         for(EditText et : holder.opening){
             et.setOnClickListener(v->{
-                TimePickerFragment time = new TimePickerFragment();
-                time.setTextView(et);
-                time.show(((FragmentActivity)ctx).getSupportFragmentManager(), "time_picker");
+                holder.time.setOnTimeListener(holder);
+                holder.time.setEditText(et);
+                holder.time.show(ctx.getSupportFragmentManager(), "time_picker");
             });
         }
     }
@@ -60,15 +58,16 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
         return days.size();
     }
 
-    public class DayOfTheWeekHolder extends RecyclerView.ViewHolder {
+    public class DayOfTheWeekHolder extends RecyclerView.ViewHolder implements TimePickerDialog.OnTimeSetListener {
         private CardView parent;
         private TextView day;
         private Switch isClosed;
         private EditText[] opening;
-
+        TimePickerFragment time;
         public DayOfTheWeekHolder(View itemView) {
             super(itemView);
 
+            time = new TimePickerFragment();
             parent = itemView.findViewById(R.id.opening_dialog_root);
             day = itemView.findViewById(R.id.opening_dialog_day);
             opening = new EditText[4];
@@ -79,6 +78,15 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
             opening[3] = itemView.findViewById(R.id.opening_dialog_close2);
         }
 
+        @SuppressLint("DefaultLocale")
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            EditText text = time.getEditText();
 
+            StringBuilder sb = new StringBuilder(String.format("%2d", hourOfDay));
+            sb.append(":");
+            sb.append(String.format("%2d", minute));
+            text.setText(sb.toString());
+        }
     }
 }
