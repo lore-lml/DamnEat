@@ -10,6 +10,8 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.damn.polito.damneatrestaurant.dialogs.OpeningDialog;
 
 import static com.damn.polito.commonresources.Utility.*;
 
@@ -57,6 +60,13 @@ public class EditProfile extends AppCompatActivity {
         save = findViewById(R.id.edit_save);
 
         init();
+
+        opening.setOnClickListener(v->{
+            FragmentManager fm = getSupportFragmentManager();
+            DialogFragment opening = new OpeningDialog();
+
+            opening.show(fm, "CIAO");
+        });
 
     }
 

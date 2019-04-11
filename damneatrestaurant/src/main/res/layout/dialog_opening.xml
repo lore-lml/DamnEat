@@ -18,20 +18,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerViewDishes"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/recycler_day"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab_add_dish"
+        app:layout_constraintBottom_toTopOf="@+id/fab_day"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_add_dish"
+        android:id="@+id/fab_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -39,10 +38,9 @@
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_anchor="@+id/constraintLayout2"
         app:layout_anchorGravity="right|bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewDishes"
+        app:layout_constraintTop_toBottomOf="@+id/recycler_day"
         app:srcCompat="@drawable/ic_check" />
 </android.support.constraint.ConstraintLayout>

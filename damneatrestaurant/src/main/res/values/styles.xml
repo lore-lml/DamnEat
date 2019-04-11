@@ -21,6 +21,8 @@
         <!-- active thumb & track color (30% transparency) -->
         <item name="colorControlActivated">@color/colorPrimary</item>
 
+        <item name="colorControlHighlight">@color/colorAccent</item>
+
         <!-- inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/colorSecondaryText</item>
 
