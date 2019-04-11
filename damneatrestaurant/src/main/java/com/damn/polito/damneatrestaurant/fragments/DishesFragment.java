@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.AddDish;
@@ -69,6 +71,33 @@ public class DishesFragment extends Fragment {
             Intent i = new Intent(view.getContext(), SelectDishes.class);
             startActivityForResult(i, UPDATE_DISHES_OF_DAY);
         });
+
+        adapter.setOnLongItemClickListener(position -> {
+             // SET THE MENU LAUNCHER
+                PopupMenu pop = new PopupMenu(ctx, view);
+                pop.getMenuInflater().inflate(R.menu.context_racyclerview_menu, pop.getMenu());
+                pop.setOnMenuItemClickListener(item->{
+                    switch (item.getItemId()){
+                        case R.id.item_edit:
+                            itemEdit();
+                            return true;
+                        case R.id.item_delete:
+                            itemDelete();
+                            return true;
+                        default:
+                            return DishesFragment.super.onContextItemSelected(item);
+                    }
+                });
+                pop.show();
+        });
+    }
+
+    private void itemDelete() {
+
+    }
+
+    private void itemEdit() {
+
     }
 
 
