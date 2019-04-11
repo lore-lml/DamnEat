@@ -21,7 +21,7 @@
     <string name="empty_opening">No opening info has been inserted</string>
     <string name="phone_prefix" translatable="false">+39</string>
     <string name="invalid_phone">Invalid phone number</string>
-    <string name="close">Close</string>
+    <string name="close">"Close "</string>
     <string name="empty_price">No price has been inserted</string>
     <string name="empty_availabity">No availabity has been inserted</string>
     <string name="price_too_low">Price must be positive</string>
@@ -33,4 +33,5 @@
     <string name="slot_text" translatable="false">Slot</string>
     <string name="undo_string">Undo</string>
     <string name="dish_deletted">Dish deleted</string>
+    <string name="invalid_slot">%s should at least have a time slot!</string>
 </resources>

@@ -20,7 +20,7 @@
     <string name="empty_phone">Non è stato inserito nessun numero di telefono</string>
     <string name="empty_opening">Nessuna informazione sull\'apertura è stata inserita</string>
     <string name="invalid_phone">Il numero di telefono non è valido</string>
-    <string name="close">Chiuso</string>
+    <string name="close">"Chiuso "</string>
     <string name="availabity_too_low">La disponibilità deve essere maggiore o uguale a zero</string>
     <string name="price_too_low">Il prezzo deve essere maggiore di zero</string>
     <string name="empty_availabity">Nessuna disponibilità inserita</string>
@@ -29,4 +29,5 @@
     <string name="context_edit">Modifica</string>
     <string name="undo_string">Annulla</string>
     <string name="dish_deletted">Piatto eliminato</string>
+    <string name="invalid_slot">%s dovrebbe avere almeno una fascia oraria</string>
 </resources>

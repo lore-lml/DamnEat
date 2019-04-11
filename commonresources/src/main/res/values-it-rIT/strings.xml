@@ -21,4 +21,11 @@
     <string name="permission_denied">Permesso Negato</string>
     <string name="alert_edit_profile_invalid_changes">Sei sicuro di voler uscire? Le modifiche verrano perse...</string>
     <string name="select_option">Seleziona un\'opzione</string>
+    <string name="lun_text">LUN</string>
+    <string name="mar_text">MAR</string>
+    <string name="mer_text">MER</string>
+    <string name="gio_text">GIO</string>
+    <string name="ven_text">VEN</string>
+    <string name="sab_text">SAB</string>
+    <string name="dom_text">DOM</string>
 </resources>

@@ -20,9 +20,11 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_day"
-        android:layout_width="380dp"
-        android:layout_height="370dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="500dp"
+        android:layout_height="180dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@+id/fab_day"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

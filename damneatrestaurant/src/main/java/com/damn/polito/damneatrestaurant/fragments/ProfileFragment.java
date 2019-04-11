@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +31,7 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment{
 
     private String defaultValue;
     private ImageView profileImage;
