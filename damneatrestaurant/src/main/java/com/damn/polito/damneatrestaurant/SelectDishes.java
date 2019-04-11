@@ -188,12 +188,12 @@ public class SelectDishes extends AppCompatActivity {
     }
 
     private void itemDelete(int pos) {
-        Toast.makeText(this, "DELETE", Toast.LENGTH_SHORT ).show();
+        Toast.makeText(this, "@string/context_delete", Toast.LENGTH_SHORT ).show();
         deleteDish(pos);
     }
 
     private void itemEdit(int pos) {
-        Toast.makeText(this, "DELETE", Toast.LENGTH_SHORT ).show();
+        //Toast.makeText(this, "DELETE", Toast.LENGTH_SHORT ).show();
         editDish(pos);
     }
     @Override

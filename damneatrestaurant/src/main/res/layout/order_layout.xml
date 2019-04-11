@@ -25,8 +25,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/order_id"
-            android:textStyle="bold"
             android:textAppearance="@style/PrimaryText"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/order_num_dishes"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
@@ -51,10 +51,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:text="@string/order_num_dishes"
             android:textAppearance="@style/SecondaryText"
-            app:layout_constraintBottom_toTopOf="@+id/order_price"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_id" />
 
@@ -63,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginBottom="16dp"
             android:text="@string/order_price"
             android:textAlignment="center"
@@ -71,7 +69,7 @@
             android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_num_dishes" />
+            app:layout_constraintTop_toBottomOf="@+id/dishes_list" />
 
         <TextView
             android:id="@+id/order_deliverer_name_textview"
@@ -95,6 +93,16 @@
             app:layout_constraintBottom_toTopOf="@+id/order_deliverer_name_textview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/dishes_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="4dp"
+            android:text="--"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/order_num_dishes" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
