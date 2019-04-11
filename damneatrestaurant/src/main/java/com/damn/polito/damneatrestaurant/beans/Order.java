@@ -13,6 +13,7 @@ public class Order {
     private String customerAddress;
     private String customerName;
     private String delivererName;
+    private boolean expanded = false;
 
     /*FOR FUTURE USE*/
     //private Customer customer;
@@ -59,4 +60,8 @@ public class Order {
     public Double getPrice(){
         return price;
     }
+
+    public void changeExpanded() {expanded = !expanded; }
+
+    public boolean isExpanded() { return expanded; }
 }

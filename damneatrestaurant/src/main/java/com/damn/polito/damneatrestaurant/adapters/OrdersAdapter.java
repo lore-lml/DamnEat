@@ -6,6 +6,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -22,16 +23,22 @@ import java.util.Locale;
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     private List<Order> orders;
     private Context ctx;
+    private OnItemClickListener mListener;
 
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
         this.ctx = context;
     }
+
+    public interface OnItemClickListener { void onItemClick(int position); }
+
+    public void setOnItemClickListener (OnItemClickListener listener) { mListener = listener; }
+
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
-        return new OrderViewHolder(view);
+        return new OrderViewHolder(view,mListener);
     }
 
     @Override
@@ -45,6 +52,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
        // holder.date.setText(dateFormat.format(ciao.getTime()));
+
+        if (!orders.get(position).isExpanded()) {
+            holder.deliverer_name.setVisibility(View.GONE);
+            holder.date.setVisibility(View.GONE);
+        }else{
+            holder.deliverer_name.setVisibility(View.VISIBLE);
+            holder.date.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -52,11 +67,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         return orders.size();
     }
 
-    public class OrderViewHolder extends RecyclerView.ViewHolder {
+    public static class OrderViewHolder extends RecyclerView.ViewHolder {
         private TextView id,date,price,nDish, deliverer_name;
         private CardView root;
 
-        public OrderViewHolder(View itemView) {
+        public OrderViewHolder(View itemView, OnItemClickListener listener) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order);
@@ -65,6 +80,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             price = itemView.findViewById(R.id.order_price);
             nDish = itemView.findViewById(R.id.order_num_dishes);
             deliverer_name = itemView.findViewById(R.id.order_deliverer_name_textview);
+
+            itemView.setOnClickListener(view -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(position);
+                    }
+                }
+            });
         }
     }
 }

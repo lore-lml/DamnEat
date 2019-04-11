@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -27,6 +26,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     private Context context;
     private boolean select_dishes_layout;
     private Bitmap default_image;
+    private OnLongItemClickListener mLongListener;
 
     public DishesAdapter(Context context, List<Dish> dishesList, boolean select_dishes_layout) {
         this.dishesList = dishesList;
@@ -34,6 +34,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         default_image = BitmapFactory.decodeResource(context.getResources(),R.drawable.dishes_empty);
         this.select_dishes_layout = select_dishes_layout;
     }
+
+    public interface OnLongItemClickListener { void onLongItemClick(int position); }
+
+    public void setOnLongItemClickListener (OnLongItemClickListener longListener) {mLongListener = longListener; }
 
     @NonNull
     @Override
@@ -103,7 +107,15 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             } else
                 parentLayout = itemView.findViewById(R.id.dish_root);
 
-
+            itemView.setOnLongClickListener(view -> {
+                if (mLongListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        mLongListener.onLongItemClick(position);
+                    }
+                }
+                return false;
+            });
         }
     }
 }
