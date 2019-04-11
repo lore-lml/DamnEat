@@ -31,4 +31,5 @@
     <string name="second_text" translatable="false">2nd</string>
     <string name="first_text" translatable="false">1st</string>
     <string name="slot_text" translatable="false">Slot</string>
+    <string name="order_customer">Customer data:%s</string>
 </resources>

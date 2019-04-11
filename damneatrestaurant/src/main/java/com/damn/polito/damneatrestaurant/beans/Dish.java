@@ -14,6 +14,8 @@ public class Dish {
     private Bitmap photo;
     private boolean dish_otd = false;
 
+
+    private int number;
     public Dish(){}
 
     public Dish(String name, String description, float price, int availability) {
@@ -22,6 +24,7 @@ public class Dish {
         this.price = price;
         this.availability = availability;
         this.photo = null;
+        number=0;
 
     }
     public Dish(String name, String description, float price, int availability, Bitmap photo) {
@@ -78,4 +81,11 @@ public class Dish {
         this.dish_otd = !this.dish_otd;
     }
 
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 }
