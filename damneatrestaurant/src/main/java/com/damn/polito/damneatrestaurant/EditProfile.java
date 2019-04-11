@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.damn.polito.damneatrestaurant.dialogs.OpeningDialog;
 
 import static com.damn.polito.commonresources.Utility.*;
@@ -30,7 +31,7 @@ import static com.damn.polito.commonresources.Utility.*;
 import java.io.IOException;
 import java.util.Objects;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfile extends AppCompatActivity implements HandleDismissDialog {
 
     private ImageView profile;
     private ImageButton camera;
@@ -65,7 +66,7 @@ public class EditProfile extends AppCompatActivity {
             FragmentManager fm = getSupportFragmentManager();
             DialogFragment opening = new OpeningDialog();
 
-            opening.show(fm, "CIAO");
+            opening.show(fm, "Opening Dialog");
         });
 
     }
@@ -400,6 +401,11 @@ public class EditProfile extends AppCompatActivity {
             profile.setImageBitmap(profImg);
             pref.edit().remove("profile").apply();
         }
+    }
+
+    @Override
+    public void handleOnDismiss(String text) {
+        opening.setText(text);
     }
 }
 

@@ -136,4 +136,8 @@ public class Utility {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
+
+    public class Regex{
+        public static final String TIME = "^([01][0-9]|2[0-3]|[1-9]):([0-5][0-9]|[0-9])$";
+    }
 }
