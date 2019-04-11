@@ -86,11 +86,12 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circleImageView"
             android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_height="98dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/profile_sample"
-            app:layout_constraintBottom_toTopOf="@+id/order_deliverer_name_textview"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
