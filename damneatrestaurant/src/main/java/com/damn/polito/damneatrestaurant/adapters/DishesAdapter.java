@@ -107,10 +107,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             if(select_dishes_layout) {
                 parentLayout = itemView.findViewById(R.id.dish_root_add);
                 selected_switch = itemView.findViewById(R.id.selected_switch);
+                parentLayout.setOnCreateContextMenuListener(this);
             } else
                 parentLayout = itemView.findViewById(R.id.dish_root);
 
-            parentLayout.setOnCreateContextMenuListener(this);
         }
 
         @Override

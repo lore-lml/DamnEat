@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
@@ -165,6 +166,8 @@ public class SelectDishes extends AppCompatActivity {
 
     private void deleteDish(int index){
         dishesList.remove(index);
+        storeData();
+        adapter.notifyItemRemoved(index);
     }
 
     // todo: da gestire nel add dish
@@ -182,5 +185,35 @@ public class SelectDishes extends AppCompatActivity {
 
         }
         startActivityForResult(intent, UPDATE_DISH);
+    }
+
+    private void itemDelete(int pos) {
+        Toast.makeText(this, "DELETE", Toast.LENGTH_SHORT ).show();
+        deleteDish(pos);
+    }
+
+    private void itemEdit(int pos) {
+        Toast.makeText(this, "DELETE", Toast.LENGTH_SHORT ).show();
+        editDish(pos);
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        final int pos = item.getGroupId();
+        final Dish dish = dishesList.get(pos);
+
+        switch (item.getItemId()){
+            case DishesAdapter.ViewHolder.EDIT_CODE:
+                itemEdit(pos);
+                return true;
+
+            case DishesAdapter.ViewHolder.DELETE_CODE:
+                itemDelete(pos);
+                return true;
+
+            default:
+                return super.onContextItemSelected(item);
+        }
+
+
     }
 }
