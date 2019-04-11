@@ -131,7 +131,7 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
         public void disableFirstSlot(){
             for(int i = 0; i<2; i++){
                 opening[i].setEnabled(false);
-                opening[i].setTextColor(ctx.getResources().getColor(R.color.colorDisabled));
+                opening[i].setTextColor(ctx.getColor(R.color.colorDisabled));
             }
             opening[0].setText(ctx.getString(R.string.first_text));
             opening[1].setText(ctx.getString(R.string.slot_text));
@@ -140,7 +140,7 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
         public void disableSecondSlot(){
             for(int i = 2; i<4; i++){
                 opening[i].setEnabled(false);
-                opening[i].setTextColor(ctx.getResources().getColor(R.color.colorDisabled));
+                opening[i].setTextColor(ctx.getColor(R.color.colorDisabled));
             }
             opening[2].setText(ctx.getString(R.string.second_text));
             opening[3].setText(ctx.getString(R.string.slot_text));
@@ -149,14 +149,14 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
         public void enableFirstSlot(){
             for(int i = 0; i<2; i++){
                 opening[i].setEnabled(true);
-                opening[i].setTextColor(ctx.getResources().getColor(R.color.colorPrimaryDark));
+                opening[i].setTextColor(ctx.getColor(R.color.colorPrimaryDark));
             }
         }
 
         public void enableSecondSlot(){
             for(int i = 2; i<4; i++){
                 opening[i].setEnabled(true);
-                opening[i].setTextColor(ctx.getResources().getColor(R.color.colorPrimaryDark));
+                opening[i].setTextColor(ctx.getColor(R.color.colorPrimaryDark));
             }
         }
 
@@ -198,7 +198,7 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
             sb.append(":");
             sb.append(String.format("%02d", minute));
             text.setText(sb.toString());
-            text.setTextColor(ctx.getResources().getColor(R.color.colorPrimaryDark));
+            text.setTextColor(ctx.getColor(R.color.colorPrimaryDark));
 
             if(text.equals(opening[0]) || text.equals(opening[1])){
                 if(opening[0].getText().toString().matches(Utility.Regex.TIME)
@@ -215,6 +215,7 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
             if(open1 != null && close1 != null){
                 opening[0].setText(open1);
                 opening[1].setText(close1);
+                enableSecondSlot();
             }
             open2 = day.getSecondOpenTime();
             close2 = day.getSecondCloseTime();
