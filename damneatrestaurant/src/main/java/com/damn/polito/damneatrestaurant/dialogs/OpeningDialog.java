@@ -53,6 +53,7 @@ public class OpeningDialog extends DialogFragment {
         adapter = new DayOfTheWeekAdapter(days, getActivity());
         recyclerView.setAdapter(adapter);
         this.getDialog().setTitle("Opening");
+        recyclerView.smoothScrollToPosition(6);
 
         fab = v.findViewById(R.id.fab_day);
         fab.setOnClickListener(view -> saveAction());
@@ -61,7 +62,6 @@ public class OpeningDialog extends DialogFragment {
 
     private void saveAction() {
         boolean ok = true;
-
         for(int i = 0; i<days.size(); i++){
             //Ritorna al massimo i due slot orari per quella giornata
             List<String> slots = adapter.getSlots(i);
