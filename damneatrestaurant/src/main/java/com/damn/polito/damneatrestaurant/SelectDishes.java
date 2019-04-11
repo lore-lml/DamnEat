@@ -22,6 +22,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +40,8 @@ public class SelectDishes extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DishesAdapter adapter;
     private FloatingActionButton fab_add;
+    private String srcFile = "dishes.save";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,49 +72,116 @@ public class SelectDishes extends AppCompatActivity {
         Log.d("List", "List Size" + dishesList.size());
     }
     public void storeData() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        JSONArray array = new JSONArray();
-        for (Dish element:dishesList) {
-            JSONObject values = new JSONObject();
+        File f = new File(getFilesDir(), srcFile);
+        f.delete();
+        if(dishesList != null && dishesList.size() > 0){
+            JSONArray array = new JSONArray();
             try {
-                values.put("name", element.getName());
-                values.put("description", element.getDescription());
-                values.put("price", element.getPrice());
-                values.put("available", element.getAvailability());
-                values.put("photo", element.getPhotoStr());
-                values.put("dotd", element.isDishOtd());
-                array.put(values);
-                Log.d("StoreDataDish", "Store: " + array.toString());
-            }catch (JSONException e) {
-                Log.d("StoreDataDish", "Errore salavataggio");
+                for (Dish element:dishesList) {
+                    JSONObject values = new JSONObject();
+                    values.put("name", element.getName());
+                    values.put("description", element.getDescription());
+                    values.put("price", element.getPrice());
+                    values.put("available", element.getAvailability());
+                    values.put("photo", element.getPhotoStr());
+                    values.put("dotd", element.isDishOtd());
+                    array.put(values);
+                    Log.d("StoreDataDish", "Store: " + array.toString());
+                }
+                String txt = array.toString();
+
+                FileOutputStream fos = openFileOutput(srcFile, MODE_PRIVATE);
+                ObjectOutputStream o = new ObjectOutputStream(fos);
+                o.writeObject(txt);
+                o.close();
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-            String txt = array.toString();
-            pref.edit().putString("dishes", array.toString()).apply();
-            Log.d("shared_pref", txt);
         }
     }
+// public void storeData() {
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+//        JSONArray array = new JSONArray();
+//        for (Dish element:dishesList) {
+//            JSONObject values = new JSONObject();
+//            try {
+//                values.put("name", element.getName());
+//                values.put("description", element.getDescription());
+//                values.put("price", element.getPrice());
+//                values.put("available", element.getAvailability());
+//                values.put("photo", element.getPhotoStr());
+//                values.put("dotd", element.isDishOtd());
+//                array.put(values);
+//                Log.d("StoreDataDish", "Store: " + array.toString());
+//            }catch (JSONException e) {
+//                Log.d("StoreDataDish", "Errore salavataggio");
+//                e.printStackTrace();
+//            }
+//            String txt = array.toString();
+//            pref.edit().putString("dishes", array.toString()).apply();
+//            Log.d("shared_pref", txt);
+//        }
+//    }
     private void loadData() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        String s = pref.getString("dishes", null);
-        if (s == null) return;
-
-        try {
-            JSONArray array = new JSONArray(s);
-            JSONObject values;
-            for (int i=0; i<array.length(); i++) {
-                values = array.getJSONObject(i);
-                dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available")));
-                dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
-                if(!values.get("photo").equals("NO_PHOTO")){
-                    Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-                    dishesList.get(i).setPhoto(bmp);
+        File f = new File(getFilesDir(), srcFile);
+        if(f.exists()) {
+            try {
+                FileInputStream fis = openFileInput(srcFile);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                Object o = ois.readObject();
+                if(o instanceof String){
+                    Log.d("loadData", (String) o);
+                    JSONArray array = new JSONArray((String) o);
+                    JSONObject values;
+                    for (int i=0; i<array.length(); i++) {
+                        values = array.getJSONObject(i);
+                        dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available")));
+                        dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
+                        if(!values.get("photo").equals("NO_PHOTO")){
+                            Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+                            dishesList.get(i).setPhoto(bmp);
+                        }
+                    }
                 }
+                ois.close();
+                fis.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
+//  private void loadData() {
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+//        String s = pref.getString("dishes", null);
+//        if (s == null) return;
+//
+//        try {
+//            JSONArray array = new JSONArray(s);
+//            JSONObject values;
+//            for (int i=0; i<array.length(); i++) {
+//                values = array.getJSONObject(i);
+//                dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available")));
+//                dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
+//                if(!values.get("photo").equals("NO_PHOTO")){
+//                    Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+//                    dishesList.get(i).setPhoto(bmp);
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
