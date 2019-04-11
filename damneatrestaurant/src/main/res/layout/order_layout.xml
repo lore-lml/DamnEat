@@ -117,13 +117,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
-            android:text="TextView"
-            android:textAlignment="center"
+            android:textAlignment="textEnd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/circleImageView"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
             app:layout_constraintTop_toBottomOf="@+id/order_deliverer_name_textview"
-            tools:text="@string/order_customer" />
+            android:text="@string/order_customer" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

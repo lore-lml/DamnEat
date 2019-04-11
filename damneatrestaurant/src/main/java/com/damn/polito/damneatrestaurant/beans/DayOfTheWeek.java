@@ -1,5 +1,7 @@
 package com.damn.polito.damneatrestaurant.beans;
 
+import com.damn.polito.commonresources.Utility;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +20,33 @@ public class DayOfTheWeek {
         open = new String[2];
         close = new String[2];
         isClosed = false;
+    }
+
+    public DayOfTheWeek(String day, boolean isClosed) {
+        this(day);
+        this.isClosed = isClosed;
+    }
+
+    public DayOfTheWeek(String day, boolean isClosed, String open1, String close1, String open2, String close2){
+        this(day,isClosed);
+
+        if(open1 != null && open1.matches(Utility.Regex.TIME))
+            open[0] = open1;
+        else if(!isClosed)
+            throw new IllegalArgumentException("You should set at least a valid time slot");
+
+        if(close1 != null && close1.matches(Utility.Regex.TIME))
+            close[0] = close1;
+        else if(!isClosed)
+            throw new IllegalArgumentException("You should set at least a valid time slot");
+
+        if(open2 != null && open2.matches(Utility.Regex.TIME))
+            open[1] = open2;
+        else open[1]=null;
+
+        if(close2 != null && close2.matches(Utility.Regex.TIME))
+            close[1] = close2;
+        else close[1] = null;
     }
 
     public DayOfTheWeek(JSONObject json){
@@ -67,7 +96,7 @@ public class DayOfTheWeek {
     public String getFirstTimeSlot(){
         if(isClosed || open[0] == null || close[0] == null) return null;
         if(open[0].trim().isEmpty()|| close[0].trim().isEmpty()) return null;
-        return open[0] + " - " + close[0];
+        return open[0] + "-" + close[0];
     }
 
     public String getSecondTimeSlot(){
@@ -100,6 +129,7 @@ public class DayOfTheWeek {
         if(open[0] == null || close[0] == null)
             throw new RuntimeException("You must set the first time slot before set the second!\n");
         open[1] = open2;
+        close[1] = close2;
     }
 
     @Override
