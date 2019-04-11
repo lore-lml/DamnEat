@@ -44,12 +44,10 @@
             android:id="@+id/tv_dish_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:text="@string/dish_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-            app:layout_constraintEnd_toStartOf="@+id/dish_name_edit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/dish_name_edit" />
 
@@ -57,12 +55,10 @@
             android:id="@+id/tv_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:text="@string/profile_desc"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-            app:layout_constraintEnd_toStartOf="@+id/description_dish_edit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/description_dish_edit" />
 
@@ -70,12 +66,10 @@
             android:id="@+id/tv_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:text="@string/dish_price"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-            app:layout_constraintEnd_toStartOf="@+id/dish_price_edit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/dish_price_edit" />
 
@@ -83,12 +77,10 @@
             android:id="@+id/tv_availabity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:text="@string/dish_availability"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-            app:layout_constraintEnd_toStartOf="@+id/dish_availabity_edit"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/dish_availabity_edit" />
 
@@ -219,13 +211,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="@string/dish_name"
             android:inputType="textLongMessage|textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_dish_name"
             app:layout_constraintTop_toBottomOf="@+id/dish_image" />
 
         <EditText
@@ -234,28 +226,28 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="@string/profile_desc"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_description"
             app:layout_constraintTop_toBottomOf="@+id/dish_name_edit" />
 
         <EditText
             android:id="@+id/dish_price_edit"
             android:layout_width="wrap_content"
-            android:layout_height="42dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="@string/dish_price"
             android:inputType="numberDecimal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_price"
             app:layout_constraintTop_toBottomOf="@+id/description_dish_edit" />
 
         <EditText
@@ -264,13 +256,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="@string/dish_availability"
             android:inputType="numberSigned"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_availabity"
             app:layout_constraintTop_toBottomOf="@+id/dish_price_edit" />
 
         <ImageButton
