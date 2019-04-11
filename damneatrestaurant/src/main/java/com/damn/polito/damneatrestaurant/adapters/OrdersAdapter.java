@@ -54,6 +54,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
         holder.customer_info.setText(ctx.getString(R.string.order_customer,"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress()));
+
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
         List<Dish> dishes = selected.getCumulatedDishes();
@@ -72,6 +73,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.deliverer_name.setVisibility(View.VISIBLE);
             holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
+            holder.customer_info.setVisibility(View.VISIBLE);
         }
     }
 
