@@ -18,22 +18,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.damn.polito.commonresources.Utility.BitMapToString;
-import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
-import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
-import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_CAMERA;
-import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
-import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
-import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
-import static com.damn.polito.commonresources.Utility.galleryIntent16_9;
-import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
-import static com.damn.polito.commonresources.Utility.showWarning;
+import static com.damn.polito.commonresources.Utility.*;
 
 public class AddDish extends AppCompatActivity {
     private ImageView dish_image;

@@ -273,7 +273,7 @@ public class SelectDishes extends AppCompatActivity {
             cropIntent.putExtra("scaleUpIfNeeded", true);
             cropIntent.putExtra("return-data", true);
 
-            ((Activity)this).startActivityForResult(cropIntent,3000+index);
+            ((Activity)this).startActivityForResult(cropIntent,index);
         }catch (ActivityNotFoundException e){
             e.printStackTrace();
         }
