@@ -41,7 +41,7 @@ public class Dish {
         this.description = description;
     }
 
-    public void setPhoto(Bitmap photo){
+    public void setPhotoBmp(Bitmap photo){
         this.photo = photo;
     }
 
@@ -68,7 +68,7 @@ public class Dish {
     public int getAvailability() {
         return availability;
     }
-    public Bitmap getPhoto(){
+    public Bitmap getPhotoBmp(){
         return photo;
     }
 
@@ -80,7 +80,7 @@ public class Dish {
         this.dish_otd = dish_otd;
     }
 
-    public String getPhotoStr(){
+    public String getPhoto(){
         if (photo == null)
             return NO_PHOTO;
         return Utility.BitMapToString(photo);

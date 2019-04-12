@@ -17,8 +17,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
@@ -39,9 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
-import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
-import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
 import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
 
 public class SelectDishes extends AppCompatActivity {
@@ -93,7 +88,7 @@ public class SelectDishes extends AppCompatActivity {
                     values.put("description", element.getDescription());
                     values.put("price", element.getPrice());
                     values.put("available", element.getAvailability());
-                    values.put("photo", element.getPhotoStr());
+                    values.put("photo", element.getPhoto());
                     values.put("dotd", element.isDishOtd());
                     array.put(values);
                     Log.d("StoreDataDish", "Store: " + array.toString());
@@ -124,7 +119,7 @@ public class SelectDishes extends AppCompatActivity {
 //                values.put("description", element.getDescription());
 //                values.put("price", element.getPrice());
 //                values.put("available", element.getAvailability());
-//                values.put("photo", element.getPhotoStr());
+//                values.put("photo", element.getPhoto());
 //                values.put("dotd", element.isDishOtd());
 //                array.put(values);
 //                Log.d("StoreDataDish", "Store: " + array.toString());
@@ -154,7 +149,7 @@ public class SelectDishes extends AppCompatActivity {
                         dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
                         if(!values.get("photo").equals("NO_PHOTO")){
                             Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-                            dishesList.get(i).setPhoto(bmp);
+                            dishesList.get(i).setPhotoBmp(bmp);
                         }
                     }
                 }
@@ -185,7 +180,7 @@ public class SelectDishes extends AppCompatActivity {
 //                dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
 //                if(!values.get("photo").equals("NO_PHOTO")){
 //                    Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-//                    dishesList.get(i).setPhoto(bmp);
+//                    dishesList.get(i).setPhotoBmp(bmp);
 //                }
 //            }
 //        } catch (JSONException e) {
@@ -222,7 +217,7 @@ public class SelectDishes extends AppCompatActivity {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 Dish d = dishesList.get(requestCode - 2000);
-                d.setPhoto(extras.getParcelable("data"));
+                d.setPhotoBmp(extras.getParcelable("data"));
                 adapter.notifyItemChanged(requestCode-2000);
 
             } else {
@@ -233,7 +228,7 @@ public class SelectDishes extends AppCompatActivity {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 Dish d = dishesList.get(requestCode - 3000);
-                d.setPhoto(extras.getParcelable("data"));
+                d.setPhotoBmp(extras.getParcelable("data"));
                 adapter.notifyItemChanged(requestCode-3000);
             } else {
                 displayImage(data.getData(), requestCode - 3000);
@@ -244,7 +239,7 @@ public class SelectDishes extends AppCompatActivity {
     private void displayImage(Uri data, int index) {
         try {
             Dish d = dishesList.get(index);
-            d.setPhoto(MediaStore.Images.Media.getBitmap(getContentResolver(), data));
+            d.setPhotoBmp(MediaStore.Images.Media.getBitmap(getContentResolver(), data));
             adapter.notifyItemChanged(index);
 
         } catch (IOException e) {
@@ -337,9 +332,9 @@ public class SelectDishes extends AppCompatActivity {
 //        intent.putExtra("description", dishesList.get(index).getDescription());
 //        intent.putExtra("price", dishesList.get(index).getPrice());
 //        intent.putExtra("availabity", dishesList.get(index).getAvailability());
-//        if (!dishesList.get(index).getPhotoStr().equals("NO_PHOTO")){
+//        if (!dishesList.get(index).getPhoto().equals("NO_PHOTO")){
 //            PreferenceManager.getDefaultSharedPreferences(this)
-//                    .edit().putString("photo", Utility.BitMapToString(dishesList.get(index).getPhoto())).apply();
+//                    .edit().putString("photo", Utility.BitMapToString(dishesList.get(index).getPhotoBmp())).apply();
 //
 //        }
 //        startActivityForResult(intent, UPDATE_DISH);

@@ -1,14 +1,11 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -30,15 +27,10 @@ import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.damneatrestaurant.beans.Dish;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
-import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
-import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
 import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
-import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
 import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
 import static com.damn.polito.commonresources.Utility.galleryIntent16_9;
-import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
 
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder>{
     private List<Dish> dishesList;
@@ -82,8 +74,8 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         viewHolder.description.setText(selected.getDescription());
         viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
         viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
-        if(!(selected.getPhotoStr().equals("NO_PHOTO"))){
-            viewHolder.image.setImageBitmap(selected.getPhoto());
+        if(!(selected.getPhoto().equals("NO_PHOTO"))){
+            viewHolder.image.setImageBitmap(selected.getPhotoBmp());
         }else {
             viewHolder.image.setImageBitmap(default_image);
         }

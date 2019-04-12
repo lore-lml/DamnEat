@@ -5,9 +5,7 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.damn.polito.damneatrestaurant.beans.DayOfTheWeek;
 import com.damn.polito.damneatrestaurant.beans.Dish;
-import com.damn.polito.damneatrestaurant.beans.DishFirebaseWrapper;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,8 +20,8 @@ private String mail = "ste@gelato.it";
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
         Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.dishes_empty);
-        Dish dish = new Dish("sss", "ddddd", 66, 66);
-        myRef.setValue(new DishFirebaseWrapper(dish));
+        Dish dish = new Dish("sss", "kkkkk", 66, 66);
+        myRef.setValue(dish);
 //        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 //        DatabaseReference db_restaurant = database.child("ristoranti").child(mail);
 //
