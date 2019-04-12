@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "459328986949",
+    "firebase_url": "https://damneat-foodelivery.firebaseio.com",
+    "project_id": "damneat-foodelivery",
+    "storage_bucket": "damneat-foodelivery.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459328986949:android:36c6a21493927347",
+        "android_client_info": {
+          "package_name": "com.damn.polito.damneatrestaurant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "459328986949-g9fjbnpcmjpv81elupttp5dph3q1636m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.damn.polito.damneatrestaurant",
+            "certificate_hash": "01c59d1a4c5245f6396967978c168b010b4d4546"
+          }
+        },
+        {
+          "client_id": "459328986949-bvjjb7f2525fmcap5urdo8s1ejk89pfd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLJMyZNcwcM190_D_ZJOpm01-YDwcmbpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "459328986949-bvjjb7f2525fmcap5urdo8s1ejk89pfd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
