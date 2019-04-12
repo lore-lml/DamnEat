@@ -22,4 +22,11 @@
     <string name="alert_edit_profile_negative" translatable="false">No</string>
     <string name="alert_edit_profile_invalid_changes">Are you sure you want to exit? Data will be lost...</string>
     <string name="select_option">Select an option</string>
+    <string name="lun_text">MON</string>
+    <string name="mar_text">TUE</string>
+    <string name="mer_text">WED</string>
+    <string name="gio_text">THU</string>
+    <string name="ven_text">FRI</string>
+    <string name="sab_text">SAT</string>
+    <string name="dom_text">SUN</string>
 </resources>

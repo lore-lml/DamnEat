@@ -53,11 +53,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.getDishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
+        holder.customer_info.setText(ctx.getString(R.string.order_customer,"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress()));
+
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
-        List<Dish> dishes = selected.getDishes();
-        for(int i=0; i<selected.getDishesNumber(); i++){
-            dish_list_str += dishes.get(i).getName() + "\n";
+        List<Dish> dishes = selected.getCumulatedDishes();
+        for(int i=0; i<dishes.size(); i++){
+            dish_list_str += dishes.get(i).getNumber() +"x\t"+ dishes.get(i).getName() + "\n";
+
         }
         holder.dishes_list.setText(dish_list_str);
 
@@ -65,10 +68,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.deliverer_name.setVisibility(View.GONE);
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
+            holder.customer_info.setVisibility(View.GONE);
         }else{
             holder.deliverer_name.setVisibility(View.VISIBLE);
             holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
+            holder.customer_info.setVisibility(View.VISIBLE);
         }
     }
 
@@ -78,7 +83,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView id,date,price,nDish, deliverer_name, dishes_list;
+        private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info;
         private CardView root;
 
         public OrderViewHolder(View itemView, OnItemClickListener listener) {
@@ -91,7 +96,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             nDish = itemView.findViewById(R.id.order_num_dishes);
             deliverer_name = itemView.findViewById(R.id.order_deliverer_name_textview);
             dishes_list = itemView.findViewById(R.id.dishes_list);
-
+            customer_info =itemView.findViewById(R.id.order_customer_info);
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
                     int position = getAdapterPosition();

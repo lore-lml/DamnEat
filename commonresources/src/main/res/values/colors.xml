@@ -30,4 +30,5 @@
     <color name="colorEditTextHint">#8e8585</color>
     <color name="colorCorners">#4f5d73</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorDisabled">#d6d6d6</color>
 </resources>

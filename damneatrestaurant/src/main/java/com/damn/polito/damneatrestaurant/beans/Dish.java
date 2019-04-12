@@ -13,7 +13,10 @@ public class Dish {
     private int availability;
     private Bitmap photo;
     private boolean dish_otd = false;
+    private boolean edit_mode = false;
 
+
+    private int number;
     public Dish(){}
 
     public Dish(String name, String description, float price, int availability) {
@@ -22,11 +25,20 @@ public class Dish {
         this.price = price;
         this.availability = availability;
         this.photo = null;
+        number=0;
 
     }
     public Dish(String name, String description, float price, int availability, Bitmap photo) {
         this(name, description, price, availability);
         this.photo = photo;
+    }
+
+    public void  setName(String name){
+        this.name = name;
+    }
+
+    public void setDescription(String description){
+        this.description = description;
     }
 
     public void setPhoto(Bitmap photo){
@@ -76,6 +88,21 @@ public class Dish {
 
     public void changeDishOtd(){
         this.dish_otd = !this.dish_otd;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+    public void setEditMode(boolean edit_mode){
+        this.edit_mode = edit_mode;
+    }
+
+    public boolean isEditMode(){
+        return edit_mode;
     }
 
 }

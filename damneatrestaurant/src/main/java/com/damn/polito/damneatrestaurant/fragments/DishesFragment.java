@@ -33,6 +33,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +53,7 @@ public class DishesFragment extends Fragment {
     private DishesAdapter adapter;
     private FloatingActionButton fab;
     private Context ctx;
+    private String srcFile = "dishes.save";
 
     @Nullable
     @Override
@@ -118,34 +124,69 @@ public class DishesFragment extends Fragment {
     }
 
     private void loadData() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String s = pref.getString("dishes", null);
-        Log.d("shared_pref", "Init load");
-
-        if (s == null) return;
-        Log.d("shared_pref", "Not null");
-
-        try {
-
-            JSONArray array = new JSONArray(s);
-            Log.d("shared_pref", "Json caricato: " + array.toString());
-
-            JSONObject values;
-            for (int i=0; i<array.length(); i++) {
-                values = array.getJSONObject(i);
-                if(values.getBoolean("dotd")) {
-                    dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
-                    if(!values.get("photo").equals("NO_PHOTO")){
-                        Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-                        dishesList.get(i).setPhoto(bmp);
+        File f = new File(ctx.getFilesDir(), srcFile);
+        if(f.exists()) {
+            try {
+                FileInputStream fis = ctx.openFileInput(srcFile);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                Object o = ois.readObject();
+                if(o instanceof String){
+                    Log.d("loadData", (String) o);
+                    JSONArray array = new JSONArray((String) o);
+                    JSONObject values;
+                    for (int i=0; i<array.length(); i++) {
+                        values = array.getJSONObject(i);
+                        if(values.getBoolean("dotd")) {
+                            dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
+                            if (!values.get("photo").equals("NO_PHOTO")) {
+                                Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+                                dishesList.get(dishesList.size()-1).setPhoto(bmp);
+                            }
+                        }
                     }
-                    Log.d("shared_pref", "Adding to list: " + values.toString());
                 }
+                ois.close();
+                fis.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
+//    private void loadData() {
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+//        String s = pref.getString("dishes", null);
+//        Log.d("shared_pref", "Init load");
+//
+//        if (s == null) return;
+//        Log.d("shared_pref", "Not null");
+//
+//        try {
+//
+//            JSONArray array = new JSONArray(s);
+//            Log.d("shared_pref", "Json caricato: " + array.toString());
+//
+//            JSONObject values;
+//            for (int i=0; i<array.length(); i++) {
+//                values = array.getJSONObject(i);
+//                if(values.getBoolean("dotd")) {
+//                    dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
+//                    if(!values.get("photo").equals("NO_PHOTO")){
+//                        Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+//                        dishesList.get(i).setPhoto(bmp);
+//                    }
+//                    Log.d("shared_pref", "Adding to list: " + values.toString());
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
