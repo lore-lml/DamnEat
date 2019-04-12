@@ -99,9 +99,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
 
         if(select_dishes_layout) {
             viewHolder.save.setOnClickListener(v -> {
-                selected.setEditMode(false);
                 setEditMode(viewHolder, selected.isEditMode());
                 if(checkField(viewHolder)){
+                    selected.setEditMode(false);
                     selected.setName(viewHolder.edit_name.getText().toString());
                     selected.setDescription(viewHolder.edit_description.getText().toString());
                     selected.setPrice(Float.valueOf(viewHolder.edit_price.getText().toString()));
