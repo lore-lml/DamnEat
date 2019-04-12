@@ -22,7 +22,7 @@ private String mail = "ste@gelato.it";
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
         Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.dishes_empty);
-        Dish dish = new Dish("sss", "ddddd", 66, 66)
+        Dish dish = new Dish("sss", "ddddd", 66, 66);
         myRef.setValue(new DishFirebaseWrapper(dish));
 //        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 //        DatabaseReference db_restaurant = database.child("ristoranti").child(mail);
