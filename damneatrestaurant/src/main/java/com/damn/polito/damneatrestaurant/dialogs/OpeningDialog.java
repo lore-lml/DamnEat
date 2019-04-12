@@ -35,6 +35,7 @@ public class OpeningDialog extends DialogFragment {
     private DayOfTheWeekAdapter adapter;
     private FloatingActionButton fab;
     private String text;
+    private boolean saved = false;
 
     @Nullable
     @Override
@@ -49,13 +50,13 @@ public class OpeningDialog extends DialogFragment {
             initDays();
             for (String day : this.daysList)
                 days.add(new DayOfTheWeek(day));
-        }
+        }else
+            recyclerView.smoothScrollToPosition(6);
 
 
         adapter = new DayOfTheWeekAdapter(days, getActivity());
         recyclerView.setAdapter(adapter);
         this.getDialog().setTitle("Opening");
-        recyclerView.smoothScrollToPosition(6);
 
         fab = v.findViewById(R.id.fab_day);
         fab.setOnClickListener(view -> saveAction());
@@ -90,7 +91,7 @@ public class OpeningDialog extends DialogFragment {
         }
 
         if(ok){
-            //store();
+            saved = true;
             this.dismiss();
         }
     }
@@ -155,6 +156,11 @@ public class OpeningDialog extends DialogFragment {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        if(!saved){
+            super.onDismiss(dialog);
+            return;
+        }
+
         Activity activity = getActivity();
         if(activity instanceof HandleDismissDialog){
             StringBuilder sb = new StringBuilder();
