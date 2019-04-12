@@ -33,4 +33,5 @@
     <string name="invalid_slot">%s dovrebbe avere almeno una fascia oraria</string>
     <string name="second_text">2°</string>
     <string name="first_text">1°</string>
+    <string name="open">Aperto</string>
 </resources>

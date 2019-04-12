@@ -162,10 +162,13 @@ public class DayOfTheWeekAdapter extends RecyclerView.Adapter<DayOfTheWeekAdapte
 
         public void setClosed(boolean closed){
             if(closed){
+                isClosed.setText(ctx.getString(R.string.close));
                 disableFirstSlot();
                 disableSecondSlot();
-            }else
+            }else {
+                isClosed.setText(ctx.getString(R.string.open));
                 enableFirstSlot();
+            }
 
         }
 
