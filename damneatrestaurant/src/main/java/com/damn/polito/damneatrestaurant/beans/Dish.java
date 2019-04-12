@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.damn.polito.commonresources.Utility;
-
 public class Dish {
 
     private String name;
@@ -14,6 +13,7 @@ public class Dish {
     private Bitmap photo;
     private boolean dish_otd = false;
     private boolean edit_mode = false;
+    private static final String NO_PHOTO = "NO_PHOTO";
 
 
     private int number;
@@ -82,7 +82,7 @@ public class Dish {
 
     public String getPhotoStr(){
         if (photo == null)
-            return "NO_PHOTO";
+            return NO_PHOTO;
         return Utility.BitMapToString(photo);
     }
 
