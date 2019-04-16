@@ -1,4 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DamnEat - Consegne</string>
+    <string name="profile_restaurant_address">Indirizzo ristorante</string>
+    <string name="app_name">DamnEat - Deliver</string>
+    <string name="profile_name">Nome</string>
+    <string name="nav_reservations">Ordini</string>
+    <string name="nav_profile">Profilo</string>
+    <string name="dish_available">Disponibile:</string>
+    <string name="dish_name">Nome piatto</string>
+    <string name="dish_price">Prezzo piatto</string>
+    <string name="dish_availability">Disponibilità piatto</string>
+    <string name="profile_opening">Orario di apertura</string>
+    <string name="profile_phone">Numero di telefono</string>
+    <string name="order_id">ID Ordine: #%d</string>
+    <string name="order_num_dishes"># Piatti: %d</string>
+    <string name="date_format">dd/MM/yyyy - hh:mm</string>
+    <string name="title_activity_select_menu">Selezione Menu</string>
+    <string name="empty_phone">Non è stato inserito nessun numero di telefono</string>
+    <string name="empty_opening">Nessuna informazione sull\'apertura è stata inserita</string>
+    <string name="invalid_phone">Il numero di telefono non è valido</string>
+    <string name="availabity_too_low">La disponibilità deve essere maggiore o uguale a zero</string>
+    <string name="price_too_low">Il prezzo deve essere maggiore di zero</string>
+    <string name="empty_availabity">Nessuna disponibilità inserita</string>
+    <string name="empty_price">Nessun prezzo inserito</string>
+    <string name="context_delete">Elimina</string>
+    <string name="context_edit">Modifica</string>
+    <string name="order_customer">Cliente:\n%s</string>
+    <string name="undo_string">Annulla</string>
+    <string name="dish_deletted">Piatto eliminato</string>
+    <string name="invalid_slot">%s dovrebbe avere almeno una fascia oraria</string>
+    <string name="second_text">2°</string>
+    <string name="first_text">1°</string>
 </resources>

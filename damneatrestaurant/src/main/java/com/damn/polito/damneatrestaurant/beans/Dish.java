@@ -17,7 +17,6 @@ public class Dish {
 
 
     private int number;
-    public Dish(){}
 
     public Dish(String name, String description, float price, int availability) {
         this.name = name;
