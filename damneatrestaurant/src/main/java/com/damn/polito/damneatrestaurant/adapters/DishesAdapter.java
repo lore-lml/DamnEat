@@ -99,9 +99,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
 
         if(select_dishes_layout) {
             viewHolder.save.setOnClickListener(v -> {
-                selected.setEditMode(false);
                 setEditMode(viewHolder, selected.isEditMode());
                 if(checkField(viewHolder)){
+                    selected.setEditMode(false);
                     selected.setName(viewHolder.edit_name.getText().toString());
                     selected.setDescription(viewHolder.edit_description.getText().toString());
                     selected.setPrice(Float.valueOf(viewHolder.edit_price.getText().toString()));
@@ -144,7 +144,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         ImageButton save, edit_img;
         CardView circle_card, card_opacity;
         TextView edit_price, edit_availabity, edit_name, edit_description, tv_dish_name, tv_dish_desc, tv_dish_price, tv_dish_availabity;
-
+        View divider;
         public ViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.dish_name);
@@ -159,6 +159,8 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
                 parentLayout = itemView.findViewById(R.id.dish_root_add);
                 selected_switch = itemView.findViewById(R.id.selected_switch);
                 parentLayout.setOnCreateContextMenuListener(this);
+
+                divider = itemView.findViewById(R.id.divider);
 
                 tv_dish_available = itemView.findViewById(R.id.dish_available);
                 im_euro = itemView.findViewById(R.id.euro_image);
@@ -209,6 +211,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             viewHolder.tv_dish_price.setVisibility(View.VISIBLE);
             viewHolder.tv_dish_name.setVisibility(View.VISIBLE);
             viewHolder.tv_dish_desc.setVisibility(View.VISIBLE);
+            viewHolder.divider.setVisibility(View.INVISIBLE);
 
         } else {
             viewHolder.circle_card.setVisibility(View.VISIBLE);
@@ -229,7 +232,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             viewHolder.tv_dish_price.setVisibility(View.GONE);
             viewHolder.tv_dish_name.setVisibility(View.GONE);
             viewHolder.tv_dish_availabity.setVisibility(View.GONE);
-
+            viewHolder.divider.setVisibility(View.GONE);
         }
 
     }
@@ -292,7 +295,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     }
 
 
-    private void pickFromGallery(int index) {
+    public void pickFromGallery(int index) {
         Intent intent = galleryIntent16_9();
         ((Activity)context).startActivityForResult(intent, 2000+index);
     }

@@ -329,22 +329,21 @@ public class SelectDishes extends AppCompatActivity {
     }
 
 
-    // todo: da gestire nel add dish
-    private void editDish(int index) {
-        //Crea il corretto intent per l'apertura dell'activity EditProfile
-        Intent intent = new Intent(this, AddDish.class);
-
-        intent.putExtra("name", dishesList.get(index).getName());
-        intent.putExtra("description", dishesList.get(index).getDescription());
-        intent.putExtra("price", dishesList.get(index).getPrice());
-        intent.putExtra("availabity", dishesList.get(index).getAvailability());
-        if (!dishesList.get(index).getPhotoStr().equals("NO_PHOTO")){
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit().putString("photo", Utility.BitMapToString(dishesList.get(index).getPhoto())).apply();
-
-        }
-        startActivityForResult(intent, UPDATE_DISH);
-    }
+//    private void editDish(int index) {
+//        //Crea il corretto intent per l'apertura dell'activity EditProfile
+//        Intent intent = new Intent(this, AddDish.class);
+//
+//        intent.putExtra("name", dishesList.get(index).getName());
+//        intent.putExtra("description", dishesList.get(index).getDescription());
+//        intent.putExtra("price", dishesList.get(index).getPrice());
+//        intent.putExtra("availabity", dishesList.get(index).getAvailability());
+//        if (!dishesList.get(index).getPhotoStr().equals("NO_PHOTO")){
+//            PreferenceManager.getDefaultSharedPreferences(this)
+//                    .edit().putString("photo", Utility.BitMapToString(dishesList.get(index).getPhoto())).apply();
+//
+//        }
+//        startActivityForResult(intent, UPDATE_DISH);
+//    }
 
     private void itemDelete(int pos) {
         //Toast.makeText(this, "@string/context_delete", Toast.LENGTH_SHORT ).show();

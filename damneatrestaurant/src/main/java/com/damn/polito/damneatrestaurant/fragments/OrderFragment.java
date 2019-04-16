@@ -66,6 +66,7 @@ public class OrderFragment extends Fragment {
     }
 
     private void initExample(){
+        orders.clear();
         List<Dish> tmp = new ArrayList<>();
         tmp.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
         tmp.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
