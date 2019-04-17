@@ -403,6 +403,13 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         }
     }
 
+    public boolean isEmailPresent(){
+
+
+
+        return true;
+    }
+
     @Override
     public void handleOnDismiss(String text) {
         opening.setText(text);
