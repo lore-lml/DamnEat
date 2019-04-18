@@ -229,22 +229,37 @@ public class ProfileFragment extends Fragment{
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Profile prof=dataSnapshot.getValue(Profile.class);
-
-                    name.setText(prof.getName());
-                    mail.setText(prof.getMail());
-                    phone.setText(prof.getPhone());
-                    description.setText(prof.getDescription());
-                    address.setText(prof.getAddress());
-                    opening.setText(prof.getOpening());
-                    if (true) {
-                        String encodedBitmap = prof.getBitmapProf();
-                        profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                        if (profileBitmap != null)
-                            profileImage.setImageBitmap(profileBitmap);
+                    Profile prof = dataSnapshot.getValue(Profile.class);
+                    if (prof != null) {
+                        name.setText(prof.getName());
+                        mail.setText(prof.getMail());
+                        phone.setText(prof.getPhone());
+                        description.setText(prof.getDescription());
+                        address.setText(prof.getAddress());
+                        opening.setText(prof.getOpening());
+                        if (prof.getBitmapProf() != null) {
+                            String encodedBitmap = prof.getBitmapProf();
+                            profileBitmap = Utility.StringToBitMap(encodedBitmap);
+                            if (profileBitmap != null)
+                                profileImage.setImageBitmap(profileBitmap);
+                        }
                     }
-                }
+                    else{
+                        name.setText(" ");
+                        mail.setText(" ");
+                        phone.setText(" ");
+                        description.setText(" ");
+                        address.setText(" ");
+                        opening.setText(" ");
+                        if (prof!=null && prof.getBitmapProf() != null) {
+                            String encodedBitmap = prof.getBitmapProf();
+                            profileBitmap = Utility.StringToBitMap(encodedBitmap);
+                            if (profileBitmap != null)
+                                profileImage.setImageBitmap(profileBitmap);
+                        }
+                    }
 
+                }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // ...
@@ -256,7 +271,7 @@ public class ProfileFragment extends Fragment{
 
 
 
-            /* PARTE CHE SALVA SULLE SHARED
+            /* PARTE CHE CARICA DALLE SHARED
             name.setText(stringOrDefault(values.getString("name")));
             mail.setText(stringOrDefault(values.getString("mail")));
             phone.setText(stringOrDefault(values.getString("phone")));

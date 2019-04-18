@@ -68,6 +68,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         //Recupera le informazioni passate da ProfileFragment
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Intent intent = getIntent();
+
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
         sPhone = intent.getStringExtra("phone");
