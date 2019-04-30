@@ -227,7 +227,7 @@ public class ProfileFragment extends Fragment{
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     Profile prof = dataSnapshot.getValue(Profile.class);
                     if (prof != null) {
@@ -243,31 +243,22 @@ public class ProfileFragment extends Fragment{
                             if (profileBitmap != null)
                                 profileImage.setImageBitmap(profileBitmap);
                         }
-                    }
-                    else{
-                        name.setText(" ");
-                        mail.setText(" ");
-                        phone.setText(" ");
-                        description.setText(" ");
-                        address.setText(" ");
-                        opening.setText(" ");
-                        if (prof!=null && prof.getBitmapProf() != null) {
-                            String encodedBitmap = prof.getBitmapProf();
-                            profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                            if (profileBitmap != null)
-                                profileImage.setImageBitmap(profileBitmap);
-                        }
+                    }else{
+                        name.setText(defaultValue);
+                        mail.setText(defaultValue);
+                        phone.setText(defaultValue);
+                        description.setText(defaultValue);
+                        address.setText(defaultValue);
+                        opening.setText(defaultValue);
                     }
 
                 }
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     // ...
                 }
 
             });
-
-            //
 
 
 
