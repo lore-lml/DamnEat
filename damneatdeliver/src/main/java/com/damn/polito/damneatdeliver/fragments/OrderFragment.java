@@ -57,8 +57,12 @@ public class OrderFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
+        if (!orders.get(0).isExpanded())
+            orders.get(0).changeExpanded();
+
         adapter.setOnItemClickListener(position -> {
-            orders.get(position).changeExpanded();
+            if (position != 0)
+                orders.get(position).changeExpanded();
             adapter.notifyItemChanged(position);
         });
     }

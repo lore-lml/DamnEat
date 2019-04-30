@@ -34,4 +34,5 @@
     <string name="undo_string">Undo</string>
     <string name="dish_deletted">Dish deleted</string>
     <string name="invalid_slot">%s should at least have a time slot!</string>
+    <string name="confirmOrder">Delivered</string>
 </resources>
