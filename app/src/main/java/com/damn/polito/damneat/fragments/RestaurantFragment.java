@@ -108,6 +108,7 @@ public class RestaurantFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                adapter.notifyDataSetChanged();
             }
 
             @Override

@@ -18,8 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneat.adapters.DishesAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,12 +46,18 @@ public class ChooseDishes extends AppCompatActivity {
     private FloatingActionButton fab_cart;
     private ImageView no_dishes_img;
     private TextView no_dishes_tv;
-    private String restaurant_name = "Test restaurant";
-    private String restaurantID = "luigis@ristorante|it";
-    //private String restaurantID = "ste@lo|it";
-    private String address = "Test address";
-    private String name = "Test name";
-    private String clientID = "-LdjJX4rCHX-MZ4rvjRr";
+
+    // Dettagli ristorante
+    private Restaurant restaurant = new Restaurant();
+    private Double restaurant_price_ship;
+    private String restaurant_description;
+
+    private String note = "test";
+    private String deliveryTime = "19.30";
+
+
+    private Customer customer = new Customer();
+
     private Double price = -1.;
     private Context ctx;
     private String restaurant_photo;
@@ -68,23 +76,61 @@ public class ChooseDishes extends AppCompatActivity {
         fab_cart = findViewById(R.id.fab_cart);
         fab_cart.setOnClickListener(v-> startCart());
         ctx = ChooseDishes.this;
+        getIntentData();
+        getSharedData();
         init();
         initReyclerView();
     }
+
+    private void getIntentData(){
+        Intent i = getIntent();
+        restaurant.setRestaurantName(i.getStringExtra("rest_name"));
+        restaurant.setRestaurantID(i.getStringExtra("rest_key"));
+        restaurant.setRestaurantAddress(i.getStringExtra("rest_address"));
+        restaurant.setRestaurantPhone(i.getStringExtra("rest_phone"));
+        restaurant.setPhoto(i.getStringExtra("rest_image"));
+        restaurant_description = i.getStringExtra("rest_description");
+        restaurant_price_ship = i.getDoubleExtra("rest_priceship", 0);
+        Log.d("restaurant", restaurant.getRestaurantName());
+        Log.d("restaurant", restaurant.getRestaurantAddress());
+    }
+
+    private void getSharedData() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        customer.setCustomerName(pref.getString("clientname", ""));
+        customer.setCustomerAddress(pref.getString("clientaddress", ""));
+        customer.setCustomerMail(pref.getString("clientmail", ""));
+        customer.setCustomerPhone(pref.getString("clientphone", ""));
+        customer.setCustomerID(pref.getString("dbkey", ""));
+    }
+
 
     private void startCart(){
         String data = "";
         Intent i = new Intent(this, Cart.class);
         List<Dish> cart_dishes = getCartDishes();
         storeData(cart_dishes);
+        price = 0.;
         for (Dish d:cart_dishes) {
-            data += d.getQuantity() +"x\t"+ d.getName() + "\n";
+            String p = String.format("%.2f", d.getPrice());
+            data += d.getQuantity() +"x\t"+ d.getName()+"\t"+ p + "€\n";
             price += d.getQuantity()*d.getPrice();
         }
-        i.putExtra("list",data);
+        if(price == 0){
+            Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_LONG);
+            return;
+        }
+        if(restaurant_price_ship != 0.) {
+            String p = String.format("%.2f", restaurant_price_ship);
+            data += getString(R.string.ship) + " " + p + "€";
+            Log.d("test", restaurant_price_ship.toString());
+            price += restaurant_price_ship;
+        }
+        i.putExtra("list", data);
         i.putExtra("price", price);
-        i.putExtra("name", restaurant_name);
-        i.putExtra("address", address);
+        i.putExtra("restaurant_name", restaurant.getRestaurantName());
+        i.putExtra("restaurant_address", restaurant.getRestaurantAddress());
+        i.putExtra("restaurant_photo", restaurant.Photo());
         startActivityForResult(i, CART);
     }
 
@@ -111,7 +157,7 @@ public class ChooseDishes extends AppCompatActivity {
 
     private void init(){
         database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference("ristoranti/"+ restaurantID +"/piatti_del_giorno/");
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -150,15 +196,8 @@ public class ChooseDishes extends AppCompatActivity {
             }
         });
     }
-//    private void init(){
-//        dishesList.add(new Dish("Pizzaaaaaaaaa", "Buonaaaaaaaaa", (float)5.5, 10));
-//        dishesList.add(new Dish("Gelatoooooooo", "Grossooooooooo", (float)3, 20));
-//        dishesList.add(new Dish("Pizzaaaaaaaaa", "Buonaaaaaaaaa", (float)5.5, 10));
-//        dishesList.add(new Dish("Gelatoooooooo", "Grossooooooooo", (float)3, 20));
-//    }
 
     public void snackBar(int index){
-
         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.select_dishes_coordinator), R.string.dish_added, Snackbar.LENGTH_LONG);
         mySnackbar.setAction(R.string.undo_string, v -> {
             dishesList.get(index).decreaseQuantity();
@@ -174,7 +213,7 @@ public class ChooseDishes extends AppCompatActivity {
             for (Dish element:cart_dishes) {
                 JSONObject values = new JSONObject();
                 try {
-                    values.put("name", element.getName());
+                    values.put("client_name", element.getName());
                     values.put("quantity", element.getQuantity());
                     values.put("price", element.getPrice());
                     values.put("id", element.getId());
@@ -207,7 +246,7 @@ public class ChooseDishes extends AppCompatActivity {
             JSONObject values;
             for (int i=0; i<array.length(); i++) {
                 values = array.getJSONObject(i);
-                cart_list.add(new Dish(values.getString("name"), values.getInt("quantity"), values.getDouble("price"), values.getString("id")));
+                cart_list.add(new Dish(values.getString("client_name"), values.getInt("quantity"), values.getDouble("price"), values.getString("id")));
                 Log.d("shared_pref", "Adding to list: " + values.toString());
                 }
         } catch (JSONException e) {
@@ -222,7 +261,7 @@ public class ChooseDishes extends AppCompatActivity {
             List<Dish> cart_dishes = loadData();
 
             //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
-            DatabaseReference dbRefRestaurant = database.getReference("ristoranti/"+restaurantID+"/piatti_del_giorno/");
+            DatabaseReference dbRefRestaurant = database.getReference("ristoranti/"+restaurant.getRestaurantID()+"/piatti_del_giorno/");
 //            DatabaseReference id_restaurant = dbRefRestaurant.push();
 //            id_restaurant.setValue(orderID.getKey());
 
@@ -267,24 +306,25 @@ public class ChooseDishes extends AppCompatActivity {
                 public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                     Log.d("transazione", String.valueOf(b));
                     if(b) {
-                        Order order = new Order(cart_dishes, new Date(), address, name, price);
+                        Order order = new Order(cart_dishes, new Date(), restaurant, customer, price, note, deliveryTime);
                         DatabaseReference dbRefOrdini = database.getReference("ordini/");
                         DatabaseReference orderID = dbRefOrdini.push();
                         orderID.setValue(order);
                         orderID_key = orderID.getKey();
                         //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
-                        DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurantID + "/ordini_pendenti/");
+                        DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/ordini_pendenti/");
                         DatabaseReference id_restaurant = dbRefRestaurant.push();
                         id_restaurant.setValue(orderID.getKey());
                         //AGGIUNGO LA CHIAVE AGLI ORDINI DEL CLIENTE
-                        DatabaseReference dbRefClient = database.getReference("clienti/" + clientID + "/lista_ordini/");
+                        DatabaseReference dbRefClient = database.getReference("clienti/" + customer.getCustomerID() + "/lista_ordini/");
                         DatabaseReference id_client = dbRefClient.push();
                         id_client.setValue(orderID.getKey());
                         Toast.makeText(ctx, R.string.order_succesfull, Toast.LENGTH_LONG).show();
+                        setResult(RESULT_OK);
+                        finish();
                     }
                     else
                         Toast.makeText(ctx, R.string.order_error, Toast.LENGTH_LONG).show();
-
                 }
             });
         }

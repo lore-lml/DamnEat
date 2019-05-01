@@ -10,43 +10,64 @@ import java.util.Map;
 
 public class Order {
 
-
     private int id;
     private List<Dish> dishes;
     private Date date;
     private double price;
-    private String customerAddress;
-    private String customerName;
     private String delivererName;
+    private String note;
+    private String deliveryTime;
 
-
+    private Customer customer;
+    private Restaurant restaurant;
+    //private Deliverer deliverer;
 
     private String state;
     private boolean expanded;
 
-    /*FOR FUTURE USE*/
-    //private Customer customer;
-    //private Deliverer deliverer;
+    public Order(List<Dish> dishes, Date date, double price, String delivererName, String note, String deliveryTime, Customer customer, Restaurant restaurant) {
+        this.dishes = dishes;
+        this.date = date;
+        this.price = price;
+        this.delivererName = delivererName;
+        this.note = note;
+        this.deliveryTime = deliveryTime;
+        this.customer = customer;
+        this.restaurant = restaurant;
+        this.state = "ordered";
+
+    }
 
     public Order(int id, List<Dish> dishes, Date date, String customerAddress, String customerName, String delivererName, double price) {
         this.id = id;
         this.dishes = dishes;
         this.date = date;
-        this.customerAddress = customerAddress;
-        this.customerName = customerName;
+        this.customer = new Customer(customerName, customerAddress);
         this.delivererName = delivererName;
         this.price=price;
         this.expanded = false;
     }
 
-    public Order(List<Dish> dishes, Date date, String customerAddress, String customerName, double price){
-        this.dishes = dishes;
+    public Order(List<Dish> cart_dishes, Date date, Restaurant restaurant, Customer customer, Double price, String note, String deliveryTime) {
+        this.dishes = cart_dishes;
         this.date = date;
-        this.customerAddress = customerAddress;
-        this.customerName = customerName;
+        this.customer = customer;
+        this.restaurant = restaurant;
         this.price = price;
+        this.note = note;
+        this.deliveryTime = deliveryTime;
         this.state = "ordered";
     }
+
+//    public Order(List<Dish> dishes, Date date, String customerAddress, String customerName, double price){
+//        this.dishes = dishes;
+//        this.date = date;
+//        this.customer = new Customer(customerName, customerAddress);
+//        this.price = price;
+//        this.state = "ordered";
+//    }
+
+
 
     public String getState() {
         return state;
@@ -99,11 +120,11 @@ public class Order {
     }
 
     public String getCustomerAddress() {
-        return customerAddress;
+        return customer.getCustomerAddress();
     }
 
     public String getCustomerName() {
-        return customerName;
+        return customer.getCustomerName();
     }
 
     public String getDelivererName() {
@@ -131,11 +152,42 @@ public class Order {
     }
 
     public void setCustomerAddress(String customerAddress) {
-        this.customerAddress = customerAddress;
+        this.customer.setCustomerAddress(customerAddress);
     }
 
     public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+        this.customer.setCustomerName(customerName);
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
 }

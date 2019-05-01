@@ -9,4 +9,6 @@
     <string name="no_dishes">This restaurant has no dishes yet</string>
     <string name="order_error">Order error</string>
     <string name="order_succesfull">Order successfully completed</string>
+    <string name="ship">Delivery cost</string>
+    <string name="cart_empty">Cart empty</string>
 </resources>

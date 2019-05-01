@@ -1,0 +1,62 @@
+package com.damn.polito.commonresources.beans;
+
+public class Restaurant {
+    private String restaurantName;
+    private String restaurantPhone;
+    private String restaurantID;
+    private String restaurantAddress;
+    private String photo;
+
+    public Restaurant() {
+    }
+
+    public Restaurant(String restaurantName, String restaurantPhone, String restaurantID, String restaurantAddress, String photo) {
+        this.restaurantName = restaurantName;
+        this.restaurantPhone = restaurantPhone;
+        this.restaurantID = restaurantID;
+        this.restaurantAddress = restaurantAddress;
+        this.photo = photo;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
+    public String getRestaurantPhone() {
+        return restaurantPhone;
+    }
+
+    public void setRestaurantPhone(String restaurantPhone) {
+        this.restaurantPhone = restaurantPhone;
+    }
+
+    public String getRestaurantID() {
+        return restaurantID;
+    }
+
+    public void setRestaurantID(String restaurantID) {
+        this.restaurantID = restaurantID;
+    }
+
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
+
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
+    }
+
+    public String Photo() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+
+}

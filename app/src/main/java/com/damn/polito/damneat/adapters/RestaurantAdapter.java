@@ -73,8 +73,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             intent.putExtra("rest_image", current.getImage());
             intent.putExtra("rest_description", current.getDescription());
             intent.putExtra("rest_priceship", current.getPriceShip());
-            intent.putExtra("rest_rating", holder.ratingBar.getProgress());
-            intent.putExtra("rest_reviews", current.getReviews());
+//            intent.putExtra("rest_rating", holder.ratingBar.getProgress());
+//            intent.putExtra("rest_reviews", current.getReviews());
             ((Activity)ctx).startActivityForResult(intent, RestaurantFragment.REQUEST_CODE + pos);
         });
     }
