@@ -1,2 +1,17 @@
 <resources>
+    <style name="DishPrice" parent="Base.TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="DishAvailabity" parent="Base.TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="DishQuantity" parent="Base.TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

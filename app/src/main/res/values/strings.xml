@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">DamnEat</string>
     <string name="profile_address">Address</string>
+    <string name="add_to_chart">Add to chart</string>
+    <string name="dish_added">Dish added to your shopping cart</string>
+    <string name="confirm_order">Confirm order</string>
+    <string name="dishes_list">Dishes list</string>
+    <string name="price">Price</string>
 </resources>

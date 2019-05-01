@@ -1,4 +1,6 @@
-package com.damn.polito.damneatrestaurant.beans;
+package com.damn.polito.commonresources.beans;
+
+import com.damn.polito.commonresources.beans.Dish;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +10,7 @@ import java.util.Map;
 
 public class Order {
 
+
     private int id;
     private List<Dish> dishes;
     private Date date;
@@ -15,7 +18,11 @@ public class Order {
     private String customerAddress;
     private String customerName;
     private String delivererName;
-    private boolean expanded = false;
+
+
+
+    private String state;
+    private boolean expanded;
 
     /*FOR FUTURE USE*/
     //private Customer customer;
@@ -29,9 +36,26 @@ public class Order {
         this.customerName = customerName;
         this.delivererName = delivererName;
         this.price=price;
+        this.expanded = false;
     }
 
-    public int getId() {
+    public Order(List<Dish> dishes, Date date, String customerAddress, String customerName, double price){
+        this.dishes = dishes;
+        this.date = date;
+        this.customerAddress = customerAddress;
+        this.customerName = customerName;
+        this.price = price;
+        this.state = "ordered";
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    public int Id() {
         return id;
     }
 
@@ -39,7 +63,7 @@ public class Order {
     }
 
     /*Visualizzazione compatta*/
-    public List<Dish> getCumulatedDishes(){
+    public List<Dish> CumulatedDishes(){
         List<Dish> out = new ArrayList<>();
         Map<String,Integer> outTmp = new HashMap<>();
         int i,j,contiene;
@@ -60,13 +84,13 @@ public class Order {
             }
         }
         for(i=0;i<out.size();i++){
-            out.get(i).setNumber(outTmp.get(out.get(i).getName()));
+            out.get(i).setQuantity(outTmp.get(out.get(i).getName()));
         }
 
         return out;
     }
 
-    public int getDishesNumber() {
+    public int DishesNumber() {
         return dishes.size();
     }
 
@@ -92,5 +116,26 @@ public class Order {
 
     public void changeExpanded() {expanded = !expanded; }
 
-    public boolean isExpanded() { return expanded; }
+    public boolean Expanded() { return expanded; }
+
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
 }

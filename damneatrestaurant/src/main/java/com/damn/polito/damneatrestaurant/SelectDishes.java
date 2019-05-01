@@ -20,7 +20,7 @@ import android.view.MenuItem;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
-import com.damn.polito.damneatrestaurant.beans.Dish;
+import com.damn.polito.commonresources.beans.Dish;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,7 +89,7 @@ public class SelectDishes extends AppCompatActivity {
                     values.put("price", element.getPrice());
                     values.put("available", element.getAvailability());
                     values.put("photo", element.getPhoto());
-                    values.put("dotd", element.isDishOtd());
+                    values.put("dotd", element.DishOtd());
                     array.put(values);
                     Log.d("StoreDataDish", "Store: " + array.toString());
                 }
@@ -120,7 +120,7 @@ public class SelectDishes extends AppCompatActivity {
 //                values.put("price", element.getPrice());
 //                values.put("available", element.getAvailability());
 //                values.put("photo", element.getPhoto());
-//                values.put("dotd", element.isDishOtd());
+//                values.put("dotd", element.DishOtd());
 //                array.put(values);
 //                Log.d("StoreDataDish", "Store: " + array.toString());
 //            }catch (JSONException e) {
@@ -334,7 +334,7 @@ public class SelectDishes extends AppCompatActivity {
 //        intent.putExtra("availabity", dishesList.get(index).getAvailability());
 //        if (!dishesList.get(index).getPhoto().equals("NO_PHOTO")){
 //            PreferenceManager.getDefaultSharedPreferences(this)
-//                    .edit().putString("photo", Utility.BitMapToString(dishesList.get(index).getPhotoBmp())).apply();
+//                    .edit().putString("photo", Utility.BitMapToString(dishesList.get(index).PhotoBmp())).apply();
 //
 //        }
 //        startActivityForResult(intent, UPDATE_DISH);

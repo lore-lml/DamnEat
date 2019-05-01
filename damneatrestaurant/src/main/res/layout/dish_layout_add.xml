@@ -155,7 +155,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
             android:elevation="10dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/dish_price"
             app:layout_constraintStart_toStartOf="parent"

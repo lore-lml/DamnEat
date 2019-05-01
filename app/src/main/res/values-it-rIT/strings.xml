@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_address">Indirizzo</string>
+    <string name="add_to_chart">Aggiungi al carrello</string>
+    <string name="dish_added">Piatto aggiunto al carrello</string>
+    <string name="confirm_order">Conferma ordine</string>
+    <string name="dishes_list">Lista piatti</string>
+    <string name="price">Prezzo</string>
 </resources>

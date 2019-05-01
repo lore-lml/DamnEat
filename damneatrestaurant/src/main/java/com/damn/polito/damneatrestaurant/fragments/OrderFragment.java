@@ -15,12 +15,10 @@ import android.widget.TextView;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
-import com.damn.polito.damneatrestaurant.beans.Dish;
-import com.damn.polito.damneatrestaurant.beans.Order;
+import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.commonresources.beans.Order;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;

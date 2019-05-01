@@ -22,7 +22,7 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
-import com.damn.polito.damneatrestaurant.beans.Dish;
+import com.damn.polito.commonresources.beans.Dish;
 
 import org.json.JSONArray;
 import org.json.JSONException;
