@@ -323,6 +323,8 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         if(!(opening.equals(sOpening)))
             return true;
 
+        if(profImg == null) return false;
+
         return (!(profImg.equals(profImgPrec)));
 
     }
@@ -366,8 +368,10 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         if(checkChanges())
             // Facciamo comparire il messagio solo se sono stati cambiati dei campi
             showWarning(this, checkField(), getActivityResult());
-        else
+        else {
+            setResult(RESULT_CANCELED);
             this.finish();
+        }
     }
 
     @Override
@@ -376,8 +380,10 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             case android.R.id.home:
                 if(checkChanges())
                     showWarning(this, checkField(), getActivityResult());
-                else
+                else {
+                    setResult(RESULT_CANCELED);
                     this.finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

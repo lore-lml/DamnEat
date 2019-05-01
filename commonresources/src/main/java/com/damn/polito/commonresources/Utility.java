@@ -25,7 +25,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 public class Utility {
-
+    public static boolean firstON = true;
     public static final int REQUEST_IMAGE_CAPTURE = 2;
     public static final int IMAGE_GALLERY_REQUEST = 10;
     public static final int CROP_REQUEST = 20;

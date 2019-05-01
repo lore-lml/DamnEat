@@ -1,68 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground">
 
     <View
-        android:id="@+id/view"
         android:layout_width="match_parent"
-        android:layout_height="210dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="100dp"
         android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/profile_sample"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/image_button"
+        android:elevation="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+        app:layout_constraintEnd_toEndOf="@+id/profile_image"
+        app:srcCompat="@drawable/ic_photo_camera" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profile_image"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="16dp"
-                android:elevation="10dp"
-                android:src="@drawable/profile_sample"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageButton
-                android:id="@+id/btn_camera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/image_button"
-                android:elevation="30dp"
-                app:layout_constraintStart_toEndOf="@+id/profile_image"
-                app:layout_constraintTop_toTopOf="@+id/profile_image"
-                app:srcCompat="@drawable/ic_photo_camera" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="75dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="20dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/colorBackground"
                 app:cardElevation="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/profile_image">
+                app:cardCornerRadius="20dp">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
@@ -70,15 +73,15 @@
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/card_edit_name"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="90dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
                         android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
                         app:cardElevation="5dp"
+                        app:cardCornerRadius="10dp"
                         app:layout_constraintBottom_toTopOf="@+id/card_edit_mail"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -103,8 +106,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:layout_marginTop="6dp"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginEnd="16dp"
                                 android:hint="@string/profile_name"
                                 android:inputType="textPersonName"
                                 android:textAppearance="@style/EditText"
@@ -119,16 +121,17 @@
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/card_edit_mail"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
+                        android:background="@color/colorBackground"
                         android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
                         app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_desc"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintBottom_toTopOf="@+id/card_edit_phone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/card_edit_name">
@@ -152,8 +155,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:layout_marginTop="6dp"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginEnd="16dp"
                                 android:hint="@string/profile_email"
                                 android:inputType="textEmailAddress"
                                 android:textAppearance="@style/EditText"
@@ -167,20 +169,86 @@
                     </android.support.v7.widget.CardView>
 
                     <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_desc"
-                        android:layout_width="match_parent"
+                        android:id="@+id/card_edit_phone"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
+                        android:background="@color/colorBackground"
                         android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
                         app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_address"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintBottom_toTopOf="@+id/card_edit_desc"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/card_edit_mail">
+
+                        <android.support.constraint.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/icon_phone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/ic_phone" />
+
+                            <EditText
+                                android:id="@+id/edit_prefix"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:focusableInTouchMode="false"
+                                android:focusable="false"
+                                android:cursorVisible="false"
+                                android:text="@string/phone_prefix"
+                                android:textAppearance="@style/EditText"
+                                android:textColor="@color/colorEditText"
+                                android:textColorHint="@color/colorEditTextHint"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/edit_phone"
+                                app:layout_constraintStart_toEndOf="@+id/icon_phone"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <EditText
+                                android:id="@+id/edit_phone"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:hint="@string/profile_phone"
+                                android:inputType="phone"
+                                android:textAppearance="@style/EditText"
+                                android:textColor="@color/colorEditText"
+                                android:textColorHint="@color/colorEditTextHint"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/edit_prefix"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </android.support.constraint.ConstraintLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/card_edit_desc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/colorBackground"
+                        android:elevation="5dp"
+                        app:cardElevation="5dp"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintBottom_toTopOf="@+id/card_edit_address"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/card_edit_phone">
 
                         <android.support.constraint.ConstraintLayout
                             android:layout_width="match_parent"
@@ -201,8 +269,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:layout_marginTop="6dp"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginEnd="16dp"
                                 android:hint="@string/profile_desc"
                                 android:inputType="textShortMessage|textMultiLine"
                                 android:textAppearance="@style/EditText"
@@ -217,11 +284,13 @@
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/card_edit_address"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/colorBackground"
                         android:elevation="5dp"
                         app:cardElevation="5dp"
                         app:cardCornerRadius="10dp"
@@ -249,13 +318,13 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
+                                android:layout_marginEnd="16dp"
                                 android:hint="@string/profile_address"
-                                android:inputType="textShortMessage"
+                                android:inputType="text"
                                 android:textAppearance="@style/EditText"
                                 android:textColor="@color/colorEditText"
                                 android:textColorHint="@color/colorEditTextHint"
-                                android:layout_marginTop="6dp"
-                                android:layout_marginBottom="6dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/imageView6"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -264,11 +333,13 @@
 
                     <Button
                         android:id="@+id/edit_save"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="32dp"
                         android:layout_marginTop="32dp"
-                        android:layout_marginBottom="32dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="16dp"
                         android:background="@drawable/buttons"
                         android:paddingStart="100dp"
                         android:paddingEnd="100dp"
@@ -284,8 +355,10 @@
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
     </ScrollView>
+
+
 
 
 </android.support.constraint.ConstraintLayout>
