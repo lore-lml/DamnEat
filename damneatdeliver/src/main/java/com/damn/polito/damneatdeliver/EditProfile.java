@@ -10,11 +10,11 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,8 +22,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.damneatdeliver.R;
 
 import static com.damn.polito.commonresources.Utility.*;
 
@@ -34,12 +34,12 @@ public class EditProfile extends AppCompatActivity {
 
     private ImageView profile;
     private ImageButton camera;
-    private EditText name, mail, description;
+    private EditText name, mail, description, address, phone, opening;
     private Button save;
     private Bitmap profImg;
 
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
-    private String sName, sMail, sDesc;
+    private String sName, sMail, sDesc, sAddress, sPhone, sOpening;
     private Bitmap profImgPrec;
 
     @Override
@@ -53,24 +53,27 @@ public class EditProfile extends AppCompatActivity {
         camera = findViewById(R.id.btn_camera);
         name = findViewById(R.id.edit_name);
         mail = findViewById(R.id.edit_mail);
+        phone = findViewById(R.id.edit_phone);
         description = findViewById(R.id.edit_desc);
         save = findViewById(R.id.edit_save);
 
-        findViewById(R.id.card_edit_address).setVisibility(View.INVISIBLE);
-
         init();
-
     }
 
     private void init() {
-        //Recupera le informazioni passate da Profile
+        //Recupera le informazioni passate da ProfileFragment
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Intent intent = getIntent();
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
+        sPhone = intent.getStringExtra("phone");
+
+        if (sPhone != null && !sPhone.isEmpty())
+            sPhone = sPhone.substring(4);
+
         sDesc = intent.getStringExtra("description");
         String bitmapString = pref.getString("profile", null);
-        if(bitmapString != null) {
+        if (bitmapString != null) {
             profImg = StringToBitMap(bitmapString);
             profImgPrec = profImg;
             pref.edit().remove("profile").apply();
@@ -78,26 +81,26 @@ public class EditProfile extends AppCompatActivity {
 
         name.setText(sName);
         mail.setText(sMail);
+        phone.setText(sPhone);
         description.setText(sDesc);
-
-        if(profImg != null){
+        if (profImg != null) {
             profile.setImageBitmap(profImg);
         }
 
 
         //Imposta la funzione del bottone "SALVA"
-        save.setOnClickListener(v->{
-            if(checkField()){
+        save.setOnClickListener(v -> {
+            if (checkField()) {
                 setActivityResult();
                 finish();
             }
         });
 
-        camera.setOnClickListener(v->{
+        camera.setOnClickListener(v -> {
             PopupMenu pop = new PopupMenu(this, camera);
             pop.getMenuInflater().inflate(R.menu.context_camera_menu, pop.getMenu());
-            pop.setOnMenuItemClickListener(item->{
-                switch (item.getItemId()){
+            pop.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
                     case R.id.item_snap:
                         itemCamera();
                         return true;
@@ -113,7 +116,7 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void itemCamera() {
-        if(!checkPermissionFromDevice(REQUEST_PERM_CAMERA))
+        if (!checkPermissionFromDevice(REQUEST_PERM_CAMERA))
             requestPermission(REQUEST_PERM_CAMERA, PERMISSION_CODE_CAMERA);
         else
             photoShot();
@@ -126,8 +129,8 @@ public class EditProfile extends AppCompatActivity {
         }
     }
 
-    private void itemGallery(){
-        if(!checkPermissionFromDevice(REQUEST_PERM_WRITE_EXTERNAL))
+    private void itemGallery() {
+        if (!checkPermissionFromDevice(REQUEST_PERM_WRITE_EXTERNAL))
             requestPermission(REQUEST_PERM_WRITE_EXTERNAL, PERMISSION_CODE_WRITE_EXTERNAL);
         else
             pickFromGallery();
@@ -146,9 +149,9 @@ public class EditProfile extends AppCompatActivity {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
+        i.putExtra("phone", getString(R.string.phone_prefix) + " " + phone.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
-
-        if(profImg != null){
+        if (profImg != null) {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
         }
@@ -167,16 +170,16 @@ public class EditProfile extends AppCompatActivity {
             if (extras != null) {
                 profImg = extras.getParcelable("data");
                 profile.setImageBitmap(profImg);
-            }else{
+            } else {
                 copyAndCrop(data.getData());
             }
         }
-        if(requestCode == CROP_REQUEST){
+        if (requestCode == CROP_REQUEST) {
             final Bundle extras = data.getExtras();
             if (extras != null) {
                 profImg = extras.getParcelable("data");
                 profile.setImageBitmap(profImg);
-            }else{
+            } else {
                 displayImage(data.getData());
             }
         }
@@ -194,13 +197,13 @@ public class EditProfile extends AppCompatActivity {
     private void copyAndCrop(Uri uri) {
         assert uri != null;
         Uri newUri = getImageUrlWithAuthority(this, Objects.requireNonNull(uri));
-        if(newUri != null) {
+        if (newUri != null) {
             cropImage(newUri);
         }
     }
 
     private void cropImage(Uri uri) {
-        try{
+        try {
             Intent cropIntent = new Intent("com.android.camera.action.CROP");
             cropIntent.setDataAndType(uri, "image/*");
             cropIntent.putExtra("crop", "true");
@@ -212,8 +215,8 @@ public class EditProfile extends AppCompatActivity {
             cropIntent.putExtra("scaleUpIfNeeded", true);
             cropIntent.putExtra("return-data", true);
 
-            startActivityForResult(cropIntent,CROP_REQUEST);
-        }catch (ActivityNotFoundException e){
+            startActivityForResult(cropIntent, CROP_REQUEST);
+        } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -222,7 +225,7 @@ public class EditProfile extends AppCompatActivity {
         String name = this.name.getText().toString();
 
         //Controllo sui campi vuoti
-        if(name.trim().isEmpty()){
+        if (name.trim().isEmpty()) {
             Toast.makeText(this, getString(R.string.empty_name), Toast.LENGTH_SHORT).show();
             this.name.requestFocus();
             return false;
@@ -231,41 +234,57 @@ public class EditProfile extends AppCompatActivity {
         //Controlla se la stringa inserita sia una mail valida
         String mail = this.mail.getText().toString();
         String regex = Utility.Regex.MAIL;
-        if(mail.trim().toLowerCase().isEmpty()){
+        if (mail.trim().toLowerCase().isEmpty()) {
             Toast.makeText(this, getString(R.string.empty_mail), Toast.LENGTH_SHORT).show();
             this.mail.requestFocus();
             return false;
-        }
-        else if(!mail.matches(regex)){
+        } else if (!mail.matches(regex)) {
             Toast.makeText(this, getString(R.string.invalid_mail), Toast.LENGTH_SHORT).show();
             this.mail.requestFocus();
             return false;
         }
 
+        String phone = this.phone.getText().toString().trim();
+        if (phone.isEmpty()) {
+            Toast.makeText(this, getString(R.string.empty_phone), Toast.LENGTH_SHORT).show();
+            this.phone.requestFocus();
+            return false;
+        } else if (!phone.matches(Utility.Regex.MOBILE_PHONE) && !phone.matches(Utility.Regex.TELEPHONE)) {
+            Toast.makeText(this, getString(R.string.invalid_phone), Toast.LENGTH_SHORT).show();
+            this.phone.requestFocus();
+            return false;
+        }
+
         String description = this.description.getText().toString();
-        if(description.trim().isEmpty()){
+        if (description.trim().isEmpty()) {
             Toast.makeText(this, getString(R.string.empty_desc), Toast.LENGTH_SHORT).show();
             this.description.requestFocus();
             return false;
         }
-
 
         return true;
     }
 
     private boolean checkChanges() {
         String name = this.name.getText().toString();
-        if(!name.equals(sName))
+        if (!name.equals(sName))
             return true;
 
         String mail = this.mail.getText().toString();
-        if(!(mail.equals(sMail)))
+        if (!(mail.equals(sMail)))
+            return true;
+
+        String phone = this.phone.getText().toString();
+        if (!(phone.equals(sPhone)))
             return true;
 
         String description = this.description.getText().toString();
-        if(!(description.equals(sDesc)))
+        if (!(description.equals(sDesc)))
             return true;
 
+        String address = this.address.getText().toString();
+        if (!(address.equals(sAddress)))
+            return true;
 
         return (!(profImg.equals(profImgPrec)));
 
@@ -279,16 +298,16 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void requestPermission(final String permission, final int permission_code) {
-        ActivityCompat.requestPermissions(this,new String[]{
+        ActivityCompat.requestPermissions(this, new String[]{
                 permission
         }, permission_code);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
+        switch (requestCode) {
             case PERMISSION_CODE_CAMERA:
-                if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
                     Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
                             Toast.LENGTH_SHORT).show();
                 else
@@ -297,7 +316,7 @@ public class EditProfile extends AppCompatActivity {
                 break;
 
             case PERMISSION_CODE_WRITE_EXTERNAL:
-                if(!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
                     Toast.makeText(getApplicationContext(), getString(R.string.permission_denied),
                             Toast.LENGTH_SHORT).show();
                 else
@@ -307,7 +326,7 @@ public class EditProfile extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(checkChanges())
+        if (checkChanges())
             // Facciamo comparire il messagio solo se sono stati cambiati dei campi
             showWarning(this, checkField(), getActivityResult());
         else
@@ -316,9 +335,9 @@ public class EditProfile extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
-                if(checkChanges())
+                if (checkChanges())
                     showWarning(this, checkField(), getActivityResult());
                 else
                     this.finish();
@@ -331,16 +350,17 @@ public class EditProfile extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(profImg != null)
+        if (profImg != null)
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("profile", BitMapToString(profImg)).apply();
     }
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         String bitmap = pref.getString("profile", null);
-        if(bitmap != null) {
+        if (bitmap != null) {
             profImg = StringToBitMap(bitmap);
             profile.setImageBitmap(profImg);
             pref.edit().remove("profile").apply();

@@ -20,7 +20,7 @@
     <string name="context_camera_gallery">Scegli dalla galleria</string>
     <string name="permission_denied">Permesso Negato</string>
     <string name="alert_edit_profile_invalid_changes">Sei sicuro di voler uscire? Le modifiche verrano perse...</string>
-    <string name="select_option">Seleziona un\'opzione</string>
+    <string name="select_option">Opzioni</string>
     <string name="lun_text">LUN</string>
     <string name="mar_text">MAR</string>
     <string name="mer_text">MER</string>

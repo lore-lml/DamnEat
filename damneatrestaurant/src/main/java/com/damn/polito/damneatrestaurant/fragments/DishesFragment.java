@@ -92,11 +92,12 @@ public class DishesFragment extends Fragment {
     }
 
     private void itemDelete() {
-        Toast.makeText(ctx, "DELETE", Toast.LENGTH_SHORT ).show();
+        //Toast.makeText(ctx, "DELETE", Toast.LENGTH_SHORT ).show();
     }
 
     private void itemEdit() {
-        Toast.makeText(ctx, "DELETE", Toast.LENGTH_SHORT ).show();
+        //Toast.makeText(ctx, "DELETE", Toast.LENGTH_SHORT ).show();
+
     }
 
 
