@@ -126,8 +126,8 @@ public class Dish {
         return edit_mode;
     }
 
-    public void setId(String key) {
-        this.id = key;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getId() {
