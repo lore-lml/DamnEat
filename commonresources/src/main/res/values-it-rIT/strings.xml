@@ -31,6 +31,7 @@
     <string name="nav_dishes">Piatti</string>
     <string name="nav_reservations">Ordini</string>
     <string name="nav_profile">Profilo</string>
+    <string name="nav_restaurant">Ristoranti</string>
     <string name="dish_available">Disponibile:</string>
     <string name="dish_name">Nome piatto</string>
     <string name="dish_price">Prezzo piatto</string>
@@ -58,4 +59,7 @@
     <string name="second_text">2°</string>
     <string name="first_text">1°</string>
     <string name="open">Aperto</string>
+    <string name="price_free">Gratuito</string>
+    <string name="menu_search">Cerca</string>
+    <string name="offline_warning">Sei Offline\nControlla la tua connessione internet</string>
 </resources>

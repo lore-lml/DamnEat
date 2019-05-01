@@ -10,17 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Cart"></activity>
-        <activity android:name=".ChooseDishes">
+        <activity android:name=".Welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ChooseDishes"/>
         <activity
             android:name=".EditProfile"
-            android:parentActivityName=".Profile" />
-        <activity android:name=".Profile"></activity>
+            android:parentActivityName=".Welcome" />
     </application>
 
 </manifest>
