@@ -94,7 +94,7 @@
                                 app:srcCompat="@drawable/ic_person" />
 
                             <TextView
-                                android:id="@+id/profile_name"
+                                android:id="@+id/restaurant_name"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
@@ -121,7 +121,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/icon_name"
-                                app:layout_constraintTop_toBottomOf="@+id/profile_name" />
+                                app:layout_constraintTop_toBottomOf="@+id/restaurant_name" />
                         </android.support.constraint.ConstraintLayout>
 
                     </android.support.v7.widget.CardView>
@@ -294,14 +294,14 @@
                                 android:layout_marginEnd="16dp"
                                 android:text="@string/profile_address"
                                 android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_address"
+                                app:layout_constraintBottom_toTopOf="@+id/editText_price"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/icon_address"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
-                                android:id="@+id/editText_address"
+                                android:id="@+id/editText_price"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"

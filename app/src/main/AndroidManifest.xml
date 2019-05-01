@@ -9,15 +9,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditProfile"
-            android:parentActivityName=".Profile"/>
-        <activity android:name=".Profile">
+        <activity android:name=".Cart"></activity>
+        <activity android:name=".ChooseDishes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".EditProfile"
+            android:parentActivityName=".Profile" />
+        <activity android:name=".Profile"></activity>
     </application>
-
 
 </manifest>

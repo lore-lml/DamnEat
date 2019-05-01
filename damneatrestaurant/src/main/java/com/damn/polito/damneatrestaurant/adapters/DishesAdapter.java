@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
-import com.damn.polito.damneatrestaurant.beans.Dish;
+import com.damn.polito.commonresources.beans.Dish;
 import java.util.List;
 import java.util.Locale;
 
@@ -62,9 +62,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
         Dish selected = dishesList.get(index);
-        boolean editMode = selected.isEditMode();
+        boolean editMode = selected.EditMode();
         /*GESTIRE IN FASE DI LOAD*/
-        /*if(!selected.isDishOtd() && !allDishes){
+        /*if(!selected.DishOtd() && !allDishes){
             viewHolder.parentLayout.setVisibility(View.GONE);
             return;
         }*/
@@ -75,13 +75,13 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
         viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
         if(!(selected.getPhoto().equals("NO_PHOTO"))){
-            viewHolder.image.setImageBitmap(selected.getPhotoBmp());
+            viewHolder.image.setImageBitmap(selected.PhotoBmp());
         }else {
             viewHolder.image.setImageBitmap(default_image);
         }
         //viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
         if(select_dishes_layout && !editMode){
-            viewHolder.selected_switch.setChecked(selected.isDishOtd());
+            viewHolder.selected_switch.setChecked(selected.DishOtd());
             viewHolder.selected_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 selected.setDishOtd(isChecked);
                 Log.d("Switch", "Ha cambiato valore a " + isChecked);
@@ -91,7 +91,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
 
         if(select_dishes_layout) {
             viewHolder.save.setOnClickListener(v -> {
-                setEditMode(viewHolder, selected.isEditMode());
+                setEditMode(viewHolder, selected.EditMode());
                 if(checkField(viewHolder)){
                     selected.setEditMode(false);
                     selected.setName(viewHolder.edit_name.getText().toString());

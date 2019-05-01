@@ -5,29 +5,30 @@
     android:id="@+id/select_dishes_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SelectDishes">
+    tools:context=".ChooseDishes">
 
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/constraintLayout">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewDishes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_add"
+        android:id="@+id/fab_cart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="32dp"
         android:clickable="true"
         app:layout_anchor="@+id/constraintLayout"
         app:layout_anchorGravity="right|bottom"
-        app:srcCompat="@drawable/ic_add"
+        app:srcCompat="@drawable/ic_shopping"
         android:focusable="true" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewDishes2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </android.support.constraint.ConstraintLayout>
-
 </android.support.design.widget.CoordinatorLayout>

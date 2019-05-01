@@ -1,12 +1,9 @@
 package com.damn.polito.damneatrestaurant;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.TrafficStats;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.damn.polito.damneatrestaurant.beans.Dish;
+import com.damn.polito.commonresources.beans.Dish;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

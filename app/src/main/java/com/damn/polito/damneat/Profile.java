@@ -35,7 +35,7 @@ public class Profile extends AppCompatActivity {
         name = findViewById(R.id.editText_name);
         mail = findViewById(R.id.editText_email);
         description = findViewById(R.id.editText_desc);
-        address = findViewById(R.id.editText_address);
+        address = findViewById(R.id.editText_price);
 
         loadData();
     }

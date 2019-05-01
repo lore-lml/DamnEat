@@ -4,21 +4,17 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.damneatrestaurant.beans.Dish;
-import com.damn.polito.damneatrestaurant.beans.Order;
+import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.commonresources.beans.Order;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,23 +44,23 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         DateFormat dateFormat = new SimpleDateFormat(ctx.getString(R.string.date_format), Locale.getDefault());
         Order selected = orders.get(position);
         //Calendar ciao= Calendar.getInstance();
-        holder.id.setText(ctx.getString(R.string.order_id, selected.getId()));
+        holder.id.setText(ctx.getString(R.string.order_id, selected.Id()));
         holder.date.setText(dateFormat.format(selected.getDate()));
-        holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.getDishesNumber()));
+        holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
         holder.customer_info.setText(ctx.getString(R.string.order_customer,"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress()));
 
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
-        List<Dish> dishes = selected.getCumulatedDishes();
+        List<Dish> dishes = selected.CumulatedDishes();
         for(int i=0; i<dishes.size(); i++){
-            dish_list_str += dishes.get(i).getNumber() +"x\t"+ dishes.get(i).getName() + "\n";
+            dish_list_str += dishes.get(i).getQuantity() +"x\t"+ dishes.get(i).getName() + "\n";
 
         }
         holder.dishes_list.setText(dish_list_str);
 
-        if (!orders.get(position).isExpanded()) {
+        if (!orders.get(position).Expanded()) {
             holder.deliverer_name.setVisibility(View.GONE);
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);

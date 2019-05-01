@@ -54,7 +54,7 @@ public class EditProfile extends AppCompatActivity {
         mail = findViewById(R.id.edit_mail);
         description = findViewById(R.id.edit_desc);
         address = findViewById(R.id.edit_address);
-        save = findViewById(R.id.edit_save);
+        save = findViewById(R.id.confirm_button);
 
         init();
 

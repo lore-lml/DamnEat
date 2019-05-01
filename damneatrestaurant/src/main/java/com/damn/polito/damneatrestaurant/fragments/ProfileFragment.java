@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.beans.Profile;
-import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,10 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static android.app.Activity.RESULT_OK;
-import static java.sql.DriverManager.println;
 
 public class ProfileFragment extends Fragment{
 
@@ -75,7 +71,7 @@ public class ProfileFragment extends Fragment{
         mail = view.findViewById(R.id.editText_email);
         phone = view.findViewById(R.id.editText_phone);
         description = view.findViewById(R.id.editText_desc);
-        address = view.findViewById(R.id.editText_address);
+        address = view.findViewById(R.id.editText_email);
         opening = view.findViewById(R.id.editText_opening);
 
         loadData();

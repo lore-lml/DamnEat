@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground">
@@ -14,17 +15,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -39,6 +43,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cardView5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
@@ -91,7 +96,7 @@
                                 app:srcCompat="@drawable/ic_person" />
 
                             <TextView
-                                android:id="@+id/profile_name"
+                                android:id="@+id/restaurant_name"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
@@ -135,7 +140,7 @@
                         android:elevation="5dp"
                         app:cardCornerRadius="10dp"
                         app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_phone"
+                        app:layout_constraintBottom_toTopOf="@+id/cardView3"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/cardView">
@@ -153,7 +158,7 @@
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_email" />
+                                app:srcCompat="@drawable/ic_map" />
 
                             <TextView
                                 android:id="@+id/profile_email"
@@ -162,16 +167,16 @@
                                 android:layout_marginStart="16dp"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginEnd="16dp"
-                                android:text="@string/profile_email"
+                                android:text="@string/profile_address"
                                 android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_email"
+                                app:layout_constraintBottom_toTopOf="@+id/editText_address"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/icon_email"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
-                                android:id="@+id/editText_email"
+                                android:id="@+id/editText_address"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="16dp"
@@ -202,7 +207,7 @@
                         app:layout_constraintBottom_toTopOf="@+id/card_address"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_phone">
+                        app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
                         <android.support.constraint.ConstraintLayout
                             android:layout_width="match_parent"
@@ -225,16 +230,17 @@
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginEnd="16dp"
-                                android:text="@string/profile_desc"
+                                android:text="@string/dishes_list"
                                 android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_desc"
+
+                                app:layout_constraintBottom_toTopOf="@+id/editText_dishes"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/icon_desc"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
-                                android:id="@+id/editText_desc"
+                                android:id="@+id/editText_dishes"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
@@ -257,12 +263,12 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="32dp"
                         android:background="@color/colorBackground"
                         android:elevation="5dp"
                         app:cardCornerRadius="10dp"
                         app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_opening"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/cardView3"
@@ -280,7 +286,7 @@
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_map" />
+                                app:srcCompat="@drawable/ic_euro_red" />
 
                             <TextView
                                 android:id="@+id/profile_address"
@@ -289,7 +295,7 @@
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginEnd="16dp"
-                                android:text="@string/profile_address"
+                                android:text="@string/price"
                                 android:textAppearance="@style/PrimaryText"
                                 app:layout_constraintBottom_toTopOf="@+id/editText_price"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -298,7 +304,7 @@
                                 app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
-                                android:id="@+id/editText_address"
+                                android:id="@+id/editText_price"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
@@ -314,137 +320,25 @@
                         </android.support.constraint.ConstraintLayout>
                     </android.support.v7.widget.CardView>
 
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_phone"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@color/colorBackground"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/cardView3"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/cardView2"
-                        app:layout_constraintVertical_bias="0.0">
-
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <ImageView
-                                android:id="@+id/icon_phone"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_phone" />
-
-                            <TextView
-                                android:id="@+id/profile_phone"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:text="@string/profile_phone"
-                                android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_phone"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_phone"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <TextView
-                                android:id="@+id/editText_phone"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginBottom="8dp"
-                                android:text="@string/nullText"
-                                android:textAppearance="@style/SecondaryText"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_phone"
-                                app:layout_constraintTop_toBottomOf="@+id/profile_phone" />
-                        </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_opening"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="32dp"
-                        android:background="@color/colorBackground"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_address"
-                        app:layout_constraintVertical_bias="0.0">
-
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <ImageView
-                                android:id="@+id/icon_opening"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_clock" />
-
-                            <TextView
-                                android:id="@+id/profile_opening"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:text="@string/profile_opening"
-                                android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_opening"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_opening"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <TextView
-                                android:id="@+id/editText_opening"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginBottom="8dp"
-                                android:text="@string/nullText"
-                                android:textAppearance="@style/SecondaryText"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_opening"
-                                app:layout_constraintTop_toBottomOf="@+id/profile_opening" />
-                        </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
 
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 
+            <Button
+                android:id="@+id/confirm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/buttons"
+                android:paddingStart="100dp"
+                android:paddingEnd="100dp"
+                android:text="@string/confirm_order"
+                android:textColor="#fff"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardView5" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
