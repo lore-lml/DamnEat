@@ -1,6 +1,9 @@
 package com.damn.polito.damneat.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,17 +33,26 @@ public class OrderFragment extends Fragment {
     private DishesAdapter adapter;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
+    private Context ctx;
     private Customer customer = new Customer();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        customer.setCustomerID("-LdpRQn5RteW_n9G3TFn");
-
+        ctx = getContext();
+        getSharedData();
         init();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    private void getSharedData() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        customer.setCustomerName(pref.getString("clientname", ""));
+        customer.setCustomerAddress(pref.getString("clientaddress", ""));
+        customer.setCustomerMail(pref.getString("clientmail", ""));
+        customer.setCustomerPhone(pref.getString("clientphone", ""));
+        customer.setCustomerID(pref.getString("dbkey", ""));
+    }
     private void init(){
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("clienti/"+ customer.getCustomerID() +"/lista_ordini/");
