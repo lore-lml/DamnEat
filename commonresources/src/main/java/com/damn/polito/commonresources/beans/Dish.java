@@ -1,22 +1,22 @@
-package com.damn.polito.damneatrestaurant.beans;
+package com.damn.polito.commonresources.beans;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import com.damn.polito.commonresources.Utility;
-
 public class Dish {
 
     private String name;
+    private String id;
     private String description;
     private float price;
     private int availability;
     private Bitmap photo;
+    private String photo_str;
     private boolean dish_otd = false;
     private boolean edit_mode = false;
-
-
-    private int number;
+    private static final String NO_PHOTO = "NO_PHOTO";
+    private int quantity;
+    public Dish(){}
 
     public Dish(String name, String description, float price, int availability) {
         this.name = name;
@@ -24,12 +24,19 @@ public class Dish {
         this.price = price;
         this.availability = availability;
         this.photo = null;
-        number=0;
+        quantity = 0;
 
     }
     public Dish(String name, String description, float price, int availability, Bitmap photo) {
         this(name, description, price, availability);
         this.photo = photo;
+    }
+
+    public Dish(String name, int quantity, double price, String id){
+        this.name = name;
+        this.quantity = quantity;
+        this.price = (float) price;
+        this.id = id;
     }
 
     public void  setName(String name){
@@ -40,8 +47,16 @@ public class Dish {
         this.description = description;
     }
 
-    public void setPhoto(Bitmap photo){
+    public void setPhotoBmp(Bitmap photo){
         this.photo = photo;
+    }
+
+    public void setPhoto(String photo){
+        this.photo_str = photo;
+        if(photo == null)
+            this.photo = null;
+        //todo: else converti l'immagine in Bitmap
+
     }
 
     public void setPrice(float price) {
@@ -67,11 +82,11 @@ public class Dish {
     public int getAvailability() {
         return availability;
     }
-    public Bitmap getPhoto(){
+    public Bitmap PhotoBmp(){
         return photo;
     }
 
-    public boolean isDishOtd(){
+    public boolean DishOtd(){
         return dish_otd;
     }
 
@@ -79,9 +94,9 @@ public class Dish {
         this.dish_otd = dish_otd;
     }
 
-    public String getPhotoStr(){
+    public String getPhoto(){
         if (photo == null)
-            return "NO_PHOTO";
+            return NO_PHOTO;
         return Utility.BitMapToString(photo);
     }
 
@@ -89,19 +104,33 @@ public class Dish {
         this.dish_otd = !this.dish_otd;
     }
 
-    public int getNumber() {
-        return number;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+    public void increaseQuantity() {
+        this.quantity++;
+    }
+    public void decreaseQuantity() {
+        if(this.quantity > 0)
+            this.quantity--;
     }
     public void setEditMode(boolean edit_mode){
         this.edit_mode = edit_mode;
     }
 
-    public boolean isEditMode(){
+    public boolean EditMode(){
         return edit_mode;
     }
 
+    public void setId(String key) {
+        this.id = key;
+    }
+
+    public String getId() {
+        return this.id;
+    }
 }

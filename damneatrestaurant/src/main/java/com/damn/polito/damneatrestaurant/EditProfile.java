@@ -68,6 +68,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         //Recupera le informazioni passate da ProfileFragment
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Intent intent = getIntent();
+
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
         sPhone = intent.getStringExtra("phone");
@@ -401,6 +402,13 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             profile.setImageBitmap(profImg);
             pref.edit().remove("profile").apply();
         }
+    }
+
+    public boolean isEmailPresent(){
+
+
+
+        return true;
     }
 
     @Override

@@ -249,7 +249,7 @@
                         android:elevation="5dp"
                         app:cardCornerRadius="10dp"
                         app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/edit_save"
+                        app:layout_constraintBottom_toTopOf="@+id/confirm_button"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/card_edit_desc">

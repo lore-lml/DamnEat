@@ -225,7 +225,7 @@
                         android:elevation="5dp"
                         app:cardElevation="5dp"
                         app:cardCornerRadius="10dp"
-                        app:layout_constraintBottom_toTopOf="@+id/edit_save"
+                        app:layout_constraintBottom_toTopOf="@+id/confirm_button"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/card_edit_desc">
@@ -263,7 +263,7 @@
                     </android.support.v7.widget.CardView>
 
                     <Button
-                        android:id="@+id/edit_save"
+                        android:id="@+id/confirm_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"

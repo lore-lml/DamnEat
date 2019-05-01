@@ -1,14 +1,11 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,18 +24,13 @@ import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
-import com.damn.polito.damneatrestaurant.beans.Dish;
+import com.damn.polito.commonresources.beans.Dish;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
-import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
-import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
 import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
-import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
 import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
 import static com.damn.polito.commonresources.Utility.galleryIntent16_9;
-import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
 
 public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder>{
     private List<Dish> dishesList;
@@ -70,9 +62,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
         Dish selected = dishesList.get(index);
-        boolean editMode = selected.isEditMode();
+        boolean editMode = selected.EditMode();
         /*GESTIRE IN FASE DI LOAD*/
-        /*if(!selected.isDishOtd() && !allDishes){
+        /*if(!selected.DishOtd() && !allDishes){
             viewHolder.parentLayout.setVisibility(View.GONE);
             return;
         }*/
@@ -82,14 +74,14 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         viewHolder.description.setText(selected.getDescription());
         viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
         viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
-        if(!(selected.getPhotoStr().equals("NO_PHOTO"))){
-            viewHolder.image.setImageBitmap(selected.getPhoto());
+        if(!(selected.getPhoto().equals("NO_PHOTO"))){
+            viewHolder.image.setImageBitmap(selected.PhotoBmp());
         }else {
             viewHolder.image.setImageBitmap(default_image);
         }
         //viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
         if(select_dishes_layout && !editMode){
-            viewHolder.selected_switch.setChecked(selected.isDishOtd());
+            viewHolder.selected_switch.setChecked(selected.DishOtd());
             viewHolder.selected_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 selected.setDishOtd(isChecked);
                 Log.d("Switch", "Ha cambiato valore a " + isChecked);
@@ -99,7 +91,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
 
         if(select_dishes_layout) {
             viewHolder.save.setOnClickListener(v -> {
-                setEditMode(viewHolder, selected.isEditMode());
+                setEditMode(viewHolder, selected.EditMode());
                 if(checkField(viewHolder)){
                     selected.setEditMode(false);
                     selected.setName(viewHolder.edit_name.getText().toString());

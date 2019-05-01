@@ -2,16 +2,13 @@ package com.damn.polito.damneatrestaurant.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,15 +16,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
-import com.damn.polito.damneatrestaurant.AddDish;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
-import com.damn.polito.damneatrestaurant.beans.Dish;
+import com.damn.polito.commonresources.beans.Dish;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,9 +36,6 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static android.app.Activity.RESULT_OK;
-import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class DishesFragment extends Fragment {
 
@@ -140,7 +132,7 @@ public class DishesFragment extends Fragment {
                             dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
                             if (!values.get("photo").equals("NO_PHOTO")) {
                                 Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-                                dishesList.get(dishesList.size()-1).setPhoto(bmp);
+                                dishesList.get(dishesList.size()-1).setPhotoBmp(bmp);
                             }
                         }
                     }
@@ -178,7 +170,7 @@ public class DishesFragment extends Fragment {
 //                    dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
 //                    if(!values.get("photo").equals("NO_PHOTO")){
 //                        Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-//                        dishesList.get(i).setPhoto(bmp);
+//                        dishesList.get(i).setPhotoBmp(bmp);
 //                    }
 //                    Log.d("shared_pref", "Adding to list: " + values.toString());
 //                }

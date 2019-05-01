@@ -22,7 +22,14 @@ import android.widget.TextView;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
+import com.damn.polito.damneatrestaurant.beans.Profile;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +71,7 @@ public class ProfileFragment extends Fragment{
         mail = view.findViewById(R.id.editText_email);
         phone = view.findViewById(R.id.editText_phone);
         description = view.findViewById(R.id.editText_desc);
-        address = view.findViewById(R.id.editText_address);
+        address = view.findViewById(R.id.editText_email);
         opening = view.findViewById(R.id.editText_opening);
 
         loadData();
@@ -119,9 +126,16 @@ public class ProfileFragment extends Fragment{
             hasProfile = true;
             pref.edit().remove("profile").apply();
         }
+        //
+        //CARICO I DATI SU FIREBASE
+        storeProfileOnFirebase(name,mail,phone,description,address,opening,bitmapProf);
+        //code
+        //
+
 
         JSONObject values = new JSONObject();
         try {
+
             values.put("name", name);
             values.put("mail", mail);
             values.put("phone", phone);
@@ -152,6 +166,45 @@ public class ProfileFragment extends Fragment{
         }
     }
 
+    private boolean storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening,String bitmapProf){
+
+        //DA IMPLEMENTARE RETURN TRUE OR FALSE A SECONDA CHE LA TRANSAZIONE VADA A BUONFINE
+        //
+        //NON è IMPLEMENTATA LA POSSIBILITà DI MODIFICARE L'ACCOUNT, SI PUO' PER ADESSO SOLO
+        //CREARNE DI NUOVI
+
+        //SE LA MAIL ESISTE NON SI SALVA NULLA, SE NON ESISTE SI CREA UNA NUOVA KEY SU FIREBASE
+        boolean success;
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String escapedMail = mail.replace(".", "|");
+        DatabaseReference myRef = database.getReference("ristoratori/"+escapedMail);
+        myRef.runTransaction(new Transaction.Handler(){
+            @Override
+            public Transaction.Result doTransaction (MutableData currentData){
+                if(currentData.getValue()==null){
+                    //la mail non e' stata ancora usata. posso registrare l'utente
+                    currentData.setValue(new Profile(name, mail, phone, description, address, opening, bitmapProf));
+                    return Transaction.success(currentData);
+                }
+                else{
+                    //Deny modification
+
+                    return Transaction.abort();
+                }
+
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
+                //this method will be called once with the result of the transaction
+
+            }
+
+        });
+
+            return true;
+    }
+
     private void loadData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
         String s = pref.getString("info", null);
@@ -159,6 +212,53 @@ public class ProfileFragment extends Fragment{
 
         try {
             JSONObject values = new JSONObject(s);
+            //CARICO I DATI DA FIREBASE, di ciò che è salvato nelle shared al momento
+            // viene usata solamete la mail, in modo che la pagina possa essere chiamata
+            // automaticamente
+
+            //
+            String escapedMail = stringOrDefault(values.getString("mail")).replace(".","|");
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("ristoratori/"+escapedMail);
+
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    Profile prof = dataSnapshot.getValue(Profile.class);
+                    if (prof != null) {
+                        name.setText(prof.getName());
+                        mail.setText(prof.getMail());
+                        phone.setText(prof.getPhone());
+                        description.setText(prof.getDescription());
+                        address.setText(prof.getAddress());
+                        opening.setText(prof.getOpening());
+                        if (prof.getBitmapProf() != null) {
+                            String encodedBitmap = prof.getBitmapProf();
+                            profileBitmap = Utility.StringToBitMap(encodedBitmap);
+                            if (profileBitmap != null)
+                                profileImage.setImageBitmap(profileBitmap);
+                        }
+                    }else{
+                        name.setText(defaultValue);
+                        mail.setText(defaultValue);
+                        phone.setText(defaultValue);
+                        description.setText(defaultValue);
+                        address.setText(defaultValue);
+                        opening.setText(defaultValue);
+                    }
+
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // ...
+                }
+
+            });
+
+
+
+            /* PARTE CHE CARICA DALLE SHARED
             name.setText(stringOrDefault(values.getString("name")));
             mail.setText(stringOrDefault(values.getString("mail")));
             phone.setText(stringOrDefault(values.getString("phone")));
@@ -171,12 +271,16 @@ public class ProfileFragment extends Fragment{
                 if (profileBitmap != null)
                     profileImage.setImageBitmap(profileBitmap);
             }
+            */
+
 
             empty = false;
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
