@@ -6,4 +6,7 @@
     <string name="confirm_order">Conferma ordine</string>
     <string name="dishes_list">Lista piatti</string>
     <string name="price">Prezzo</string>
+    <string name="no_dishes">Il ristorante non ha ancora piatti disponibili</string>
+    <string name="order_error">Errore nell\'effettuare l\'ordine</string>
+    <string name="order_succesfull">Ordine effettuato</string>
 </resources>
