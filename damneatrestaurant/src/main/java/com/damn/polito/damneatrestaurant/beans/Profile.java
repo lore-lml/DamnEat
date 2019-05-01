@@ -4,13 +4,13 @@ import android.graphics.Bitmap;
 
 public class Profile {
 
-    String name;
-    String mail;
-    String phone;
-    String description;
-    String address;
-    String opening;
-    String bitmapProf;
+    private String name;
+    private String mail;
+    private String phone;
+    private String description;
+    private String address;
+    private String opening;
+    private String bitmapProf;
     //Bitmap bitmap;
 
     public Profile(String name, String mail, String phone, String description, String address, String opening, String bitmapProf) {
@@ -32,10 +32,10 @@ public class Profile {
         this.opening = opening;
         this.bitmap = bitmap;
     }*/
-
-    public Profile() {
-
+    public Profile(Profile p) {
+        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.bitmapProf);
     }
+    public Profile() {}
 
     public String getName() {
         return name;
@@ -100,15 +100,5 @@ public class Profile {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }*/
-
-    public void setProfile(Profile p) {
-        name=p.getName();
-        mail= p.getMail();
-        phone=p.getPhone();
-        description=p.getDescription();
-        address=p.getAddress();
-        opening=p.getOpening();
-        bitmapProf=p.getBitmapProf();
-    }
 }
 
