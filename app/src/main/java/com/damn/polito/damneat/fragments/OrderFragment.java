@@ -42,11 +42,14 @@ public class OrderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.orders_fragment, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         ctx = getContext();
         assert ctx != null;
 
@@ -54,7 +57,6 @@ public class OrderFragment extends Fragment {
         init();
         initReyclerView(view);
 
-        super.onViewCreated(view, savedInstanceState);
     }
 
     private void initReyclerView(View view){
@@ -89,7 +91,7 @@ public class OrderFragment extends Fragment {
                     getOrderFirebase(key);
                     orderKeyList.add(key);
                 }
-                //adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -111,7 +113,7 @@ public class OrderFragment extends Fragment {
                 Order order = dataSnapshot.getValue(Order.class);
                 orderList.add(order);
                 Log.d("order", order.getCustomer().getCustomerName());
-                //adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
             }
 
             @Override
