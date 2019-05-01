@@ -25,6 +25,11 @@ public class Order {
     private String state;
     private boolean expanded;
 
+    public  Order(){
+        this.customer = new Customer();
+        this.restaurant = new Restaurant();
+    }
+
     public Order(List<Dish> dishes, Date date, double price, String delivererName, String note, String deliveryTime, Customer customer, Restaurant restaurant) {
         this.dishes = dishes;
         this.date = date;
@@ -189,5 +194,17 @@ public class Order {
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setDelivererName(String delivererName) {
+        this.delivererName = delivererName;
     }
 }
