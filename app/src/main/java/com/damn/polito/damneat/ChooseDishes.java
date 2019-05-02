@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ChooseDishes extends AppCompatActivity {
     private List<Dish> dishesList = new ArrayList<>();
@@ -68,6 +70,8 @@ public class ChooseDishes extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.activity_choose_dishes);
         no_dishes_img = findViewById(R.id.no_dishes_img);
         no_dishes_tv = findViewById(R.id.no_dishes_tv);
@@ -129,7 +133,7 @@ public class ChooseDishes extends AppCompatActivity {
         i.putExtra("price", price);
         i.putExtra("restaurant_name", restaurant.getRestaurantName());
         i.putExtra("restaurant_address", restaurant.getRestaurantAddress());
-        i.putExtra("restaurant_photo", restaurant.Photo());
+        i.putExtra("restaurant_photo", restaurant.getPhoto());
         startActivityForResult(i, CART);
     }
 
@@ -293,7 +297,7 @@ public class ChooseDishes extends AppCompatActivity {
                         }
 
                         Log.d("transazione", d.getName());
-                        //String dishID = d.getId();
+                        //String dishID = d.Id();
                         MutableData dbRefDish = currentData.child(dishID);
                         d.setAvailability(d.getAvailability()-cart_dish.getQuantity());
                         dbRefDish.setValue(d);
@@ -308,8 +312,9 @@ public class ChooseDishes extends AppCompatActivity {
                         Order order = new Order(cart_dishes, new Date(), restaurant, customer, price, note, deliveryTime);
                         DatabaseReference dbRefOrdini = database.getReference("ordini/");
                         DatabaseReference orderID = dbRefOrdini.push();
-                        orderID.setValue(order);
                         orderID_key = orderID.getKey();
+                        order.sId(orderID_key);
+                        orderID.setValue(order);
                         //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
                         DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/ordini_pendenti/");
                         DatabaseReference id_restaurant = dbRefRestaurant.push();
@@ -326,6 +331,19 @@ public class ChooseDishes extends AppCompatActivity {
                         Toast.makeText(ctx, R.string.order_error, Toast.LENGTH_LONG).show();
                 }
             });
+        }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

@@ -10,5 +10,13 @@
     <string name="order_error">Errore nell\'effettuare l\'ordine</string>
     <string name="order_succesfull">Ordine effettuato</string>
     <string name="cart_empty">Carrello vuoto</string>
-    <string name="restaurant">Ristorante</string>
+    <string name="restaurant">Ristorante:\n %s</string>
+    <string name="confirmOrder">Conferma consegna</string>
+    <string name="ordered">Ordinato</string>
+    <string name="delivery_time">Ora di consegna: %s</string>
+    <string name="state">Stato: %s</string>
+    <string name="ship">Costo spedizione</string>
+    <string name="delivered">Consegnato</string>
+    <string name="accepted">Accettato</string>
+    <string name="shipped">Spedito</string>
 </resources>

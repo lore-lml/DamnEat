@@ -1,5 +1,7 @@
 package com.damn.polito.commonresources.beans;
 
+import android.util.Log;
+
 import com.damn.polito.commonresources.beans.Dish;
 
 import java.util.ArrayList;
@@ -10,12 +12,12 @@ import java.util.Map;
 
 public class Order {
 
-    private int id;
+    private String id;
     private List<Dish> dishes;
     private Date date;
     private double price;
     private String delivererName = "NOT_ASSIGNED_YET";
-    private String delivererPhoto;
+    private String delivererPhoto = "NO_PHOTO";
     private String note;
     private String deliveryTime;
 
@@ -44,7 +46,7 @@ public class Order {
 
     }
 
-    public Order(int id, List<Dish> dishes, Date date, String customerAddress, String customerName, String delivererName, double price) {
+    public Order(String id, List<Dish> dishes, Date date, String customerAddress, String customerName, String delivererName, double price) {
         this.id = id;
         this.dishes = dishes;
         this.date = date;
@@ -83,7 +85,7 @@ public class Order {
     public void setState(String state) {
         this.state = state;
     }
-    public int Id() {
+    public String sId() {
         return id;
     }
 
@@ -198,11 +200,11 @@ public class Order {
         this.restaurant = restaurant;
     }
 
-    public int getId() {
+    public String Id() {
         return id;
     }
 
-    public void setId(int id) {
+    public void sId(String id) {
         this.id = id;
     }
 
