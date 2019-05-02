@@ -109,7 +109,6 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             description = itemView.findViewById(R.id.dish_description);
             image = itemView.findViewById(R.id.dish_image);
             parentLayout = itemView.findViewById(R.id.dish_root);
-            parentLayout = itemView.findViewById(R.id.dish_root);
             quantity = itemView.findViewById(R.id.dish_quantity);
             button = itemView.findViewById(R.id.add_button);
             delete_button = itemView.findViewById(R.id.delete_button);

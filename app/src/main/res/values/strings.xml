@@ -3,7 +3,6 @@
     <string name="profile_address">Address</string>
     <string name="add_to_chart">Add</string>
     <string name="dish_added">Dish added to your shopping cart</string>
-    <string name="confirm_order">Confirm order</string>
     <string name="dishes_list">Dishes list</string>
     <string name="price">Price</string>
     <string name="no_dishes">This restaurant has no dishes yet</string>
@@ -12,4 +11,16 @@
     <string name="ship">Delivery cost</string>
     <string name="cart_empty">Cart empty</string>
 
+    <string name="restaurant">Restaurant:\n %s</string>
+    <string name="confirmOrder">Confirm delivered</string>
+    <string name="confirm_order">Confirm order</string>
+    <string name="delivery_time">Delivery time: %s</string>
+    <string name="state">State:</string>
+    <string name="ordered">Ordered</string>
+    <string name="delivered">Delivered</string>
+    <string name="note" translatable="false">Note: %s</string>
+    <string name="shipped">Shipped</string>
+    <string name="accepted">Accepted</string>
+    <string name="confirmed">Completed</string>
+    <string name="rejected">Rejected</string>
 </resources>

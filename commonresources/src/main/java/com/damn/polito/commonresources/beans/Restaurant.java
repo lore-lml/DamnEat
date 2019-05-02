@@ -52,7 +52,7 @@ public class Restaurant {
         this.restaurantAddress = restaurantAddress;
     }
 
-    public String Photo() {
+    public String getPhoto() {
         return photo;
     }
 

@@ -44,7 +44,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         DateFormat dateFormat = new SimpleDateFormat(ctx.getString(R.string.date_format), Locale.getDefault());
         Order selected = orders.get(position);
         //Calendar ciao= Calendar.getInstance();
-        holder.id.setText(ctx.getString(R.string.order_id, selected.Id()));
+        holder.id.setText(ctx.getString(R.string.order_id_s, selected.sId()));
         holder.date.setText(dateFormat.format(selected.getDate()));
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));

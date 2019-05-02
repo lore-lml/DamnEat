@@ -4,17 +4,22 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 
+import java.util.Objects;
+
 public class Cart extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.activity_cart);
         Intent i = getIntent();
         String list = i.getStringExtra("list");
@@ -43,6 +48,18 @@ public class Cart extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }
