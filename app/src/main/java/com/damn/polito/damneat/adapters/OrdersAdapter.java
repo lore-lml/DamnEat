@@ -68,10 +68,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.restaurant_info.setText(ctx.getString(R.string.restaurant, selected.getRestaurant().getRestaurantName()));
 
-        if(selected.getState().toLowerCase().equals("confirmed")){
+        if(selected.getState().toLowerCase().equals("confirmed") || selected.getState().toLowerCase().equals("rejected")){
 
             holder.deliverer_name.setVisibility(View.GONE);
             holder.restaurant_info.setVisibility(View.VISIBLE);
+
             if (selected.getRestaurant().getPhoto() == null)
                 holder.deliverer_photo.setImageBitmap(default_image);
             else if(selected.getRestaurant().getPhoto().equals("NO_PHOTO"))
@@ -83,6 +84,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 selected.changeExpanded();
                 expandOrContract(holder, selected.Expanded());
             });
+            if(selected.getState().toLowerCase().equals("confirmed")) {
+                holder.state.setText(ctx.getString(R.string.confirmed));
+                holder.state.setTextColor(ctx.getResources().getColor(R.color.colorGreen));
+
+            }
+            if(selected.getState().toLowerCase().equals("rejected")){
+                holder.state.setTextColor(ctx.getResources().getColor(R.color.colorAccent));
+                holder.state.setText(ctx.getString(R.string.rejected));
+            }
+
 
             expandOrContract(holder, selected.Expanded());
 
@@ -102,34 +113,30 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.note.setText(ctx.getString(R.string.note, selected.getNote()));
             holder.delivery_time.setText(ctx.getString(R.string.delivery_time, selected.getDeliveryTime()));
 
-            if(selected.getState().equals("ordered")){
+            if(selected.getState().toLowerCase().equals("ordered")){
                 holder.deliverer_photo.setVisibility(View.INVISIBLE);
                 holder.deliverer_name.setVisibility(View.INVISIBLE);
-                holder.state.setText(ctx.getString(R.string.state, ctx.getString(R.string.ordered)));
+                holder.state.setText(ctx.getString(R.string.ordered));
             } else {
                 holder.deliverer_photo.setVisibility(View.VISIBLE);
                 holder.deliverer_name.setVisibility(View.VISIBLE);
             }
 
-            if(selected.getState().equals("accepted"))
-                holder.state.setText(ctx.getString(R.string.state, ctx.getString(R.string.accepted)));
+            if(selected.getState().toLowerCase().equals("accepted"))
+                holder.state.setText(ctx.getString(R.string.accepted));
 
-            if(selected.getState().equals("shipped"))
-                holder.state.setText(ctx.getString(R.string.state, ctx.getString(R.string.shipped)));
+            if(selected.getState().toLowerCase().equals("shipped"))
+                holder.state.setText(ctx.getString(R.string.shipped));
 
-            if(selected.getState().equals("delivered")){
+            if(selected.getState().toLowerCase().equals("delivered")){
                 holder.confirmButton.setVisibility(View.VISIBLE);
-                holder.state.setText(ctx.getString(R.string.state, ctx.getString(R.string.delivered)));
+                holder.state.setText(ctx.getString(R.string.delivered));
                 holder.confirmButton.setOnClickListener(v->{
                     setConfirmed(selected.Id());
                 });
             } else {
                 holder.confirmButton.setVisibility(View.GONE);
             }
-
-
-
-
         }
              // holder.date.setText(dateFormat.format(ciao.getTime()));
     }
@@ -162,8 +169,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         if (!state) {
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
+            holder.id.setVisibility(View.GONE);
+
         }else{
             holder.date.setVisibility(View.VISIBLE);
+            holder.id.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
         }
     }
@@ -191,7 +201,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             deliverer_photo = itemView.findViewById(R.id.circleImageView);
             dishes_list = itemView.findViewById(R.id.dishes_list);
             restaurant_info =itemView.findViewById(R.id.order_customer_info);
-            state =itemView.findViewById(R.id.state_tv);
+            state =itemView.findViewById(R.id.state_tv_edit);
             delivery_time =itemView.findViewById(R.id.delivery_time_tv);
             note =itemView.findViewById(R.id.note_tv);
             confirmButton =itemView.findViewById(R.id.confirmOrder);
@@ -201,7 +211,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     @Override
     public int getItemViewType(int position) {
-        if(orders.get(position).getState().toLowerCase().equals("confirmed"))
+        if(orders.get(position).getState().toLowerCase().equals("confirmed") || orders.get(position).getState().toLowerCase().equals("rejected"))
             return 0;
         return 1;
     }

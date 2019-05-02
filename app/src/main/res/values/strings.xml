@@ -14,10 +14,12 @@
     <string name="confirmOrder">Confirm delivered</string>
     <string name="confirm_order">Confirm order</string>
     <string name="delivery_time">Delivery time: %s</string>
-    <string name="state">State: %s</string>
+    <string name="state">State:</string>
     <string name="ordered">Ordered</string>
     <string name="delivered">Delivered</string>
     <string name="note" translatable="false">Note: %s</string>
     <string name="shipped">Shipped</string>
     <string name="accepted">Accepted</string>
+    <string name="confirmed">Completed</string>
+    <string name="rejected">Rejected</string>
 </resources>
