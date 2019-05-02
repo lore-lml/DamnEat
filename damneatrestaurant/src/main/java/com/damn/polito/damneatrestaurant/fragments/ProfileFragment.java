@@ -40,7 +40,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment{
 
-    private String defaultValue;
+    private String defaultValue, dbkey;
     private ImageView profileImage;
     private TextView name, mail, description, address, phone, opening;
     private Bitmap profileBitmap;

@@ -13,7 +13,6 @@ public class Dish {
     private String description;
     private float price;
     private int availability;
-    private Bitmap photo;
     private String photo_str;
     private boolean dish_otd = false;
     private boolean edit_mode = false;
@@ -27,7 +26,6 @@ public class Dish {
         this.price=price;
         this.availability=availability;
         this.photo_str=photo_str;
-        this.photo=StringToBitMap(photo_str);
         quantity = 0;
     }
 
@@ -36,14 +34,13 @@ public class Dish {
         this.description = description;
         this.price = price;
         this.availability = availability;
-        this.photo = null;
-        this.photo_str=null;
+        this.photo_str="NO_PHOTO";
         quantity = 0;
 
     }
     public Dish(String name, String description, float price, int availability, Bitmap photo) {
         this(name, description, price, availability);
-        this.photo = photo;
+        this.photo_str = Utility.BitMapToString(photo);
     }
 
     public Dish(String name, int quantity, double price, String id){
@@ -62,15 +59,13 @@ public class Dish {
     }
 
     public void setPhotoBmp(Bitmap photo){
-        this.photo = photo;
+        this.photo_str = Utility.BitMapToString(photo);
     }
 
     public void setPhoto(String photo){
         this.photo_str = photo;
         if(photo == null)
-            this.photo = null;
-        //todo: else converti l'immagine in Bitmap
-
+            this.photo_str = "NO_PHOTO";
     }
 
     public void setPrice(float price) {
@@ -96,11 +91,8 @@ public class Dish {
     public int getAvailability() {
         return availability;
     }
-    public Bitmap PhotoBmp(){
-        return photo;
-    }
 
-    public boolean DishOtd(){
+    public boolean isDishOtd(){
         return dish_otd;
     }
 
@@ -109,9 +101,9 @@ public class Dish {
     }
 
     public String getPhoto(){
-        if (photo == null)
-            return NO_PHOTO;
-        return Utility.BitMapToString(photo);
+        if(photo_str== null)
+            return "NO_PHOTO";
+        return photo_str;
     }
 
     public void changeDishOtd(){

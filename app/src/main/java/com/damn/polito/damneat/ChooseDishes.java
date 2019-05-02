@@ -219,7 +219,7 @@ public class ChooseDishes extends AppCompatActivity {
                     values.put("client_name", element.getName());
                     values.put("quantity", element.getQuantity());
                     values.put("price", element.getPrice());
-                    values.put("id", element.getId());
+                    values.put("id", element.Id());
                     array.put(values);
                     Log.d("StoreDataDish", "Store: " + array.toString());
                 }catch (JSONException e) {
@@ -279,9 +279,9 @@ public class ChooseDishes extends AppCompatActivity {
                         for (MutableData child:(currentData.getChildren())){
                             Dish dish = child.getValue(Dish.class);
                             Log.d("transazione", child.getValue().toString());
-                            Log.d("transazione", cart_dish.getId());
+                            Log.d("transazione", cart_dish.Id());
                             dishID = child.getKey();
-                            if (dishID != null && dishID.equals(cart_dish.getId())) {
+                            if (dishID != null && dishID.equals(cart_dish.Id())) {
                                 d = dish;
                                 break;
                             }

@@ -118,39 +118,39 @@ public class SelectDishes extends AppCompatActivity {
 //        dishesList.add(new Dish("Insalata", "Altra roba verde", (float)4.50,5));
 //        Log.d("List", "List Size" + dishesList.size());
 //    }
-    public void storeData() {
-        File f = new File(getFilesDir(), srcFile);
-        f.delete();
-        if(dishesList != null && dishesList.size() > 0){
-            JSONArray array = new JSONArray();
-            try {
-                for (Dish element:dishesList) {
-                    JSONObject values = new JSONObject();
-                    values.put("name", element.getName());
-                    values.put("description", element.getDescription());
-                    values.put("price", element.getPrice());
-                    values.put("available", element.getAvailability());
-                    values.put("photo", element.getPhoto());
-                    values.put("dotd", element.DishOtd());
-                    array.put(values);
-                    Log.d("StoreDataDish", "Store: " + array.toString());
-                }
-                String txt = array.toString();
-
-                FileOutputStream fos = openFileOutput(srcFile, MODE_PRIVATE);
-                ObjectOutputStream o = new ObjectOutputStream(fos);
-                o.writeObject(txt);
-                o.close();
-                fos.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    public void storeData() {
+//        File f = new File(getFilesDir(), srcFile);
+//        f.delete();
+//        if(dishesList != null && dishesList.size() > 0){
+//            JSONArray array = new JSONArray();
+//            try {
+//                for (Dish element:dishesList) {
+//                    JSONObject values = new JSONObject();
+//                    values.put("name", element.getName());
+//                    values.put("description", element.getDescription());
+//                    values.put("price", element.getPrice());
+//                    values.put("available", element.getAvailability());
+//                    values.put("photo", element.getPhoto());
+//                    values.put("dotd", element.isDishOtd());
+//                    array.put(values);
+//                    Log.d("StoreDataDish", "Store: " + array.toString());
+//                }
+//                String txt = array.toString();
+//
+//                FileOutputStream fos = openFileOutput(srcFile, MODE_PRIVATE);
+//                ObjectOutputStream o = new ObjectOutputStream(fos);
+//                o.writeObject(txt);
+//                o.close();
+//                fos.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 // public void storeData() {
 //        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 //        JSONArray array = new JSONArray();
@@ -162,7 +162,7 @@ public class SelectDishes extends AppCompatActivity {
 //                values.put("price", element.getPrice());
 //                values.put("available", element.getAvailability());
 //                values.put("photo", element.getPhoto());
-//                values.put("dotd", element.DishOtd());
+//                values.put("dotd", element.isDishOtd());
 //                array.put(values);
 //                Log.d("StoreDataDish", "Store: " + array.toString());
 //            }catch (JSONException e) {
@@ -174,40 +174,39 @@ public class SelectDishes extends AppCompatActivity {
 //            Log.d("shared_pref", txt);
 //        }
 //    }
-    private void loadData() {
-        File f = new File(getFilesDir(), srcFile);
-        if(f.exists()) {
-            try {
-                FileInputStream fis = openFileInput(srcFile);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                Object o = ois.readObject();
-                if(o instanceof String){
-                    Log.d("loadData", (String) o);
-                    JSONArray array = new JSONArray((String) o);
-                    JSONObject values;
-                    for (int i=0; i<array.length(); i++) {
-                        values = array.getJSONObject(i);
-                        dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available")));
-                        dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
-                        if(!values.get("photo").equals("NO_PHOTO")){
-                            Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-                            dishesList.get(i).setPhotoBmp(bmp);
-                        }
-                    }
-                }
-                ois.close();
-                fis.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    private void loadData() {
+//        File f = new File(getFilesDir(), srcFile);
+//        if(f.exists()) {
+//            try {
+//                FileInputStream fis = openFileInput(srcFile);
+//                ObjectInputStream ois = new ObjectInputStream(fis);
+//                Object o = ois.readObject();
+//                if(o instanceof String){
+//                    Log.d("loadData", (String) o);
+//                    JSONArray array = new JSONArray((String) o);
+//                    JSONObject values;
+//                    for (int i=0; i<array.length(); i++) {
+//                        values = array.getJSONObject(i);
+//                        dishesList.add(new Dish(values.getString("name"), values.getString("description"),(float) values.getDouble("price"), values.getInt("available")));
+//                        dishesList.get(i).setDishOtd(values.getBoolean("dotd"));
+//                        if(!values.get("photo").equals("NO_PHOTO")){
+//                            dishesList.get(i).setPhoto(values.getString("photo"));
+//                        }
+//                    }
+//                }
+//                ois.close();
+//                fis.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 //  private void loadData() {
 //        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 //        String s = pref.getString("dishes", null);
@@ -244,16 +243,17 @@ public class SelectDishes extends AppCompatActivity {
             Log.d("ONRESULT", "s value: " + s);
             if (s != null) {
                 Bitmap bmp = Utility.StringToBitMap(s);
-                dishesList.add(new Dish(name, description, price, avaibility, bmp));
+                //dishesList.add(new Dish(name, description, price, avaibility, bmp));
                 pref.edit().remove("dish_photo").apply();
             } else {
                 Log.d("ONRESULT", "Adding dish without photo");
-                dishesList.add(new Dish(name, description, price, avaibility));
+                //dishesList.add(new Dish(name, description, price, avaibility));
             }
-            adapter.notifyDataSetChanged();
+            //adapter.notifyDataSetChanged();
             recyclerView.smoothScrollToPosition(dishesList.size() - 1);
             Log.d("ONRESULT", "OnresultActivity");
-            storeData();
+            //todo: sss
+            //storeData();
         }
         if (requestCode < 3000 && requestCode >= 2000) {
             final Bundle extras = data.getExtras();
@@ -271,7 +271,7 @@ public class SelectDishes extends AppCompatActivity {
             if (extras != null) {
                 Dish d = dishesList.get(requestCode - 3000);
                 d.setPhotoBmp(extras.getParcelable("data"));
-                adapter.notifyItemChanged(requestCode-3000);
+                //adapter.notifyItemChanged(requestCode-3000);
             } else {
                 displayImage(data.getData(), requestCode - 3000);
             }
@@ -282,7 +282,7 @@ public class SelectDishes extends AppCompatActivity {
         try {
             Dish d = dishesList.get(index);
             d.setPhotoBmp(MediaStore.Images.Media.getBitmap(getContentResolver(), data));
-            adapter.notifyItemChanged(index);
+            //adapter.notifyItemChanged(index);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -323,18 +323,18 @@ public class SelectDishes extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        storeData();
-    }
+//    @Override
+//    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+//        super.onSaveInstanceState(outState, outPersistentState);
+//        storeData();
+//    }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        dishesList.clear();
-        loadData();
-    }
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        dishesList.clear();
+//        //loadData();
+//    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -349,17 +349,25 @@ public class SelectDishes extends AppCompatActivity {
 
     private void deleteDish(int index){
         Dish dish = dishesList.get(index);
-        dishesList.remove(index);
-        storeData();
-        adapter.notifyItemRemoved(index);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dish.Id()+ "/");
+        dbRef.removeValue();
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dish.Id()+ "/");
+        dbRef.removeValue();
+
+        //dishesList.remove(index);
+        //storeData();
+        //adapter.notifyItemRemoved(index);
 
         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.select_dishes_coordinator), R.string.dish_deletted, Snackbar.LENGTH_LONG);
         mySnackbar.setAction(R.string.undo_string, v -> {
             if(dish!=null){
-            dishesList.add(index, dish);
-            adapter.notifyItemInserted(index);
-            recyclerView.smoothScrollToPosition(index);
-            storeData();
+                DatabaseReference dbRef_add = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dish.Id()+ "/");
+                dbRef_add.setValue(dish);
+                //dishesList.add(index, dish);
+                //adapter.notifyItemInserted(index);
+                recyclerView.smoothScrollToPosition(index);
 
             }});
         mySnackbar.show();

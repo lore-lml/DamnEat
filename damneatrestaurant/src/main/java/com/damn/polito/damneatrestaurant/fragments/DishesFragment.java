@@ -2,8 +2,10 @@ package com.damn.polito.damneatrestaurant.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -51,7 +53,7 @@ public class DishesFragment extends Fragment {
     private DishesAdapter adapter;
     private FloatingActionButton fab;
     private Context ctx;
-    private String srcFile = "dishes.save";
+    //private String srcFile = "dishes.save";
     private Restaurant restaurant = new Restaurant();
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
@@ -71,11 +73,12 @@ public class DishesFragment extends Fragment {
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.app_name);
 
         fab = view.findViewById(R.id.fab_add_dish);
-        dishesList.clear();
+        //dishesList.clear();
         restaurant.setRestaurantID("ste@lo|it");
-
+        init();
         //loadData();
         initReyclerView(view);
+        adapter.notifyDataSetChanged();
 
         fab.setOnClickListener(v-> {
             Intent i = new Intent(view.getContext(), SelectDishes.class);
@@ -102,6 +105,15 @@ public class DishesFragment extends Fragment {
         });*/
     }
 
+    private void getSharedData() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        restaurant.setRestaurantName(pref.getString("clientname", ""));
+        restaurant.setRestaurantAddress(pref.getString("clientaddress", ""));
+        restaurant.setRestaurantName(pref.getString("clientmail", ""));
+        restaurant.setRestaurantPhone(pref.getString("clientphone", ""));
+        restaurant.setRestaurantID(pref.getString("dbkey", ""));
+    }
+
     private void itemDelete() {
         //Toast.makeText(ctx, "DELETE", Toast.LENGTH_SHORT ).show();
     }
@@ -121,49 +133,49 @@ public class DishesFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        dishesList.clear();
-        loadData();
+        //dishesList.clear();
+        //loadData();
         adapter.notifyDataSetChanged();
     }
-
-    private void loadData() {
-        File f = new File(ctx.getFilesDir(), srcFile);
-        if(f.exists()) {
-            try {
-                FileInputStream fis = ctx.openFileInput(srcFile);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                Object o = ois.readObject();
-                if(o instanceof String){
-                    Log.d("loadData", (String) o);
-                    JSONArray array = new JSONArray((String) o);
-                    JSONObject values;
-                    for (int i=0; i<array.length(); i++) {
-                        values = array.getJSONObject(i);
-                        if(values.getBoolean("dotd")) {
-                            dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
-                            if (!values.get("photo").equals("NO_PHOTO")) {
-                                Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-                                dishesList.get(dishesList.size()-1).setPhotoBmp(bmp);
-                            }
-                        }
-                    }
-                }
-                ois.close();
-                fis.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//
+//    private void loadData() {
+//        File f = new File(ctx.getFilesDir(), srcFile);
+//        if(f.exists()) {
+//            try {
+//                FileInputStream fis = ctx.openFileInput(srcFile);
+//                ObjectInputStream ois = new ObjectInputStream(fis);
+//                Object o = ois.readObject();
+//                if(o instanceof String){
+//                    Log.d("loadData", (String) o);
+//                    JSONArray array = new JSONArray((String) o);
+//                    JSONObject values;
+//                    for (int i=0; i<array.length(); i++) {
+//                        values = array.getJSONObject(i);
+//                        if(values.getBoolean("dotd")) {
+//                            dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
+//                            if (!values.get("photo").equals("NO_PHOTO")) {
+//                                Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+//                                dishesList.get(dishesList.size()-1).setPhotoBmp(bmp);
+//                            }
+//                        }
+//                    }
+//                }
+//                ois.close();
+//                fis.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
     private void init(){
         database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/");
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -171,9 +183,9 @@ public class DishesFragment extends Fragment {
                 Dish dish;
                 dishesList.clear();
                 for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
-                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
-                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
-                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
+//                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
+//                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
+//                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
                     key = chidSnap.getKey();
                     dish = chidSnap.getValue(Dish.class);
                     dishesList.add(dish);

@@ -22,6 +22,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
@@ -69,25 +70,21 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
         Dish selected = dishesList.get(index);
         boolean editMode = selected.EditMode();
-        /*GESTIRE IN FASE DI LOAD*/
-        /*if(!selected.DishOtd() && !allDishes){
-            viewHolder.parentLayout.setVisibility(View.GONE);
-            return;
-        }*/
 
         //viewHolder.image.setImageBitmap(selected.getImage());
         viewHolder.name.setText(selected.getName());
         viewHolder.description.setText(selected.getDescription());
         viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
         viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
+
         if(!(selected.getPhoto().equals("NO_PHOTO"))){
-            viewHolder.image.setImageBitmap(selected.PhotoBmp());
+            viewHolder.image.setImageBitmap(Utility.StringToBitMap(selected.getPhoto()));
         }else {
             viewHolder.image.setImageBitmap(default_image);
         }
         //viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
         if(select_dishes_layout && !editMode){
-            viewHolder.selected_switch.setChecked(selected.DishOtd());
+            viewHolder.selected_switch.setChecked(selected.isDishOtd());
             viewHolder.selected_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 selected.setDishOtd(isChecked);
                 if(isChecked)
@@ -95,7 +92,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
                 else
                     deleteDish(selected);
                 Log.d("Switch", "Ha cambiato valore a " + isChecked);
-                ((SelectDishes)context).storeData();
+                //((SelectDishes)context).storeData();
             });
         }
 
@@ -112,7 +109,15 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
                     viewHolder.description.setText(selected.getDescription());
                     viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
                     viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
-                    ((SelectDishes)context).storeData();
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    String dishId = selected.Id();
+                    DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dishId + "/");
+                    dbRef.setValue(selected);
+                    if(selected.isDishOtd()){
+                        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dishId + "/");
+                        dbRef.setValue(selected);
+                    }
+                    //((SelectDishes)context).storeData();
                 }
             });
             viewHolder.edit_img.setOnClickListener(v -> {itemGallery(index);});
@@ -303,17 +308,22 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     }
 
     private void saveDish(Dish dish){
+        String dishId = dish.Id();
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
-        DatabaseReference dbDish = dbRef.push();
-        dish.setId(dbDish.getKey());
-        dbDish.setValue(dish);
+        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/"+ dishId +"/");
+        dbRef.setValue(dish);
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/"+ dishId +"/dishOtd/");
+        dbRef.setValue(true);
     }
 
     private void deleteDish(Dish dish){
+        String dishId = dish.Id();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dish.Id()+ "/");
-        dbRef.setValue("");
+        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dishId + "/");
+        dbRef.removeValue();
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/"+ dishId +"/dishOtd/");
+        dbRef.setValue(false);
     }
 
 }

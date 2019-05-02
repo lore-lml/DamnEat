@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.damneat.ChooseDishes;
 import com.damn.polito.damneat.R;
@@ -59,7 +60,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         }
 
         if(!(selected.getPhoto().equals("NO_PHOTO"))){
-            viewHolder.image.setImageBitmap(selected.PhotoBmp());
+            viewHolder.image.setImageBitmap(Utility.StringToBitMap(selected.getPhoto()));
         }else {
             viewHolder.image.setImageBitmap(default_image);
         }
