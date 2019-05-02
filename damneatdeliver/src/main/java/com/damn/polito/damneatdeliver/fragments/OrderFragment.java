@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.adapters.OrdersAdapter;
-import com.damn.polito.damneatdeliver.beans.Dish;
-import com.damn.polito.damneatdeliver.beans.Order;
+import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.commonresources.beans.Order;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,7 +57,7 @@ public class OrderFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        if (!orders.get(0).isExpanded())
+        if (!orders.get(0).Expanded())
             orders.get(0).changeExpanded();
 
         adapter.setOnItemClickListener(position -> {

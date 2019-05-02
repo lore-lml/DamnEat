@@ -63,7 +63,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         Double price = 0.;
         for (Dish d:dishes) {
             String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"x\t"+ d.getName()+"\t"+ p + "€\n";
+            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
             price += d.getQuantity()*d.getPrice();
         }
         if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {

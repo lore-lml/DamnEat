@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.damneatdeliver.R;
-import com.damn.polito.damneatdeliver.beans.Dish;
-import com.damn.polito.damneatdeliver.beans.Order;
+import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.commonresources.beans.Order;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -53,17 +54,25 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         Order selected = orders.get(position);
         holder.id.setText(ctx.getString(R.string.order_id, selected.getId()));
         holder.date.setText(dateFormat.format(selected.getDate()));
-        holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.getDishesNumber()));
+        holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
         holder.customer_info.setText(ctx.getString(R.string.order_customer,"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress()));
 
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
-        List<Dish> dishes = selected.getCumulatedDishes();
-        for(int i=0; i<dishes.size(); i++){
-            dish_list_str += dishes.get(i).getNumber() +"x\t"+ dishes.get(i).getName() + "\n";
-
+        List<Dish> dishes = selected.getDishes();
+        Double price = 0.;
+        for (Dish d:dishes) {
+            String p = String.format("%.2f", d.getPrice());
+            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
+            price += d.getQuantity()*d.getPrice();
+        }
+        if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
+            String p = String.format("%.2f", selected.getRestaurant().getRestaurant_price_ship());
+            dish_list_str += ctx.getString(R.string.ship) + " " + p + "€";
+            Log.d("test", selected.getRestaurant().getRestaurant_price_ship().toString());
+            price += selected.getRestaurant().getRestaurant_price_ship();
         }
         holder.dishes_list.setText(dish_list_str);
 
@@ -72,7 +81,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 Toast.makeText(ctx, "Delivered", Toast.LENGTH_LONG).show();
             });
 
-        if (!orders.get(position).isExpanded()) {
+        if (!orders.get(position).Expanded()) {
             holder.deliverer_name.setVisibility(View.GONE);
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);

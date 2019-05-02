@@ -49,6 +49,7 @@ public class Order {
         this.dishes = dishes;
         this.date = date;
         this.customer = new Customer(customerName, customerAddress);
+        this.restaurant = new Restaurant();
         this.delivererName = delivererName;
         this.price=price;
         this.expanded = false;
