@@ -1,7 +1,5 @@
 package com.damn.polito.damneatrestaurant.beans;
 
-import android.graphics.Bitmap;
-
 public class Profile {
 
     private String name;
@@ -10,30 +8,21 @@ public class Profile {
     private String description;
     private String address;
     private String opening;
-    private String bitmapProf;
+    private String image;
     //Bitmap bitmap;
 
-    public Profile(String name, String mail, String phone, String description, String address, String opening, String bitmapProf) {
+    public Profile(String name, String mail, String phone, String description, String address, String opening, String image) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
         this.description = description;
         this.address = address;
         this.opening = opening;
-        this.bitmapProf = bitmapProf;
+        this.image = image;
     }
-/*
-    public Profile(String name, String mail, String phone, String description, String address, String opening, Bitmap bitmap) {
-        this.name = name;
-        this.mail = mail;
-        this.phone = phone;
-        this.description = description;
-        this.address = address;
-        this.opening = opening;
-        this.bitmap = bitmap;
-    }*/
+
     public Profile(Profile p) {
-        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.bitmapProf);
+        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.image);
     }
     public Profile() {}
 
@@ -85,20 +74,12 @@ public class Profile {
         this.opening = opening;
     }
 
-    public String getBitmapProf() {
-        return bitmapProf;
+    public String getImage() {
+        return image;
     }
 
-    public void setBitmapProf(String bitmapProf) {
-        this.bitmapProf = bitmapProf;
+    public void setImage(String image) {
+        this.image = image;
     }
-
-   /* public Bitmap getBitmap() {
-        return bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }*/
 }
 

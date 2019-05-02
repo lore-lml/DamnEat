@@ -53,6 +53,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
         if(img != null)
             holder.restaurantImage.setImageBitmap(img);
+        else
+            holder.restaurantImage.setImageResource(R.drawable.dish_preview);
 
         holder.name.setText(current.getName());
         holder.categories.setText(current.getCategories());
@@ -109,10 +111,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             return results;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             filtered.clear();
-            filtered.addAll((List<Restaurant>)filterResults.values);
+            if(filterResults.values instanceof List)
+                filtered.addAll((List<Restaurant>)filterResults.values);
             notifyDataSetChanged();
         }
     };
