@@ -10,5 +10,5 @@
     <string name="order_error">Errore nell\'effettuare l\'ordine</string>
     <string name="order_succesfull">Ordine effettuato</string>
     <string name="cart_empty">Carrello vuoto</string>
-    <string name="restaurant">Ristorante</string>
+    <string name="ship">Costo consegna</string>
 </resources>

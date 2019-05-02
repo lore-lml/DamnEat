@@ -3,6 +3,9 @@ package com.damn.polito.commonresources.beans;
 import android.graphics.Bitmap;
 
 import com.damn.polito.commonresources.Utility;
+
+import static com.damn.polito.commonresources.Utility.StringToBitMap;
+
 public class Dish {
 
     private String name;
@@ -18,12 +21,23 @@ public class Dish {
     private int quantity;
     public Dish(){}
 
+    public Dish(String name, String description, float price, int availability, String photo_str){
+        this.name=name;
+        this.description=description;
+        this.price=price;
+        this.availability=availability;
+        this.photo_str=photo_str;
+        this.photo=StringToBitMap(photo_str);
+        quantity = 0;
+    }
+
     public Dish(String name, String description, float price, int availability) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.availability = availability;
         this.photo = null;
+        this.photo_str=null;
         quantity = 0;
 
     }

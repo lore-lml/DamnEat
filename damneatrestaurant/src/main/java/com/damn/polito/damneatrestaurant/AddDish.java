@@ -20,6 +20,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.damneatrestaurant.beans.Profile;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -141,9 +153,52 @@ public class AddDish extends AppCompatActivity {
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("price", price.getText().toString().trim());
         i.putExtra("availabity", availabity.getText().toString().trim());
-        if(dishImg != null){
+        if (dishImg != null) {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("dish_photo", BitMapToString(dishImg)).apply();
+        }
+
+        //
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String s = pref.getString("info", null);
+        if (s != null) {
+
+            try {
+                JSONObject values = new JSONObject(s);
+                //CARICO I DATI DA FIREBASE, di ciò che è salvato nelle shared al momento
+                // viene usata solamete la mail, in modo che la pagina possa essere chiamata
+                // automaticamente
+
+                //
+                String escapedMail = stringOrDefault(values.getString("mail")).replace(".", "|");
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("ristoranti/" + escapedMail+"/piatti_totali").push();
+                String id = myRef.getKey();
+                if (dishImg != null) {
+                    Dish d = new Dish(name.getText().toString().trim(),
+                            description.getText().toString().trim(),
+                            Float.parseFloat(price.getText().toString().trim()),
+                            Integer.parseInt(availabity.getText().toString().trim()),
+                            BitMapToString(dishImg));
+                    myRef.setValue(d);
+                }
+                else {
+                    Dish d = new Dish(name.getText().toString().trim(),
+                            description.getText().toString().trim(),
+                            Float.parseFloat(price.getText().toString().trim()),
+                            Integer.parseInt(availabity.getText().toString().trim()));
+                    myRef.setValue(d);
+                }
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            //
+
+
         }
         return i;
     }
@@ -253,6 +308,11 @@ public class AddDish extends AppCompatActivity {
 
 
         return true;
+    }
+
+
+    private String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
     }
 
 
