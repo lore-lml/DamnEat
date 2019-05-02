@@ -65,4 +65,7 @@
     <string name="ship">Spedizione</string>
     <string name="insert_note">Vuoi specificare qualcosa?</string>
     <string name="oreder_time">Ora</string>
+    <string name="summary_ship">Costo spedizione:</string>
+    <string name="summary_dish">Piatti:</string>
+    <string name="summary_total">Totale:</string>
 </resources>
