@@ -63,4 +63,6 @@
     <string name="menu_search">Cerca</string>
     <string name="offline_warning">Sei Offline\nControlla la tua connessione internet</string>
     <string name="ship">Spedizione</string>
+    <string name="insert_note">Vuoi specificare qualcosa?</string>
+    <string name="oreder_time">Ora</string>
 </resources>
