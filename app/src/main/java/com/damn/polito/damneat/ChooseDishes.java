@@ -1,5 +1,6 @@
 package com.damn.polito.damneat;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,6 +40,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ChooseDishes extends AppCompatActivity {
@@ -60,6 +62,7 @@ public class ChooseDishes extends AppCompatActivity {
     private Customer customer = new Customer();
 
     private Double price = -1.;
+    private int quantity = -1;
     private Context ctx;
     private String restaurant_photo;
     private final int CART = 10;
@@ -109,31 +112,43 @@ public class ChooseDishes extends AppCompatActivity {
 
 
     private void startCart(){
-        String data = "";
+        StringBuilder data = new StringBuilder();
+        StringBuilder prices = new StringBuilder();
         Intent i = new Intent(this, Cart.class);
         List<Dish> cart_dishes = getCartDishes();
         storeData(cart_dishes);
         price = 0.;
+        quantity = 0;
         for (Dish d:cart_dishes) {
-            String p = String.format("%.2f", d.getPrice());
-            data += d.getQuantity() +"x\t"+ d.getName()+"\t"+ p + "€\n";
+            String p = String.format(Locale.getDefault(),"%.2f", d.getPrice()*d.getQuantity());
+            prices.append(p).append("€ ").append("\n");
+            data.append(d.getQuantity()).append("x ").append(d.getName()).append("\n");
             price += d.getQuantity()*d.getPrice();
+            quantity += d.getQuantity();
         }
+        data.deleteCharAt(data.length()-1);
+        prices.deleteCharAt(prices.length()-1);
+
         if(price == 0){
-            Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_LONG).show();
             return;
         }
+        String ship;
         if(restaurant.getRestaurant_price_ship() != 0.) {
-            String p = String.format("%.2f", restaurant.getRestaurant_price_ship());
-            data += getString(R.string.ship) + " " + p + "€";
+            ship = String.format(Locale.getDefault(),"%.2f €", restaurant.getRestaurant_price_ship());
             Log.d("test", restaurant.getRestaurant_price_ship().toString());
             price += restaurant.getRestaurant_price_ship();
+        }else{
+            ship = getString(R.string.price_free);
         }
-        i.putExtra("list", data);
+        i.putExtra("list", data.toString());
         i.putExtra("price", price);
         i.putExtra("restaurant_name", restaurant.getRestaurantName());
         i.putExtra("restaurant_address", restaurant.getRestaurantAddress());
         i.putExtra("restaurant_photo", restaurant.getPhoto());
+        i.putExtra("restaurant_shipprice", ship);
+        i.putExtra("restaurant_dishprices", prices.toString());
+        i.putExtra("restaurant_quantity", quantity);
         startActivityForResult(i, CART);
     }
 
@@ -162,6 +177,7 @@ public class ChooseDishes extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
         dbRef.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String key;

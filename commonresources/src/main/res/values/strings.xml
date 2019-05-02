@@ -69,5 +69,10 @@
     <string name="menu_search">Search</string>
     <string name="offline_warning">You are Offline\nCheck your internet connection</string>
     <string name="ship">Ship</string>
+    <string name="insert_note">Do you have any recommendation?</string>
+    <string name="oreder_time">Time</string>
+    <string name="summary_ship">Ship price:</string>
+    <string name="summary_dish">Dishes:</string>
+    <string name="summary_total">Total:</string>
 
 </resources>
