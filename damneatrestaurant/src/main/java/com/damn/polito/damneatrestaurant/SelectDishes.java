@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,8 +20,14 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
 import com.damn.polito.commonresources.beans.Dish;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +54,10 @@ public class SelectDishes extends AppCompatActivity {
     private DishesAdapter adapter;
     private FloatingActionButton fab_add;
     private String srcFile = "dishes.save";
+    private Restaurant restaurant = new Restaurant();
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +71,53 @@ public class SelectDishes extends AppCompatActivity {
             startActivityForResult(i, AdD_DISH);
         });
         dishesList.clear();
-        loadData();
+        restaurant.setRestaurantID("ste@lo|it");
+
+        init();
+        //loadData();
         initReyclerView();
 
     }
+    private void init(){
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String key;
+                Dish dish;
+                dishesList.clear();
+                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
+                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
+                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
+                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
+                    key = chidSnap.getKey();
+                    dish = chidSnap.getValue(Dish.class);
+                    dishesList.add(dish);
+                    dishesList.get(dishesList.size()-1).setId(key);
+                }
+                adapter.notifyDataSetChanged();
+                //Log.d("Load", dishesList.get(0).getName());
 
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-    private void initDishes(){
-        dishesList.add(new Dish("Pizzaaaaaaa", "Chi non conosce la pizza??", 6,20));
-        dishesList.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));
-        dishesList.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        dishesList.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        dishesList.add(new Dish("Petto di pollo", "Non so cosa dire", 5,12));
-        dishesList.add(new Dish("Insalata", "Altra roba verde", (float)4.50,5));
-        Log.d("List", "List Size" + dishesList.size());
+            }
+        });
     }
+
+
+//    private void initDishes(){
+//        dishesList.add(new Dish("Pizzaaaaaaa", "Chi non conosce la pizza??", 6,20));
+//        dishesList.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));
+//        dishesList.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
+//        dishesList.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+//        dishesList.add(new Dish("Petto di pollo", "Non so cosa dire", 5,12));
+//        dishesList.add(new Dish("Insalata", "Altra roba verde", (float)4.50,5));
+//        Log.d("List", "List Size" + dishesList.size());
+//    }
     public void storeData() {
         File f = new File(getFilesDir(), srcFile);
         f.delete();

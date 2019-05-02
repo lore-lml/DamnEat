@@ -22,9 +22,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.commonresources.beans.Dish;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -38,12 +42,14 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     private boolean select_dishes_layout;
     private Bitmap default_image;
     private OnLongItemClickListener mLongListener;
+    private Restaurant restaurant = new Restaurant();
 
     public DishesAdapter(Context context, List<Dish> dishesList, boolean select_dishes_layout) {
         this.dishesList = dishesList;
         this.context = context;
         default_image = BitmapFactory.decodeResource(context.getResources(),R.drawable.dishes_empty);
         this.select_dishes_layout = select_dishes_layout;
+        restaurant.setRestaurantID("ste@lo|it");
     }
 
     public interface OnLongItemClickListener { void onLongItemClick(int position); }
@@ -84,6 +90,10 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             viewHolder.selected_switch.setChecked(selected.DishOtd());
             viewHolder.selected_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 selected.setDishOtd(isChecked);
+                if(isChecked)
+                    saveDish(selected);
+                else
+                    deleteDish(selected);
                 Log.d("Switch", "Ha cambiato valore a " + isChecked);
                 ((SelectDishes)context).storeData();
             });
@@ -290,6 +300,20 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     public void pickFromGallery(int index) {
         Intent intent = galleryIntent16_9();
         ((Activity)context).startActivityForResult(intent, 2000+index);
+    }
+
+    private void saveDish(Dish dish){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
+        DatabaseReference dbDish = dbRef.push();
+        dish.setId(dbDish.getKey());
+        dbDish.setValue(dish);
+    }
+
+    private void deleteDish(Dish dish){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dish.Id()+ "/");
+        dbRef.setValue("");
     }
 
 }

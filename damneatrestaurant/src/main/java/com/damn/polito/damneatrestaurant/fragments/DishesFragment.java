@@ -19,10 +19,16 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
 import com.damn.polito.commonresources.beans.Dish;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +52,9 @@ public class DishesFragment extends Fragment {
     private FloatingActionButton fab;
     private Context ctx;
     private String srcFile = "dishes.save";
+    private Restaurant restaurant = new Restaurant();
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
 
     @Nullable
     @Override
@@ -63,7 +72,9 @@ public class DishesFragment extends Fragment {
 
         fab = view.findViewById(R.id.fab_add_dish);
         dishesList.clear();
-        loadData();
+        restaurant.setRestaurantID("ste@lo|it");
+
+        //loadData();
         initReyclerView(view);
 
         fab.setOnClickListener(v-> {
@@ -150,6 +161,36 @@ public class DishesFragment extends Fragment {
             }
         }
     }
+    private void init(){
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String key;
+                Dish dish;
+                dishesList.clear();
+                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
+                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
+                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
+                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
+                    key = chidSnap.getKey();
+                    dish = chidSnap.getValue(Dish.class);
+                    dishesList.add(dish);
+                    dishesList.get(dishesList.size()-1).setId(key);
+                }
+                adapter.notifyDataSetChanged();
+                //Log.d("Load", dishesList.get(0).getName());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 //    private void loadData() {
 //        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 //        String s = pref.getString("dishes", null);
