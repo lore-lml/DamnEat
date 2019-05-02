@@ -108,7 +108,11 @@ public class RestaurantFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getKey();
                 Restaurant r = dataSnapshot.getValue(Restaurant.class);
+                assert key != null;
+                assert r != null;
+                r.setFbKey(key);
                 int pos = restaurants.indexOf(r);
                 restaurants.remove(r);
                 restaurants.add(pos, r);
