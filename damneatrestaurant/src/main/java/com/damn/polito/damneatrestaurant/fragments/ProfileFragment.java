@@ -233,8 +233,8 @@ public class ProfileFragment extends Fragment{
                         description.setText(prof.getDescription());
                         address.setText(prof.getAddress());
                         opening.setText(prof.getOpening());
-                        if (prof.getBitmapProf() != null) {
-                            String encodedBitmap = prof.getBitmapProf();
+                        if (prof.getImage() != null) {
+                            String encodedBitmap = prof.getImage();
                             profileBitmap = Utility.StringToBitMap(encodedBitmap);
                             if (profileBitmap != null)
                                 profileImage.setImageBitmap(profileBitmap);

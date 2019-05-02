@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.damn.polito.commonresources.FirebaseTransactionResult;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneat.EditProfile;
 import com.damn.polito.damneat.R;
@@ -33,9 +32,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -51,6 +48,8 @@ public class ProfileFragment extends Fragment {
 
     private FirebaseDatabase database;
     private String dbKey;
+
+    private Map<String, Object> orders;
 
     @Nullable
     @Override
@@ -121,7 +120,7 @@ public class ProfileFragment extends Fragment {
         if(!hasChanged) return;
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean hasProfile = false;
+        //boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
         String phone = data.getStringExtra("phone");
@@ -130,7 +129,7 @@ public class ProfileFragment extends Fragment {
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
-            hasProfile = true;
+            //hasProfile = true;
             pref.edit().remove("profile").apply();
         }
         //
@@ -177,10 +176,15 @@ public class ProfileFragment extends Fragment {
 
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference myRef;
-
-        if(dbKey == null)
+        DatabaseReference ordini;
+        if(dbKey == null) {
             myRef = database.getReference("clienti/").push();
-        else myRef = database.getReference("clienti/"+dbKey);
+            ordini = database.getReference("clienti/" + myRef.getKey() + "/lista_ordini");
+        }
+        else{
+            myRef = database.getReference("clienti/" + dbKey);
+            ordini = database.getReference("clienti/" + dbKey + "/lista_ordini");
+        }
 
         myRef.runTransaction(new Transaction.Handler(){
             @NonNull
@@ -194,6 +198,8 @@ public class ProfileFragment extends Fragment {
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 //this method will be called once with the result of the transaction
                 if(committed) {
+                    if(orders.size() != 0)
+                        ordini.updateChildren(orders);
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
                     editor.putString("dbkey", myRef.getKey());
                     editor.putString("clientaddress", profile.getAddress());
@@ -203,10 +209,9 @@ public class ProfileFragment extends Fragment {
                     editor.apply();
                 }
             }
-
         });
     }
-
+    @SuppressWarnings("unchecked")
     private void loadData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 
@@ -221,7 +226,7 @@ public class ProfileFragment extends Fragment {
             // automaticamente
 
 
-            DatabaseReference myRef = database.getReference("clienti/"+dbKey);
+            DatabaseReference myRef = database.getReference("clienti/" + dbKey);
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -250,6 +255,19 @@ public class ProfileFragment extends Fragment {
                     }
 
                 }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            DatabaseReference ordini = database.getReference("clienti/"+ dbKey +"/lista_ordini");
+            ordini.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    orders = (Map)dataSnapshot.getValue();
+                }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
