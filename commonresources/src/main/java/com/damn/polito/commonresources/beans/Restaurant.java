@@ -5,16 +5,18 @@ public class Restaurant {
     private String restaurantPhone;
     private String restaurantID;
     private String restaurantAddress;
+    private Double restaurant_price_ship;
     private String photo;
 
     public Restaurant() {
     }
 
-    public Restaurant(String restaurantName, String restaurantPhone, String restaurantID, String restaurantAddress, String photo) {
+    public Restaurant(String restaurantName, String restaurantPhone, String restaurantID, String restaurantAddress, Double restaurant_price_ship, String photo) {
         this.restaurantName = restaurantName;
         this.restaurantPhone = restaurantPhone;
         this.restaurantID = restaurantID;
         this.restaurantAddress = restaurantAddress;
+        this.restaurant_price_ship = restaurant_price_ship;
         this.photo = photo;
     }
 
@@ -58,5 +60,11 @@ public class Restaurant {
         this.photo = photo;
     }
 
+    public Double getRestaurant_price_ship() {
+        return restaurant_price_ship;
+    }
 
+    public void setRestaurant_price_ship(Double restaurant_price_ship) {
+        this.restaurant_price_ship = restaurant_price_ship;
+    }
 }

@@ -49,7 +49,6 @@ public class ChooseDishes extends AppCompatActivity {
 
     // Dettagli ristorante
     private Restaurant restaurant = new Restaurant();
-    private Double restaurant_price_ship;
     private String restaurant_description;
 
     private String note = "test";
@@ -90,7 +89,7 @@ public class ChooseDishes extends AppCompatActivity {
         restaurant.setRestaurantPhone(i.getStringExtra("rest_phone"));
         restaurant.setPhoto(i.getStringExtra("rest_image"));
         restaurant_description = i.getStringExtra("rest_description");
-        restaurant_price_ship = i.getDoubleExtra("rest_priceship", 0);
+        restaurant.setRestaurant_price_ship(i.getDoubleExtra("rest_priceship", 0));
         Log.d("restaurant", restaurant.getRestaurantName());
         Log.d("restaurant", restaurant.getRestaurantAddress());
     }
@@ -120,11 +119,11 @@ public class ChooseDishes extends AppCompatActivity {
             Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_LONG);
             return;
         }
-        if(restaurant_price_ship != 0.) {
-            String p = String.format("%.2f", restaurant_price_ship);
+        if(restaurant.getRestaurant_price_ship() != 0.) {
+            String p = String.format("%.2f", restaurant.getRestaurant_price_ship());
             data += getString(R.string.ship) + " " + p + "€";
-            Log.d("test", restaurant_price_ship.toString());
-            price += restaurant_price_ship;
+            Log.d("test", restaurant.getRestaurant_price_ship().toString());
+            price += restaurant.getRestaurant_price_ship();
         }
         i.putExtra("list", data);
         i.putExtra("price", price);

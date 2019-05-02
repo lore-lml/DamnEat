@@ -4,10 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
@@ -49,18 +51,32 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
-        holder.customer_info.setText(ctx.getString(R.string.order_customer,"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress()));
-
+        String restaurant_info = ctx.getString(R.string.restaurant)+ "\n" + selected.getRestaurant().getRestaurantName();
+        holder.customer_info.setText(restaurant_info);
+        holder.root.setOnClickListener(v->{
+            selected.changeExpanded();
+            Toast.makeText(ctx, "TEST", Toast.LENGTH_LONG);
+        });
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
-        List<Dish> dishes = selected.CumulatedDishes();
-        for(int i=0; i<dishes.size(); i++){
-            dish_list_str += dishes.get(i).getQuantity() +"x\t"+ dishes.get(i).getName() + "\n";
-
+        List<Dish> dishes = selected.getDishes();
+        Double price = 0.;
+        for (Dish d:dishes) {
+            String p = String.format("%.2f", d.getPrice());
+            dish_list_str += d.getQuantity() +"x\t"+ d.getName()+"\t"+ p + "€\n";
+            price += d.getQuantity()*d.getPrice();
+        }
+        if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
+            String p = String.format("%.2f", selected.getRestaurant().getRestaurant_price_ship());
+            dish_list_str += ctx.getString(R.string.ship) + " " + p + "€";
+            Log.d("test", selected.getRestaurant().getRestaurant_price_ship().toString());
+            price += selected.getRestaurant().getRestaurant_price_ship();
         }
         holder.dishes_list.setText(dish_list_str);
 
-        if (!orders.get(position).Expanded()) {
+
+
+        if (!selected.Expanded()) {
             holder.deliverer_name.setVisibility(View.GONE);
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
@@ -85,7 +101,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         public OrderViewHolder(View itemView, OnItemClickListener listener) {
             super(itemView);
 
-            root =itemView.findViewById(R.id.card_order);
+            root =itemView.findViewById(R.id.card_order_customer);
             id= itemView.findViewById(R.id.order_id);
             date = itemView.findViewById(R.id.order_date_value);
             price = itemView.findViewById(R.id.order_price);
@@ -93,14 +109,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             deliverer_name = itemView.findViewById(R.id.order_deliverer_name_textview);
             dishes_list = itemView.findViewById(R.id.dishes_list);
             customer_info =itemView.findViewById(R.id.order_customer_info);
-            itemView.setOnClickListener(view -> {
-                if (listener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(position);
-                    }
-                }
-            });
         }
     }
 }

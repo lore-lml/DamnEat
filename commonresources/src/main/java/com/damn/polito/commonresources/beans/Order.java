@@ -14,7 +14,8 @@ public class Order {
     private List<Dish> dishes;
     private Date date;
     private double price;
-    private String delivererName;
+    private String delivererName = "NOT_ASSIGNED_YET";
+    private String delivererPhoto;
     private String note;
     private String deliveryTime;
 
@@ -206,5 +207,13 @@ public class Order {
 
     public void setDelivererName(String delivererName) {
         this.delivererName = delivererName;
+    }
+
+    public String getDelivererPhoto() {
+        return delivererPhoto;
+    }
+
+    public void setDelivererPhoto(String delivererPhoto) {
+        this.delivererPhoto = delivererPhoto;
     }
 }
