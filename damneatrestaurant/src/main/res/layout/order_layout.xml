@@ -93,12 +93,11 @@
             android:id="@+id/circleImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:src="@drawable/profile_sample"
             app:layout_constraintBottom_toTopOf="@+id/order_deliverer_name_textview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/order_id" />
 
         <TextView
             android:id="@+id/dishes_list"
