@@ -24,6 +24,7 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.damneatrestaurant.dialogs.CategoryDialog;
 import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.damn.polito.damneatrestaurant.dialogs.OpeningDialog;
 
@@ -36,12 +37,12 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
 
     private ImageView profile;
     private ImageButton camera;
-    private EditText name, mail, description, address, phone, opening;
+    private EditText name, mail, description, address, phone, opening, category;
     private Button save;
     private Bitmap profImg;
 
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
-    private String sName, sMail, sDesc, sAddress, sPhone, sOpening;
+    private String sName, sMail, sDesc, sAddress, sPhone, sOpening, sCategory;
     private Bitmap profImgPrec;
 
     @Override
@@ -60,6 +61,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         address = findViewById(R.id.edit_address);
         opening = findViewById(R.id.edit_opening);
         save = findViewById(R.id.edit_save);
+        category = findViewById(R.id.edit_category);
 
         init();
     }
@@ -128,6 +130,12 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             OpeningDialog opening = new OpeningDialog();
             opening.setDaysText(sOpening);
             opening.show(fm, "Opening Dialog");
+        });
+
+        category.setOnClickListener(v->{
+            FragmentManager fm = getSupportFragmentManager();
+            CategoryDialog category = new CategoryDialog();
+            category.show(fm, "Category Dialog");
         });
     }
 

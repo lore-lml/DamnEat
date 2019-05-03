@@ -68,4 +68,19 @@
     <string name="summary_ship">Costo spedizione:</string>
     <string name="summary_dish">Piatti:</string>
     <string name="summary_total">Totale:</string>
+    <string name="category_cuisine">Cucina</string>
+    <string name="category_price">Fascia di prezzo</string>
+    <string name="cuisine_chinese">Cinese</string>
+    <string name="cuisine_greek">Greca</string>
+    <string name="cuisine_italian">Italiana</string>
+    <string name="cuisine_japanese">Giapponese</string>
+    <string name="cuisine_other">Altra</string>
+    <string name="cuisine_mexican">Messicana</string>
+    <string name="cuisine_new">La tua cucina</string>
+    <string name="dish_sandwich">Panini</string>
+    <string name="dish_new">Il tuo piatto</string>
+    <string name="dish_starter">Primi</string>
+    <string name="dish_meat">Carne</string>
+    <string name="dish_others">Altri</string>
+    <string name="restaurant_category">Categorie</string>
 </resources>
