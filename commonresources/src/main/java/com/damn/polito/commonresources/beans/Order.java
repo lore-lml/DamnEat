@@ -15,7 +15,7 @@ public class Order {
     private Date date;
     private double price;
     private String delivererName = "NOT_ASSIGNED_YET";
-    private String delivererPhoto;
+    private String delivererPhoto = "NO_PHOTO";
     private String note;
     private String deliveryTime;
 

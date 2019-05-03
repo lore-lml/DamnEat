@@ -38,7 +38,7 @@
     <string name="dish_availability">Disponibilità piatto</string>
     <string name="profile_opening">Orario di apertura</string>
     <string name="profile_phone">Numero di telefono</string>
-    <string name="order_id">ID Ordine: #%d</string>
+    <string name="order_id_s">ID Ordine: %s</string>
     <string name="order_num_dishes"># Piatti: %d</string>
     <string name="date_format">dd/MM/yyyy - hh:mm</string>
     <string name="title_activity_select_menu">Selezione Menu</string>
@@ -63,4 +63,25 @@
     <string name="menu_search">Cerca</string>
     <string name="offline_warning">Sei Offline\nControlla la tua connessione internet</string>
     <string name="ship">Spedizione</string>
+    <string name="insert_note">Vuoi specificare qualcosa?</string>
+    <string name="oreder_time">Ora</string>
+    <string name="summary_ship">Costo spedizione:</string>
+    <string name="summary_dish">Piatti:</string>
+    <string name="summary_total">Totale:</string>
+    <string name="category_cuisine">Cucina</string>
+    <string name="category_price">Fascia di prezzo</string>
+    <string name="cuisine_chinese">Cinese</string>
+    <string name="cuisine_greek">Greca</string>
+    <string name="cuisine_italian">Italiana</string>
+    <string name="cuisine_japanese">Giapponese</string>
+    <string name="cuisine_other">Altra</string>
+    <string name="cuisine_mexican">Messicana</string>
+    <string name="cuisine_new">La tua cucina</string>
+    <string name="dish_sandwich">Panini</string>
+    <string name="dish_new">Il tuo piatto</string>
+    <string name="dish_starter">Primi</string>
+    <string name="dish_meat">Carne</string>
+    <string name="dish_others">Altri</string>
+    <string name="restaurant_category">Categorie</string>
+    <string name="empty_categories">Nessuna categoria inserita</string>
 </resources>

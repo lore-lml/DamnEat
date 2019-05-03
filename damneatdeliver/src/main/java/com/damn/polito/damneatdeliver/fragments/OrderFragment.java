@@ -62,6 +62,10 @@ public class OrderFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
+        if(orders.size()>0) {
+            if (!orders.get(0).Expanded())
+                orders.get(0).changeExpanded();
+        }
         adapter.setOnItemClickListener(position -> {
             if (position != 0)
                 orders.get(position).changeExpanded();
@@ -111,8 +115,6 @@ public class OrderFragment extends Fragment {
         orders.add(new Order("845663", tmp, new Date(), "Via pastrengo 1", "Steve", "Matteo Azzurri", 10.5));
         orders.add(new Order("895241", tmp, new Date(), "Corso Duca 9", "Pippo", "Alessandro Rosa", 10.5));
 
-    }
-
     private void init(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference("ordini");
@@ -146,4 +148,4 @@ public class OrderFragment extends Fragment {
             }
         });
     }
-}
+}}

@@ -15,10 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.damn.polito.commonresources.beans.Customer;
-import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneat.R;
-import com.damn.polito.damneat.adapters.DishesAdapter;
 import com.damn.polito.damneat.adapters.OrdersAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,11 +25,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class OrderFragment extends Fragment {
     private List<String> orderKeyList = new ArrayList<>();
-    private List<Order> orderList = new ArrayList<>();
+    private LinkedList<Order> orderList = new LinkedList<>();
     private RecyclerView recyclerView;
     private OrdersAdapter adapter;
     private FirebaseDatabase database;
@@ -49,7 +48,6 @@ public class OrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         ctx = getContext();
         assert ctx != null;
 
@@ -82,7 +80,6 @@ public class OrderFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String key;
                 orderKeyList.clear();
-                orderList.clear();
                 for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
                     Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
                     Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
@@ -91,7 +88,7 @@ public class OrderFragment extends Fragment {
                     getOrderFirebase(key);
                     orderKeyList.add(key);
                 }
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -111,7 +108,15 @@ public class OrderFragment extends Fragment {
 
                 Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
-                orderList.add(order);
+                if(order!=null){
+                    order.sId(key);
+                    for(int i=0; i<orderList.size(); i++)
+                        if(orderList.get(i).Id().equals(order.Id())){
+                            orderList.remove(i);
+                            break;
+                        }
+                }
+                orderList.addFirst(order);
                 Log.d("order", order.getCustomer().getCustomerName());
                 adapter.notifyDataSetChanged();
             }

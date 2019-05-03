@@ -1,17 +1,23 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,10 +28,19 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private List<Order> orders;
     private Context ctx;
     private OnItemClickListener mListener;
-
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
+    private String key;
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
         this.ctx = context;
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String s = pref.getString("dbkey", null);
+        if (s != null) {
+            String key = stringOrDefault(s);
+        }
+
     }
 
     public interface OnItemClickListener { void onItemClick(int position); }
@@ -44,7 +59,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         DateFormat dateFormat = new SimpleDateFormat(ctx.getString(R.string.date_format), Locale.getDefault());
         Order selected = orders.get(position);
         //Calendar ciao= Calendar.getInstance();
-        holder.id.setText(ctx.getString(R.string.order_id, selected.Id()));
+        holder.id.setText(ctx.getString(R.string.order_id_s, selected.sId()));
         holder.date.setText(dateFormat.format(selected.getDate()));
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
@@ -53,10 +68,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
-        List<Dish> dishes = selected.CumulatedDishes();
-        for(int i=0; i<dishes.size(); i++){
-            dish_list_str += dishes.get(i).getQuantity() +"x\t"+ dishes.get(i).getName() + "\n";
-
+        List<Dish> dishes = selected.getDishes();
+        for (Dish d:dishes) {
+            String p = String.format("%.2f", d.getPrice());
+            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
         }
         holder.dishes_list.setText(dish_list_str);
 
@@ -65,8 +80,21 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
             holder.customer_info.setVisibility(View.GONE);
+            if(selected.getState().equals("ordered")){
+                holder.findDeliverer.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.findDeliverer.setVisibility(View.GONE);
+            }
         }else{
-            holder.deliverer_name.setVisibility(View.VISIBLE);
+            if(selected.getState().equals("ordered")){
+                holder.deliverer_name.setVisibility(View.GONE);
+                holder.findDeliverer.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.deliverer_name.setVisibility(View.VISIBLE);
+                holder.findDeliverer.setVisibility(View.GONE);
+            }
             holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
             holder.customer_info.setVisibility(View.VISIBLE);
@@ -81,6 +109,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
         private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info;
         private CardView root;
+        private Button findDeliverer;
 
         public OrderViewHolder(View itemView, OnItemClickListener listener) {
             super(itemView);
@@ -93,6 +122,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             deliverer_name = itemView.findViewById(R.id.order_deliverer_name_textview);
             dishes_list = itemView.findViewById(R.id.dishes_list);
             customer_info =itemView.findViewById(R.id.order_customer_info);
+            findDeliverer=itemView.findViewById(R.id.order_find_deliverer_button);
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
                     int position = getAdapterPosition();
@@ -101,6 +131,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                     }
                 }
             });
+
+            findDeliverer.setOnClickListener(v ->{
+                    Log.d("tmz","premuto find deliverer");
+
+
+                });
         }
+    }
+
+    public String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
     }
 }

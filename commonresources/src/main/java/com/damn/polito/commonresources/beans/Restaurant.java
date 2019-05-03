@@ -52,7 +52,9 @@ public class Restaurant {
         this.restaurantAddress = restaurantAddress;
     }
 
-    public String Photo() {
+    public String getPhoto() {
+        if(photo == null)
+            return "NO_PHOTO";
         return photo;
     }
 

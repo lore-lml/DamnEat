@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.EditProfile;
@@ -34,19 +35,23 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment{
 
-    private String defaultValue;
+    private String defaultValue, dbkey;
     private ImageView profileImage;
-    private TextView name, mail, description, address, phone, opening;
+    private TextView name, mail, description, address, phone, opening, categories;
     private Bitmap profileBitmap;
     private boolean empty = true;
     private Context ctx;
+    private String dbKey;
+    private FirebaseDatabase database;
 
+    //private Map<String, Object> orders;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,9 +76,10 @@ public class ProfileFragment extends Fragment{
         mail = view.findViewById(R.id.editText_email);
         phone = view.findViewById(R.id.editText_phone);
         description = view.findViewById(R.id.editText_desc);
-        address = view.findViewById(R.id.editText_email);
+        address = view.findViewById(R.id.editText_address);
         opening = view.findViewById(R.id.editText_opening);
-
+        categories = view.findViewById(R.id.editText_category);
+        database = FirebaseDatabase.getInstance();
         loadData();
     }
 
@@ -89,6 +95,7 @@ public class ProfileFragment extends Fragment{
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("address", address.getText().toString().trim());
             intent.putExtra("opening", opening.getText().toString().trim());
+            intent.putExtra("categories", categories.getText().toString().trim());
             intent.putExtra("image", profileImage.getDrawable().toString());
             if (profileBitmap != null){
                 PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -120,6 +127,7 @@ public class ProfileFragment extends Fragment{
         String description = data.getStringExtra("description");
         String address = data.getStringExtra("address");
         String opening = data.getStringExtra("opening");
+        String categories = data.getStringExtra("categories");
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
@@ -128,11 +136,21 @@ public class ProfileFragment extends Fragment{
         }
         //
         //CARICO I DATI SU FIREBASE
-        storeProfileOnFirebase(name,mail,phone,description,address,opening,bitmapProf);
+        storeProfileOnFirebase(name,mail,phone,description,address,opening, categories, bitmapProf);
         //code
         //
 
+        this.name.setText(name);
+        this.mail.setText(mail);
+        this.phone.setText(phone);
+        this.description.setText(description);
+        this.address.setText(address);
+        this.opening.setText(opening);
+        this.categories.setText(categories);
+        if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
+        empty = false;
 
+        /*
         JSONObject values = new JSONObject();
         try {
 
@@ -142,6 +160,7 @@ public class ProfileFragment extends Fragment{
             values.put("description", description);
             values.put("address", address);
             values.put("opening", opening);
+            values.put("categories", categories);
             if (profileBitmap != null) {
                 String bts = Utility.BitMapToString(profileBitmap);
                 values.put("profile", bts);
@@ -158,15 +177,16 @@ public class ProfileFragment extends Fragment{
             this.description.setText(description);
             this.address.setText(address);
             this.opening.setText(opening);
+            this.categories.setText(categories);
             if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
 
             empty = false;
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
-    private boolean storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening,String bitmapProf){
+    private void storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening,String categories, String bitmapProf){
 
         //DA IMPLEMENTARE RETURN TRUE OR FALSE A SECONDA CHE LA TRANSAZIONE VADA A BUONFINE
         //
@@ -174,52 +194,56 @@ public class ProfileFragment extends Fragment{
         //CREARNE DI NUOVI
 
         //SE LA MAIL ESISTE NON SI SALVA NULLA, SE NON ESISTE SI CREA UNA NUOVA KEY SU FIREBASE
-        boolean success;
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        String escapedMail = mail.replace(".", "|");
-        DatabaseReference myRef = database.getReference("ristoratori/"+escapedMail);
+        DatabaseReference myRef;
+        //DatabaseReference ordini;
+        if(dbKey == null) {
+            myRef = database.getReference("ristoratori/").push();
+            //ordini = database.getReference("ristoratori/" + myRef.getKey() + "/lista_ordini");
+        }
+        else{
+            myRef = database.getReference("ristoratori/" + dbKey);
+            //ordini = database.getReference("ristoratori/" + dbKey + "/lista_ordini");
+        }
+
         myRef.runTransaction(new Transaction.Handler(){
+            @NonNull
             @Override
-            public Transaction.Result doTransaction (MutableData currentData){
-                if(currentData.getValue()==null){
-                    //la mail non e' stata ancora usata. posso registrare l'utente
-                    currentData.setValue(new Profile(name, mail, phone, description, address, opening, bitmapProf));
-                    return Transaction.success(currentData);
-                }
-                else{
-                    //Deny modification
-
-                    return Transaction.abort();
-                }
-
+            public Transaction.Result doTransaction (@NonNull MutableData currentData){
+                currentData.setValue(new Profile(name, mail, phone, description, address, opening, categories, bitmapProf));
+                return Transaction.success(currentData);
             }
 
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 //this method will be called once with the result of the transaction
-
+                if(committed) {
+                    /*if(orders != null && orders.size() != 0)
+                        ordini.updateChildren(orders);*/
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+                    editor.putString("dbkey", myRef.getKey());
+                    editor.putString("address", address);
+                    editor.putString("name", name);
+                    editor.putString("phone", phone);
+                    editor.putString("mail", mail);
+                    editor.putString("description",description);
+                    editor.putString("opening", opening);
+                    editor.putString("categories", categories);
+                    editor.putString("profile", bitmapProf);
+                    editor.apply();
+                }
             }
-
         });
-
-            return true;
     }
 
     private void loadData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String s = pref.getString("info", null);
-        if (s == null) return;
 
-        try {
-            JSONObject values = new JSONObject(s);
-            //CARICO I DATI DA FIREBASE, di ciò che è salvato nelle shared al momento
-            // viene usata solamete la mail, in modo che la pagina possa essere chiamata
-            // automaticamente
+            if(dbKey == null) {
+                dbKey = pref.getString("dbkey", null);
+                if (dbKey == null) return;
+            }
 
-            //
-            String escapedMail = stringOrDefault(values.getString("mail")).replace(".","|");
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("ristoratori/"+escapedMail);
+            DatabaseReference myRef = database.getReference("ristoratori/" + dbKey);
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -233,12 +257,14 @@ public class ProfileFragment extends Fragment{
                         description.setText(prof.getDescription());
                         address.setText(prof.getAddress());
                         opening.setText(prof.getOpening());
+                        categories.setText(prof.getCategories());
                         if (prof.getImage() != null) {
                             String encodedBitmap = prof.getImage();
                             profileBitmap = Utility.StringToBitMap(encodedBitmap);
                             if (profileBitmap != null)
                                 profileImage.setImageBitmap(profileBitmap);
                         }
+                        empty = false;
                     }else{
                         name.setText(defaultValue);
                         mail.setText(defaultValue);
@@ -246,15 +272,30 @@ public class ProfileFragment extends Fragment{
                         description.setText(defaultValue);
                         address.setText(defaultValue);
                         opening.setText(defaultValue);
+                        categories.setText(defaultValue);
                     }
 
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // ...
+                    Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            /*DatabaseReference ordini = database.getReference("ristoratori/"+ dbKey +"/lista_ordini");
+            ordini.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    orders = (Map)dataSnapshot.getValue();
                 }
 
-            });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+                }
+            });*/
+
+
 
 
 
@@ -271,13 +312,12 @@ public class ProfileFragment extends Fragment{
                 if (profileBitmap != null)
                     profileImage.setImageBitmap(profileBitmap);
             }
+            empty = false;
             */
 
 
-            empty = false;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+
     }
 
 

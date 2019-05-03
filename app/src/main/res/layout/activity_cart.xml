@@ -1,347 +1,408 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground">
+    android:background="@color/colorBackground"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="1.0"
+    app:layout_constraintStart_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.0"
+    tools:context=".Cart">
 
-    <View
-        android:id="@+id/view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="210dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <android.support.constraint.ConstraintLayout
+        <android.support.v7.widget.CardView
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:cardBackgroundColor="@color/colorPrimary">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/restaurant_image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="16dp"
-                android:elevation="10dp"
-                android:src="@drawable/profile_sample"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardView5"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/restaurant_image">
+                android:layout_height="match_parent">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/restaurant_image"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/profile_sample"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/divider2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <android.support.constraint.ConstraintLayout
+                <View
+                    android:id="@+id/divider2"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/restaurant_image"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bubble_chat"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/divider2"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/restaurant_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="Amici Miei"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/PrimaryText"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/restaurant_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="8dp"
+                        android:text="Corso Lione 65"
+                        android:textAppearance="@style/SecondaryText" />
+
+                </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="20dp"
+            android:focusableInTouchMode="true"
+            android:layout_margin="8dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/summary_dish"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="10dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardBackgroundColor="@color/colorBackground"
+                    app:layout_constraintBottom_toTopOf="@+id/summary_list"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/cardView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="75dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@color/colorBackground"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/cardView2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="spread_inside">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                        <ImageView
+                            android:id="@+id/imageView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="0"
+                            android:tint="@color/colorAccent"
+                            app:srcCompat="@drawable/ic_restaurant" />
 
-                            <ImageView
-                                android:id="@+id/icon_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginBottom="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_person" />
+                        <TextView
+                            android:id="@+id/restaurant_dish"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="3"
+                            android:text="@string/summary_dish"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/PrimaryText" />
 
-                            <TextView
-                                android:id="@+id/restaurant_name"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:text="@string/profile_name"
-                                android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_name"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_name"
-                                app:layout_constraintTop_toTopOf="parent" />
+                        <TextView
+                            android:id="@+id/restaurant_dishnumber"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="5"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/PrimaryText" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
 
-                            <TextView
-                                android:id="@+id/editText_name"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginBottom="8dp"
-                                android:text="@string/nullText"
-                                android:textAppearance="@style/SecondaryText"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_name"
-                                app:layout_constraintTop_toBottomOf="@+id/restaurant_name" />
-                        </android.support.constraint.ConstraintLayout>
+                <android.support.v7.widget.CardView
+                    android:id="@+id/summary_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="10dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardBackgroundColor="@color/colorBackground"
+                    app:layout_constraintBottom_toTopOf="@+id/summary_ship"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/summary_dish">
 
-                    </android.support.v7.widget.CardView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/cardView2"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@color/colorBackground"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/cardView3"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/cardView">
+                        <ImageView
+                            android:id="@+id/imageView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_assignment" />
 
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/restaurant_dishlist"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:layout_weight="3"
+                            android:layout_gravity="center"
+                            android:text="1x Pizza Margherita\n1x Gelato cioccolato\n3x Nighiri"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/SecondaryText"
+                            android:textColor="#000" />
 
+                        <TextView
+                            android:id="@+id/restaurant_dishprice"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:layout_weight="1"
+                            android:layout_gravity="center"
+                            android:text="€ 5.00\n€ 2.50\n€ 3.50"
+                            android:textAlignment="center"
+                            android:textColor="#000" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
 
-                            <ImageView
-                                android:id="@+id/icon_email"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_map" />
+                <android.support.v7.widget.CardView
+                    android:id="@+id/summary_ship"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="10dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardBackgroundColor="@color/colorBackground"
+                    app:layout_constraintBottom_toTopOf="@+id/summary_total"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/summary_list">
 
-                            <TextView
-                                android:id="@+id/profile_email"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:text="@string/profile_address"
-                                android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_address"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_email"
-                                app:layout_constraintTop_toTopOf="parent" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/editText_address"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="16dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginBottom="8dp"
-                                android:text="@string/nullText"
-                                android:textAppearance="@style/SecondaryText"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_email"
-                                app:layout_constraintTop_toBottomOf="@+id/profile_email" />
-                        </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
+                        <ImageView
+                            android:id="@+id/imageView5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="0"
+                            android:tint="@color/colorAccent"
+                            app:srcCompat="@drawable/ic_bike" />
 
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/cardView3"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@color/colorBackground"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_address"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/cardView2">
+                        <TextView
+                            android:id="@+id/restaurant_ship"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="3"
+                            android:text="@string/summary_ship"
+                            android:textAlignment="center"
+                            android:textColor="#000" />
 
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/restaurant_shipprice"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="€ 1.90"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:textAlignment="center"
+                            android:textColor="#000" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
 
-                            <ImageView
-                                android:id="@+id/icon_desc"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_assignment" />
+                <android.support.v7.widget.CardView
+                    android:id="@+id/summary_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="10dp"
+                    app:cardBackgroundColor="@color/colorBackground"
+                    app:cardCornerRadius="8dp"
+                    app:layout_constraintBottom_toTopOf="@id/summary_note"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/summary_ship">
 
-                            <TextView
-                                android:id="@+id/profile_desc"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:text="@string/dishes_list"
-                                android:textAppearance="@style/PrimaryText"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                                app:layout_constraintBottom_toTopOf="@+id/editText_dishes"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_desc"
-                                app:layout_constraintTop_toTopOf="parent" />
+                        <ImageView
+                            android:id="@+id/imageView8"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="0"
+                            app:srcCompat="@drawable/ic_euro_red" />
 
-                            <TextView
-                                android:id="@+id/editText_dishes"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginBottom="8dp"
-                                android:text="@string/nullText"
-                                android:textAppearance="@style/SecondaryText"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_desc"
-                                app:layout_constraintTop_toBottomOf="@+id/profile_desc" />
-                        </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
+                        <TextView
+                            android:id="@+id/restaurant_total"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="3"
+                            android:text="@string/summary_total"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/PrimaryText" />
 
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_address"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="32dp"
-                        android:background="@color/colorBackground"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/cardView3"
-                        app:layout_constraintVertical_bias="0.0">
+                        <TextView
+                            android:id="@+id/restaurant_totalprice"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="1.5"
+                            android:text="€ 12.90"
+                            android:textAlignment="center"
+                            android:textAppearance="@style/PrimaryText"
+                            android:textSize="18sp" />
+                    </LinearLayout>
 
-                        <android.support.constraint.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                </android.support.v7.widget.CardView>
 
-                            <ImageView
-                                android:id="@+id/icon_address"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_euro_red" />
+                <android.support.v7.widget.CardView
+                    android:id="@+id/summary_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="32dp"
+                    android:elevation="10dp"
+                    app:cardBackgroundColor="@color/colorBackground"
+                    app:cardCornerRadius="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/summary_total">
 
-                            <TextView
-                                android:id="@+id/profile_address"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:text="@string/price"
-                                android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_price"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_address"
-                                app:layout_constraintTop_toTopOf="parent" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/editText_price"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginEnd="16dp"
-                                android:layout_marginBottom="8dp"
-                                android:text="@string/nullText"
-                                android:textAppearance="@style/SecondaryText"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.0"
-                                app:layout_constraintStart_toEndOf="@+id/icon_address"
-                                app:layout_constraintTop_toBottomOf="@+id/profile_address" />
-                        </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="0"
+                            android:tint="@color/colorAccent"
+                            app:srcCompat="@drawable/ic_chat" />
 
+                        <EditText
+                            android:id="@+id/restaurant_note"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="3"
+                            android:hint="@string/insert_note"
+                            android:inputType="textMultiLine"
+                            android:textAlignment="center"
+                            android:textColor="#000"
+                            android:textSize="15sp" />
 
-                </android.support.constraint.ConstraintLayout>
-            </android.support.v7.widget.CardView>
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="0"
+                            android:tint="@color/colorAccent"
+                            app:srcCompat="@drawable/ic_clock" />
 
-            <Button
-                android:id="@+id/confirm_button"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/buttons"
-                android:paddingStart="100dp"
-                android:paddingEnd="100dp"
-                android:text="@string/confirm_order"
-                android:textColor="#fff"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardView5" />
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
+                        <EditText
+                            android:id="@+id/restaurant_time"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="4dp"
+                            android:layout_weight="1"
+                            android:hint="@string/oreder_time"
+                            android:focusableInTouchMode="false"
+                            android:focusable="false"
+                            android:cursorVisible="false"
+                            android:textSize="15sp"
+                            android:textAlignment="center"
+                            android:textColor="#000" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+        <Button
+            android:id="@+id/confirm_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/buttons"
+            android:paddingStart="100dp"
+            android:paddingEnd="100dp"
+            android:text="@string/confirm_order"
+            android:textColor="#fff"/>
 
-</android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

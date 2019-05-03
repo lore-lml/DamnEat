@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_order"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_order_not_delivered"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="8dp"
@@ -9,6 +10,7 @@
     android:layout_marginRight="8dp"
     android:layout_marginBottom="4dp"
     android:background="@color/colorBackground"
+    app:cardCornerRadius="20dp"
     app:cardElevation="5dp">
 
     <android.support.constraint.ConstraintLayout
@@ -17,18 +19,18 @@
         android:background="@color/colorPrimaryCardView">
 
         <TextView
-            android:id="@+id/order_id"
+            android:id="@+id/state_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/order_id_s"
             android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="12sp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/state"
+            android:textAppearance="@style/PrimaryText"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/delivery_time_tv"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
+            app:layout_constraintTop_toBottomOf="@+id/order_id" />
 
         <TextView
             android:id="@+id/order_date_value"
@@ -36,9 +38,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/nullText"
             android:textAppearance="@style/SecondaryText"
             android:textStyle="italic"
+            app:layout_constraintBottom_toTopOf="@+id/order_id"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread" />
@@ -48,41 +52,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/order_num_dishes"
             android:textAppearance="@style/SecondaryText"
             app:layout_constraintBottom_toTopOf="@+id/dishes_list"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_delivery_time" />
+            app:layout_constraintTop_toBottomOf="@+id/delivery_time_tv" />
 
         <TextView
             android:id="@+id/order_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
             android:text="@string/order_price"
             android:textAlignment="center"
             android:textAppearance="@style/PrimaryText"
             android:textSize="25sp"
-            app:layout_constraintBottom_toTopOf="@+id/confirmOrder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toTopOf="@id/note_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dishes_list" />
 
         <TextView
-            android:id="@+id/order_Customer_name_textview"
+            android:id="@+id/order_deliverer_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
+            android:text="Giovanni Rossi"
 
-            android:text="@string/order_customer"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textAppearance="@style/SecondaryText"
+            app:layout_constraintBottom_toTopOf="@+id/order_customer_info"
+            app:layout_constraintEnd_toEndOf="@+id/circleImageView"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
             app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -92,9 +95,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:src="@drawable/profile_sample"
+            app:layout_constraintBottom_toTopOf="@+id/order_deliverer_name_textview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/dishes_list"
@@ -111,44 +114,22 @@
             android:id="@+id/order_customer_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:gravity="end"
-            android:text="@string/string"
-            android:textAppearance="@style/PrimaryText"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/order_customer"
+            android:textAlignment="textEnd"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_Customer_name_textview"
-            app:layout_constraintVertical_bias="0.1" />
-
-        <TextView
-            android:id="@+id/restaurant_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/string"
-            android:textAppearance="@style/PrimaryText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/restaurant_name" />
-
-        <TextView
-            android:id="@+id/restaurant_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/order_restaurant"
-            android:textAppearance="@style/SecondaryText"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_id" />
+            app:layout_constraintEnd_toEndOf="@+id/circleImageView"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/order_deliverer_name_textview" />
 
         <Button
             android:id="@+id/confirmOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
             android:background="@drawable/buttons"
             android:paddingStart="100dp"
             android:paddingEnd="100dp"
@@ -156,32 +137,54 @@
             android:textColor="#fff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/order_customer_info"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/order_delivery_time"
+            android:id="@+id/delivery_time_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/delivery_time"
             android:textAppearance="@style/PrimaryText"
-            android:textSize="22sp"
+            app:layout_constraintBottom_toTopOf="@id/order_num_dishes"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/restaurant_info" />
+            app:layout_constraintTop_toBottomOf="@id/state_tv" />
 
         <TextView
-            android:id="@+id/order_note"
+            android:id="@+id/note_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/string"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.421"
-            app:layout_constraintStart_toEndOf="@+id/dishes_list"
-            app:layout_constraintTop_toBottomOf="@+id/order_customer_info" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/confirmOrder"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/order_price" />
+
+        <TextView
+            android:id="@+id/order_id"
+            android:layout_width="wrap_content"
+            android:layout_height="19dp"
+            android:layout_marginStart="16dp"
+            android:text="@string/order_id_s"
+            app:layout_constraintBottom_toTopOf="@id/state_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/order_date_value" />
+
+        <TextView
+            android:id="@+id/state_tv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Completed"
+            android:textAppearance="@style/PrimaryText"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/state_tv"
+            app:layout_constraintStart_toEndOf="@+id/state_tv"
+            app:layout_constraintTop_toTopOf="@+id/state_tv" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

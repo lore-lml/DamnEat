@@ -1,5 +1,6 @@
 package com.damn.polito.damneat;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +40,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class ChooseDishes extends AppCompatActivity {
     private List<Dish> dishesList = new ArrayList<>();
@@ -58,6 +62,7 @@ public class ChooseDishes extends AppCompatActivity {
     private Customer customer = new Customer();
 
     private Double price = -1.;
+    private int quantity = -1;
     private Context ctx;
     private String restaurant_photo;
     private final int CART = 10;
@@ -68,6 +73,8 @@ public class ChooseDishes extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.activity_choose_dishes);
         no_dishes_img = findViewById(R.id.no_dishes_img);
         no_dishes_tv = findViewById(R.id.no_dishes_tv);
@@ -105,31 +112,43 @@ public class ChooseDishes extends AppCompatActivity {
 
 
     private void startCart(){
-        String data = "";
+        StringBuilder data = new StringBuilder();
+        StringBuilder prices = new StringBuilder();
         Intent i = new Intent(this, Cart.class);
         List<Dish> cart_dishes = getCartDishes();
         storeData(cart_dishes);
         price = 0.;
+        quantity = 0;
         for (Dish d:cart_dishes) {
-            String p = String.format("%.2f", d.getPrice());
-            data += d.getQuantity() +"x\t"+ d.getName()+"\t"+ p + "€\n";
+            String p = String.format(Locale.getDefault(),"%.2f", d.getPrice()*d.getQuantity());
+            prices.append(p).append("€ ").append("\n");
+            data.append(d.getQuantity()).append("x ").append(d.getName()).append("\n");
             price += d.getQuantity()*d.getPrice();
+            quantity += d.getQuantity();
         }
+        data.deleteCharAt(data.length()-1);
+        prices.deleteCharAt(prices.length()-1);
+
         if(price == 0){
-            Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_LONG).show();
             return;
         }
+        String ship;
         if(restaurant.getRestaurant_price_ship() != 0.) {
-            String p = String.format("%.2f", restaurant.getRestaurant_price_ship());
-            data += getString(R.string.ship) + " " + p + "€";
+            ship = String.format(Locale.getDefault(),"%.2f €", restaurant.getRestaurant_price_ship());
             Log.d("test", restaurant.getRestaurant_price_ship().toString());
             price += restaurant.getRestaurant_price_ship();
+        }else{
+            ship = getString(R.string.price_free);
         }
-        i.putExtra("list", data);
+        i.putExtra("list", data.toString());
         i.putExtra("price", price);
         i.putExtra("restaurant_name", restaurant.getRestaurantName());
         i.putExtra("restaurant_address", restaurant.getRestaurantAddress());
-        i.putExtra("restaurant_photo", restaurant.Photo());
+        i.putExtra("restaurant_photo", restaurant.getPhoto());
+        i.putExtra("restaurant_shipprice", ship);
+        i.putExtra("restaurant_dishprices", prices.toString());
+        i.putExtra("restaurant_quantity", quantity);
         startActivityForResult(i, CART);
     }
 
@@ -158,6 +177,7 @@ public class ChooseDishes extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
         dbRef.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String key;
@@ -215,7 +235,7 @@ public class ChooseDishes extends AppCompatActivity {
                     values.put("client_name", element.getName());
                     values.put("quantity", element.getQuantity());
                     values.put("price", element.getPrice());
-                    values.put("id", element.getId());
+                    values.put("id", element.Id());
                     array.put(values);
                     Log.d("StoreDataDish", "Store: " + array.toString());
                 }catch (JSONException e) {
@@ -275,9 +295,9 @@ public class ChooseDishes extends AppCompatActivity {
                         for (MutableData child:(currentData.getChildren())){
                             Dish dish = child.getValue(Dish.class);
                             Log.d("transazione", child.getValue().toString());
-                            Log.d("transazione", cart_dish.getId());
+                            Log.d("transazione", cart_dish.Id());
                             dishID = child.getKey();
-                            if (dishID != null && dishID.equals(cart_dish.getId())) {
+                            if (dishID != null && dishID.equals(cart_dish.Id())) {
                                 d = dish;
                                 break;
                             }
@@ -293,7 +313,7 @@ public class ChooseDishes extends AppCompatActivity {
                         }
 
                         Log.d("transazione", d.getName());
-                        //String dishID = d.getId();
+                        //String dishID = d.Id();
                         MutableData dbRefDish = currentData.child(dishID);
                         d.setAvailability(d.getAvailability()-cart_dish.getQuantity());
                         dbRefDish.setValue(d);
@@ -308,8 +328,9 @@ public class ChooseDishes extends AppCompatActivity {
                         Order order = new Order(cart_dishes, new Date(), restaurant, customer, price, note, deliveryTime);
                         DatabaseReference dbRefOrdini = database.getReference("ordini/");
                         DatabaseReference orderID = dbRefOrdini.push();
-                        orderID.setValue(order);
                         orderID_key = orderID.getKey();
+                        order.sId(orderID_key);
+                        orderID.setValue(order);
                         //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
                         DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/ordini_pendenti/");
                         DatabaseReference id_restaurant = dbRefRestaurant.push();
@@ -326,6 +347,19 @@ public class ChooseDishes extends AppCompatActivity {
                         Toast.makeText(ctx, R.string.order_error, Toast.LENGTH_LONG).show();
                 }
             });
+        }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

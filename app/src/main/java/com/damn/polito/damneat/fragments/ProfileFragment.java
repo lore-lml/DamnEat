@@ -198,7 +198,7 @@ public class ProfileFragment extends Fragment {
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 //this method will be called once with the result of the transaction
                 if(committed) {
-                    if(orders.size() != 0)
+                    if(orders != null && orders.size() != 0)
                         ordini.updateChildren(orders);
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
                     editor.putString("dbkey", myRef.getKey());

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_restaurant_address">Indirizzo ristorante</string>
+    <string name="assign_deliverer">Assegna un rider</string>
+    <string name="order_id">ID Ordine: #%d</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->
@@ -13,7 +15,7 @@
     <!--<string name="dish_availability">Disponibilità piatto</string>-->
     <!--<string name="profile_opening">Orario di apertura</string>-->
     <!--<string name="profile_phone">Numero di telefono</string>-->
-    <!--<string name="order_id">ID Ordine: #%d</string>-->
+    <!--<string name="order_id_s">ID Ordine: #%d</string>-->
     <!--<string name="order_num_dishes"># Piatti: %d</string>-->
     <!--<string name="date_format">dd/MM/yyyy - hh:mm</string>-->
     <!--<string name="title_activity_select_menu">Selezione Menu</string>-->
