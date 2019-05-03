@@ -10,8 +10,10 @@ public class Profile {
     private String opening;
     private String image;
     private String categories;
+    private double priceShip;
 
-    public Profile(String name, String mail, String phone, String description, String address, String opening, String image, String categories) {
+    public Profile(String name, String mail, String phone, String description, String address, String opening,
+                   String categories, double priceShip, String image) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
@@ -20,10 +22,11 @@ public class Profile {
         this.opening = opening;
         this.image = image;
         this.categories = categories;
+        this.priceShip = priceShip;
     }
 
     public Profile(Profile p) {
-        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.image, p.categories);
+        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.categories, p.priceShip, p.image);
     }
     public Profile() {}
 
@@ -89,6 +92,14 @@ public class Profile {
 
     public void setCategories(String categories) {
         this.categories = categories;
+    }
+
+    public Double getPriceShip() {
+        return priceShip;
+    }
+
+    public void setPriceShip(Double priceShip) {
+        this.priceShip = priceShip;
     }
 }
 
