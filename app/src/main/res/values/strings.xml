@@ -3,7 +3,6 @@
     <string name="profile_address">Address</string>
     <string name="add_to_chart">Add</string>
     <string name="dish_added">Dish added to your shopping cart</string>
-    <string name="confirm_order">Confirm order</string>
     <string name="dishes_list">Dishes list</string>
     <string name="price">Price</string>
     <string name="no_dishes">This restaurant has no dishes yet</string>

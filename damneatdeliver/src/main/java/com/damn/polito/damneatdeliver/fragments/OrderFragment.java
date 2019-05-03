@@ -73,35 +73,35 @@ public class OrderFragment extends Fragment {
         });
     }
 
-    private void initExample(){
+    private void initExample() {
         orders.clear();
         List<Dish> tmp = new ArrayList<>();
-        tmp.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+        tmp.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3, 15));
+        tmp.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50, 3));
 
         List<Dish> tmp2 = new ArrayList<>();
-        tmp2.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp2.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));
-        tmp2.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+        tmp2.add(new Dish("Pizza", "Chi non conosce la pizza??", 6, 20));
+        tmp2.add(new Dish("Carbonara", "Un piatto buonissimo", 7, 10));
+        tmp2.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50, 3));
 
         List<Dish> tmp3 = new ArrayList<>();
-        tmp3.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp3.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp3.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp3.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
+        tmp3.add(new Dish("Pizza", "Chi non conosce la pizza??", 6, 20));
+        tmp3.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3, 15));
+        tmp3.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50, 3));
+        tmp3.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50, 10));
 
         List<Dish> tmp4 = new ArrayList<>();
-        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
+        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6, 20));
+        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3, 15));
+        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50, 3));
+        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50, 10));
+        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3, 15));
+        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50, 3));
+        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50, 10));
+        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6, 20));
+        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3, 15));
+        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50, 3));
+        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50, 10));
 
 
         orders.add(new Order("123121", tmp, new Date(), "Via Pastrengo 5", "Osvaldo Osvaldi", "Mario Rossi", 10.5));
@@ -114,6 +114,7 @@ public class OrderFragment extends Fragment {
         orders.add(new Order("454542", tmp3, new Date(), "Via pastrengo 8", "Gigi", "Lorenzo Viola", 10.5));
         orders.add(new Order("845663", tmp, new Date(), "Via pastrengo 1", "Steve", "Matteo Azzurri", 10.5));
         orders.add(new Order("895241", tmp, new Date(), "Corso Duca 9", "Pippo", "Alessandro Rosa", 10.5));
+    }
 
     private void init(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -131,7 +132,7 @@ public class OrderFragment extends Fragment {
                     key = chidSnap.getKey();
                     order = chidSnap.getValue(Order.class);
                     orders.add(order);
-                    orders.get(orders.size()-1).setId(key);
+                    orders.get(orders.size()-1).sId(key);
                 }
                 adapter.notifyDataSetChanged();
 
@@ -148,4 +149,4 @@ public class OrderFragment extends Fragment {
             }
         });
     }
-}}
+}
