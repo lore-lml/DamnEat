@@ -32,10 +32,6 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -44,14 +40,14 @@ public class ProfileFragment extends Fragment{
 
     private String defaultValue, dbkey;
     private ImageView profileImage;
-    private TextView name, mail, description, address, phone, opening;
+    private TextView name, mail, description, address, phone, opening, categories, shipPrice;
     private Bitmap profileBitmap;
     private boolean empty = true;
     private Context ctx;
     private String dbKey;
     private FirebaseDatabase database;
 
-    private Map<String, Object> orders;
+    //private Map<String, Object> orders;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,6 +74,8 @@ public class ProfileFragment extends Fragment{
         description = view.findViewById(R.id.editText_desc);
         address = view.findViewById(R.id.editText_address);
         opening = view.findViewById(R.id.editText_opening);
+        categories = view.findViewById(R.id.editText_category);
+        shipPrice = view.findViewById(R.id.editText_shipprice);
         database = FirebaseDatabase.getInstance();
         loadData();
     }
@@ -94,6 +92,8 @@ public class ProfileFragment extends Fragment{
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("address", address.getText().toString().trim());
             intent.putExtra("opening", opening.getText().toString().trim());
+            intent.putExtra("categories", categories.getText().toString().trim());
+            intent.putExtra("shipprice", shipPrice.getText().toString().trim());
             intent.putExtra("image", profileImage.getDrawable().toString());
             if (profileBitmap != null){
                 PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -125,15 +125,18 @@ public class ProfileFragment extends Fragment{
         String description = data.getStringExtra("description");
         String address = data.getStringExtra("address");
         String opening = data.getStringExtra("opening");
+        String categories = data.getStringExtra("categories");
+        String shipprice = data.getStringExtra("shipprice");
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
             hasProfile = true;
             pref.edit().remove("profile").apply();
         }
+        double priceship = shipprice.equals(getString(R.string.price_free)) ? 0.0 : Double.valueOf(shipprice.replace(",","."));
         //
         //CARICO I DATI SU FIREBASE
-        storeProfileOnFirebase(name,mail,phone,description,address,opening,bitmapProf);
+        storeProfileOnFirebase(new Profile(name,mail,phone,description,address, opening, categories, priceship, bitmapProf));
         //code
         //
 
@@ -143,6 +146,11 @@ public class ProfileFragment extends Fragment{
         this.description.setText(description);
         this.address.setText(address);
         this.opening.setText(opening);
+        this.categories.setText(categories);
+        if(!shipprice.equals(getString(R.string.price_free)))
+            this.shipPrice.setText(getString(R.string.order_price, Double.valueOf(shipprice.replace(",","."))));
+        else
+            this.shipPrice.setText(shipprice);
         if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
         empty = false;
 
@@ -156,6 +164,8 @@ public class ProfileFragment extends Fragment{
             values.put("description", description);
             values.put("address", address);
             values.put("opening", opening);
+            values.put("categories", categories);
+            values.put("shipprice", shipprice);
             if (profileBitmap != null) {
                 String bts = Utility.BitMapToString(profileBitmap);
                 values.put("profile", bts);
@@ -172,6 +182,8 @@ public class ProfileFragment extends Fragment{
             this.description.setText(description);
             this.address.setText(address);
             this.opening.setText(opening);
+            this.shipPrice.setText(shipprice);
+            this.categories.setText(categories);
             if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
 
             empty = false;
@@ -180,7 +192,7 @@ public class ProfileFragment extends Fragment{
         }*/
     }
 
-    private boolean storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening,String bitmapProf){
+    private void storeProfileOnFirebase(Profile profile){
 
         //DA IMPLEMENTARE RETURN TRUE OR FALSE A SECONDA CHE LA TRANSAZIONE VADA A BUONFINE
         //
@@ -203,7 +215,7 @@ public class ProfileFragment extends Fragment{
             @NonNull
             @Override
             public Transaction.Result doTransaction (@NonNull MutableData currentData){
-                currentData.setValue(new Profile(name, mail, phone, description, address, opening, bitmapProf));
+                currentData.setValue(profile);
                 return Transaction.success(currentData);
             }
 
@@ -215,19 +227,19 @@ public class ProfileFragment extends Fragment{
                         ordini.updateChildren(orders);*/
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
                     editor.putString("dbkey", myRef.getKey());
-                    editor.putString("address", address);
-                    editor.putString("name", name);
-                    editor.putString("phone", phone);
-                    editor.putString("mail", mail);
-                    editor.putString("description",description);
-                    editor.putString("opening", opening);
-                    editor.putString("profile", bitmapProf);
+                    editor.putString("address", profile.getAddress());
+                    editor.putString("name", profile.getName());
+                    editor.putString("phone", profile.getPhone());
+                    editor.putString("mail", profile.getMail());
+                    editor.putString("description",profile.getDescription());
+                    editor.putString("opening", profile.getOpening());
+                    editor.putString("categories", profile.getCategories());
+                    editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
+                    editor.putString("profile", profile.getImage());
                     editor.apply();
                 }
             }
         });
-
-            return true;
     }
 
     private void loadData() {
@@ -252,6 +264,11 @@ public class ProfileFragment extends Fragment{
                         description.setText(prof.getDescription());
                         address.setText(prof.getAddress());
                         opening.setText(prof.getOpening());
+                        categories.setText(prof.getCategories());
+                        if(prof.getPriceShip() != null && !prof.getPriceShip().equals(0.0))
+                            ProfileFragment.this.shipPrice.setText(getString(R.string.order_price, prof.getPriceShip()));
+                        else
+                            ProfileFragment.this.shipPrice.setText(String.valueOf(0.0));
                         if (prof.getImage() != null) {
                             String encodedBitmap = prof.getImage();
                             profileBitmap = Utility.StringToBitMap(encodedBitmap);
@@ -266,6 +283,8 @@ public class ProfileFragment extends Fragment{
                         description.setText(defaultValue);
                         address.setText(defaultValue);
                         opening.setText(defaultValue);
+                        categories.setText(defaultValue);
+                        shipPrice.setText(R.string.price_free);
                     }
 
                 }

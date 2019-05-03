@@ -1,5 +1,7 @@
 package com.damn.polito.damneatrestaurant.dialogs;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,13 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryDialog extends DialogFragment {
 
@@ -24,6 +29,9 @@ public class CategoryDialog extends DialogFragment {
     private EditText otherCuisine, otherDish;
     private RadioGroup priceRange;
     private Button save;
+
+    private String result;
+    private boolean ok = false;
 
     @Nullable
     @Override
@@ -37,6 +45,119 @@ public class CategoryDialog extends DialogFragment {
         getDialog().setTitle(R.string.restaurant_category);
 
         initViews(v);
+
+        if(result != null){
+            initParams();
+        }
+
+        save.setOnClickListener(view->{
+            StringBuilder sb1 = new StringBuilder();
+            boolean otherCuisine = false;
+            int cnt = 0;
+            for(CheckBox c : cuisine) {
+                if (c.isChecked()) {
+                    cnt++;
+                    if(c.getId() != R.id.box_other)
+                        sb1.append(c.getText()).append(", ");
+                    else
+                        otherCuisine = true;
+                }
+            }
+            if(cnt == 0){
+                Toast.makeText(getContext(), "No cuisine selected", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if(otherCuisine)
+                sb1.append(this.otherCuisine.getText().toString()).append(", ");
+
+            boolean otherDish = false;
+            for(CheckBox c : dishes){
+                if(c.isChecked()){
+                    if(c.getId() != R.id.box_otherdish)
+                        sb1.append(c.getText()).append(", ");
+                    else
+                        otherDish = true;
+                }
+            }
+            if(otherDish)
+                sb1.append(this.otherDish.getText().toString()).append(", ");
+
+            sb1.delete(sb1.length()-2, sb1.length()-1);
+            sb1.append(" (");
+
+            switch (priceRange.getCheckedRadioButtonId()){
+                case R.id.radio_cheap:
+                    sb1.append("€");
+                    break;
+                case R.id.radio_medium:
+                    sb1.append("€€");
+                    break;
+                case R.id.radio_expensive:
+                    sb1.append("€€€");
+                    break;
+                default:
+                    sb1.append("?");
+                    break;
+            }
+            sb1.append(")");
+            result = sb1.toString();
+            ok = true;
+            this.dismiss();
+        });
+    }
+
+    private void initParams() {
+        assert result != null;
+
+        String[] cat = result.split(",?\\s+");
+        boolean found;
+        int nDishes = 0;
+        for (int i = 0; i < cat.length - 1; i++) {
+            found = false;
+            for(CheckBox c : cuisine) {
+                if (c.getId() != R.id.box_other && c.getText().toString().equals(cat[i])) {
+                    c.setChecked(true);
+                    found = true;
+                    break;
+                }
+            }
+            if(found) continue;
+
+            for(CheckBox c : dishes){
+                if(c.getId() != R.id.box_otherdish && c.getText().toString().equals(cat[i])) {
+                    c.setChecked(true);
+                    found = true;
+                    nDishes++;
+                    break;
+                }
+            }
+
+            if(!found){
+                //Essendo ordinati prima le cucine e poi i piatti e i le custom choice sono in ultima posizione, se il primo non trovato
+                //capita quando non sono stati trovati ancora piatti allora è sicuramente una cucina
+                if(nDishes == 0){
+                    cuisine.get(cuisine.size()-1).setChecked(true);
+                    otherCuisine.setText(cat[i]);
+                }else{
+                    dishes.get(dishes.size()-1).setChecked(true);
+                    otherDish.setText(cat[i]);
+                }
+            }
+        }
+
+        String priceRange = cat[cat.length-1];
+        switch (priceRange){
+            case "(€)":
+                ((RadioButton)this.priceRange.getChildAt(0)).setChecked(true);
+                break;
+            case "(€€)":
+                ((RadioButton)this.priceRange.getChildAt(1)).setChecked(true);
+                break;
+            case "(€€€)":
+                ((RadioButton)this.priceRange.getChildAt(2)).setChecked(true);
+                break;
+        }
+
     }
 
     private void initViews(View v) {
@@ -82,4 +203,24 @@ public class CategoryDialog extends DialogFragment {
             }
         });
     }
+
+    public void setCategories(String categories){
+        this.result = categories;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if(result == null || !ok) {
+            super.onDismiss(dialog);
+            return;
+        }
+
+        Activity activity = getActivity();
+        if(activity instanceof HandleDismissDialog){
+            ((HandleDismissDialog) activity).handleOnDismiss(EditProfile.DialogType.Categories, result);
+        }
+    }
+
+
+
 }

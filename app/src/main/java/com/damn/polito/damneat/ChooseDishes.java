@@ -50,6 +50,7 @@ public class ChooseDishes extends AppCompatActivity {
     private FloatingActionButton fab_cart;
     private ImageView no_dishes_img;
     private TextView no_dishes_tv;
+    private ValueEventListener listener;
 
     // Dettagli ristorante
     private Restaurant restaurant = new Restaurant();
@@ -97,8 +98,8 @@ public class ChooseDishes extends AppCompatActivity {
         restaurant.setPhoto(i.getStringExtra("rest_image"));
         restaurant_description = i.getStringExtra("rest_description");
         restaurant.setRestaurant_price_ship(i.getDoubleExtra("rest_priceship", 0));
-        Log.d("restaurant", restaurant.getRestaurantName());
-        Log.d("restaurant", restaurant.getRestaurantAddress());
+        //Log.d("restaurant", restaurant.getRestaurantName());
+        //Log.d("restaurant", restaurant.getRestaurantAddress());
     }
 
     private void getSharedData() {
@@ -126,8 +127,10 @@ public class ChooseDishes extends AppCompatActivity {
             price += d.getQuantity()*d.getPrice();
             quantity += d.getQuantity();
         }
-        data.deleteCharAt(data.length()-1);
-        prices.deleteCharAt(prices.length()-1);
+        if(data.length()>0)
+            data.deleteCharAt(data.length()-1);
+        if(prices.length()>0)
+            prices.deleteCharAt(prices.length()-1);
 
         if(price == 0){
             Toast.makeText(this, R.string.cart_empty, Toast.LENGTH_LONG).show();
@@ -176,7 +179,7 @@ public class ChooseDishes extends AppCompatActivity {
     private void init(){
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
-        dbRef.addValueEventListener(new ValueEventListener() {
+        listener = dbRef.addValueEventListener(new ValueEventListener() {
             @SuppressLint("RestrictedApi")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -184,23 +187,22 @@ public class ChooseDishes extends AppCompatActivity {
                 Dish dish;
                 dishesList.clear();
                 for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
-                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
-                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
+                    //Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
+                    //Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
                     //DataPacket value = dataSnapshot.getValue(DataPacket.class);
                     key = chidSnap.getKey();
                     dish = chidSnap.getValue(Dish.class);
                     dishesList.add(dish);
-                    dishesList.get(dishesList.size()-1).setId(key);
+                    dishesList.get(dishesList.size() - 1).setId(key);
                 }
                 adapter.notifyDataSetChanged();
                 //Log.d("Load", dishesList.get(0).getName());
-                if(dishesList.size() == 0){
+                if (dishesList.size() == 0) {
                     recyclerView.setVisibility(View.GONE);
                     fab_cart.setVisibility(View.GONE);
                     no_dishes_img.setVisibility(View.VISIBLE);
                     no_dishes_tv.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     recyclerView.setVisibility(View.VISIBLE);
                     fab_cart.setVisibility(View.VISIBLE);
                     no_dishes_img.setVisibility(View.GONE);
@@ -277,6 +279,10 @@ public class ChooseDishes extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == CART){
+            note = data.getStringExtra("note");
+            deliveryTime = data.getStringExtra("time");
+            Log.d("result", note);
+
             List<Dish> cart_dishes = loadData();
 
             //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
@@ -294,8 +300,8 @@ public class ChooseDishes extends AppCompatActivity {
                     for (Dish cart_dish:cart_dishes) {
                         for (MutableData child:(currentData.getChildren())){
                             Dish dish = child.getValue(Dish.class);
-                            Log.d("transazione", child.getValue().toString());
-                            Log.d("transazione", cart_dish.Id());
+                            //Log.d("transazione", child.getValue().toString());
+                            //Log.d("transazione", cart_dish.Id());
                             dishID = child.getKey();
                             if (dishID != null && dishID.equals(cart_dish.Id())) {
                                 d = dish;
@@ -312,7 +318,7 @@ public class ChooseDishes extends AppCompatActivity {
                             return Transaction.abort();
                         }
 
-                        Log.d("transazione", d.getName());
+                        //Log.d("transazione", d.getName());
                         //String dishID = d.Id();
                         MutableData dbRefDish = currentData.child(dishID);
                         d.setAvailability(d.getAvailability()-cart_dish.getQuantity());
@@ -323,7 +329,7 @@ public class ChooseDishes extends AppCompatActivity {
 
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                    Log.d("transazione", String.valueOf(b));
+                    //Log.d("transazione", String.valueOf(b));
                     if(b) {
                         Order order = new Order(cart_dishes, new Date(), restaurant, customer, price, note, deliveryTime);
                         DatabaseReference dbRefOrdini = database.getReference("ordini/");
@@ -361,5 +367,11 @@ public class ChooseDishes extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dbRef.removeEventListener(listener);
     }
 }

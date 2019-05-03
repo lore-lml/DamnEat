@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +17,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Cart extends AppCompatActivity {
+
+    private String time = "20:00";
+    EditText note_et;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +42,10 @@ public class Cart extends AppCompatActivity {
         TextView name_tv = findViewById(R.id.restaurant_name);
         TextView price_tv = findViewById(R.id.restaurant_totalprice);
         TextView address_tv = findViewById(R.id.restaurant_address);
-        EditText note_et = findViewById(R.id.restaurant_note);
         EditText time_et = findViewById(R.id.restaurant_time);
         TextView ship_tv = findViewById(R.id.restaurant_shipprice);
+        note_et = findViewById(R.id.restaurant_note);
+
         ImageView photo_image = findViewById(R.id.restaurant_image);
 
 
@@ -60,7 +65,7 @@ public class Cart extends AppCompatActivity {
 
         Button button = findViewById(R.id.confirm_button);
         button.setOnClickListener(v-> {
-            setResult(RESULT_OK);
+            setResultCart();
             finish();
         });
     }
@@ -77,8 +82,12 @@ public class Cart extends AppCompatActivity {
         }
     }
 
-    private void setResult(){
+    private void setResultCart(){
         Intent i = new Intent();
+        Log.d("result", note_et.getText().toString());
+        i.putExtra("note", note_et.getText().toString());
+        i.putExtra("time", time);
+        setResult(RESULT_OK, i);
     }
 
 }
