@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,15 +13,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.damneatrestaurant.beans.Profile;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,30 +37,30 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private List<Order> orders;
     private Context ctx;
     private OnItemClickListener mListener;
-    private FirebaseDatabase database;
-    private DatabaseReference dbRef;
+    private OnButtonClickListener bListener;
     private String key;
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
         this.ctx = context;
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        String s = pref.getString("dbkey", null);
-        if (s != null) {
-            String key = stringOrDefault(s);
-        }
 
     }
 
     public interface OnItemClickListener { void onItemClick(int position); }
 
+
     public void setOnItemClickListener (OnItemClickListener listener) { mListener = listener; }
+
+    public interface OnButtonClickListener { void onButtonClick(int position); }
+
+
+    public void setOnButtonClickListener (OnButtonClickListener listener) { bListener = listener; }
 
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
-        return new OrderViewHolder(view,mListener);
+        return new OrderViewHolder(view,mListener,bListener);
     }
 
     @Override
@@ -111,7 +120,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private CardView root;
         private Button findDeliverer;
 
-        public OrderViewHolder(View itemView, OnItemClickListener listener) {
+        public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order);
@@ -133,14 +142,18 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             });
 
             findDeliverer.setOnClickListener(v ->{
-                    Log.d("tmz","premuto find deliverer");
-
-
-                });
+                if (buttonListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        buttonListener.onButtonClick(position);
+                    }
+                }
+            });
         }
     }
 
     public String stringOrDefault(String s) {
         return (s == null || s.trim().isEmpty()) ? "" : s;
     }
+
 }
