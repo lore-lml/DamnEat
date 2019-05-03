@@ -50,7 +50,7 @@
     <string name="invalid_phone">Invalid phone number</string>
     <string name="close">"Close "</string>
     <string name="empty_price">No price has been inserted</string>
-    <string name="empty_availabity">No availabity has been inserted</string>
+    <string name="empty_availabity">No availability has been inserted</string>
     <string name="price_too_low">Price must be positive</string>
     <string name="availabity_too_low">Availabity must be positive or null</string>
     <string name="context_delete">Delete</string>
@@ -93,5 +93,6 @@
     <string name="dish_meat">Meat</string>
     <string name="dish_others">Others</string>
     <string name="restaurant_category">Categories</string>
+    <string name="empty_categories">No categories have been inserted</string>
 
 </resources>

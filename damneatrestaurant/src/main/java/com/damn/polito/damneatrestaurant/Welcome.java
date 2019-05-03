@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.fragments.DishesFragment;
 import com.damn.polito.damneatrestaurant.fragments.OrderFragment;
 import com.damn.polito.damneatrestaurant.fragments.ProfileFragment;
@@ -56,7 +57,10 @@ public class Welcome extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_dishes);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        if(Utility.firstON) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            Utility.firstON = false;
+        }
     }
 
     @Override

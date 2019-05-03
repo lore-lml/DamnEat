@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DamnEat - Restaurant</string>
+    <string name="app_name" translatable="false">DamnEat - Restaurant</string>
     <string name="profile_restaurant_address">Restaurant address</string>
     <string name="profile_name">Restaurant name</string>
     <string name="profile_address">Restaurant address</string>
@@ -37,4 +37,5 @@
     <string name="dish_deletted">Dish deleted</string>
     <string name="invalid_slot">%s should at least have a time slot!</string>
     <string name="open">Open</string>
+    <string name="assign_deliverer">Find a deliverer</string>
 </resources>
