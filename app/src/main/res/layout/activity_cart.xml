@@ -73,6 +73,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="Amici Miei"
+                        android:textAlignment="center"
                         android:textAppearance="@style/PrimaryText"
                         android:textSize="22sp" />
 

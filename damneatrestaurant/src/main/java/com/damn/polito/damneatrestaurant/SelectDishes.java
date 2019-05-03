@@ -259,9 +259,8 @@ public class SelectDishes extends AppCompatActivity {
                 //dishesList.add(new Dish(name, description, price, avaibility));
             }
             //adapter.notifyDataSetChanged();
-            recyclerView.smoothScrollToPosition(dishesList.size() - 1);
+            //recyclerView.smoothScrollToPosition(dishesList.size() - 1);
             Log.d("ONRESULT", "OnresultActivity");
-            //todo: sss
             //storeData();
         }
         if (requestCode < 3000 && requestCode >= 2000) {

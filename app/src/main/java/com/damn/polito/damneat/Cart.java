@@ -77,4 +77,8 @@ public class Cart extends AppCompatActivity {
         }
     }
 
+    private void setResult(){
+        Intent i = new Intent();
+    }
+
 }
