@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_restaurant_address">Indirizzo ristorante</string>
+    <string name="assign_deliverer">Assegna un rider</string>
+    <string name="order_id">ID Ordine: #%d</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->
