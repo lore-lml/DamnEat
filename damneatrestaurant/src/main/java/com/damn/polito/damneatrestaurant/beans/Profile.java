@@ -9,9 +9,10 @@ public class Profile {
     private String address;
     private String opening;
     private String image;
+    private String categories;
     //Bitmap bitmap;
 
-    public Profile(String name, String mail, String phone, String description, String address, String opening, String image) {
+    public Profile(String name, String mail, String phone, String description, String address, String opening, String image, String categories) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
@@ -19,10 +20,11 @@ public class Profile {
         this.address = address;
         this.opening = opening;
         this.image = image;
+        this.categories = categories;
     }
 
     public Profile(Profile p) {
-        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.image);
+        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.image, p.categories);
     }
     public Profile() {}
 
@@ -80,6 +82,14 @@ public class Profile {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getCategories() {
+        return categories;
+    }
+
+    public void setCategories(String categories) {
+        this.categories = categories;
     }
 }
 

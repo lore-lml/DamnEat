@@ -83,4 +83,5 @@
     <string name="dish_meat">Carne</string>
     <string name="dish_others">Altri</string>
     <string name="restaurant_category">Categorie</string>
+    <string name="empty_categories">Nessuna categoria inserita</string>
 </resources>

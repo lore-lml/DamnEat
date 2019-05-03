@@ -37,12 +37,12 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
 
     private ImageView profile;
     private ImageButton camera;
-    private EditText name, mail, description, address, phone, opening, category;
+    private EditText name, mail, description, address, phone, opening, categories;
     private Button save;
     private Bitmap profImg;
 
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
-    private String sName, sMail, sDesc, sAddress, sPhone, sOpening, sCategory;
+    private String sName, sMail, sDesc, sAddress, sPhone, sOpening, sCategories;
     private Bitmap profImgPrec;
 
     @Override
@@ -61,7 +61,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         address = findViewById(R.id.edit_address);
         opening = findViewById(R.id.edit_opening);
         save = findViewById(R.id.edit_save);
-        category = findViewById(R.id.edit_category);
+        categories = findViewById(R.id.edit_category);
 
         init();
     }
@@ -81,6 +81,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         sDesc = intent.getStringExtra("description");
         sAddress = intent.getStringExtra("address");
         sOpening = intent.getStringExtra("opening");
+        sCategories = intent.getStringExtra("categories");
         String bitmapString = pref.getString("profile", null);
         if(bitmapString != null) {
             profImg = StringToBitMap(bitmapString);
@@ -94,6 +95,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         description.setText(sDesc);
         address.setText(sAddress);
         opening.setText(sOpening);
+        categories.setText(sCategories);
         if(profImg != null){
             profile.setImageBitmap(profImg);
         }
@@ -132,7 +134,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             opening.show(fm, "Opening Dialog");
         });
 
-        category.setOnClickListener(v->{
+        categories.setOnClickListener(v->{
             FragmentManager fm = getSupportFragmentManager();
             CategoryDialog category = new CategoryDialog();
             category.show(fm, "Category Dialog");
@@ -177,6 +179,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("address", address.getText().toString().trim());
         i.putExtra("opening", opening.getText().toString().trim());
+        i.putExtra("categories", categories.getText().toString().trim());
         if(profImg != null){
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
@@ -303,6 +306,13 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             return false;
         }
 
+        String categories = this.categories.getText().toString();
+        if(categories.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_categories), Toast.LENGTH_SHORT).show();
+            this.categories.requestFocus();
+            return false;
+        }
+
         return true;
     }
 
@@ -329,6 +339,10 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
 
         String opening = this.opening.getText().toString();
         if(!(opening.equals(sOpening)))
+            return true;
+
+        String categories = this.categories.getText().toString();
+        if(!(categories.equals(sCategories)))
             return true;
 
         if(profImg == null) return false;
@@ -418,12 +432,6 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         }
     }
 
-    public boolean isEmailPresent(){
-
-
-
-        return true;
-    }
 
     @Override
     public void handleOnDismiss(String text) {

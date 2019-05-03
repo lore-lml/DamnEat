@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
 
@@ -37,6 +38,27 @@ public class CategoryDialog extends DialogFragment {
         getDialog().setTitle(R.string.restaurant_category);
 
         initViews(v);
+
+        save.setOnClickListener(view->{
+            StringBuilder sb1 = new StringBuilder();
+            int cnt = 0;
+            for(CheckBox c : cuisine) {
+                if (c.isChecked()) {
+                    cnt++;
+                    sb1.append(c.getText()).append(", ");
+                }
+            }
+            if(cnt == 0){
+                Toast.makeText(getContext(), "No cuisine selected", Toast.LENGTH_LONG).show();
+                return;
+            }
+            for(CheckBox c : dishes){
+                if(c.isChecked()){
+                    sb1.append(c.getText()).append(", ");
+                    /*TODO: finire scelta categorie*/
+                }
+            }
+        });
     }
 
     private void initViews(View v) {

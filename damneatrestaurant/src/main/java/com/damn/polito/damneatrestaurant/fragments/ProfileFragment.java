@@ -44,14 +44,14 @@ public class ProfileFragment extends Fragment{
 
     private String defaultValue, dbkey;
     private ImageView profileImage;
-    private TextView name, mail, description, address, phone, opening;
+    private TextView name, mail, description, address, phone, opening, categories;
     private Bitmap profileBitmap;
     private boolean empty = true;
     private Context ctx;
     private String dbKey;
     private FirebaseDatabase database;
 
-    private Map<String, Object> orders;
+    //private Map<String, Object> orders;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,6 +78,7 @@ public class ProfileFragment extends Fragment{
         description = view.findViewById(R.id.editText_desc);
         address = view.findViewById(R.id.editText_address);
         opening = view.findViewById(R.id.editText_opening);
+        categories = view.findViewById(R.id.editText_category);
         database = FirebaseDatabase.getInstance();
         loadData();
     }
@@ -94,6 +95,7 @@ public class ProfileFragment extends Fragment{
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("address", address.getText().toString().trim());
             intent.putExtra("opening", opening.getText().toString().trim());
+            intent.putExtra("categories", categories.getText().toString().trim());
             intent.putExtra("image", profileImage.getDrawable().toString());
             if (profileBitmap != null){
                 PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -125,6 +127,7 @@ public class ProfileFragment extends Fragment{
         String description = data.getStringExtra("description");
         String address = data.getStringExtra("address");
         String opening = data.getStringExtra("opening");
+        String categories = data.getStringExtra("categories");
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
@@ -133,7 +136,7 @@ public class ProfileFragment extends Fragment{
         }
         //
         //CARICO I DATI SU FIREBASE
-        storeProfileOnFirebase(name,mail,phone,description,address,opening,bitmapProf);
+        storeProfileOnFirebase(name,mail,phone,description,address,opening, categories, bitmapProf);
         //code
         //
 
@@ -143,6 +146,7 @@ public class ProfileFragment extends Fragment{
         this.description.setText(description);
         this.address.setText(address);
         this.opening.setText(opening);
+        this.categories.setText(categories);
         if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
         empty = false;
 
@@ -156,6 +160,7 @@ public class ProfileFragment extends Fragment{
             values.put("description", description);
             values.put("address", address);
             values.put("opening", opening);
+            values.put("categories", categories);
             if (profileBitmap != null) {
                 String bts = Utility.BitMapToString(profileBitmap);
                 values.put("profile", bts);
@@ -172,6 +177,7 @@ public class ProfileFragment extends Fragment{
             this.description.setText(description);
             this.address.setText(address);
             this.opening.setText(opening);
+            this.categories.setText(categories);
             if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
 
             empty = false;
@@ -180,7 +186,7 @@ public class ProfileFragment extends Fragment{
         }*/
     }
 
-    private boolean storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening,String bitmapProf){
+    private void storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening,String categories, String bitmapProf){
 
         //DA IMPLEMENTARE RETURN TRUE OR FALSE A SECONDA CHE LA TRANSAZIONE VADA A BUONFINE
         //
@@ -203,7 +209,7 @@ public class ProfileFragment extends Fragment{
             @NonNull
             @Override
             public Transaction.Result doTransaction (@NonNull MutableData currentData){
-                currentData.setValue(new Profile(name, mail, phone, description, address, opening, bitmapProf));
+                currentData.setValue(new Profile(name, mail, phone, description, address, opening, categories, bitmapProf));
                 return Transaction.success(currentData);
             }
 
@@ -221,13 +227,12 @@ public class ProfileFragment extends Fragment{
                     editor.putString("mail", mail);
                     editor.putString("description",description);
                     editor.putString("opening", opening);
+                    editor.putString("categories", categories);
                     editor.putString("profile", bitmapProf);
                     editor.apply();
                 }
             }
         });
-
-            return true;
     }
 
     private void loadData() {
@@ -252,6 +257,7 @@ public class ProfileFragment extends Fragment{
                         description.setText(prof.getDescription());
                         address.setText(prof.getAddress());
                         opening.setText(prof.getOpening());
+                        categories.setText(prof.getCategories());
                         if (prof.getImage() != null) {
                             String encodedBitmap = prof.getImage();
                             profileBitmap = Utility.StringToBitMap(encodedBitmap);
@@ -266,6 +272,7 @@ public class ProfileFragment extends Fragment{
                         description.setText(defaultValue);
                         address.setText(defaultValue);
                         opening.setText(defaultValue);
+                        categories.setText(defaultValue);
                     }
 
                 }
