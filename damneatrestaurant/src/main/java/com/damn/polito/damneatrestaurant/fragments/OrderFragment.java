@@ -24,6 +24,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -71,18 +73,92 @@ public class OrderFragment extends Fragment {
         if (s != null|| !s.isEmpty()) {
 
             key = stringOrDefault(s);
-            initOrders();
+            if (initOrders()){
+                adapter = new OrdersAdapter(orders, ctx);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setAdapter(adapter);
+
+                adapter.setOnItemClickListener(position -> {
+                    orders.get(position).changeExpanded();
+                    adapter.notifyItemChanged(position);
+                });
+
+                //ABBINAMENTO DELIVERER ORDINE
+                adapter.setOnButtonClickListener(position -> {
+
+                    Log.d("tmz","pressed find deliverer");
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference dbRef= database.getReference("/tmp_deliverers_liberi/");
+
+
+                    dbRef.runTransaction(new Transaction.Handler() {
+                        @NonNull
+                        @Override
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                            List<String> deliverers_keys = new ArrayList<>();
+                            List<String> deliverers_names = new ArrayList<>();
+                            DatabaseReference ref;
+                            FirebaseDatabase db;
+                            for (MutableData child : mutableData.getChildren()){
+                                if (child!=null) {
+                                    String s = child.getValue(String.class);
+                                    deliverers_keys.add(s);
+                                    db = FirebaseDatabase.getInstance();
+                                    ref = db.getReference("/tmp_deliverers/" + s);
+                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            String key;
+                                            String d = dataSnapshot.getValue(String.class);
+
+                                            deliverers_names.add(d);
+
+                                            if(!deliverers_names.isEmpty()){
+                                                DatabaseReference ref;
+                                                FirebaseDatabase db;
+                                                db = FirebaseDatabase.getInstance();
+                                                ref= db.getReference("/tmp_deliverers_liberi/"+deliverers_keys.get(0));
+                                                ref.removeValue();
+                                                Log.d("transazione", orders.get(position).Id());
+                                                Log.d("transazione", deliverers_names.get(0));
+                                                db = FirebaseDatabase.getInstance();
+                                                ref = db.getReference("/ordini/" + orders.get(position).Id()+"/delivererName/");
+                                                ref.setValue(deliverers_names.get(0));
+                                                ref = db.getReference("/ordini/" + orders.get(position).Id()+"/state/");
+                                                ref.setValue("accepted");
+
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                    break;
+                                }
+                            }
+
+
+
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                        }
+                    });
+                    adapter.notifyItemChanged(position);
+                });
+            }
+
+
         }
         //initExample();
 
-        adapter = new OrdersAdapter(orders, ctx);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
 
-        adapter.setOnItemClickListener(position -> {
-            orders.get(position).changeExpanded();
-            adapter.notifyItemChanged(position);
-        });
     }
 
     private void initExample(){
@@ -129,7 +205,7 @@ public class OrderFragment extends Fragment {
 
     }
 
-    private void initOrders(){
+    private boolean initOrders(){
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("ristoranti/"+key+"/ordini_pendenti/");
         dbRef.addValueEventListener(new ValueEventListener() {
@@ -155,7 +231,7 @@ public class OrderFragment extends Fragment {
 
             }
         });
-
+        return true;
     }
 
     private void getOrderFirebase(String key){

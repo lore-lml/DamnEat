@@ -226,10 +226,7 @@ public class AddDish extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(checkChanges())
-                    showWarning(this, checkField(), getActivityResult());
-                else
-                    this.finish();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -238,30 +235,26 @@ public class AddDish extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(checkChanges())
-            // Facciamo comparire il messagio solo se sono stati cambiati dei campi
-            showWarning(this, checkField(), getActivityResult());
-        else
-            this.finish();
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
-    private boolean checkChanges() {
+    /*private boolean checkChanges() {
         String name = this.name.getText().toString();
         if(!name.equals(""))
             return true;
 
-        String mail = this.description.getText().toString();
-        if(!(mail.equals("")))
-            return true;
-
-        String description = this.price.getText().toString();
+        String description = this.description.getText().toString();
         if(!(description.equals("")))
             return true;
 
-        String address = this.availabity.getText().toString();
-        return (!(address.equals("")));
+        String price = this.price.getText().toString();
+        if(!(price.equals("")))
+            return true;
 
-    }
+        String availability = this.availabity.getText().toString();
+        return (!(availability.equals("")));
+    }*/
 
     private boolean checkField() {
         String name = this.name.getText().toString();
@@ -279,17 +272,6 @@ public class AddDish extends AppCompatActivity {
             return false;
         }
 
-        String availabity = this.availabity.getText().toString();
-        if(availabity.trim().isEmpty()){
-            Toast.makeText(this, getString(R.string.empty_availabity), Toast.LENGTH_SHORT).show();
-            this.availabity.requestFocus();
-            return false;
-        }
-        if(Integer.parseInt(availabity)<0){
-            Toast.makeText(this, getString(R.string.availabity_too_low), Toast.LENGTH_SHORT).show();
-            this.availabity.requestFocus();
-            return false;
-        }
         String price = this.price.getText().toString();
         if(price.trim().isEmpty()){
             Toast.makeText(this, getString(R.string.empty_price), Toast.LENGTH_SHORT).show();
@@ -302,7 +284,17 @@ public class AddDish extends AppCompatActivity {
             return false;
         }
 
-
+        String availabity = this.availabity.getText().toString();
+        if(availabity.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_availabity), Toast.LENGTH_SHORT).show();
+            this.availabity.requestFocus();
+            return false;
+        }
+        if(Integer.parseInt(availabity)<0){
+            Toast.makeText(this, getString(R.string.availabity_too_low), Toast.LENGTH_SHORT).show();
+            this.availabity.requestFocus();
+            return false;
+        }
 
         return true;
     }

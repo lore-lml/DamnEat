@@ -2,7 +2,9 @@ package com.damn.polito.damneat.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +48,8 @@ public class RestaurantFragment extends Fragment {
     private RecyclerView recyclerView;
     private RestaurantAdapter adapter;
     private LinearLayout offline;
+    private TextView registered_tv;
+    private ImageView registered_im;
     private Context ctx;
 
     private DatabaseReference dbRef;
@@ -71,6 +76,10 @@ public class RestaurantFragment extends Fragment {
         assert ctx != null;
 
         offline = view.findViewById(R.id.restaurant_offline);
+        registered_tv = view.findViewById(R.id.not_registered_tv);
+        registered_im = view.findViewById(R.id.not_registered_im);
+        recyclerView = view.findViewById(R.id.restaurant_recycler);
+
 
         if(InternetConnection.haveInternetConnection(ctx)) {
             init(view);
@@ -79,11 +88,45 @@ public class RestaurantFragment extends Fragment {
         }else{
             offline.setVisibility(View.VISIBLE);
         }
+        Log.d("not_registered reg", String.valueOf(userRegistered()));
+        if(!userRegistered()){
+            registered_tv.setVisibility(View.VISIBLE);
+            registered_im.setVisibility(View.VISIBLE);
+            offline.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+
+        }else {
+            registered_tv.setVisibility(View.GONE);
+            registered_im.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
+
+    private boolean userRegistered() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        Log.d("not_registered name", pref.getString("clientname", ""));
+
+        if(pref.getString("clientname", "").equals(""))
+            return false;
+        Log.d("not_registered address", pref.getString("clientaddress", ""));
+        Log.d("not_registered equals", String.valueOf(pref.getString("clientname", "").equals("")));
+
+        if(pref.getString("clientaddress", "").equals(""))
+            return false;
+        Log.d("not_registered mail", pref.getString("clientmail", ""));
+
+        if(pref.getString("clientmail", "").equals(""))
+            return false;
+        Log.d("not_registered phone", pref.getString("clientphone", ""));
+
+        return !pref.getString("clientphone", "").equals("");
+    }
+
+    private void getSharedData() {
+           }
 
     private void init(View view){
         restaurants = new ArrayList<>();
-        recyclerView = view.findViewById(R.id.restaurant_recycler);
         adapter = new RestaurantAdapter(getActivity(), restaurants);
 
         recyclerView.setAdapter(adapter);

@@ -177,14 +177,10 @@ public class ProfileFragment extends Fragment {
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference myRef;
         DatabaseReference ordini;
-        if(dbKey == null) {
-            myRef = database.getReference("clienti/").push();
-            ordini = database.getReference("clienti/" + myRef.getKey() + "/lista_ordini");
-        }
-        else{
-            myRef = database.getReference("clienti/" + dbKey);
-            ordini = database.getReference("clienti/" + dbKey + "/lista_ordini");
-        }
+
+        myRef = database.getReference("clienti/" + dbKey);
+        ordini = database.getReference("clienti/" + dbKey + "/lista_ordini");
+
 
         myRef.runTransaction(new Transaction.Handler(){
             @NonNull
@@ -201,7 +197,7 @@ public class ProfileFragment extends Fragment {
                     if(orders != null && orders.size() != 0)
                         ordini.updateChildren(orders);
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-                    editor.putString("dbkey", myRef.getKey());
+                    //editor.putString("dbkey", myRef.getKey());
                     editor.putString("clientaddress", profile.getAddress());
                     editor.putString("clientname", profile.getName());
                     editor.putString("clientphone", profile.getPhone());
