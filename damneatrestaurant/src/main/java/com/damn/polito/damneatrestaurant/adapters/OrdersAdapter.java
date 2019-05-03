@@ -37,6 +37,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private List<Order> orders;
     private Context ctx;
     private OnItemClickListener mListener;
+    private OnButtonClickListener bListener;
     private String key;
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
@@ -50,12 +51,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     public void setOnItemClickListener (OnItemClickListener listener) { mListener = listener; }
 
+    public interface OnButtonClickListener { void onButtonClick(int position); }
+
+
+    public void setOnButtonClickListener (OnButtonClickListener listener) { bListener = listener; }
 
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
-        return new OrderViewHolder(view,mListener);
+        return new OrderViewHolder(view,mListener,bListener);
     }
 
     @Override
@@ -115,7 +120,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private CardView root;
         private Button findDeliverer;
 
-        public OrderViewHolder(View itemView, OnItemClickListener listener) {
+        public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order);
@@ -135,75 +140,20 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                     }
                 }
             });
-            List<String> deliverers_keys = new ArrayList<>();
-            List<String> deliverers_names = new ArrayList<>();
+
             findDeliverer.setOnClickListener(v ->{
-                    Log.d("tmz","premuto find deliverer");
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference dbRef= database.getReference("/tmp_deliverers_liberi/");
-
-
-                    dbRef.runTransaction(new Transaction.Handler() {
-                        @NonNull
-                        @Override
-                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                            DatabaseReference ref;
-                            FirebaseDatabase db;
-                            for (MutableData child : mutableData.getChildren()){
-                                if (child!=null) {
-                                    String s = child.getValue(String.class);
-                                    deliverers_keys.add(s);
-                                    Log.d("transazione", child.getValue().toString());
-                                    db = FirebaseDatabase.getInstance();
-                                    ref = db.getReference("/tmp_deliverers/" + s);
-                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            String key;
-                                            String d = dataSnapshot.getValue(String.class);
-                                            deliverers_names.add(d);
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                    break;
-                                }
-                            }
-
-                            if(!deliverers_keys.isEmpty()){
-                                db = FirebaseDatabase.getInstance();
-                                ref= db.getReference("/tmp_deliverers_liberi/"+deliverers_keys.get(0));
-                                ref.removeValue();
-                                //String id = ;
-                                //Log.d("transazione", id);
-                            }
-
-                            return Transaction.success(mutableData);
-                        }
-
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-                        }
-                    });
-
-
-
-
-
-
-                });
+                if (buttonListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        buttonListener.onButtonClick(position);
+                    }
+                }
+            });
         }
     }
 
     public String stringOrDefault(String s) {
         return (s == null || s.trim().isEmpty()) ? "" : s;
     }
-
-
 
 }
