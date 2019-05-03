@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,15 +13,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.damneatrestaurant.beans.Profile;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,24 +37,19 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private List<Order> orders;
     private Context ctx;
     private OnItemClickListener mListener;
-    private FirebaseDatabase database;
-    private DatabaseReference dbRef;
     private String key;
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
         this.ctx = context;
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-        String s = pref.getString("dbkey", null);
-        if (s != null) {
-            String key = stringOrDefault(s);
-        }
 
     }
 
     public interface OnItemClickListener { void onItemClick(int position); }
 
+
     public void setOnItemClickListener (OnItemClickListener listener) { mListener = listener; }
+
 
     @NonNull
     @Override
@@ -131,9 +135,65 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                     }
                 }
             });
-
+            List<String> deliverers_keys = new ArrayList<>();
+            List<String> deliverers_names = new ArrayList<>();
             findDeliverer.setOnClickListener(v ->{
                     Log.d("tmz","premuto find deliverer");
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference dbRef= database.getReference("/tmp_deliverers_liberi/");
+
+
+                    dbRef.runTransaction(new Transaction.Handler() {
+                        @NonNull
+                        @Override
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                            DatabaseReference ref;
+                            FirebaseDatabase db;
+                            for (MutableData child : mutableData.getChildren()){
+                                if (child!=null) {
+                                    String s = child.getValue(String.class);
+                                    deliverers_keys.add(s);
+                                    Log.d("transazione", child.getValue().toString());
+                                    db = FirebaseDatabase.getInstance();
+                                    ref = db.getReference("/tmp_deliverers/" + s);
+                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            String key;
+                                            String d = dataSnapshot.getValue(String.class);
+                                            deliverers_names.add(d);
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                    break;
+                                }
+                            }
+
+                            if(!deliverers_keys.isEmpty()){
+                                db = FirebaseDatabase.getInstance();
+                                ref= db.getReference("/tmp_deliverers_liberi/"+deliverers_keys.get(0));
+                                ref.removeValue();
+                                //String id = ;
+                                //Log.d("transazione", id);
+                            }
+
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                        }
+                    });
+
+
+
+
 
 
                 });
@@ -143,4 +203,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public String stringOrDefault(String s) {
         return (s == null || s.trim().isEmpty()) ? "" : s;
     }
+
+
+
 }
