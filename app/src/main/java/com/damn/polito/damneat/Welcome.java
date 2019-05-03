@@ -1,6 +1,8 @@
 package com.damn.polito.damneat;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -107,14 +109,21 @@ public class Welcome extends AppCompatActivity {
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                Toast.makeText(this, user.getEmail().toString() + "   " + user.getUid(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, user.getEmail().toString(), Toast.LENGTH_LONG).show();
                 //set button signout
                 //b.setEnabled(true);
+                storeData(user);
 
             }
             else{
                 Toast.makeText(this, response.getError().getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void storeData(FirebaseUser user){
+        SharedPreferences.Editor pref = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        pref.putString("dbkey", user.getUid());
+        pref.apply();
     }
 }
