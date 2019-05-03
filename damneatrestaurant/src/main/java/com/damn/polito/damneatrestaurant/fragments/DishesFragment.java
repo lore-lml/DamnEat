@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.damn.polito.commonresources.Utility.BitMapToString;
+
 public class DishesFragment extends Fragment {
 
     private List<Dish> dishesList = new ArrayList<>();
@@ -74,7 +76,19 @@ public class DishesFragment extends Fragment {
 
         fab = view.findViewById(R.id.fab_add_dish);
         //dishesList.clear();
-        restaurant.setRestaurantID("ste@lo|it");
+
+        // OTTENGO LA MAIL DALLE SHARED PREF
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String s = pref.getString("dbkey", null);
+        if (s != null) {
+
+
+                String key = stringOrDefault(s);
+                restaurant.setRestaurantID(key);
+
+
+        }
+
         init();
         //loadData();
         initReyclerView(view);
@@ -252,5 +266,8 @@ public class DishesFragment extends Fragment {
         }
 
 
+    }
+    public String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
     }
 }

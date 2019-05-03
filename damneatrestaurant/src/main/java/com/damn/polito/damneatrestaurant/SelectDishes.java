@@ -71,7 +71,16 @@ public class SelectDishes extends AppCompatActivity {
             startActivityForResult(i, AdD_DISH);
         });
         dishesList.clear();
-        restaurant.setRestaurantID("ste@lo|it");
+
+        // OTTENGO LA MAIL DALLE SHARED PREF
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String s = pref.getString("dbkey", null);
+        if (s != null) {
+
+                String key = stringOrDefault(s);
+                restaurant.setRestaurantID(s);
+
+        }
 
         init();
         //loadData();
@@ -420,5 +429,9 @@ public class SelectDishes extends AppCompatActivity {
         }
 
 
+    }
+
+    public String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
     }
 }

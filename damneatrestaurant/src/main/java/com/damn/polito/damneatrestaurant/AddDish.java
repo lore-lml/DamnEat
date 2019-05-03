@@ -161,19 +161,18 @@ public class AddDish extends AppCompatActivity {
         //
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        String s = pref.getString("info", null);
+        String s = pref.getString("dbkey", null);
         if (s != null) {
 
-            try {
-                JSONObject values = new JSONObject(s);
+
                 //CARICO I DATI DA FIREBASE, di ciò che è salvato nelle shared al momento
                 // viene usata solamete la mail, in modo che la pagina possa essere chiamata
                 // automaticamente
 
                 //
-                String escapedMail = stringOrDefault(values.getString("mail")).replace(".", "|");
+                String key = stringOrDefault(s);
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("ristoranti/" + escapedMail+"/piatti_totali").push();
+                DatabaseReference myRef = database.getReference("ristoranti/" + key+"/piatti_totali").push();
                 String id = myRef.getKey();
                 if (dishImg != null) {
                     Dish d = new Dish(name.getText().toString().trim(),
@@ -193,9 +192,7 @@ public class AddDish extends AppCompatActivity {
 
 
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+
             //
 
 
@@ -311,7 +308,7 @@ public class AddDish extends AppCompatActivity {
     }
 
 
-    private String stringOrDefault(String s) {
+    public String stringOrDefault(String s) {
         return (s == null || s.trim().isEmpty()) ? "" : s;
     }
 

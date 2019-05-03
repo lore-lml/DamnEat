@@ -3,9 +3,11 @@ package com.damn.polito.damneatrestaurant.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +32,9 @@ import com.damn.polito.commonresources.beans.Dish;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -50,7 +55,17 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         this.context = context;
         default_image = BitmapFactory.decodeResource(context.getResources(),R.drawable.dishes_empty);
         this.select_dishes_layout = select_dishes_layout;
-        restaurant.setRestaurantID("ste@lo|it");
+
+        // OTTENGO LA MAIL DALLE SHARED PREF
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String s = pref.getString("dbkey", null);
+        if (s != null) {
+
+
+                String key = stringOrDefault(s);
+                restaurant.setRestaurantID(key);
+
+        }
     }
 
     public interface OnLongItemClickListener { void onLongItemClick(int position); }
@@ -326,4 +341,9 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         dbRef.setValue(false);
     }
 
+    public String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
+    }
+
 }
+
