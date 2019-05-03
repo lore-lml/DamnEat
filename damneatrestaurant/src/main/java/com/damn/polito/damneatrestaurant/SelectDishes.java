@@ -72,7 +72,7 @@ public class SelectDishes extends AppCompatActivity {
         });
         dishesList.clear();
 
-        // OTTENGO LA MAIL DALLE SHARED PREF
+        // OTTENGO LA ID DALLE SHARED PREF
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         String s = pref.getString("dbkey", null);
         if (s != null) {

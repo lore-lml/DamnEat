@@ -115,7 +115,7 @@ public class OrderFragment extends Fragment {
                             orderList.remove(i);
                             break;
                         }
-                    }
+                }
                 orderList.addFirst(order);
                 Log.d("order", order.getCustomer().getCustomerName());
                 adapter.notifyDataSetChanged();
