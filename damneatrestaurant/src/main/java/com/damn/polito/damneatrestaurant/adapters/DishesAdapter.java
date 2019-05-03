@@ -326,8 +326,11 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         String dishId = dish.Id();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/"+ dishId +"/");
-        dbRef.setValue(dish);
+        DatabaseReference dbRef;
+        if(dish.isDishOtd()) {
+            dbRef = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/piatti_del_giorno/" + dishId + "/");
+            dbRef.setValue(dish);
+        }
         dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/"+ dishId +"/dishOtd/");
         dbRef.setValue(true);
     }
