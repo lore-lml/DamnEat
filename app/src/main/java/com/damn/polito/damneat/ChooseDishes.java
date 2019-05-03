@@ -284,75 +284,92 @@ public class ChooseDishes extends AppCompatActivity {
             Log.d("result", note);
 
             List<Dish> cart_dishes = loadData();
-
+            Order order = new Order(cart_dishes, new Date(), restaurant, customer, price, note, deliveryTime);
+            DatabaseReference dbRefOrdini = database.getReference("ordini/");
+            DatabaseReference orderID = dbRefOrdini.push();
+            orderID_key = orderID.getKey();
+            order.sId(orderID_key);
+            orderID.setValue(order);
             //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
-            DatabaseReference dbRefRestaurant = database.getReference("ristoranti/"+restaurant.getRestaurantID()+"/piatti_del_giorno/");
-//            DatabaseReference id_restaurant = dbRefRestaurant.push();
-//            id_restaurant.setValue(orderID.getKey());
+            DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/ordini_pendenti/");
+            DatabaseReference id_restaurant = dbRefRestaurant.push();
+            id_restaurant.setValue(orderID.getKey());
+            //AGGIUNGO LA CHIAVE AGLI ORDINI DEL CLIENTE
+            DatabaseReference dbRefClient = database.getReference("clienti/" + customer.getCustomerID() + "/lista_ordini/");
+            DatabaseReference id_client = dbRefClient.push();
+            id_client.setValue(orderID.getKey());
+            Toast.makeText(ctx, R.string.order_succesfull, Toast.LENGTH_LONG).show();
+            setResult(RESULT_OK);
+            finish();
 
-            dbRefRestaurant.runTransaction(new Transaction.Handler() {
-                @NonNull
-                @Override
-                public Transaction.Result doTransaction(@NonNull MutableData currentData) {
-                    //currentData.setValue(orderID_key);
-                    Dish d = null;
-                    String dishID = null;
-                    for (Dish cart_dish:cart_dishes) {
-                        for (MutableData child:(currentData.getChildren())){
-                            Dish dish = child.getValue(Dish.class);
-                            //Log.d("transazione", child.getValue().toString());
-                            //Log.d("transazione", cart_dish.Id());
-                            dishID = child.getKey();
-                            if (dishID != null && dishID.equals(cart_dish.Id())) {
-                                d = dish;
-                                break;
-                            }
-                        }
-                        if(d!=null && cart_dish.getQuantity()>d.getAvailability()){
-                            //creare stringa
-                            Toast.makeText(ctx, "Errore quantità", Toast.LENGTH_LONG).show();
-                            return Transaction.abort();
-                        }
-                        if(d == null){
-                            Toast.makeText(ctx, "Piatto non trovato", Toast.LENGTH_LONG).show();
-                            return Transaction.abort();
-                        }
-
-                        //Log.d("transazione", d.getName());
-                        //String dishID = d.Id();
-                        MutableData dbRefDish = currentData.child(dishID);
-                        d.setAvailability(d.getAvailability()-cart_dish.getQuantity());
-                        dbRefDish.setValue(d);
-                    }
-                    return Transaction.success(currentData);
-                }
-
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                    //Log.d("transazione", String.valueOf(b));
-                    if(b) {
-                        Order order = new Order(cart_dishes, new Date(), restaurant, customer, price, note, deliveryTime);
-                        DatabaseReference dbRefOrdini = database.getReference("ordini/");
-                        DatabaseReference orderID = dbRefOrdini.push();
-                        orderID_key = orderID.getKey();
-                        order.sId(orderID_key);
-                        orderID.setValue(order);
-                        //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
-                        DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/ordini_pendenti/");
-                        DatabaseReference id_restaurant = dbRefRestaurant.push();
-                        id_restaurant.setValue(orderID.getKey());
-                        //AGGIUNGO LA CHIAVE AGLI ORDINI DEL CLIENTE
-                        DatabaseReference dbRefClient = database.getReference("clienti/" + customer.getCustomerID() + "/lista_ordini/");
-                        DatabaseReference id_client = dbRefClient.push();
-                        id_client.setValue(orderID.getKey());
-                        Toast.makeText(ctx, R.string.order_succesfull, Toast.LENGTH_LONG).show();
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-                    else
-                        Toast.makeText(ctx, R.string.order_error, Toast.LENGTH_LONG).show();
-                }
-            });
+//            //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
+//            DatabaseReference dbRefRestaurant = database.getReference("ristoranti/"+restaurant.getRestaurantID()+"/piatti_del_giorno/");
+////            DatabaseReference id_restaurant = dbRefRestaurant.push();
+////            id_restaurant.setValue(orderID.getKey());
+//
+//            dbRefRestaurant.runTransaction(new Transaction.Handler() {
+//                @NonNull
+//                @Override
+//                public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+//                    //currentData.setValue(orderID_key);
+//                    Dish d = null;
+//                    String dishID = null;
+//                    for (Dish cart_dish:cart_dishes) {
+//                        for (MutableData child:(currentData.getChildren())){
+//                            Dish dish = child.getValue(Dish.class);
+//                            //Log.d("transazione", child.getValue().toString());
+//                            //Log.d("transazione", cart_dish.Id());
+//                            dishID = child.getKey();
+//                            if (dishID != null && dishID.equals(cart_dish.Id())) {
+//                                d = dish;
+//                                break;
+//                            }
+//                        }
+//                        if(d!=null && cart_dish.getQuantity()>d.getAvailability()){
+//                            //creare stringa
+//                            Toast.makeText(ctx, "Errore quantità", Toast.LENGTH_LONG).show();
+//                            return Transaction.abort();
+//                        }
+//                        if(d == null){
+//                            Toast.makeText(ctx, "Piatto non trovato", Toast.LENGTH_LONG).show();
+//                            return Transaction.abort();
+//                        }
+//
+//                        //Log.d("transazione", d.getName());
+//                        //String dishID = d.Id();
+//                        MutableData dbRefDish = currentData.child(dishID);
+//                        d.setAvailability(d.getAvailability()-cart_dish.getQuantity());
+//                        dbRefDish.setValue(d);
+//                    }
+//                    return Transaction.success(currentData);
+//                }
+//
+//                @Override
+//                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+//                    //Log.d("transazione", String.valueOf(b));
+//                    if(b) {
+//                        Order order = new Order(cart_dishes, new Date(), restaurant, customer, price, note, deliveryTime);
+//                        DatabaseReference dbRefOrdini = database.getReference("ordini/");
+//                        DatabaseReference orderID = dbRefOrdini.push();
+//                        orderID_key = orderID.getKey();
+//                        order.sId(orderID_key);
+//                        orderID.setValue(order);
+//                        //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
+//                        DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/ordini_pendenti/");
+//                        DatabaseReference id_restaurant = dbRefRestaurant.push();
+//                        id_restaurant.setValue(orderID.getKey());
+//                        //AGGIUNGO LA CHIAVE AGLI ORDINI DEL CLIENTE
+//                        DatabaseReference dbRefClient = database.getReference("clienti/" + customer.getCustomerID() + "/lista_ordini/");
+//                        DatabaseReference id_client = dbRefClient.push();
+//                        id_client.setValue(orderID.getKey());
+//                        Toast.makeText(ctx, R.string.order_succesfull, Toast.LENGTH_LONG).show();
+//                        setResult(RESULT_OK);
+//                        finish();
+//                    }
+//                    else
+//                        Toast.makeText(ctx, R.string.order_error, Toast.LENGTH_LONG).show();
+//                }
+//            });
         }
     }
 
