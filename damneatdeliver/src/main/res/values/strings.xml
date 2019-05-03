@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">DamnEat - Deliver</string>
-    <string name="profile_restaurant_address">Resturant address</string>
+    <string name="profile_restaurant_address">Restaurant address</string>
     <string name="profile_name">Name</string>
     <string name="profile_address">Address</string>
     <string name="nav_reservations">Reservations</string>
@@ -12,7 +12,7 @@
     <string name="profile_opening">Opening hours</string>
     <string name="profile_phone">Phone number</string>
     <string name="title_activity_select_menu">Select Menu</string>
-    <string name="order_id">Order ID: #%d</string>
+    <string name="order_id">Order ID: #%s</string>
     <string name="order_num_dishes"># Dishes: %d</string>
     <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
@@ -29,10 +29,14 @@
     <string name="second_text">2nd</string>
     <string name="first_text">1st</string>
     <string name="slot_text" translatable="false">Slot</string>
-    <string name="order_customer">Customer:\n%s</string>
+    <string name="order_customer">Customer</string>
+    <string name="order_restaurant">Restaurant</string>
 
     <string name="undo_string">Undo</string>
     <string name="dish_deletted">Dish deleted</string>
     <string name="invalid_slot">%s should at least have a time slot!</string>
     <string name="confirmOrder">Delivered</string>
+    <string name="delivery_time">%s</string>
+    <string name="refuseOrder">NO</string>
+    <string name="acceptOrder">YES</string>
 </resources>

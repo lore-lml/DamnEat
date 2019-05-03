@@ -3,7 +3,6 @@
     <string name="profile_address">Indirizzo</string>
     <string name="add_to_chart">Aggiungi</string>
     <string name="dish_added">Piatto aggiunto al carrello</string>
-    <string name="confirm_order">Conferma ordine</string>
     <string name="dishes_list">Lista piatti</string>
     <string name="price">Prezzo</string>
     <string name="no_dishes">Il ristorante non ha ancora piatti disponibili</string>
@@ -13,12 +12,12 @@
     <string name="restaurant">Ristorante:\n %s</string>
     <string name="confirmOrder">Conferma consegna</string>
     <string name="ordered">Ordinato</string>
-    <string name="delivery_time">Ora di consegna: %s</string>
-    <string name="state">Stato:</string>
-    <string name="ship">Costo spedizione</string>
     <string name="delivered">Consegnato</string>
     <string name="accepted">Accettato</string>
     <string name="shipped">Spedito</string>
     <string name="rejected">Rifiutato</string>
     <string name="confirmed">Completato</string>
+    <string name="delivery_time">Ora di consegna: %s</string>
+    <string name="ship">Costo di spedizione</string>
+    <string name="state">Stato:</string>
 </resources>
