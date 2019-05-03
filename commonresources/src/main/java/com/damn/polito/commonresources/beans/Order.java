@@ -92,36 +92,41 @@ public class Order {
     public List<Dish> getDishes() { return dishes;
     }
 
-    /*Visualizzazione compatta*/
-    public List<Dish> CumulatedDishes(){
-        List<Dish> out = new ArrayList<>();
-        Map<String,Integer> outTmp = new HashMap<>();
-        int i,j,contiene;
-        for(i=0;i<dishes.size();i++) {
-            contiene = 0;
-            for (j = 0; j < out.size() && !out.isEmpty(); j++){
-                if (dishes.get(i).getName()!=null && out.get(j).getName()!=null) {
-                    if(dishes.get(i).getName().equalsIgnoreCase(out.get(j).getName()))
-                        contiene=1;
-                }
-            }
-            if (contiene == 0) {
-                out.add(dishes.get(i));
-                outTmp.put(dishes.get(i).getName(), 1);
-
-            } else {
-                outTmp.put(dishes.get(i).getName(), outTmp.get(dishes.get(i).getName()) + 1);
-            }
-        }
-        for(i=0;i<out.size();i++){
-            out.get(i).setQuantity(outTmp.get(out.get(i).getName()));
-        }
-
-        return out;
-    }
+//    /*Visualizzazione compatta*/
+//    public List<Dish> CumulatedDishes(){
+//        List<Dish> out = new ArrayList<>();
+//        Map<String,Integer> outTmp = new HashMap<>();
+//        int i,j,contiene;
+//        for(i=0;i<dishes.size();i++) {
+//            contiene = 0;
+//            for (j = 0; j < out.size() && !out.isEmpty(); j++){
+//                if (dishes.get(i).getName()!=null && out.get(j).getName()!=null) {
+//                    if(dishes.get(i).getName().equalsIgnoreCase(out.get(j).getName()))
+//                        contiene=1;
+//                }
+//            }
+//            if (contiene == 0) {
+//                out.add(dishes.get(i));
+//                outTmp.put(dishes.get(i).getName(), 1);
+//
+//            } else {
+//                outTmp.put(dishes.get(i).getName(), outTmp.get(dishes.get(i).getName()) + 1);
+//            }
+//        }
+//        for(i=0;i<out.size();i++){
+//            out.get(i).setQuantity(outTmp.get(out.get(i).getName()));
+//        }
+//
+//        return out;
+//    }
 
     public int DishesNumber() {
-        return dishes.size();
+        int number = 0;
+        for(Dish d: dishes){
+            number += d.getQuantity();
+        }
+
+        return number;
     }
 
     public Date getDate() {
