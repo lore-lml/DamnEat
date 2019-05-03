@@ -74,5 +74,24 @@
     <string name="summary_ship">Ship price:</string>
     <string name="summary_dish">Dishes:</string>
     <string name="summary_total">Total:</string>
+    <string name="category_cuisine">Cuisine</string>
+    <string name="category_price">Price range</string>
+    <string name="cuisine_italian">Italian</string>
+    <string name="cuisine_greek">Greek</string>
+    <string name="cuisine_mexican">Mexican</string>
+    <string name="cuisine_japanese">Japanese</string>
+    <string name="cuisine_chinese">Chinese</string>
+    <string name="cuisine_other">Other</string>
+    <string name="cuisine_new">Your cuisine</string>
+    <string name="dish_hamburger" translatable="false">Hamburger</string>
+    <string name="dish_pizza" translatable="false">Pizza</string>
+    <string name="dish_sandwich">Sandwich</string>
+    <string name="dish_sushi" translatable="false">Sushi</string>
+    <string name="dish_new">Your dish</string>
+    <string name="dish_starter">Starter</string>
+    <string name="dish_tacos" translatable="false">Tacos</string>
+    <string name="dish_meat">Meat</string>
+    <string name="dish_others">Others</string>
+    <string name="restaurant_category">Categories</string>
 
 </resources>

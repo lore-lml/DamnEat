@@ -137,6 +137,15 @@ public class ProfileFragment extends Fragment{
         //code
         //
 
+        this.name.setText(name);
+        this.mail.setText(mail);
+        this.phone.setText(phone);
+        this.description.setText(description);
+        this.address.setText(address);
+        this.opening.setText(opening);
+        if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
+        empty = false;
+
         /*
         JSONObject values = new JSONObject();
         try {
@@ -180,14 +189,14 @@ public class ProfileFragment extends Fragment{
 
         //SE LA MAIL ESISTE NON SI SALVA NULLA, SE NON ESISTE SI CREA UNA NUOVA KEY SU FIREBASE
         DatabaseReference myRef;
-        DatabaseReference ordini;
+        //DatabaseReference ordini;
         if(dbKey == null) {
             myRef = database.getReference("ristoratori/").push();
-            ordini = database.getReference("ristoratori/" + myRef.getKey() + "/lista_ordini");
+            //ordini = database.getReference("ristoratori/" + myRef.getKey() + "/lista_ordini");
         }
         else{
             myRef = database.getReference("ristoratori/" + dbKey);
-            ordini = database.getReference("ristoratori/" + dbKey + "/lista_ordini");
+            //ordini = database.getReference("ristoratori/" + dbKey + "/lista_ordini");
         }
 
         myRef.runTransaction(new Transaction.Handler(){
@@ -202,8 +211,8 @@ public class ProfileFragment extends Fragment{
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 //this method will be called once with the result of the transaction
                 if(committed) {
-                    if(orders != null && orders.size() != 0)
-                        ordini.updateChildren(orders);
+                    /*if(orders != null && orders.size() != 0)
+                        ordini.updateChildren(orders);*/
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
                     editor.putString("dbkey", myRef.getKey());
                     editor.putString("address", address);
@@ -266,7 +275,7 @@ public class ProfileFragment extends Fragment{
                 }
             });
 
-            DatabaseReference ordini = database.getReference("ristoratori/"+ dbKey +"/lista_ordini");
+            /*DatabaseReference ordini = database.getReference("ristoratori/"+ dbKey +"/lista_ordini");
             ordini.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -277,7 +286,7 @@ public class ProfileFragment extends Fragment{
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
                 }
-            });
+            });*/
 
 
 
