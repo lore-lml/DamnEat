@@ -53,10 +53,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
-        List<Dish> dishes = selected.CumulatedDishes();
-        for(int i=0; i<dishes.size(); i++){
-            dish_list_str += dishes.get(i).getQuantity() +"x\t"+ dishes.get(i).getName() + "\n";
-
+        List<Dish> dishes = selected.getDishes();
+        for (Dish d:dishes) {
+            String p = String.format("%.2f", d.getPrice());
+            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
         }
         holder.dishes_list.setText(dish_list_str);
 
