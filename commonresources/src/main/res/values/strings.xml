@@ -40,7 +40,7 @@
     <string name="profile_opening">Opening hours</string>
     <string name="profile_phone">Phone number</string>
     <string name="title_activity_select_menu">Select Menu</string>
-    <string name="order_id">Order ID: #%d</string>
+    <string name="order_id">Order ID: #%s</string>
     <string name="order_num_dishes"># Dishes: %d</string>
     <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
@@ -58,7 +58,11 @@
     <string name="second_text">2nd</string>
     <string name="first_text">1st</string>
     <string name="slot_text" translatable="false">Slot</string>
-    <string name="order_customer">Customer:\n%s</string>
+    <string name="order_customer">Customer:</string>
+    <string name="string" translatable="false">%s</string>
+    <string name="order_restaurant_name" translatable="false">%s</string>
+    <string name="order_restaurant_address" translatable="false">%s</string>
+
 
     <string name="undo_string">Undo</string>
     <string name="dish_deletted">Dish deleted</string>

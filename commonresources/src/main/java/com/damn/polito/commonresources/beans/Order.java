@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Order {
 
-    private int id;
+    private String id;
     private List<Dish> dishes;
     private Date date;
     private double price;
@@ -44,7 +44,7 @@ public class Order {
 
     }
 
-    public Order(int id, List<Dish> dishes, Date date, String customerAddress, String customerName, String delivererName, double price) {
+    public Order(String id, List<Dish> dishes, Date date, String customerAddress, String customerName, String delivererName, double price) {
         this.id = id;
         this.dishes = dishes;
         this.date = date;
@@ -83,7 +83,7 @@ public class Order {
     public void setState(String state) {
         this.state = state;
     }
-    public int Id() {
+    public String Id() {
         return id;
     }
 
@@ -198,11 +198,11 @@ public class Order {
         this.restaurant = restaurant;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
