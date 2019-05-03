@@ -71,18 +71,22 @@ public class OrderFragment extends Fragment {
         if (s != null|| !s.isEmpty()) {
 
             key = stringOrDefault(s);
-            initOrders();
+            if (initOrders()==true){
+                adapter = new OrdersAdapter(orders, ctx);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setAdapter(adapter);
+
+                adapter.setOnItemClickListener(position -> {
+                    orders.get(position).changeExpanded();
+                    adapter.notifyItemChanged(position);
+                });
+            }
+
+
         }
         //initExample();
 
-        adapter = new OrdersAdapter(orders, ctx);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
 
-        adapter.setOnItemClickListener(position -> {
-            orders.get(position).changeExpanded();
-            adapter.notifyItemChanged(position);
-        });
     }
 
     private void initExample(){
@@ -129,9 +133,10 @@ public class OrderFragment extends Fragment {
 
     }
 
-    private void initOrders(){
+    private boolean initOrders(){
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("ristoranti/"+key+"/ordini_pendenti/");
+        if (dbRef==null) return false;
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -155,7 +160,7 @@ public class OrderFragment extends Fragment {
 
             }
         });
-
+        return true;
     }
 
     private void getOrderFirebase(String key){
