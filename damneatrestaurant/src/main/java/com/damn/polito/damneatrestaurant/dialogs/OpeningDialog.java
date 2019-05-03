@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.DayOfTheWeekAdapter;
 import com.damn.polito.damneatrestaurant.beans.DayOfTheWeek;
@@ -115,7 +116,6 @@ public class OpeningDialog extends DialogFragment {
                     JSONObject json = array.getJSONObject(i);
                     days.add(new DayOfTheWeek(json));
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -167,7 +167,7 @@ public class OpeningDialog extends DialogFragment {
             for(DayOfTheWeek d : days)
                 sb.append(d.toString()).append("\n");
 
-            ((HandleDismissDialog) activity).handleOnDismiss(sb.toString());
+            ((HandleDismissDialog) activity).handleOnDismiss(EditProfile.DialogType.Opening, sb.toString());
         }
     }
 

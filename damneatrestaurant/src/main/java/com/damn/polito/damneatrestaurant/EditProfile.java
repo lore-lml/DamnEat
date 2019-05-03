@@ -35,6 +35,8 @@ import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity implements HandleDismissDialog {
 
+    public enum DialogType{Opening, Categories}
+
     private ImageView profile;
     private ImageButton camera;
     private EditText name, mail, description, address, phone, opening, categories;
@@ -130,13 +132,14 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         opening.setOnClickListener(v->{
             FragmentManager fm = getSupportFragmentManager();
             OpeningDialog opening = new OpeningDialog();
-            opening.setDaysText(sOpening);
+            opening.setDaysText(this.opening.getText().toString());
             opening.show(fm, "Opening Dialog");
         });
 
         categories.setOnClickListener(v->{
             FragmentManager fm = getSupportFragmentManager();
             CategoryDialog category = new CategoryDialog();
+            category.setCategories(this.categories.getText().toString());
             category.show(fm, "Category Dialog");
         });
     }
@@ -434,8 +437,15 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
 
 
     @Override
-    public void handleOnDismiss(String text) {
-        opening.setText(text);
+    public void handleOnDismiss(DialogType type, String text) {
+        switch (type){
+            case Opening:
+                opening.setText(text);
+                break;
+            case Categories:
+                categories.setText(text);
+                break;
+        }
     }
 }
 

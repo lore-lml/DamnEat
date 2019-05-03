@@ -10,7 +10,6 @@ public class Profile {
     private String opening;
     private String image;
     private String categories;
-    //Bitmap bitmap;
 
     public Profile(String name, String mail, String phone, String description, String address, String opening, String image, String categories) {
         this.name = name;

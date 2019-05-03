@@ -186,7 +186,7 @@ public class ProfileFragment extends Fragment{
         }*/
     }
 
-    private void storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening,String categories, String bitmapProf){
+    private void storeProfileOnFirebase(String name,String mail,String phone,String description,String address,String opening, String bitmapProf, String categories){
 
         //DA IMPLEMENTARE RETURN TRUE OR FALSE A SECONDA CHE LA TRANSAZIONE VADA A BUONFINE
         //

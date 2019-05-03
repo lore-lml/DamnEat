@@ -9,17 +9,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Cart"></activity>
-        <activity android:name=".Welcome">
+        <activity android:name=".Cart"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Welcome"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChooseDishes"/>
+        <activity android:name=".ChooseDishes"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".EditProfile"
-            android:parentActivityName=".Welcome" />
+            android:parentActivityName=".Welcome"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
