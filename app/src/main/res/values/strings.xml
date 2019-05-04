@@ -25,4 +25,8 @@
     <string name="rejected">Rejected</string>
     <string name="not_registered">You have to fill the profile to place an order.</string>
     <string name="dialog_time">Delivery time</string>
+    <string name="sort_alpha">Sort alphabetically</string>
+    <string name="sort_pricerangeasc">Sort by price range ascendent</string>
+    <string name="sort_pricerangedesc">Sort by price range descendent</string>
+    <string name="sort_mostrated">Sort most rated</string>
 </resources>

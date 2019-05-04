@@ -4,6 +4,9 @@
     <string name="assign_deliverer">Assegna un rider</string>
     <string name="order_id">ID Ordine: #%d</string>
     <string name="not_registered">Devi compilare il profilo per aggiungere un piatto.</string>
+    <string name="order_state">Stato:</string>
+    <string name="order_delivery_time">Orario di consegna</string>
+    <string name="order_customer_info">"Cliente: "</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->

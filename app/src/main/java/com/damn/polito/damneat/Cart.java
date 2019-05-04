@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.damneat.dialogs.DialogType;
 import com.damn.polito.damneat.dialogs.HandleDismissDialog;
 import com.damn.polito.damneat.dialogs.SpinnerDialog;
 
@@ -111,7 +112,8 @@ public class Cart extends AppCompatActivity implements HandleDismissDialog {
     }
 
     @Override
-    public void handleOnDismiss(String text) {
-        time_et.setText(text);
+    public void handleOnDismiss(DialogType type, String text) {
+        if(type == DialogType.SpinnerDialog)
+            time_et.setText(text);
     }
 }

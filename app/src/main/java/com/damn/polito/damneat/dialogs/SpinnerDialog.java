@@ -139,6 +139,6 @@ public class SpinnerDialog extends DialogFragment {
         }
         Activity activity = getActivity();
         assert activity != null;
-        ((HandleDismissDialog) activity).handleOnDismiss((String)spinner.getSelectedItem());
+        ((HandleDismissDialog) activity).handleOnDismiss(DialogType.SpinnerDialog, (String)spinner.getSelectedItem());
     }
 }
