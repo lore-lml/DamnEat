@@ -73,9 +73,9 @@ public class SpinnerDialog extends DialogFragment {
 
         if(day.getFirstTimeSlot() != null)
             hours.addAll(getHourInRange(day.getFirstOpenTime(), day.getFirstCloseTime()));
-        if(day.getSecondTimeSlot() != null && hours.size() != 0)
+        if(day.getSecondTimeSlot() != null && hours.size() == 0)
             hours.addAll(getHourInRange(day.getSecondOpenTime(), day.getSecondCloseTime()));
-        Collections.sort(hours);
+
         return hours;
     }
 
@@ -96,7 +96,7 @@ public class SpinnerDialog extends DialogFragment {
         int closeMin = Integer.valueOf(closeTime[1]);
 
         //Calcolo differenza di ore tra chiusura e apertura
-        int diffHour = closeHour - openHour < 0 ? 24-(closeHour-openHour) : closeHour - openHour;
+        int diffHour = closeHour - openHour < 0 ? 24-(closeHour-openHour)*-1 : closeHour - openHour;
         int diffMin = closeMin - openMin;
         if(diffMin < 0){
             diffHour--;
