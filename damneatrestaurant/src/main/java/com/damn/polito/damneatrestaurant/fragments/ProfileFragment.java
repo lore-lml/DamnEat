@@ -272,6 +272,7 @@ public class ProfileFragment extends Fragment{
                             if (profileBitmap != null)
                                 profileImage.setImageBitmap(profileBitmap);
                         }
+                        storeProfile(prof);
                         empty = false;
                     }else{
                         name.setText(defaultValue);
@@ -327,6 +328,21 @@ public class ProfileFragment extends Fragment{
 
 
 
+    }
+
+    private void storeProfile(Profile profile){
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+        //editor.putString("dbkey", myRef.getKey());
+        editor.putString("address", profile.getAddress());
+        editor.putString("name", profile.getName());
+        editor.putString("phone", profile.getPhone());
+        editor.putString("mail", profile.getMail());
+        editor.putString("description",profile.getDescription());
+        editor.putString("opening", profile.getOpening());
+        editor.putString("categories", profile.getCategories());
+        editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
+        editor.putString("profile", profile.getImage());
+        editor.apply();
     }
 
 
