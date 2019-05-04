@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +43,10 @@ public class CurrentFragment extends Fragment {
     private Context ctx;
 
     private TextView id,date,price,nDish, deliverer_name, dishes_list, dishes_list_2, restaurant_info, state, note, delivery_time;
-    private CardView root;
+    private CardView root, card_order, card_order_message, card_order_quest;
     private ImageView deliverer_photo, restaurant_photo;
     private Button confirmButton;
+    private Switch switch_available;
     private Bitmap bitmap;
 
     private boolean empty = true;
@@ -83,10 +85,45 @@ public class CurrentFragment extends Fragment {
         delivery_time =view.findViewById(R.id.order_delivery_time);
         note =view.findViewById(R.id.order_note);
         confirmButton =view.findViewById(R.id.confirmOrder);
+        switch_available = view.findViewById(R.id.available_switch);
 
+        card_order = view.findViewById(R.id.card_order);
+        card_order_message = view.findViewById(R.id.card_order_message);
+        card_order_quest = view.findViewById(R.id.card_order_quest);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        if (key == null) {
+//CAMBIARE METTENDO LA CHIAVE DEL DELIVERER
+            key = pref.getString("name", null);
+            if (key == null) return;
+        }
         database = FirebaseDatabase.getInstance();
 
-        load();
+        switch_available.setChecked(false);
+        switch_available.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked) {
+                card_order.setVisibility(View.VISIBLE);
+                SetAvailable();
+            } else {
+                Log.d("Switch", "Ha cambiato valore a " + isChecked);
+                card_order.setVisibility(View.GONE);
+                card_order_message.setVisibility(View.GONE);
+                card_order_quest.setVisibility(View.GONE);
+                SetUnavailable();
+            }
+        });
+    }
+
+    private void SetUnavailable() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("tmp_deliverers/"+key);
+        dbRef.removeValue();
+    }
+
+    private void SetAvailable() {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference dbRef = database.getReference("tmp_deliverers/"+key);
+            dbRef.setValue(key);
     }
 
     private String getDishesList(Order selected){
@@ -108,14 +145,7 @@ public class CurrentFragment extends Fragment {
     }
 
     private void load() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        if (key == null) {
-            key = pref.getString("key", null);
-            if (key == null) return;
-        }
-
-        DatabaseReference ref = database.getReference("clienti/" + key);
+        DatabaseReference ref = database.getReference("ordini/");
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

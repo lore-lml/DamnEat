@@ -73,7 +73,7 @@ public class Welcome extends AppCompatActivity {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
-        navigation.setSelectedItemId(R.id.nav_reservations);
+        navigation.setSelectedItemId(R.id.nav_current);
     }
 
     @Override

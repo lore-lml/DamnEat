@@ -30,7 +30,7 @@
     <string name="sab_text">SAT</string>
     <string name="dom_text">SUN</string>
     <string name="nav_dishes">Dishes</string>
-    <string name="nav_reservations">Reservations</string>
+    <string name="nav_reservations">Orders</string>
     <string name="nav_profile">Profile</string>
     <string name="nav_restaurant">Restaurants</string>
     <string name="dish_available">Available:</string>
@@ -100,7 +100,7 @@
     <string name="empty_categories">No categories have been inserted</string>
     <string name="time_asap">As soon as possible</string>
     <string name="disconnect">disconnect</string>
-    <string name="logout_error">Logout error</string>
-    <string name="login_error">Login error</string>
+    <string name="logout_error" translatable="false">Logout error</string>
+    <string name="login_error" translatable="false">Login error</string>
 
 </resources>

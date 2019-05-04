@@ -94,7 +94,7 @@ public class OrderFragment extends Fragment {
 
                 if(orders.size() == 0)  recyclerView.setVisibility(View.GONE);
                 else {
-                    if(!orders.get(0).Expanded()) orders.get(0).changeExpanded();
+//                    if(!orders.get(0).Expanded()) orders.get(0).changeExpanded();
                     recyclerView.setVisibility(View.VISIBLE);
                 }
             }

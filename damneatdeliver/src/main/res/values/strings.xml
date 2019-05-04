@@ -41,4 +41,6 @@
     <string name="acceptOrder">YES</string>
     <string name="nav_current">Current</string>
     <string name="restaurant">Restaurant:\n %s</string>
+        <string name="order_available">AVAILABLE</string>
+    <string name="order_message">Waiting for a order...</string>
 </resources>

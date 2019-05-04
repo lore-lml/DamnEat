@@ -1,10 +1,7 @@
 package com.damn.polito.damneatdeliver.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,18 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
-import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
-import com.damn.polito.damneatdeliver.fragments.OrderFragment;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.damn.polito.damneatdeliver.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
