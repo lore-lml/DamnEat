@@ -20,4 +20,6 @@
     <string name="delivery_time">Ora di consegna: %s</string>
     <string name="ship">Costo di spedizione</string>
     <string name="state">Stato:</string>
+    <string name="not_registered">Devi compilare il profilo prima di poter effettuare un ordine.</string>
+    <string name="confirm_order">Conferma ordine</string>
 </resources>

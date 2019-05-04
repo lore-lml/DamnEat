@@ -59,4 +59,9 @@
         <!-- inactive track color (30% transparency) -->
         <item name="android:colorForeground">@color/colorCorners</item>
     </style>
+
+    <style name="NoDishes" parent="Base.TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>
