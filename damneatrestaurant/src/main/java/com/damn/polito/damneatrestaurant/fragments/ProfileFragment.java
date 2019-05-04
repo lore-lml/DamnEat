@@ -132,26 +132,43 @@ public class ProfileFragment extends Fragment{
         prof.setCategories(pref.getString("categories", ""));
         prof.setDescription(pref.getString("description", ""));
         prof.setImage(pref.getString("profile", ""));
-        //todo: da fare
-       // prof.setPriceShip((double)pref.getFloat("shipprice", (float)0.0));
+        String ship = pref.getString("shipprice", "");
+        assert ship != null;
+        if(!ship.isEmpty())
+            prof.setPriceShip(Double.valueOf(ship));
+        else
+            prof.setPriceShip(0.0);
+
+        if(!name.getText().toString().trim().isEmpty())
+            empty = false;
     }
 
     public void updateProfile(){
         loadDataShared();
         if(name != null)
-            name.setText(prof.getName());
+            name.setText(stringOrDefault(prof.getName()));
         if(mail != null)
-            mail.setText(prof.getMail());
+            mail.setText(stringOrDefault(prof.getMail()));
         if(phone != null)
-            phone.setText(prof.getPhone());
+            phone.setText(stringOrDefault(prof.getPhone()));
         if(description != null)
-            description.setText(prof.getDescription());
+            description.setText(stringOrDefault(prof.getDescription()));
         if(address != null)
-            address.setText(prof.getAddress());
+            address.setText(stringOrDefault(prof.getAddress()));
         if(opening != null)
-            opening.setText(prof.getOpening());
+            opening.setText(stringOrDefault(prof.getOpening()));
         if(categories != null)
-            categories.setText(prof.getCategories());
+            categories.setText(stringOrDefault(prof.getCategories()));
+        if(shipPrice != null) {
+            shipPrice.setText(prof.getPriceShip().equals(0.0) ?
+                    getString(R.string.price_free) :
+                    getString(R.string.order_price, prof.getPriceShip()));
+        }
+        if(profileImage != null){
+            profileBitmap = Utility.StringToBitMap(prof.getImage());
+            if(profileBitmap != null)
+                profileImage.setImageBitmap(profileBitmap);
+        }
     }
 
 

@@ -22,4 +22,5 @@
     <string name="state">Stato:</string>
     <string name="not_registered">Devi compilare il profilo prima di poter effettuare un ordine.</string>
     <string name="confirm_order">Conferma ordine</string>
+    <string name="dialog_time">Ora di consegna</string>
 </resources>

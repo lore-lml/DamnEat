@@ -1,4 +1,4 @@
-package com.damn.polito.damneatrestaurant.beans;
+package com.damn.polito.commonresources.beans;
 
 import com.damn.polito.commonresources.Utility;
 
