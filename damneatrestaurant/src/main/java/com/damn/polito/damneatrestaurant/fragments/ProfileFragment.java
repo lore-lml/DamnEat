@@ -202,14 +202,9 @@ public class ProfileFragment extends Fragment{
         //SE LA MAIL ESISTE NON SI SALVA NULLA, SE NON ESISTE SI CREA UNA NUOVA KEY SU FIREBASE
         DatabaseReference myRef;
         //DatabaseReference ordini;
-        if(dbKey == null) {
-            myRef = database.getReference("ristoratori/").push();
-            //ordini = database.getReference("ristoratori/" + myRef.getKey() + "/lista_ordini");
-        }
-        else{
-            myRef = database.getReference("ristoratori/" + dbKey);
+
+        myRef = database.getReference("ristoratori/" + dbKey);
             //ordini = database.getReference("ristoratori/" + dbKey + "/lista_ordini");
-        }
 
         myRef.runTransaction(new Transaction.Handler(){
             @NonNull
@@ -226,7 +221,7 @@ public class ProfileFragment extends Fragment{
                     /*if(orders != null && orders.size() != 0)
                         ordini.updateChildren(orders);*/
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-                    editor.putString("dbkey", myRef.getKey());
+                    //editor.putString("dbkey", myRef.getKey());
                     editor.putString("address", profile.getAddress());
                     editor.putString("name", profile.getName());
                     editor.putString("phone", profile.getPhone());

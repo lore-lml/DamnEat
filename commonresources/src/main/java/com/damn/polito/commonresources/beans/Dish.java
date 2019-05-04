@@ -136,7 +136,7 @@ public class Dish {
         this.id = id;
     }
 
-    public String Id() {
+    public String getId() {
         return this.id;
     }
 }

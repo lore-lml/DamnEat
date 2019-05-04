@@ -126,4 +126,6 @@ public class Welcome extends AppCompatActivity {
         pref.putString("dbkey", user.getUid());
         pref.apply();
     }
+
+
 }

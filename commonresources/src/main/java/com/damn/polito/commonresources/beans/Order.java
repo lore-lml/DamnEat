@@ -1,7 +1,5 @@
 package com.damn.polito.commonresources.beans;
 
-import android.util.Log;
-
 import com.damn.polito.commonresources.beans.Dish;
 
 import java.util.ArrayList;
@@ -85,7 +83,7 @@ public class Order {
     public void setState(String state) {
         this.state = state;
     }
-    public String sId() {
+    public String Id() {
         return id;
     }
 
@@ -205,7 +203,7 @@ public class Order {
         this.restaurant = restaurant;
     }
 
-    public String Id() {
+    public String getId() {
         return id;
     }
 

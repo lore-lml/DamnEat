@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -29,17 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -359,9 +348,9 @@ public class SelectDishes extends AppCompatActivity {
         Dish dish = dishesList.get(index);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dish.Id()+ "/");
+        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dish.getId()+ "/");
         dbRef.removeValue();
-        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dish.Id()+ "/");
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dish.getId()+ "/");
         dbRef.removeValue();
 
         //dishesList.remove(index);
@@ -371,7 +360,7 @@ public class SelectDishes extends AppCompatActivity {
         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.select_dishes_coordinator), R.string.dish_deletted, Snackbar.LENGTH_LONG);
         mySnackbar.setAction(R.string.undo_string, v -> {
             if(dish!=null){
-                DatabaseReference dbRef_add = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dish.Id()+ "/");
+                DatabaseReference dbRef_add = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dish.getId()+ "/");
                 dbRef_add.setValue(dish);
                 //dishesList.add(index, dish);
                 //adapter.notifyItemInserted(index);

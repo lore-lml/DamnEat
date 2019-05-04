@@ -27,13 +27,9 @@ import android.widget.Toast;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.commonresources.beans.Dish;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Locale;
@@ -125,7 +121,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
                     viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
                     viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    String dishId = selected.Id();
+                    String dishId = selected.getId();
                     DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dishId + "/");
                     dbRef.setValue(selected);
                     if(selected.isDishOtd()){
@@ -323,7 +319,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     }
 
     private void saveDish(Dish dish){
-        String dishId = dish.Id();
+        String dishId = dish.getId();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef;
@@ -336,7 +332,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     }
 
     private void deleteDish(Dish dish){
-        String dishId = dish.Id();
+        String dishId = dish.getId();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dishId + "/");
         dbRef.removeValue();

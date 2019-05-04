@@ -18,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
@@ -55,6 +57,8 @@ public class DishesFragment extends Fragment {
     private DishesAdapter adapter;
     private FloatingActionButton fab;
     private Context ctx;
+    private TextView registered_tv;
+    private ImageView registered_im;
     //private String srcFile = "dishes.save";
     private Restaurant restaurant = new Restaurant();
     private FirebaseDatabase database;
@@ -73,7 +77,8 @@ public class DishesFragment extends Fragment {
         AppCompatActivity activity = ((AppCompatActivity)getActivity());
         assert activity != null;
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.app_name);
-
+        registered_tv = view.findViewById(R.id.not_registered_tv);
+        registered_im = view.findViewById(R.id.not_registered_im);
         fab = view.findViewById(R.id.fab_add_dish);
         //dishesList.clear();
 
@@ -95,8 +100,11 @@ public class DishesFragment extends Fragment {
         adapter.notifyDataSetChanged();
 
         fab.setOnClickListener(v-> {
-            Intent i = new Intent(view.getContext(), SelectDishes.class);
-            startActivityForResult(i, UPDATE_DISHES_OF_DAY);
+            if(userRegistered()) {
+                Intent i = new Intent(view.getContext(), SelectDishes.class);
+                startActivityForResult(i, UPDATE_DISHES_OF_DAY);
+            }else
+                Toast.makeText(ctx, R.string.not_registered, Toast.LENGTH_LONG).show();
         });
 
         /*adapter.setOnLongItemClickListener(position -> {
@@ -117,15 +125,33 @@ public class DishesFragment extends Fragment {
                 });
                 pop.show();
         });*/
+
+        if(!userRegistered()){
+            registered_tv.setVisibility(View.VISIBLE);
+            registered_im.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+
+        }else {
+            registered_tv.setVisibility(View.GONE);
+            registered_im.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
-    private void getSharedData() {
+    private boolean userRegistered() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        restaurant.setRestaurantName(pref.getString("clientname", ""));
-        restaurant.setRestaurantAddress(pref.getString("clientaddress", ""));
-        restaurant.setRestaurantName(pref.getString("clientmail", ""));
-        restaurant.setRestaurantPhone(pref.getString("clientphone", ""));
-        restaurant.setRestaurantID(pref.getString("dbkey", ""));
+        Log.d("shared addr", pref.getString("address", ""));
+        if(pref.getString("address", "").equals(""))
+            return false;
+
+        if(pref.getString("name", "").equals(""))
+            return false;
+
+        if(pref.getString("phone", "").equals(""))
+            return false;
+        Log.d("shared clientphone", pref.getString("clientphone", ""));
+
+        return !pref.getString("mail", "").equals("");
     }
 
     private void itemDelete() {
