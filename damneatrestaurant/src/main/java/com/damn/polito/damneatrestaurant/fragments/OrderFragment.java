@@ -131,14 +131,14 @@ public class OrderFragment extends Fragment {
                                                 //AGGIORNO LE AVAILABILITY
                                                 for (Dish dish : orders.get(position).getDishes()){
                                                     db = FirebaseDatabase.getInstance();
-                                                    ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_totali/"+dish.Id());
+                                                    ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_totali/"+dish.getId());
                                                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                             Dish dsh = dataSnapshot.getValue(Dish.class);
                                                             int availability = dsh.getAvailability();
                                                             FirebaseDatabase tmpDB=FirebaseDatabase.getInstance();
-                                                            DatabaseReference tmpRef=tmpDB.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_totali/"+dish.Id());
+                                                            DatabaseReference tmpRef=tmpDB.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_totali/"+dish.getId());
                                                             tmpRef.child("availability").setValue(availability-dish.getQuantity());
                                                         }
                                                         @Override
@@ -147,13 +147,14 @@ public class OrderFragment extends Fragment {
                                                         }
                                                     });
 
-                                                    ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_del_giorno/"+dish.Id()+"availability");
+                                                    ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_del_giorno/"+dish.getId());
                                                     ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            int availability = dataSnapshot.getValue(Dish.class).getAvailability();
+                                                            Dish dsh = dataSnapshot.getValue(Dish.class);
+                                                            int availability = dsh.getAvailability();
                                                             FirebaseDatabase tmpDB=FirebaseDatabase.getInstance();
-                                                            DatabaseReference tmpRef=tmpDB.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_del_giorno/"+dish.Id());
+                                                            DatabaseReference tmpRef=tmpDB.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_del_giorno/"+dish.getId());
                                                             tmpRef.child("availability").setValue(availability-dish.getQuantity());
                                                         }
                                                         @Override
