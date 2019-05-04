@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -75,6 +76,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             intent.putExtra("rest_image", current.getImage());
             intent.putExtra("rest_description", current.getDescription());
             intent.putExtra("rest_priceship", current.getPriceShip());
+
+            PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString("rest_opening", current.getOpening()).apply();
 //            intent.putExtra("rest_rating", holder.ratingBar.getProgress());
 //            intent.putExtra("rest_reviews", current.getReviews());
             ((Activity)ctx).startActivityForResult(intent, RestaurantFragment.REQUEST_CODE + pos);

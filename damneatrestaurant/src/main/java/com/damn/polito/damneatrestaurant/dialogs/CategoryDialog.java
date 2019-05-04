@@ -20,7 +20,6 @@ import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CategoryDialog extends DialogFragment {
 

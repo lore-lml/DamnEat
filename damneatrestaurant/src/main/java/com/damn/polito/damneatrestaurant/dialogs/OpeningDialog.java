@@ -107,7 +107,6 @@ public class OpeningDialog extends DialogFragment {
     }
 
     private List<DayOfTheWeek> load(){
-        List<DayOfTheWeek> days = new ArrayList<>();
         /*String t = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("days", null);
         if(t != null){
             try {
@@ -121,26 +120,10 @@ public class OpeningDialog extends DialogFragment {
             }
         }*/
         if(text != null && !text.isEmpty()){
-            String[] t = text.split("\n");
-            for(String line : t){
-                String[] field = line.split("\\s+");
-                String d = field[0].substring(0,field[0].length()-1);
-                if(field[1].equalsIgnoreCase("closed")){
-                    days.add(new DayOfTheWeek(d, true));
-                }else{
-                    String[] fs = field[1].split("-");
-                    String open2=null, close2=null;
-                    if(field.length == 3) {
-                        String[] ss = field[2].split("-");
-                        open2 = ss[0];
-                        close2 = ss[1];
-                    }
-                    days.add(new DayOfTheWeek(d, false, fs[0], fs[1], open2, close2));
-                }
-            }
+            return DayOfTheWeek.listOfDays(text);
         }
 
-        return days;
+        return new ArrayList<>();
     }
 
     private void initDays() {
