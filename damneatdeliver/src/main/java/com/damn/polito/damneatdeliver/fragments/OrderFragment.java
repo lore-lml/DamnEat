@@ -34,7 +34,6 @@ public class OrderFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Order> orders = new ArrayList<>();
     private OrdersAdapter adapter;
-    private TextView mTextMessage;
 
     @Nullable
     @Override
@@ -62,14 +61,48 @@ public class OrderFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        if(orders.size()>0) {
-            if (!orders.get(0).Expanded())
-                orders.get(0).changeExpanded();
-        }
+//        if(orders.size()>0) {
+//            if (!orders.get(0).Expanded())
+//                orders.get(0).changeExpanded();
+//        }
         adapter.setOnItemClickListener(position -> {
-            if (position != 0)
+//            if (position != 0)
                 orders.get(position).changeExpanded();
             adapter.notifyItemChanged(position);
+        });
+    }
+
+    private void init(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("ordini");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String key;
+                Order order;
+                orders.clear();
+                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
+                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
+                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
+                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
+                    key = chidSnap.getKey();
+                    order = chidSnap.getValue(Order.class);
+                    orders.add(order);
+                    orders.get(orders.size()-1).sId(key);
+                }
+                adapter.notifyDataSetChanged();
+
+                if(orders.size() == 0)  recyclerView.setVisibility(View.GONE);
+                else {
+                    if(!orders.get(0).Expanded()) orders.get(0).changeExpanded();
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                throw databaseError.toException();
+            }
         });
     }
 
@@ -114,39 +147,5 @@ public class OrderFragment extends Fragment {
         orders.add(new Order("454542", tmp3, new Date(), "Via pastrengo 8", "Gigi", "Lorenzo Viola", 10.5));
         orders.add(new Order("845663", tmp, new Date(), "Via pastrengo 1", "Steve", "Matteo Azzurri", 10.5));
         orders.add(new Order("895241", tmp, new Date(), "Corso Duca 9", "Pippo", "Alessandro Rosa", 10.5));
-    }
-
-    private void init(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("ordini");
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String key;
-                Order order;
-                orders.clear();
-                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
-                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
-                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
-                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
-                    key = chidSnap.getKey();
-                    order = chidSnap.getValue(Order.class);
-                    orders.add(order);
-                    orders.get(orders.size()-1).sId(key);
-                }
-                adapter.notifyDataSetChanged();
-
-                if(orders.size() == 0)  recyclerView.setVisibility(View.GONE);
-                else {
-                    if(!orders.get(0).Expanded()) orders.get(0).changeExpanded();
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                throw databaseError.toException();
-            }
-        });
     }
 }
