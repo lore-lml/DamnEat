@@ -102,5 +102,7 @@
     <string name="disconnect">disconnect</string>
     <string name="logout_error">Logout error</string>
     <string name="login_error">Login error</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
 
 </resources>

@@ -61,7 +61,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         holder.categories.setText(current.getCategories());
         holder.reviews.setText(ctx.getString(R.string.restaurant_reviews, current.getReviews()));
         holder.ratingBar.setMax(MAX_PROGRESS);
-        holder.ratingBar.setProgress(current.getReviews() == 0 ? 0 : 100*current.getTotalRate()/current.getReviews());
+        holder.ratingBar.setProgress(current.getReviews() == 0 ? 0 : current.rate());
 
         holder.priceShip.setText(current.getPriceShip() == 0 ?
                 ctx.getString(R.string.price_free) : ctx.getString(R.string.order_price, current.getPriceShip()));

@@ -88,4 +88,6 @@
     <string name="disconnect">Disconnettiti</string>
     <string name="login_error">Errore login</string>
     <string name="logout_error">Errore logout</string>
+    <string name="filter">Filtra</string>
+    <string name="sort">Ordina</string>
 </resources>
