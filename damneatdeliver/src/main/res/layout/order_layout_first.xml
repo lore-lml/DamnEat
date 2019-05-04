@@ -75,15 +75,15 @@
             android:id="@+id/order_Customer_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginTop="8dp"
 
+            android:layout_marginEnd="24dp"
             android:text="@string/order_customer"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
+            app:layout_constraintTop_toBottomOf="@+id/restaurant_info" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circleImageView"
@@ -150,13 +150,13 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
             android:background="@drawable/buttons"
-            android:paddingStart="100dp"
-            android:paddingEnd="100dp"
+            android:paddingStart="70dp"
+            android:paddingEnd="70dp"
             android:text="@string/confirmOrder"
             android:textColor="#fff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintHorizontal_bias="0.349"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -182,6 +182,25 @@
             app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toEndOf="@+id/dishes_list"
             app:layout_constraintTop_toBottomOf="@+id/order_customer_info" />
+
+        <Button
+            android:id="@+id/refuseOrder"
+            android:layout_width="51dp"
+            android:layout_height="41dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="28dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/refuseOrder"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toBottomOf="@+id/acceptOrder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.843"
+            app:layout_constraintStart_toEndOf="@+id/confirmOrder"
+            app:layout_constraintTop_toTopOf="@+id/confirmOrder" />
+
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

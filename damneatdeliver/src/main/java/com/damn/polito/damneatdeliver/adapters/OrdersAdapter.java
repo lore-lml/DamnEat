@@ -102,9 +102,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.image.setVisibility(View.VISIBLE);
             holder.price.setVisibility(View.VISIBLE);
             holder.date.setVisibility(View.VISIBLE);
-            holder.button.setVisibility(View.VISIBLE);
+//            holder.button.setVisibility(View.VISIBLE);
 //            holder.acceptButton.setVisibility(View.GONE);
-//            holder.refuseButton.setVisibility(View.GONE);
+            holder.refuseButton.setVisibility(View.GONE);
 
             holder.button.setOnClickListener((View v) -> {
                 DeliveredStatus(selected.getId(), holder);
@@ -114,9 +114,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.image.setVisibility(View.GONE);
             holder.price.setVisibility(View.GONE);
             holder.date.setVisibility(View.GONE);
-//            holder.button.setVisibility(View.GONE);
-//            holder.acceptButton.setVisibility(View.VISIBLE);
-//            holder.refuseButton.setVisibility(View.VISIBLE);
+            holder.dishes_list.setVisibility(View.GONE);
+            holder.nDish.setVisibility(View.GONE);
+//            holder.button.setText(R.string.acceptOrder);
         }
 
         if (!orders.get(position).Expanded()) {
@@ -135,11 +135,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
         orders.get(0).setState("delivered");
         ordini.setValue(orders.get(0));
-
         free = true;
-        //notificare che si è disponibili
+
+            holder.button.setVisibility(View.GONE);
+//            holder.acceptButton.setVisibility(View.VISIBLE);
+            holder.refuseButton.setVisibility(View.VISIBLE);
 
         Toast.makeText(ctx, "Delivered succesfully", Toast.LENGTH_LONG).show();
+
+        notifyItemChanged(0);
 
         return true;
     }

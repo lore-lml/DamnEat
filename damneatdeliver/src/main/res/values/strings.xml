@@ -39,4 +39,6 @@
     <string name="delivery_time">%s</string>
     <string name="refuseOrder">NO</string>
     <string name="acceptOrder">YES</string>
+    <string name="nav_current">Current</string>
+    <string name="restaurant">Restaurant:\n %s</string>
 </resources>

@@ -51,6 +51,7 @@ public class ProfileFragment extends Fragment {
 
     private Map<String, Object> orders;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
