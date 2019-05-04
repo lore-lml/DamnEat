@@ -22,10 +22,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/order_id_s"
             android:textAppearance="@style/PrimaryText"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/order_find_deliverer_button"
+            android:textSize="@dimen/activity_horizontal_margin"
+            app:layout_constraintBottom_toTopOf="@+id/state_tv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
 
@@ -35,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/nullText"
             android:textAppearance="@style/SecondaryText"
             android:textStyle="italic"
@@ -47,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/order_num_dishes"
             android:textAppearance="@style/SecondaryText"
             app:layout_constraintBottom_toTopOf="@+id/dishes_list"
@@ -60,7 +64,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/order_price"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
             android:textAppearance="@style/PrimaryText"
             android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -71,14 +75,13 @@
             android:id="@+id/order_deliverer_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Giovanni Rossi"
 
-            android:textAlignment="center"
+            android:layout_marginEnd="16dp"
+            android:text="Giovanni Rossi"
+            android:textAlignment="textEnd"
             android:textAppearance="@style/SecondaryText"
-            app:layout_constraintBottom_toTopOf="@+id/order_customer_info"
+            app:layout_constraintBottom_toTopOf="@+id/order_customer"
             app:layout_constraintEnd_toEndOf="@+id/circleImageView"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
             app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
@@ -86,33 +89,37 @@
             android:id="@+id/circleImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:src="@drawable/profile_sample"
             app:layout_constraintBottom_toTopOf="@+id/order_deliverer_name_textview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_id" />
+            app:layout_constraintTop_toBottomOf="@+id/delivery_time_tv" />
 
         <TextView
             android:id="@+id/dishes_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="27dp"
+            android:layout_marginBottom="24dp"
             android:text="--"
             app:layout_constraintBottom_toTopOf="@+id/order_price"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_num_dishes" />
 
         <TextView
-            android:id="@+id/order_customer_info"
+            android:id="@+id/order_customer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
             android:text="@string/order_customer"
-            android:textAlignment="textEnd"
+            android:textAlignment="center"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/circleImageView"
-            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_deliverer_name_textview" />
 
         <Button
@@ -120,12 +127,50 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/colorPrimary"
             android:text="@string/assign_deliverer"
             android:textColor="@color/colorCorners"
             app:layout_constraintBottom_toTopOf="@+id/order_num_dishes"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/delivery_time_tv" />
+
+        <TextView
+            android:id="@+id/state_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/order_state"
+            android:textAppearance="@style/PrimaryText"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/delivery_time_tv"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_id" />
+
+        <TextView
+            android:id="@+id/state_tv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Completed"
+            android:textAppearance="@style/PrimaryText"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/state_tv"
+            app:layout_constraintStart_toEndOf="@+id/state_tv"
+            app:layout_constraintTop_toTopOf="@+id/state_tv" />
+
+        <TextView
+            android:id="@+id/delivery_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="Delivery time"
+            android:textAppearance="@style/PrimaryText"
+            app:layout_constraintBottom_toTopOf="@+id/order_find_deliverer_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/state_tv" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
