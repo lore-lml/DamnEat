@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.damn.polito.damneatdeliver.R;
+import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
 import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
 import com.firebase.ui.auth.AuthUI;
@@ -29,6 +30,7 @@ public class Welcome extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private ProfileFragment profileFragment;
     private OrderFragment orderFragment;
+    private CurrentFragment currentFragment;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
@@ -42,6 +44,11 @@ public class Welcome extends AppCompatActivity {
                 if(orderFragment == null)
                     orderFragment = new OrderFragment();
                 selected = orderFragment;
+                break;
+            case R.id.nav_current:
+                if(currentFragment == null)
+                    currentFragment = new CurrentFragment();
+                selected = currentFragment;
                 break;
             case R.id.nav_profile:
                 if(profileFragment == null)

@@ -29,13 +29,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     private List<Order> orders;
     private Context ctx;
     private OnItemClickListener mListener;
-    private boolean colored = false, free = false;
+    private boolean free = false;
 
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
@@ -50,13 +49,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == 1) {
-            View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout_first, parent, false);
-            return new OrderViewHolder(view,mListener);
-        }else {
+//        if (viewType == 1) {
+//            View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout_first, parent, false);
+//            return new OrderViewHolder(view,mListener);
+//        }else {
             View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
             return new OrderViewHolder(view,mListener);
-        }
+//        }
     }
 
     @Override
@@ -97,27 +96,27 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         }
         holder.dishes_list.setText(dish_list_str);
 
-        if (position == 0 && !free) {
-            holder.price.setVisibility(View.VISIBLE);
-            holder.image.setVisibility(View.VISIBLE);
-            holder.price.setVisibility(View.VISIBLE);
-            holder.date.setVisibility(View.VISIBLE);
-            holder.button.setVisibility(View.VISIBLE);
-//            holder.acceptButton.setVisibility(View.GONE);
+//        if (position == 0 && !free) {
+//            holder.price.setVisibility(View.VISIBLE);
+//            holder.image.setVisibility(View.VISIBLE);
+//            holder.price.setVisibility(View.VISIBLE);
+//            holder.date.setVisibility(View.VISIBLE);
+////            holder.button.setVisibility(View.VISIBLE);
+////            holder.acceptButton.setVisibility(View.GONE);
 //            holder.refuseButton.setVisibility(View.GONE);
-
-            holder.button.setOnClickListener((View v) -> {
-                DeliveredStatus(selected.getId(), holder);
-            });
-        }else if(free){
-            holder.price.setVisibility(View.GONE);
-            holder.image.setVisibility(View.GONE);
-            holder.price.setVisibility(View.GONE);
-            holder.date.setVisibility(View.GONE);
-//            holder.button.setVisibility(View.GONE);
-//            holder.acceptButton.setVisibility(View.VISIBLE);
-//            holder.refuseButton.setVisibility(View.VISIBLE);
-        }
+//
+//            holder.button.setOnClickListener((View v) -> {
+//                DeliveredStatus(selected.getId(), holder);
+//            });
+//        }else if(free){
+//            holder.price.setVisibility(View.GONE);
+//            holder.image.setVisibility(View.GONE);
+//            holder.price.setVisibility(View.GONE);
+//            holder.date.setVisibility(View.GONE);
+//            holder.dishes_list.setVisibility(View.GONE);
+//            holder.nDish.setVisibility(View.GONE);
+////            holder.button.setText(R.string.acceptOrder);
+//        }
 
         if (!orders.get(position).Expanded()) {
             holder.id.setVisibility(View.GONE);
@@ -130,19 +129,23 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         }
     }
 
-    private boolean DeliveredStatus(String id, OrderViewHolder holder) {
-        DatabaseReference ordini = FirebaseDatabase.getInstance().getReference("ordini").child(id);
-
-        orders.get(0).setState("delivered");
-        ordini.setValue(orders.get(0));
-
-        free = true;
-        //notificare che si è disponibili
-
-        Toast.makeText(ctx, "Delivered succesfully", Toast.LENGTH_LONG).show();
-
-        return true;
-    }
+//    private boolean DeliveredStatus(String id, OrderViewHolder holder) {
+//        DatabaseReference ordini = FirebaseDatabase.getInstance().getReference("ordini").child(id);
+//
+//        orders.get(0).setState("delivered");
+//        ordini.setValue(orders.get(0));
+//        free = true;
+//
+////            holder.button.setVisibility(View.GONE);
+//// //            holder.acceptButton.setVisibility(View.VISIBLE);
+////            holder.refuseButton.setVisibility(View.VISIBLE);
+//
+//        Toast.makeText(ctx, "Delivered succesfully", Toast.LENGTH_LONG).show();
+//
+//        notifyItemChanged(0);
+//
+//        return true;
+//    }
 
     @Override
     public int getItemCount() {
@@ -159,7 +162,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private TextView id,date,price,nDish, dishes_list, customer_info, restaurant_i, delivery_time, note;
         private TextView message;
         private CardView root;
-        private Button button, acceptButton, refuseButton;
         private ImageView image;
 
         public OrderViewHolder(View itemView, OnItemClickListener listener) {
@@ -175,12 +177,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             restaurant_i = itemView.findViewById(R.id.restaurant_info);
             delivery_time = itemView.findViewById(R.id.order_delivery_time);
             note = itemView.findViewById(R.id.order_note);
-            button = itemView.findViewById(R.id.confirmOrder);
             image = itemView.findViewById(R.id.circleImageView);
 
             message = itemView.findViewById(R.id.order_message_id);
-            acceptButton = itemView.findViewById(R.id.acceptOrder);
-            refuseButton = itemView.findViewById(R.id.refuseOrder);
 
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
