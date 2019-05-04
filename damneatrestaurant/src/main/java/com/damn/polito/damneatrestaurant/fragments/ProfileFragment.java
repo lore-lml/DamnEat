@@ -48,6 +48,7 @@ public class ProfileFragment extends Fragment{
     private Context ctx;
     private String dbKey;
     private FirebaseDatabase database;
+    private Profile prof;
 
     //private Map<String, Object> orders;
     @Nullable
@@ -64,7 +65,7 @@ public class ProfileFragment extends Fragment{
         AppCompatActivity activity = ((AppCompatActivity)getActivity());
         assert activity != null;
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.alert_edit_profile_title);
-
+        prof = new Profile();
         ctx = view.getContext();
 
         defaultValue = getString(R.string.nullText);
@@ -79,7 +80,8 @@ public class ProfileFragment extends Fragment{
         categories = view.findViewById(R.id.editText_category);
         shipPrice = view.findViewById(R.id.editText_shipprice);
         database = FirebaseDatabase.getInstance();
-        loadData();
+
+        updateProfile();
     }
 
     private void editProfile() {
@@ -117,6 +119,39 @@ public class ProfileFragment extends Fragment{
             storeData(data);
         }
     }
+
+    private void loadDataShared(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        prof.setAddress(pref.getString("address", ""));
+        prof.setName(pref.getString("name", ""));
+        prof.setMail(pref.getString("mail", ""));
+        prof.setPhone(pref.getString("phone", ""));
+        prof.setOpening(pref.getString("opening", ""));
+        prof.setCategories(pref.getString("categories", ""));
+        prof.setDescription(pref.getString("description", ""));
+        prof.setImage(pref.getString("profile", ""));
+        //todo: da fare
+       // prof.setPriceShip((double)pref.getFloat("shipprice", (float)0.0));
+    }
+
+    public void updateProfile(){
+        loadDataShared();
+        if(name != null)
+            name.setText(prof.getName());
+        if(mail != null)
+            mail.setText(prof.getMail());
+        if(phone != null)
+            phone.setText(prof.getPhone());
+        if(description != null)
+            description.setText(prof.getDescription());
+        if(address != null)
+            address.setText(prof.getAddress());
+        if(opening != null)
+            opening.setText(prof.getOpening());
+        if(categories != null)
+            categories.setText(prof.getCategories());
+    }
+
 
     private void storeData(Intent data) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -239,58 +274,7 @@ public class ProfileFragment extends Fragment{
         });
     }
 
-    private void loadData() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 
-            if(dbKey == null) {
-                dbKey = pref.getString("dbkey", null);
-                if (dbKey == null) return;
-            }
-
-            DatabaseReference myRef = database.getReference("ristoratori/" + dbKey);
-
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    Profile prof = dataSnapshot.getValue(Profile.class);
-                    if (prof != null) {
-                        name.setText(prof.getName());
-                        mail.setText(prof.getMail());
-                        phone.setText(prof.getPhone());
-                        description.setText(prof.getDescription());
-                        address.setText(prof.getAddress());
-                        opening.setText(prof.getOpening());
-                        categories.setText(prof.getCategories());
-                        if(prof.getPriceShip() != null && !prof.getPriceShip().equals(0.0))
-                            ProfileFragment.this.shipPrice.setText(getString(R.string.order_price, prof.getPriceShip()));
-                        else
-                            ProfileFragment.this.shipPrice.setText(String.valueOf(0.0));
-                        if (prof.getImage() != null) {
-                            String encodedBitmap = prof.getImage();
-                            profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                            if (profileBitmap != null)
-                                profileImage.setImageBitmap(profileBitmap);
-                        }
-                        storeProfile(prof);
-                        empty = false;
-                    }else{
-                        name.setText(defaultValue);
-                        mail.setText(defaultValue);
-                        phone.setText(defaultValue);
-                        description.setText(defaultValue);
-                        address.setText(defaultValue);
-                        opening.setText(defaultValue);
-                        categories.setText(defaultValue);
-                        shipPrice.setText(R.string.price_free);
-                    }
-
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
-                }
-            });
 
             /*DatabaseReference ordini = database.getReference("ristoratori/"+ dbKey +"/lista_ordini");
             ordini.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -327,23 +311,10 @@ public class ProfileFragment extends Fragment{
 
 
 
+//
+//    }
 
-    }
 
-    private void storeProfile(Profile profile){
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-        //editor.putString("dbkey", myRef.getKey());
-        editor.putString("address", profile.getAddress());
-        editor.putString("name", profile.getName());
-        editor.putString("phone", profile.getPhone());
-        editor.putString("mail", profile.getMail());
-        editor.putString("description",profile.getDescription());
-        editor.putString("opening", profile.getOpening());
-        editor.putString("categories", profile.getCategories());
-        editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
-        editor.putString("profile", profile.getImage());
-        editor.apply();
-    }
 
 
 

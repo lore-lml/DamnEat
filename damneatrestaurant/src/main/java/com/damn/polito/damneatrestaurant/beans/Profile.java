@@ -2,15 +2,15 @@ package com.damn.polito.damneatrestaurant.beans;
 
 public class Profile {
 
-    private String name;
-    private String mail;
-    private String phone;
-    private String description;
-    private String address;
-    private String opening;
-    private String image;
-    private String categories;
-    private double priceShip;
+    private String name = "";
+    private String mail = "";
+    private String phone = "";
+    private String description = "";
+    private String address = "";
+    private String opening = "";
+    private String image = "NO_PHOTO";
+    private String categories = "";
+    private double priceShip = .0;
 
     public Profile(String name, String mail, String phone, String description, String address, String opening,
                    String categories, double priceShip, String image) {

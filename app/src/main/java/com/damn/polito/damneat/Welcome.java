@@ -72,6 +72,7 @@ public class Welcome extends AppCompatActivity {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             Utility.firstON = false;
         }
+
     }
 
     @Override
