@@ -67,6 +67,8 @@ public class ProfileFragment extends Fragment{
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.alert_edit_profile_title);
         prof = new Profile();
         ctx = view.getContext();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        dbKey = pref.getString("dbkey", null);
 
         defaultValue = getString(R.string.nullText);
 
@@ -334,6 +336,7 @@ public class ProfileFragment extends Fragment{
                 return true;
             case R.id.item_disconnect:
                 FirebaseLogin.logout((Activity) ctx);
+                updateProfile();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

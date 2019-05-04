@@ -42,6 +42,7 @@ public class Welcome extends AppCompatActivity {
     private String dbKey;
 
     private FirebaseDatabase database;
+    private DatabaseReference myRef;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
@@ -87,7 +88,7 @@ public class Welcome extends AppCompatActivity {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             Utility.firstON = false;
         }
-        loadDataProfile(this);
+        //loadDataProfile(this);
 
     }
 
@@ -104,7 +105,7 @@ public class Welcome extends AppCompatActivity {
                 //set button signout
                 //b.setEnabled(true);
                 FirebaseLogin.storeData(user, this);
-
+                loadDataProfile(this);
             }
             else{
                 String error = null;
@@ -143,14 +144,15 @@ public class Welcome extends AppCompatActivity {
             if (dbKey == null) return;
         }
 
-        DatabaseReference myRef = database.getReference("ristoratori/" + dbKey);
+        myRef = database.getReference("ristoratori/" + dbKey);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 Profile prof = dataSnapshot.getValue(Profile.class);
-                storeProfile(prof);
+                if(prof != null)
+                    storeProfile(prof);
                 if(profileFragment!=null)
                     profileFragment.updateProfile();
   //              if (prof != null) {
