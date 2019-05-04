@@ -5,4 +5,8 @@
         app:showAsAction="ifRoom"
         android:title="@string/action_edit"
         android:icon="@drawable/ic_action_edit"/>
+    <item android:id="@+id/item_disconnect"
+        app:showAsAction="ifRoom"
+        android:title="@string/disconnect"
+        android:icon="@drawable/ic_disconnect"/>
 </menu>

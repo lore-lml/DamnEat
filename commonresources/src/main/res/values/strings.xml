@@ -98,5 +98,8 @@
     <string name="dish_others">Others</string>
     <string name="restaurant_category">Categories</string>
     <string name="empty_categories">No categories have been inserted</string>
+    <string name="disconnect">disconnect</string>
+    <string name="logout_error">Logout error</string>
+    <string name="login_error">Login error</string>
 
 </resources>

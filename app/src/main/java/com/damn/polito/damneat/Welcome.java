@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneat.fragments.OrderFragment;
 import com.damn.polito.damneat.fragments.ProfileFragment;
@@ -25,8 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Welcome extends AppCompatActivity {
-    List<AuthUI.IdpConfig> providers;
-    private final int REQUEST_CODE = 707;
+
 
     private FragmentManager fragmentManager;
     private RestaurantFragment restaurantFragment;
@@ -60,12 +60,8 @@ public class Welcome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        //init providers
-        providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build()
-        );
-        shownSignInOptions();
+        FirebaseLogin.init();
+        FirebaseLogin.shownSignInOptions(this);
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
@@ -92,40 +88,36 @@ public class Welcome extends AppCompatActivity {
             navigation.setSelectedItemId(selectedId);
     }
 
-    private void shownSignInOptions() {
-        startActivityForResult(
-                AuthUI.getInstance().createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .setTheme(R.style.Background)
-                        .build(), REQUEST_CODE);
-    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE){
+        if(requestCode == FirebaseLogin.REQUEST_CODE){
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if(resultCode==RESULT_OK){
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                Toast.makeText(this, user.getEmail().toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, ""+user.getEmail().toString(), Toast.LENGTH_LONG).show();
                 //set button signout
                 //b.setEnabled(true);
-                storeData(user);
+                FirebaseLogin.storeData(user, this);
 
             }
             else{
-                Toast.makeText(this, response.getError().getMessage(), Toast.LENGTH_LONG).show();
+                String error = null;
+                try {
+                    error = response.getError().getMessage();
+
+                }catch (Exception e){
+
+                }
+                if(error == null)
+                    error = getString(R.string.login_error);
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
             }
         }
     }
-
-    private void storeData(FirebaseUser user){
-        SharedPreferences.Editor pref = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        pref.putString("dbkey", user.getUid());
-        pref.apply();
-    }
-
 
 }

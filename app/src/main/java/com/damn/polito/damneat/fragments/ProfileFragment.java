@@ -1,5 +1,6 @@
 package com.damn.polito.damneat.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneat.EditProfile;
 import com.damn.polito.damneat.R;
@@ -310,6 +312,9 @@ public class ProfileFragment extends Fragment {
         switch (id) {
             case R.id.item_edit:
                 editProfile();
+                return true;
+            case R.id.item_disconnect:
+                FirebaseLogin.logout((Activity) ctx);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
