@@ -84,7 +84,10 @@
     <string name="dish_others">Altri</string>
     <string name="restaurant_category">Categorie</string>
     <string name="empty_categories">Nessuna categoria inserita</string>
+    <string name="time_asap">Il prima possibile</string>
     <string name="disconnect">Disconnettiti</string>
     <string name="login_error">Errore login</string>
     <string name="logout_error">Errore logout</string>
+    <string name="filter">Filtra</string>
+    <string name="sort">Ordina</string>
 </resources>

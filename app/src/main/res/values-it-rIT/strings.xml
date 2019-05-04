@@ -22,4 +22,9 @@
     <string name="state">Stato:</string>
     <string name="not_registered">Devi compilare il profilo prima di poter effettuare un ordine.</string>
     <string name="confirm_order">Conferma ordine</string>
+    <string name="dialog_time">Ora di consegna</string>
+    <string name="sort_alpha">Ordine alfabetico</string>
+    <string name="sort_pricerangeasc">Ordine fascia di prezzo più bassa</string>
+    <string name="sort_mostrated">Ordine migliore valutazione</string>
+    <string name="sort_pricerangedesc">Ordine fascia di prezzo più alta</string>
 </resources>

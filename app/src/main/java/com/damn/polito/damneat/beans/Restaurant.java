@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Restaurant {
 
+    public enum PriceRange{Cheap, Medium, Expensive}
+
     private String name;
     private String address;
     private String opening;
@@ -54,7 +56,7 @@ public class Restaurant {
 
     public void setCategories(String categories) {
         if(categories == null) return;
-        String cat[] = categories.split(",");
+        String[] cat = categories.split(",?\\s+");
         this.categories.clear();
         for(String s : cat)
             this.categories.add(s.trim());
@@ -99,6 +101,25 @@ public class Restaurant {
     public String getMail() { return mail; }
 
     public void setMail(String mail) { this.mail = mail; }
+
+    public int rate(){
+        double rate = 100*(double)totalRate/reviews;
+        return (int)rate;
+    }
+
+    public PriceRange priceRange(){
+        String range = categories.get(categories.size()-1);
+
+        switch (range){
+            case "(€€)":
+                return PriceRange.Medium;
+            case "(€€€)":
+                return PriceRange.Expensive;
+            default:
+                return PriceRange.Cheap;
+        }
+    }
+
 
     public boolean contains(String filterPattern) {
         if(name.toLowerCase().contains(filterPattern))

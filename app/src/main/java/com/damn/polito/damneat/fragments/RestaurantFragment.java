@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +31,9 @@ import com.damn.polito.commonresources.InternetConnection;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.adapters.RestaurantAdapter;
 import com.damn.polito.damneat.beans.Restaurant;
+import com.damn.polito.damneat.dialogs.DialogType;
+import com.damn.polito.damneat.dialogs.HandleDismissDialog;
+import com.damn.polito.damneat.dialogs.SortDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,12 +41,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
-public class RestaurantFragment extends Fragment {
+public class RestaurantFragment extends Fragment implements HandleDismissDialog {
+
+    public enum SortType{Alpha, PriceAsc, PriceDesc, MostRated}
 
     public static final int REQUEST_CODE = 9000;
 
@@ -50,12 +58,15 @@ public class RestaurantFragment extends Fragment {
     private LinearLayout offline;
     private TextView registered_tv;
     private ImageView registered_im;
+    private Button sort,filter;
     private Context ctx;
 
     private DatabaseReference dbRef;
     private ChildEventListener listener;
 
     private List<Restaurant> restaurants;
+
+    private SortType sortType;
 
     @Nullable
     @Override
@@ -79,10 +90,12 @@ public class RestaurantFragment extends Fragment {
         registered_tv = view.findViewById(R.id.not_registered_tv);
         registered_im = view.findViewById(R.id.not_registered_im);
         recyclerView = view.findViewById(R.id.restaurant_recycler);
+        sort = view.findViewById(R.id.button_sort);
+        filter = view.findViewById(R.id.button_filter);
 
 
         if(InternetConnection.haveInternetConnection(ctx)) {
-            init(view);
+            init();
             loadData();
             offline.setVisibility(View.GONE);
         }else{
@@ -94,11 +107,15 @@ public class RestaurantFragment extends Fragment {
             registered_im.setVisibility(View.VISIBLE);
             offline.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);
+            sort.setVisibility(View.GONE);
+            filter.setVisibility(View.GONE);
 
         }else {
             registered_tv.setVisibility(View.GONE);
             registered_im.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            sort.setVisibility(View.VISIBLE);
+            filter.setVisibility(View.VISIBLE);
         }
     }
 
@@ -125,12 +142,22 @@ public class RestaurantFragment extends Fragment {
     private void getSharedData() {
            }
 
-    private void init(View view){
+    private void init(){
         restaurants = new ArrayList<>();
         adapter = new RestaurantAdapter(getActivity(), restaurants);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
+
+        sort.setOnClickListener(v->{
+            assert getActivity() != null;
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            SortDialog sortDialog = new SortDialog();
+            sortDialog.setFragment(this);
+            if(sortType != null)
+                sortDialog.setSortType(sortType);
+            sortDialog.show(fm, "Sort Dialog");
+        });
     }
 
     private void loadData() {
@@ -224,5 +251,81 @@ public class RestaurantFragment extends Fragment {
 
             /*TODO: gestire stato ordine effettuato*/
         }
+    }
+
+    @Override
+    public void handleOnDismiss(DialogType type, String text) {
+        if(type != DialogType.SortDialog) return;
+        if(text.isEmpty()) return;
+
+        SortType sort = SortType.valueOf(text);
+        switch (sort){
+            case Alpha:
+                orderAlpha();
+                break;
+            case PriceAsc:
+                orderPriceAsc();
+                break;
+            case PriceDesc:
+                orderPriceDesc();
+                break;
+            case MostRated:
+                orderMostRated();
+                break;
+        }
+    }
+
+    private void orderMostRated() {
+        Collections.sort(restaurants,
+                (a,b)->b.rate() - a.rate());
+
+        adapter.setFullList(restaurants);
+        adapter.notifyDataSetChanged();
+
+        sortType = SortType.MostRated;
+    }
+
+    private void orderPriceDesc() {
+        Collections.sort(restaurants,
+                (a,b)->{
+                    Restaurant.PriceRange a1 = a.priceRange();
+                    Restaurant.PriceRange b1 = b.priceRange();
+                    int rate1 = a.rate();
+                    int rate2 = b.rate();
+
+                    return a1.equals(b1) ? rate2 - rate1 : b1.compareTo(a1);
+                });
+
+        adapter.setFullList(restaurants);
+        adapter.notifyDataSetChanged();
+
+        sortType = SortType.PriceDesc;
+    }
+
+    private void orderPriceAsc() {
+        Collections.sort(restaurants,
+                (a,b)->{
+            Restaurant.PriceRange a1 = a.priceRange();
+            Restaurant.PriceRange b1 = b.priceRange();
+            int rate1 = a.rate();
+            int rate2 = b.rate();
+
+            return a1.equals(b1) ? rate2 - rate1 : a1.compareTo(b1);
+        });
+
+        adapter.setFullList(restaurants);
+        adapter.notifyDataSetChanged();
+
+        sortType = SortType.PriceAsc;
+    }
+
+    private void orderAlpha() {
+        Collections.sort(restaurants,
+                (a,b)->a.getName().compareTo(b.getName()));
+
+        adapter.setFullList(restaurants);
+        adapter.notifyDataSetChanged();
+
+        sortType = SortType.Alpha;
     }
 }

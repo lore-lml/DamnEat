@@ -2,24 +2,34 @@ package com.damn.polito.damneat;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.damneat.dialogs.DialogType;
+import com.damn.polito.damneat.dialogs.HandleDismissDialog;
+import com.damn.polito.damneat.dialogs.SpinnerDialog;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Cart extends AppCompatActivity {
+public class Cart extends AppCompatActivity implements HandleDismissDialog {
 
     private String time = "20:00";
-    EditText note_et;
+    EditText note_et, time_et;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +52,7 @@ public class Cart extends AppCompatActivity {
         TextView name_tv = findViewById(R.id.restaurant_name);
         TextView price_tv = findViewById(R.id.restaurant_totalprice);
         TextView address_tv = findViewById(R.id.restaurant_address);
-        EditText time_et = findViewById(R.id.restaurant_time);
+        time_et = findViewById(R.id.restaurant_time);
         TextView ship_tv = findViewById(R.id.restaurant_shipprice);
         note_et = findViewById(R.id.restaurant_note);
 
@@ -63,12 +73,21 @@ public class Cart extends AppCompatActivity {
         list_price_tv.setText(price_list);
         ship_tv.setText(ship);
 
+        time_et.setOnClickListener(v-> showSpinner());
+
         Button button = findViewById(R.id.confirm_button);
         button.setOnClickListener(v-> {
             setResultCart();
             finish();
         });
     }
+
+    private void showSpinner() {
+        FragmentManager fm = getSupportFragmentManager();
+        SpinnerDialog spinner = new SpinnerDialog();
+        spinner.show(fm, "Spinner Dialog");
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -86,8 +105,15 @@ public class Cart extends AppCompatActivity {
         Intent i = new Intent();
         Log.d("result", note_et.getText().toString());
         i.putExtra("note", note_et.getText().toString());
-        i.putExtra("time", time);
+        String time = time_et.getText().toString().trim();
+        i.putExtra("time", time.isEmpty() ?
+                getString(R.string.time_asap) : time);
         setResult(RESULT_OK, i);
     }
 
+    @Override
+    public void handleOnDismiss(DialogType type, String text) {
+        if(type == DialogType.SpinnerDialog)
+            time_et.setText(text);
+    }
 }
