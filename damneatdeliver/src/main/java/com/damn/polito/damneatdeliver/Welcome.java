@@ -53,6 +53,7 @@ public class Welcome extends AppCompatActivity {
     private Integer selectedId = null;
     private static String dbKey;
     private String orderKey;
+    private static Context ctx;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -80,6 +81,11 @@ public class Welcome extends AppCompatActivity {
     };
 
     public static String getKey() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+        }
+
         return dbKey;
     }
 
@@ -111,6 +117,7 @@ public class Welcome extends AppCompatActivity {
         loadProfile();
         loadCurrentOrder(this);
         loadCurrentState();
+        ctx = this;
 
     }
 
