@@ -83,163 +83,114 @@ public class OrderFragment extends Fragment {
                     adapter.notifyItemChanged(position);
                 });
 
+
                 //ABBINAMENTO DELIVERER ORDINE
                 adapter.setOnButtonClickListener(position -> {
-
-                    Log.d("tmz","pressed find deliverer");
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference dbRef= database.getReference("/tmp_deliverers_liberi/");
-
-
+                    List<String> deliverers_keys = new ArrayList<>();
+                    DatabaseReference dbRef= database.getReference("/deliverers_liberi/");
                     dbRef.runTransaction(new Transaction.Handler() {
                         @NonNull
                         @Override
                         public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                            List<String> deliverers_keys = new ArrayList<>();
-                            List<String> deliverers_names = new ArrayList<>();
-                            DatabaseReference ref;
-                            FirebaseDatabase db;
-                            for (MutableData child : mutableData.getChildren()){
-                                if (child!=null) {
+                            for (MutableData child : mutableData.getChildren()) {
+                                if (child != null) {
                                     String s = child.getValue(String.class);
                                     deliverers_keys.add(s);
-                                    db = FirebaseDatabase.getInstance();
-                                    ref = db.getReference("/tmp_deliverers/" + s);
-                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            String key;
-                                            String d = dataSnapshot.getValue(String.class);
-
-                                            deliverers_names.add(d);
-
-                                            if(!deliverers_names.isEmpty()){
-                                                DatabaseReference ref;
-                                                FirebaseDatabase db;
-                                                db = FirebaseDatabase.getInstance();
-                                                ref= db.getReference("/tmp_deliverers_liberi/"+deliverers_keys.get(0));
-                                                ref.removeValue();
-                                                Log.d("transazione", orders.get(position).Id());
-                                                Log.d("transazione", deliverers_names.get(0));
-                                                db = FirebaseDatabase.getInstance();
-                                                ref = db.getReference("/ordini/" + orders.get(position).Id()+"/delivererName/");
-                                                ref.setValue(deliverers_names.get(0));
-                                                ref = db.getReference("/ordini/" + orders.get(position).Id()+"/state/");
-                                                ref.setValue("accepted");
-
-
-                                                //AGGIORNO LE AVAILABILITY
-                                                for (Dish dish : orders.get(position).getDishes()){
-                                                    db = FirebaseDatabase.getInstance();
-                                                    ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_totali/"+dish.getId());
-                                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            Dish dsh = dataSnapshot.getValue(Dish.class);
-                                                            int availability = dsh.getAvailability();
-                                                            FirebaseDatabase tmpDB=FirebaseDatabase.getInstance();
-                                                            DatabaseReference tmpRef=tmpDB.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_totali/"+dish.getId());
-                                                            tmpRef.child("availability").setValue(availability-dish.getQuantity());
-                                                        }
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                        }
-                                                    });
-
-                                                    ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_del_giorno/"+dish.getId());
-                                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            Dish dsh = dataSnapshot.getValue(Dish.class);
-                                                            int availability = dsh.getAvailability();
-                                                            FirebaseDatabase tmpDB=FirebaseDatabase.getInstance();
-                                                            DatabaseReference tmpRef=tmpDB.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID()+"/piatti_del_giorno/"+dish.getId());
-                                                            tmpRef.child("availability").setValue(availability-dish.getQuantity());
-                                                        }
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                        }
-                                                    });
-                                                }
-
-                                            }
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                    break;
                                 }
                             }
+                            if(deliverers_keys.size()<1)
+                                return Transaction.abort();
+
+                            String delivererKey = deliverers_keys.get(0);
 
 
-
-                            return Transaction.success(mutableData);
+                            for (MutableData child : mutableData.getChildren()) {
+                                if (child != null) {
+                                    String s = child.getValue(String.class);
+                                    if(s.equals(delivererKey)){
+                                        mutableData.setValue(null);
+                                        return Transaction.success(mutableData);
+                                    }
+                                }
+                            }
+                            return Transaction.abort();
                         }
 
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                            if(b){
+                                String delivererKey = deliverers_keys.get(0);
+                                if (delivererKey == null){
+                                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                                    dbOrder.setValue("rejected");
+                                    return;
+                                }
+
+                                if (!refreshAvailabity(position)){
+                                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                                    dbOrder.setValue("rejected");
+                                }
+
+                                DatabaseReference dbDeliverer = database.getReference("/deliverers/" + delivererKey + "/current_order/");
+                                dbDeliverer.setValue(orders.get(position).getId());
+
+
+                                DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                                dbOrder.setValue("accepted");
+
+                                adapter.notifyItemChanged(position);
+                            } else {
+                                String orderKey = orders.get(position).getId();
+                                DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                                dbOrder.setValue("rejected");
+                            }
 
                         }
                     });
-                    adapter.notifyItemChanged(position);
+
                 });
+
             }
 
 
         }
-        //initExample();
 
 
     }
 
-    private void initExample(){
-        orders.clear();
-        List<Dish> tmp = new ArrayList<>();
-        tmp.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
+    private boolean refreshAvailabity(int position) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        ArrayList<Dish> dishes = new ArrayList<>();
+        //AGGIORNO LE AVAILABILITY
+        for (Dish dish : orders.get(position).getDishes()) {
+            DatabaseReference ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/" + dish.getId());
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Dish dsh = dataSnapshot.getValue(Dish.class);
+                    if (dsh != null) {
+                        dsh = new Dish();
+                        dsh.setAvailability(0);
+                    }
+                    dishes.add(position, dsh);
+                }
 
-        List<Dish> tmp2 = new ArrayList<>();
-        tmp2.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp2.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));
-        tmp2.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-
-        List<Dish> tmp3 = new ArrayList<>();
-        tmp3.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp3.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp3.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp3.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-
-        List<Dish> tmp4 = new ArrayList<>();
-        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-
-//
-//        orders.add(new Order(123121, tmp, new Date(), "Via Pastrengo 5", "Osvaldo Osvaldi", "Mario Rossi", 10.5));
-//        orders.add(new Order(456551, tmp2, new Date(), "Via Pastrengo 180", "Paperino", "Luigi Bianchi", 10.5));
-//        orders.add(new Order(454542, tmp3, new Date(), "Via Pastrengo 8", "Gigi", "Marco Verdi", 10.5));
-//        orders.add(new Order(845663, tmp2, new Date(), "Via pastrengo 1", "Steve", "Francesco Gialli", 10.5));
-//        orders.add(new Order(895241, tmp, new Date(), "Corso Duca 9", "Pippo", "Stefano Arancioni", 10.5));
-//        orders.add(new Order(123121, tmp4, new Date(), "Via pastrengo 5", "Osvaldo Osvaldi", "Giuseppe Blu", 10.5));
-//        orders.add(new Order(456551, tmp2, new Date(), "Via pastrengo 180", "Paperino", "Gianfranco Neri", 10.5));
-//        orders.add(new Order(454542, tmp3, new Date(), "Via pastrengo 8", "Gigi", "Lorenzo Viola", 10.5));
-//        orders.add(new Order(845663, tmp, new Date(), "Via pastrengo 1", "Steve", "Matteo Azzurri", 10.5));
-//        orders.add(new Order(895241, tmp, new Date(), "Corso Duca 9", "Pippo", "Alessandro Rosa", 10.5));
-
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+        for(int i=0; i<dishes.size(); i++){
+            int new_availability = dishes.get(i).getAvailability() - orders.get(position).getDishes().get(i).getQuantity();
+            if(new_availability < 0)
+                return false;
+            DatabaseReference dishRef = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_totali/" + dishes.get(i).getId() + "/availability/");
+            dishRef.setValue(new_availability);
+            dishRef = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/" + dishes.get(i).getId() + "/availability/");
+            dishRef.setValue(new_availability);
+        }
+        return true;
     }
 
     private boolean initOrders(){
@@ -278,7 +229,7 @@ public class OrderFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //Log.d("order", key);
-
+                orderKeyList.clear();
                 //Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
