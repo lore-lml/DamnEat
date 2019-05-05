@@ -158,7 +158,16 @@ public class Welcome extends AppCompatActivity {
 
             }
             else{
-                Toast.makeText(this, response.getError().getMessage(), Toast.LENGTH_LONG).show();
+                String error = null;
+                try {
+                    error = response.getError().getMessage();
+
+                }catch (Exception e){
+
+                }
+                if(error == null)
+                    error = getString(R.string.login_error);
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
             }
         }
     }

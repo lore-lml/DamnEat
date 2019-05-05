@@ -37,4 +37,26 @@
     <string name="acceptOrder">SI</string>
     <string name="order_restaurant">Ristorante</string>
     <string name="note">Note:</string>
+    <string name="Accept">Accettato</string>
+    <string name="accept_question">Vuoi effettuare la consegna?</string>
+    <string name="assigned">Assegnato</string>
+    <string name="confirm_delivery">Conferma consegna</string>
+    <string name="customer_address">Indirizzo cliente:</string>
+    <string name="customer_name">Nome cliente:</string>
+    <string name="customer_phone">Telefono cliente:</string>
+    <string name="delivery_time_tv">Ora consegna:</string>
+    <string name="nav_current">Ordine corrente</string>
+    <string name="order_available">DISPONIBILE</string>
+    <string name="order_completed">Ordine completato</string>
+    <string name="order_message">In attesa di un ordine</string>
+    <string name="order_rejected">Ordine rifiutato</string>
+    <string name="phone">Telefono</string>
+    <string name="reject">Rifiuta</string>
+    <string name="restaurant">Ristorante: %s</string>
+    <string name="restaurant_address">Indirizzo ristorante:</string>
+    <string name="restaurant_name">Nome ristorante:</string>
+    <string name="restaurant_phone">Telefono ristorante:</string>
+    <string name="state">Stato: %s</string>
+    <string name="waiting_customer_confirm">In attesa della conferma del cliente</string>
+    <string name="waiting_order">In attesa di un ordine</string>
 </resources>

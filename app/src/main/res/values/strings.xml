@@ -16,13 +16,6 @@
     <string name="confirm_order">Confirm order</string>
     <string name="delivery_time">Delivery time: %s</string>
     <string name="state">State:</string>
-    <string name="ordered">Ordered</string>
-    <string name="delivered">Delivered</string>
-    <string name="note" translatable="false">Note: %s</string>
-    <string name="shipped">Shipped</string>
-    <string name="accepted">Accepted</string>
-    <string name="confirmed">Completed</string>
-    <string name="rejected">Rejected</string>
     <string name="not_registered">You have to fill the profile to place an order.</string>
     <string name="dialog_time">Delivery time</string>
     <string name="sort_alpha">Sort alphabetically</string>

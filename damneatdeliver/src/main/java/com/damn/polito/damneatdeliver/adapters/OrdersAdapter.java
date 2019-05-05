@@ -82,7 +82,22 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             Log.d("test", selected.getRestaurant().getRestaurant_price_ship().toString());
             price += selected.getRestaurant().getRestaurant_price_ship();
         }
+
         holder.dishes_list.setText(dish_list_str);
+        if(selected.getState().equals("ordered"))
+            holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.ordered)));
+        if(selected.getState().equals("delivered"))
+            holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.delivered)));
+        if(selected.getState().equals("confirmed"))
+            holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.confirmed)));
+        if(selected.getState().equals("rejected"))
+            holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.reject)));
+        if(selected.getState().equals("accepted"))
+            holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.accepted)));
+        if(selected.getState().equals("shipped"))
+            holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.shipped)));
+        if(selected.getState().equals("assigned"))
+            holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.assigned)));
 
 //        if (position == 0 && !free) {
 //            holder.price.setVisibility(View.VISIBLE);
@@ -110,10 +125,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.id.setVisibility(View.GONE);
             holder.price.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
+            holder.nDish.setVisibility(View.GONE);
         }else{
             holder.id.setVisibility(View.VISIBLE);
             holder.price.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
+            holder.nDish.setVisibility(View.VISIBLE);
+
         }
     }
 
@@ -147,7 +165,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView id,date,price,nDish, dishes_list, customer_info, restaurant_i, delivery_time, note;
+        private TextView id,date,price,nDish, dishes_list, customer_info, restaurant_i, delivery_time, note, state_tv;
         private TextView message;
         private CardView root;
         private ImageView image;
@@ -166,6 +184,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             delivery_time = itemView.findViewById(R.id.order_delivery_time);
             note = itemView.findViewById(R.id.order_note);
             image = itemView.findViewById(R.id.circleImageView);
+            state_tv = itemView.findViewById(R.id.state_tv);
 
             message = itemView.findViewById(R.id.order_message_id);
 
