@@ -137,7 +137,6 @@ public class CurrentFragment extends Fragment {
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("rejected");
-                orderState.setValue("rejected");
             }
         });
         switch_available.setChecked(Welcome.getCurrentAvaibility());

@@ -117,7 +117,6 @@ public class Welcome extends AppCompatActivity {
         navigation.setSelectedItemId(R.id.nav_current);
         loadProfile();
         loadCurrentOrder(this);
-        loadCurrentState();
         ctx = this;
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -129,6 +128,10 @@ public class Welcome extends AppCompatActivity {
         DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
         freeDeliverersRef.setValue(Welcome.getKey());
         Log.d("key", dbKey);
+        DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+        orderRef.setValue(true);
+        loadCurrentState();
+
 
     }
 
