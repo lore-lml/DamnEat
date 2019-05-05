@@ -131,20 +131,7 @@ public class OrderFragment extends Fragment {
                                     Toast.makeText(ctx, R.string.no_availabity, Toast.LENGTH_LONG).show();
                                     return;
                                 }
-
-                                if (refreshAvailabity(position)){
-                                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                                    dbOrder.setValue("rejected");
-                                }
-
-                                DatabaseReference dbDeliverer = database.getReference("/deliverers/" + delivererKey + "/current_order/");
-                                dbDeliverer.setValue(orders.get(position).getId());
-
-
-                                DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                                dbOrder.setValue("accepted");
-
-                                adapter.notifyItemChanged(position);
+                                refreshAvailabityAndAccept(position, delivererKey);
                             } else {
                                 String orderKey = orders.get(position).getId();
                                 DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
@@ -191,41 +178,49 @@ public class OrderFragment extends Fragment {
 
     }
 
-    private boolean refreshAvailabity(int position) {
+
+    private void refreshAvailabityAndAccept(int position, String delivererKey) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        dishes.clear();
         //AGGIORNO LE AVAILABILITY
-        for (Dish dish : orders.get(position).getDishes()) {
-            DatabaseReference ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/" + dish.getId());
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Dish dsh = dataSnapshot.getValue(Dish.class);
-                    if (dsh == null) {
-                        dsh = new Dish();
-                        dsh.setAvailability(0);
+        DatabaseReference ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
+        ref.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                for(MutableData child: mutableData.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    if(d!=null) {
+                        for (Dish d_ord : orders.get(position).getDishes()) {
+                            int new_quantity = d.getAvailability() - d_ord.getQuantity();
+                            if (new_quantity < 0)
+                                return Transaction.abort();
+                            else {
+                                d.setAvailability(new_quantity);
+                                child.setValue(d);
+                            }
+                        }
                     }
-                    dishes.add(position, dsh);
-                    Log.d("pos", String.valueOf(position));
                 }
+                return Transaction.success(mutableData);
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                if(b){
+
+                    DatabaseReference dbDeliverer = database.getReference("/deliverers/" + delivererKey + "/current_order/");
+                    dbDeliverer.setValue(orders.get(position).getId());
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                    dbOrder.setValue("accepted");
+
+                    adapter.notifyItemChanged(position);
+                }else {
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                    dbOrder.setValue("rejected");
                 }
-            });
-        }
+            }
+        });
 
-        Log.d("size", String.valueOf(dishes.size()));
-        for(int i=0; i<dishes.size(); i++){
-            int new_availability = dishes.get(i).getAvailability() - orders.get(position).getDishes().get(i).getQuantity();
-            if(new_availability < 0)
-                return false;
-            DatabaseReference dishRef = db.getReference("ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_totali/" + dishes.get(i).getId() + "/availability");
-            dishRef.setValue(new_availability);
-            dishRef = db.getReference("ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/" + dishes.get(i).getId() + "/availability");
-            dishRef.setValue(new_availability);
-        }
-        return true;
     }
 
     private boolean initOrders(){

@@ -100,6 +100,7 @@ public class Welcome extends AppCompatActivity {
                 Toast.makeText(this, ""+user.getEmail().toString(), Toast.LENGTH_LONG).show();
                 //set button signout
                 //b.setEnabled(true);
+                dbKey = user.getUid();
                 FirebaseLogin.storeData(user, this);
                 loadDataProfile(this);
             }

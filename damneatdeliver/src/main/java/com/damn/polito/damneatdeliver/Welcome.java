@@ -289,5 +289,13 @@ public class Welcome extends AppCompatActivity {
         return currentOrder;
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(currentState){
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+            freeDeliverersRef.setValue(Welcome.getKey());
+            currentFragment.update();
+        }
+    }
 }
