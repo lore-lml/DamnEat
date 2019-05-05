@@ -81,18 +81,22 @@ public class DayOfTheWeek {
     }
 
     public String getFirstOpenTime(){
+        if(open[0] == null || open[0].isEmpty()) return null;
         return open[0];
     }
 
     public String getSecondOpenTime(){
+        if(open[1] == null || open[1].isEmpty()) return null;
         return open[1];
     }
 
     public String getFirstCloseTime(){
+        if(close[0] == null || close[0].isEmpty()) return null;
         return close[0];
     }
 
     public String getSecondCloseTime(){
+        if(close[1] == null || close[1].isEmpty()) return null;
         return close[1];
     }
 
@@ -119,16 +123,12 @@ public class DayOfTheWeek {
     }
 
     public void setFirstTimeSlot(String open1, String close1){
-        if(open1 == null || close1 == null)
-            throw new IllegalArgumentException("You cannot set a null String\n");
         open[0] = open1;
         close[0] = close1;
     }
 
 
     public void setSecondTimeSlot(String open2, String close2){
-        if(open2 == null || close2 == null)
-            throw new IllegalArgumentException("You cannot set a null String\n");
         if(open[0] == null || close[0] == null)
             throw new RuntimeException("You must set the first time slot before set the second!\n");
         open[1] = open2;

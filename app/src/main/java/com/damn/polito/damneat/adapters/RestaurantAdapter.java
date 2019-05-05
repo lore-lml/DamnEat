@@ -128,6 +128,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         restaurants = new ArrayList<>(list);
     }
 
+    public List<Restaurant> getFullList(){
+        return restaurants;
+    }
+
     public class RestaurantViewHolder extends RecyclerView.ViewHolder {
 
         public static final int MAX_PROGRESS = 500;

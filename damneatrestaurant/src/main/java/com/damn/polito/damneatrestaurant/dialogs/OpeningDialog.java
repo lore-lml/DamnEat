@@ -87,6 +87,8 @@ public class OpeningDialog extends DialogFragment {
                 if(slots.size() == 2) {
                     String[] ss = slots.get(1).split("\\s+");
                     d.setSecondTimeSlot(ss[0], ss[1]);
+                }else{
+                    d.setSecondTimeSlot("", "");
                 }
             }
         }

@@ -32,6 +32,7 @@ import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.adapters.RestaurantAdapter;
 import com.damn.polito.damneat.beans.Restaurant;
 import com.damn.polito.damneat.dialogs.DialogType;
+import com.damn.polito.damneat.dialogs.FilterDialog;
 import com.damn.polito.damneat.dialogs.HandleDismissDialog;
 import com.damn.polito.damneat.dialogs.SortDialog;
 import com.google.firebase.database.ChildEventListener;
@@ -41,6 +42,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +54,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     public enum SortType{Alpha, PriceAsc, PriceDesc, MostRated}
 
     public static final int REQUEST_CODE = 9000;
+    public static final String REDO = "REDO";
 
     private RecyclerView recyclerView;
     private RestaurantAdapter adapter;
@@ -67,6 +70,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     private List<Restaurant> restaurants;
 
     private SortType sortType;
+    private String categories;
 
     @Nullable
     @Override
@@ -139,8 +143,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         return !pref.getString("clientphone", "").equals("");
     }
 
-    private void getSharedData() {
-           }
+    private void getSharedData() {}
 
     private void init(){
         restaurants = new ArrayList<>();
@@ -157,6 +160,16 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
             if(sortType != null)
                 sortDialog.setSortType(sortType);
             sortDialog.show(fm, "Sort Dialog");
+        });
+
+        filter.setOnClickListener(v->{
+            assert getActivity() != null;
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FilterDialog filterDialog = new FilterDialog();
+            filterDialog.setListener(this);
+            if(categories != null)
+                filterDialog.setCategories(categories);
+            filterDialog.show(fm, "Filter Dialog");
         });
     }
 
@@ -223,7 +236,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //USELESS FOR US
+                Toast.makeText(ctx, "CIAO", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -232,6 +245,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
                 adapter.getFilter().filter(filterText);
                 return false;
             }
+
         });
     }
 
@@ -255,9 +269,43 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
 
     @Override
     public void handleOnDismiss(DialogType type, String text) {
-        if(type != DialogType.SortDialog) return;
-        if(text.isEmpty()) return;
+        if(type == DialogType.SortDialog)
+            sortDismiss(text);
+        else if(type == DialogType.FilterDialog)
+            filterDismiss(text);
+    }
+    private void reDoFilter(String text){
+        filterDismiss(text);
+    }
+    private void filterDismiss(String text){
+        restaurants.clear();
 
+
+        if(text == null || text.isEmpty()){
+            restaurants.addAll(adapter.getFullList());
+            adapter.notifyDataSetChanged();
+            categories = null;
+            return;
+        }else if(text.equals(REDO) && categories != null) {
+            text = categories;
+        }
+
+        String[] categories = text.split(",\\s?");
+        List<Restaurant> fullList = new ArrayList<>(adapter.getFullList());
+        for(Restaurant r : fullList){
+            for(String cat : categories)
+                if(r.contains(cat)) {
+                    restaurants.add(r);
+                    break;
+                }
+        }
+
+        adapter.notifyDataSetChanged();
+        this.categories = text;
+    }
+
+    private void sortDismiss(String text) {
+        if(text == null || text.isEmpty()) return;
         SortType sort = SortType.valueOf(text);
         switch (sort){
             case Alpha:
