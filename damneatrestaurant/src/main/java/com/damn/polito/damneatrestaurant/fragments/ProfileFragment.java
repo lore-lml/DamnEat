@@ -139,7 +139,7 @@ public class ProfileFragment extends Fragment{
         else
             prof.setPriceShip(0.0);
 
-        if(!name.getText().toString().trim().isEmpty())
+        if(!name.getText().toString().trim().isEmpty() && !name.getText().toString().trim().equals(defaultValue))
             empty = false;
     }
 

@@ -138,6 +138,7 @@ public class ProfileFragment extends Fragment{
         empty = false;
     }
 
+    @SuppressWarnings("unchecked")
     private void loadData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 
