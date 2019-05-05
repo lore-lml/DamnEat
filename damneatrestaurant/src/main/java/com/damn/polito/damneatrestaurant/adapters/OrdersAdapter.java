@@ -85,7 +85,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
             holder.customer_info.setVisibility(View.GONE);
-            if(selected.getState().equals("ordered")){
+            if(selected.getState().equals("ordered")||selected.getState().equals("rejected")){
                 holder.findDeliverer.setVisibility(View.VISIBLE);
                 holder.deliverer_image.setVisibility(View.GONE);
             }
@@ -100,7 +100,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.setAsShipped.setVisibility(View.GONE);
             }
         }else{
-            if(selected.getState().equals("ordered")){
+            if(selected.getState().equals("ordered")||selected.getState().equals("rejected")){
                 holder.deliverer_name.setVisibility(View.GONE);
                 holder.findDeliverer.setVisibility(View.VISIBLE);
                 holder.deliverer_image.setVisibility(View.GONE);
