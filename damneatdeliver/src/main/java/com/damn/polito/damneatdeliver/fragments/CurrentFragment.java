@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +103,7 @@ public class CurrentFragment extends Fragment {
 
         acceptButton = view.findViewById(R.id.acceptOrder);
         rejectButton = view.findViewById(R.id.rejectOrder);
-
+        switch_available = view.findViewById(R.id.available_switch);
 
         photo = view.findViewById(R.id.circleImageView);
 
@@ -127,6 +128,21 @@ public class CurrentFragment extends Fragment {
                 orderState.setValue("rejected");
             }
         });
+        switch_available.setChecked(Welcome.getCurrentAvaibility());
+        switch_available.setOnClickListener(v -> {
+            Boolean available = Welcome.getCurrentAvaibility();
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+            orderRef.setValue(!available);
+            switch_available.setChecked(!available);
+            if(!available){
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+                freeDeliverersRef.setValue(Welcome.getKey());
+                Log.d("key", Welcome.getKey());
+            } else{
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+                freeDeliverersRef.removeValue();
+            }
+        });
 
 
 
@@ -137,6 +153,7 @@ public class CurrentFragment extends Fragment {
 
     public void update() {
         currentOrder = Welcome.getCurrentOrder();
+        switch_available.setChecked(Welcome.getCurrentAvaibility());
 
         if(currentOrder==null){
             currentOrder = new Order();

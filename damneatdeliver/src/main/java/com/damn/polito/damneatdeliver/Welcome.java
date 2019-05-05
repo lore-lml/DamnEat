@@ -81,6 +81,10 @@ public class Welcome extends AppCompatActivity {
         return dbKey;
     }
 
+    public static Boolean getCurrentAvaibility() {
+        return currentState;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +102,9 @@ public class Welcome extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
-
         loadCurrentOrder(this);
+        loadCurrentState();
+
     }
 
     @Override
@@ -148,6 +153,28 @@ public class Welcome extends AppCompatActivity {
         SharedPreferences.Editor pref = PreferenceManager.getDefaultSharedPreferences(this).edit();
         pref.putString("dbkey", user.getUid());
         pref.apply();
+    }
+
+    private void loadCurrentState(){
+        DatabaseReference stateRef = database.getReference("/deliverers/" + dbKey + "/state/");
+        stateRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentState = dataSnapshot.getValue(Boolean.class);
+                Log.d("state", String.valueOf(currentState));
+//
+//                try {
+//                }catch (Exception e){
+//                    currentState = false;
+//                }
+                currentFragment.update();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void loadCurrentOrder(Context ctx) {
