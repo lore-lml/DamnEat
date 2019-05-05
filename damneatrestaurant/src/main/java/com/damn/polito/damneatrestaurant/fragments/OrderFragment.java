@@ -133,7 +133,6 @@ public class OrderFragment extends Fragment {
                                 }
                                 refreshAvailabityAndAccept(position, delivererKey);
                             } else {
-                                String orderKey = orders.get(position).getId();
                                 DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                                 dbOrder.setValue("rejected");
                                 Toast.makeText(ctx, R.string.no_free_deliverers, Toast.LENGTH_LONG).show();
