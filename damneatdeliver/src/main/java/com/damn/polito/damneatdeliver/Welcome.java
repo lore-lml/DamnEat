@@ -119,6 +119,10 @@ public class Welcome extends AppCompatActivity {
         loadCurrentState();
         ctx = this;
 
+        DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+        freeDeliverersRef.setValue(Welcome.getKey());
+        Log.d("key", Welcome.getKey());
+
     }
 
     @Override

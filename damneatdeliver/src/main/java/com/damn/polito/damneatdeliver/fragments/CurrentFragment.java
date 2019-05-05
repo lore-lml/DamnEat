@@ -128,6 +128,8 @@ public class CurrentFragment extends Fragment {
                     orderPhoto.setValue(Welcome.getProfile().getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
                     orderName.setValue(Welcome.getProfile().getName());
+                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/orders_list/" + currentOrder.getId() );
+                    orderRef.setValue(currentOrder.getId());
                 }
             }
         });
