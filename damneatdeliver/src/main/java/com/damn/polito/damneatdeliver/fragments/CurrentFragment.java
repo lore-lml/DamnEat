@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -140,12 +141,27 @@ public class CurrentFragment extends Fragment {
             }
         });
         switch_available.setChecked(Welcome.getCurrentAvaibility());
-        switch_available.setOnClickListener(v -> {
+        /*switch_available.setOnClickListener(v -> {
             Boolean available = Welcome.getCurrentAvaibility();
             DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
             orderRef.setValue(!available);
             //switch_available.setChecked(!available);
             if(!available){
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+                freeDeliverersRef.setValue(Welcome.getKey());
+                //Welcome.setCurrentAvaibility(true);
+                Log.d("key", Welcome.getKey());
+            } else{
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+                freeDeliverersRef.removeValue();
+                //Welcome.setCurrentAvaibility(false);
+            }
+        });*/
+
+        switch_available.setOnCheckedChangeListener((compoundButton, b) -> {
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+            orderRef.setValue(b);
+            if(b){
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
                 freeDeliverersRef.setValue(Welcome.getKey());
                 Log.d("key", Welcome.getKey());
