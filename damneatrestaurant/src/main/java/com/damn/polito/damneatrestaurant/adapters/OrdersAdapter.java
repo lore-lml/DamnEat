@@ -17,6 +17,7 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.google.firebase.database.collection.LLRBNode;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private OnButtonClickListener bListener;
     private Bitmap default_image;
     private OnButtonShippedClickListener bShipListener;
+    private OnButtonRejectedClickListener bRejListener;
     private String key;
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
@@ -55,12 +57,17 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     public void setOnButtonShippedClickListener (OnButtonShippedClickListener listener) { bShipListener = listener; }
 
+    public interface OnButtonRejectedClickListener { void onButtonRejectedClick(int position); }
+
+
+    public void setOnButtonRejectedClickListener (OnButtonRejectedClickListener listener) { bRejListener = listener; }
+
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
         default_image = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.profile_sample);
-        return new OrderViewHolder(view,mListener,bListener,bShipListener);
+        return new OrderViewHolder(view,mListener,bListener,bShipListener,bRejListener);
     }
 
     @Override
@@ -93,6 +100,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
             holder.customer_info.setVisibility(View.GONE);
+            holder.setAsRejected.setVisibility(View.GONE);
             if(selected.getState().equals("ordered")){
                 holder.findDeliverer.setVisibility(View.VISIBLE);
             }
@@ -128,6 +136,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             else{
                 holder.deliverer_name.setVisibility(View.VISIBLE);
                 holder.deliverer_image.setVisibility(View.VISIBLE);
+                holder.setAsRejected.setVisibility(View.GONE);
+            }
+            if(selected.getState().equals("ordered")) {
+                holder.setAsRejected.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.setAsRejected.setVisibility(View.GONE);
             }
 
             if(selected.getState().equals("assigned")){
@@ -173,9 +188,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
         private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info,state,time;
         private CardView root;
-        private Button findDeliverer, setAsShipped;
+        private Button findDeliverer, setAsShipped, setAsRejected;
         private CircleImageView deliverer_image;
-        public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener, OnButtonShippedClickListener bShipListener) {
+        public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener, OnButtonShippedClickListener bShipListener, OnButtonRejectedClickListener bRejectedListener) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order);
@@ -191,6 +206,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             time=itemView.findViewById(R.id.delivery_time_tv);
             deliverer_image=itemView.findViewById(R.id.circleImageView);
             setAsShipped=itemView.findViewById(R.id.order_set_shipped);
+            setAsRejected=itemView.findViewById(R.id.order_button_reject);
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
                     int position = getAdapterPosition();
@@ -214,6 +230,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         bShipListener.onButtonShippedClick(position);
+                    }
+                }
+            });
+
+            setAsRejected.setOnClickListener(v -> {
+                if (bRejectedListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        bRejectedListener.onButtonRejectedClick(position);
                     }
                 }
             });

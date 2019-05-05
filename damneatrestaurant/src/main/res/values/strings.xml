@@ -12,6 +12,7 @@
     <string name="order_delivery_time">Delivery time: %s</string>
     <string name="order_customer_info">Customer:</string>
     <string name="set_as_shipped">Set as shipped</string>
+    <string name="set_as_rejected">Reject order</string>
     <string name="no_free_deliverers">No free deliverers</string>
     <string name="no_availabity">Quantity not available</string>
 </resources>
