@@ -48,6 +48,7 @@ public class Welcome extends AppCompatActivity {
     private CurrentFragment currentFragment;
     private static boolean currentState;
     private static Profile profile;
+    private FirebaseUser user;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
@@ -119,9 +120,15 @@ public class Welcome extends AppCompatActivity {
         loadCurrentState();
         ctx = this;
 
-        DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+            if (dbKey == null) return;
+        }
+        DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
         freeDeliverersRef.setValue(Welcome.getKey());
-        Log.d("key", Welcome.getKey());
+        Log.d("key", dbKey);
 
     }
 
@@ -153,7 +160,7 @@ public class Welcome extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if(resultCode==RESULT_OK){
                 //get user
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
                 Toast.makeText(this, user.getEmail().toString(), Toast.LENGTH_LONG).show();
                 //set button signout

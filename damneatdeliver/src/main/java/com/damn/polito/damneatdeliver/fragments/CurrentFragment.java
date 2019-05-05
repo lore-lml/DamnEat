@@ -70,7 +70,7 @@ public class CurrentFragment extends Fragment {
 
         AppCompatActivity activity = ((AppCompatActivity)getActivity());
         assert activity != null;
-        Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.alert_edit_profile_title);
+        Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.nav_current);
 
         ctx = view.getContext();
         database = FirebaseDatabase.getInstance();
