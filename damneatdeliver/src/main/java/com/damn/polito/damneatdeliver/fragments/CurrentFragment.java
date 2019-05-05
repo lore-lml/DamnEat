@@ -127,13 +127,14 @@ public class CurrentFragment extends Fragment {
                     DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
                     orderPhoto.setValue(Welcome.getProfile().getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
-                    orderPhoto.setValue(Welcome.getProfile().getName());
+                    orderName.setValue(Welcome.getProfile().getName());
                 }
             }
         });
         rejectButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                orderState.setValue("rejected");
                 orderState.setValue("rejected");
             }
         });
@@ -266,7 +267,8 @@ public class CurrentFragment extends Fragment {
 
             note_small.setText(ctx.getText(R.string.note));
             note_small_text.setText(currentOrder.getNote());
-            deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, currentOrder.getDeliveryTime()));
+            String delivery_t = currentOrder.getDeliveryTime();
+            deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
 
 
 
@@ -281,7 +283,7 @@ public class CurrentFragment extends Fragment {
             address_big.setVisibility(View.VISIBLE);
             name_big.setVisibility(View.VISIBLE);
             address_big.setVisibility(View.VISIBLE);
-            address_big_text.setVisibility(GONE);
+            address_big_text.setVisibility(View.VISIBLE);
             phone_big.setVisibility(View.VISIBLE);
             phone_big_text.setVisibility(View.VISIBLE);
             photo.setVisibility(View.VISIBLE);

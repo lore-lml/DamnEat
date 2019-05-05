@@ -1,6 +1,8 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -28,6 +30,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private Context ctx;
     private OnItemClickListener mListener;
     private OnButtonClickListener bListener;
+    private Bitmap default_image;
     private OnButtonShippedClickListener bShipListener;
     private String key;
     public OrdersAdapter(List<Order> orders, Context context){
@@ -56,6 +59,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
+        default_image = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.profile_sample);
         return new OrderViewHolder(view,mListener,bListener,bShipListener);
     }
 
@@ -70,8 +74,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.deliverer_name.setText(selected.getDelivererName());
         holder.customer_info.setText(ctx.getString(R.string.order_customer_info)+"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress());
         holder.time.setText(ctx.getString(R.string.order_delivery_time, selected.getDeliveryTime()));
+        if(selected.getDelivererPhoto().equals("NO_PHOTO"))
+            holder.deliverer_image.setImageBitmap(default_image);
+        else
+            holder.deliverer_image.setImageBitmap(Utility.StringToBitMap(selected.getDelivererPhoto()));
 
-       // holder.date.setText(dateFormat.format(ciao.getTime()));
+        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
         List<Dish> dishes = selected.getDishes();
         for (Dish d:dishes) {

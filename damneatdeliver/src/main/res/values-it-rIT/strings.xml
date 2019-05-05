@@ -44,7 +44,7 @@
     <string name="customer_address">Indirizzo cliente:</string>
     <string name="customer_name">Nome cliente:</string>
     <string name="customer_phone">Telefono cliente:</string>
-    <string name="delivery_time_tv">Ora consegna:</string>
+    <string name="delivery_time_tv">Ora consegna: %s</string>
     <string name="nav_current">Ordine corrente</string>
     <string name="order_available">DISPONIBILE</string>
     <string name="order_completed">Ordine completato</string>
