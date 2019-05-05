@@ -55,6 +55,8 @@ public class Profile {
     }
 
     public String getBitmapProf() {
+        if(bitmapProf==null)
+            return "NO_PHOTO";
         return bitmapProf;
     }
 

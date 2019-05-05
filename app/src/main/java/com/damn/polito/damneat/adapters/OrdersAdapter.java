@@ -112,7 +112,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.note.setText(ctx.getString(R.string.note, selected.getNote()));
             holder.delivery_time.setText(ctx.getString(R.string.delivery_time, selected.getDeliveryTime()));
 
-            if(selected.getState().toLowerCase().equals("ordered")){
+            if(selected.getState().toLowerCase().equals("ordered") || selected.getState().toLowerCase().equals("accepted")) {
                 holder.deliverer_photo.setVisibility(View.INVISIBLE);
                 holder.deliverer_name.setVisibility(View.INVISIBLE);
                 holder.state.setText(ctx.getString(R.string.ordered));
@@ -121,8 +121,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.deliverer_name.setVisibility(View.VISIBLE);
             }
 
-            if(selected.getState().toLowerCase().equals("accepted"))
+            if(selected.getState().toLowerCase().equals("assigned") )
                 holder.state.setText(ctx.getString(R.string.accepted));
+
 
             if(selected.getState().toLowerCase().equals("shipped"))
                 holder.state.setText(ctx.getString(R.string.shipped));

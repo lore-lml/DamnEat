@@ -23,6 +23,7 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
+import com.damn.polito.damneatdeliver.beans.Profile;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -118,8 +119,16 @@ public class CurrentFragment extends Fragment {
 
         acceptButton.setOnClickListener(v ->{
             if(currentOrder!=null){
-                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                orderState.setValue("assigned");
+                if(Welcome.getProfile()== null){
+                    Log.d("button", "profile null");
+                }else {
+                    DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                    orderState.setValue("assigned");
+                    DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
+                    orderPhoto.setValue(Welcome.getProfile().getBitmapProf());
+                    DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
+                    orderPhoto.setValue(Welcome.getProfile().getName());
+                }
             }
         });
         rejectButton.setOnClickListener(v ->{
@@ -146,7 +155,7 @@ public class CurrentFragment extends Fragment {
 
 
 
-
+        update();
     }
 
 
@@ -391,12 +400,16 @@ public class CurrentFragment extends Fragment {
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
             orderRef.removeValue();
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+            freeDeliverersRef.setValue(Welcome.getKey());
         }
 
         if(currentOrder.getState().equals("rejected")){
             Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
             orderRef.removeValue();
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+            freeDeliverersRef.setValue(Welcome.getKey());
         }
 
     }

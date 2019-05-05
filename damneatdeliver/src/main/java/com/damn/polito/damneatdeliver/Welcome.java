@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
+import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
 import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
@@ -46,6 +47,7 @@ public class Welcome extends AppCompatActivity {
     private OrderFragment orderFragment;
     private CurrentFragment currentFragment;
     private static boolean currentState;
+    private static Profile profile;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
@@ -85,6 +87,10 @@ public class Welcome extends AppCompatActivity {
         return currentState;
     }
 
+    public static Profile getProfile() {
+        return profile;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +108,7 @@ public class Welcome extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
+        loadProfile();
         loadCurrentOrder(this);
         loadCurrentState();
 
@@ -155,7 +162,34 @@ public class Welcome extends AppCompatActivity {
         pref.apply();
     }
 
+    private void loadProfile(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+            if (dbKey == null) return;
+        }
+        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info/");
+        profileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                profile = dataSnapshot.getValue(Profile.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        }
+
     private void loadCurrentState(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+            if (dbKey == null) return;
+        }
         DatabaseReference stateRef = database.getReference("/deliverers/" + dbKey + "/state/");
         stateRef.addValueEventListener(new ValueEventListener() {
             @Override
