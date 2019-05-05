@@ -50,7 +50,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order selected = orders.get(position);
-        Bitmap img = Utility.StringToBitMap(selected.getCustomer().getCustomerPhoto());
+        Bitmap img = null;
+        if(selected == null){
+            holder.root.setVisibility(View.GONE);
+            return;
+        }
+        holder.root.setVisibility(View.VISIBLE);
+
+        if(selected.getCustomer().getCustomerPhoto()!=null)
+            if(selected.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
+                 img = Utility.StringToBitMap(selected.getCustomer().getCustomerPhoto());
 
         String id = ctx.getString(R.string.order_id_s) + selected.Id();
         holder.id.setText(id);

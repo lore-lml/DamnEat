@@ -450,7 +450,7 @@
                                 android:layout_marginBottom="6dp"
                                 android:hint="0.00 €"
                                 android:maxLength="5"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:textAlignment="center"
                                 android:textAppearance="@style/EditText"
                                 android:textColor="@color/colorEditText"

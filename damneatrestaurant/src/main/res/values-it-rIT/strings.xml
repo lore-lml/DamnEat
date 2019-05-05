@@ -11,6 +11,7 @@
     <string name="no_free_deliverers">Nessun corriere libero</string>
     <string name="no_availabity">Quantità non disponibile</string>
     <string name="set_as_rejected">Rifiuta ordine</string>
+    <string name="no_customer_info">Nessuna info cliente</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->

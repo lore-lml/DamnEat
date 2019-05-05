@@ -15,4 +15,5 @@
     <string name="set_as_rejected">Reject order</string>
     <string name="no_free_deliverers">No free deliverers</string>
     <string name="no_availabity">Quantity not available</string>
+    <string name="no_customer_info">No customer info</string>
 </resources>

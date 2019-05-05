@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.InternetConnection;
 import com.damn.polito.damneat.R;
+import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.adapters.RestaurantAdapter;
 import com.damn.polito.damneat.beans.Restaurant;
 import com.damn.polito.damneat.dialogs.DialogType;
@@ -106,7 +107,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
             offline.setVisibility(View.VISIBLE);
         }
         Log.d("not_registered reg", String.valueOf(userRegistered()));
-        if(!userRegistered()){
+        if(!Welcome.accountExist){
             registered_tv.setVisibility(View.VISIBLE);
             registered_im.setVisibility(View.VISIBLE);
             offline.setVisibility(View.GONE);

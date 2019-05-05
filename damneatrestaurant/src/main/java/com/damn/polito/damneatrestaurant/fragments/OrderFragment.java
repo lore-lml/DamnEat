@@ -89,59 +89,65 @@ public class OrderFragment extends Fragment {
                 //ABBINAMENTO DELIVERER ORDINE
                 adapter.setOnButtonClickListener(position -> {
 
-                    Log.d("tmz","pressed find deliverer");
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    List<String> deliverers_keys = new ArrayList<>();
-                    DatabaseReference dbRef= database.getReference("/deliverers_liberi/");
-                    dbRef.runTransaction(new Transaction.Handler() {
-                        @NonNull
-                        @Override
-                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                            for (MutableData child : mutableData.getChildren()) {
-                                if (child != null) {
-                                    String s = child.getValue(String.class);
-                                    deliverers_keys.add(s);
-                                }
-                            }
-                            if(deliverers_keys.size()<1)
-                                return Transaction.abort();
+                    //Controlla che il cliente abbia dei dati
+                    if(orders.get(position).getCustomerName().equals("") || orders.get(position).getCustomerAddress().equals("")){
+                        DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                        dbOrder.setValue("rejected");
+                        Toast.makeText(ctx, R.string.no_customer_info, Toast.LENGTH_LONG).show();
+                    }else {
 
-                            String delivererKey = deliverers_keys.get(0);
-
-
-                            for (MutableData child : mutableData.getChildren()) {
-                                if (child != null) {
-                                    String s = child.getValue(String.class);
-                                    if(s.equals(delivererKey)){
-                                        mutableData.setValue(null);
-                                        return Transaction.success(mutableData);
+                        Log.d("tmz", "pressed find deliverer");
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        List<String> deliverers_keys = new ArrayList<>();
+                        DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
+                        dbRef.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                for (MutableData child : mutableData.getChildren()) {
+                                    if (child != null) {
+                                        String s = child.getValue(String.class);
+                                        deliverers_keys.add(s);
                                     }
                                 }
-                            }
-                            return Transaction.abort();
-                        }
+                                if (deliverers_keys.size() < 1)
+                                    return Transaction.abort();
 
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                            if(b){
                                 String delivererKey = deliverers_keys.get(0);
-                                if (delivererKey == null){
+
+
+                                for (MutableData child : mutableData.getChildren()) {
+                                    if (child != null) {
+                                        String s = child.getValue(String.class);
+                                        if (s.equals(delivererKey)) {
+                                            mutableData.setValue(null);
+                                            return Transaction.success(mutableData);
+                                        }
+                                    }
+                                }
+                                return Transaction.abort();
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                if (b) {
+                                    String delivererKey = deliverers_keys.get(0);
+                                    if (delivererKey == null) {
+                                        DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                                        dbOrder.setValue("rejected");
+                                        Toast.makeText(ctx, R.string.no_availabity, Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    refreshAvailabityAndAccept(position, delivererKey);
+                                } else {
                                     DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                                     dbOrder.setValue("rejected");
-                                    Toast.makeText(ctx, R.string.no_availabity, Toast.LENGTH_LONG).show();
-                                    return;
+                                    Toast.makeText(ctx, R.string.no_free_deliverers, Toast.LENGTH_LONG).show();
                                 }
-                                refreshAvailabityAndAccept(position, delivererKey);
-                            } else {
-                                String orderKey = orders.get(position).getId();
-                                DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                                dbOrder.setValue("rejected");
-                                Toast.makeText(ctx, R.string.no_free_deliverers, Toast.LENGTH_LONG).show();
+
                             }
-
-                        }
-                    });
-
+                        });
+                    }
                 });
 
                 //SET BUTTON AS SHIPPED
@@ -269,8 +275,8 @@ public class OrderFragment extends Fragment {
                             orders.remove(i);
                             break;
                         }
+                    orders.addFirst(order);
                 }
-                orders.addFirst(order);
                 //Log.d("order", order.getCustomer().getCustomerName());
                 adapter.notifyDataSetChanged();
             }

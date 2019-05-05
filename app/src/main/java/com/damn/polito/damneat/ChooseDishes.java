@@ -106,6 +106,7 @@ public class ChooseDishes extends AppCompatActivity {
         customer.setCustomerMail(pref.getString("clientmail", ""));
         customer.setCustomerPhone(pref.getString("clientphone", ""));
         customer.setCustomerID(pref.getString("dbkey", ""));
+        customer.setCustomerPhoto(pref.getString("clientphoto", ""));
     }
 
 
