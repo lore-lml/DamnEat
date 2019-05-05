@@ -27,6 +27,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private Context ctx;
     private OnItemClickListener mListener;
     private OnButtonClickListener bListener;
+    private OnButtonShippedClickListener bShipListener;
     private String key;
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
@@ -45,11 +46,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     public void setOnButtonClickListener (OnButtonClickListener listener) { bListener = listener; }
 
+    public interface OnButtonShippedClickListener { void onButtonShippedClick(int position); }
+
+
+    public void setOnButtonShippedClickListener (OnButtonShippedClickListener listener) { bShipListener = listener; }
+
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
-        return new OrderViewHolder(view,mListener,bListener);
+        return new OrderViewHolder(view,mListener,bListener,bShipListener);
     }
 
     @Override
@@ -87,6 +93,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.findDeliverer.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.VISIBLE);
             }
+            if(selected.getState().equals("assigned")){
+                holder.setAsShipped.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.setAsShipped.setVisibility(View.GONE);
+            }
         }else{
             if(selected.getState().equals("ordered")){
                 holder.deliverer_name.setVisibility(View.GONE);
@@ -97,6 +109,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.deliverer_name.setVisibility(View.VISIBLE);
                 holder.findDeliverer.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.VISIBLE);
+            }
+            if(selected.getState().equals("assigned")){
+                holder.setAsShipped.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.setAsShipped.setVisibility(View.GONE);
             }
             holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
@@ -112,9 +130,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
         private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info,state,time;
         private CardView root;
-        private Button findDeliverer;
+        private Button findDeliverer, setAsShipped;
         private CircleImageView deliverer_image;
-        public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener) {
+        public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener, OnButtonShippedClickListener bShipListener) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order);
@@ -129,6 +147,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             state=itemView.findViewById(R.id.state_tv_edit);
             time=itemView.findViewById(R.id.delivery_time_tv);
             deliverer_image=itemView.findViewById(R.id.circleImageView);
+            setAsShipped=itemView.findViewById(R.id.order_set_shipped);
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
                     int position = getAdapterPosition();
@@ -143,6 +162,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         buttonListener.onButtonClick(position);
+                    }
+                }
+            });
+
+            setAsShipped.setOnClickListener(v -> {
+                if (bShipListener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        bShipListener.onButtonShippedClick(position);
                     }
                 }
             });

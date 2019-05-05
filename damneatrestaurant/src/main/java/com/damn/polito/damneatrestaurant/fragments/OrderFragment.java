@@ -189,6 +189,20 @@ public class OrderFragment extends Fragment {
                     });
                     adapter.notifyItemChanged(position);
                 });
+                //FINE ABBINAMENTO DELIVERER ORDINE
+
+                //SET BUTTON AS SHIPPED
+
+                adapter.setOnButtonShippedClickListener(position -> {
+
+                    Log.d("tmz","pressed set as shipped");
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
+                    dbRef.setValue("shipped");
+
+                    adapter.notifyItemChanged(position);
+                });
+                //END SET BUTTON AS SHIPPED
             }
 
 

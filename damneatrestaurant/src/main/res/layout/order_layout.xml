@@ -131,9 +131,21 @@
             android:backgroundTint="@color/colorPrimary"
             android:text="@string/assign_deliverer"
             android:textColor="@color/colorCorners"
-            app:layout_constraintBottom_toTopOf="@+id/order_num_dishes"
+            app:layout_constraintBottom_toTopOf="@+id/order_set_shipped"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/delivery_time_tv" />
+        <Button
+            android:id="@+id/order_set_shipped"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/set_as_shipped"
+            android:textColor="@color/colorCorners"
+            app:layout_constraintBottom_toTopOf="@+id/order_num_dishes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/order_find_deliverer_button" />
 
         <TextView
             android:id="@+id/state_tv"

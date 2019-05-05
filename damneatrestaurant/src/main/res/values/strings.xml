@@ -11,4 +11,5 @@
     <string name="order_state">State:</string>
     <string name="order_delivery_time">Delivery time</string>
     <string name="order_customer_info">Customer:</string>
+    <string name="set_as_shipped">Set as shipped</string>
 </resources>
