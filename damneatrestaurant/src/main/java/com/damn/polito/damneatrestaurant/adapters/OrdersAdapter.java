@@ -1,6 +1,7 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -68,8 +69,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
         holder.customer_info.setText(ctx.getString(R.string.order_customer_info)+"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress());
-        holder.time.setText(ctx.getString(R.string.order_delivery_time)+": "+selected.getDeliveryTime());
-        holder.state.setText(selected.getState());
+        holder.time.setText(ctx.getString(R.string.order_delivery_time, selected.getDeliveryTime()));
 
        // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
@@ -87,12 +87,19 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.customer_info.setVisibility(View.GONE);
             if(selected.getState().equals("ordered")){
                 holder.findDeliverer.setVisibility(View.VISIBLE);
-                holder.deliverer_image.setVisibility(View.GONE);
             }
             else{
                 holder.findDeliverer.setVisibility(View.GONE);
+            }
+            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected")){
+                holder.deliverer_name.setVisibility(View.GONE);
+                holder.deliverer_image.setVisibility(View.GONE);
+            }
+            else{
+                holder.deliverer_name.setVisibility(View.VISIBLE);
                 holder.deliverer_image.setVisibility(View.VISIBLE);
             }
+
             if(selected.getState().equals("assigned")){
                 holder.setAsShipped.setVisibility(View.VISIBLE);
             }
@@ -100,16 +107,21 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.setAsShipped.setVisibility(View.GONE);
             }
         }else{
-            if(selected.getState().equals("ordered")){
-                holder.deliverer_name.setVisibility(View.GONE);
+            if(selected.getState().equals("ordered") ){
                 holder.findDeliverer.setVisibility(View.VISIBLE);
+            }
+            else{
+                holder.findDeliverer.setVisibility(View.GONE);
+            }
+            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected")){
+                holder.deliverer_name.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.GONE);
             }
             else{
                 holder.deliverer_name.setVisibility(View.VISIBLE);
-                holder.findDeliverer.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.VISIBLE);
             }
+
             if(selected.getState().equals("assigned")){
                 holder.setAsShipped.setVisibility(View.VISIBLE);
             }
@@ -120,6 +132,29 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.dishes_list.setVisibility(View.VISIBLE);
             holder.customer_info.setVisibility(View.VISIBLE);
         }
+
+        if(selected.getState().equals("ordered"))
+            holder.state.setText(ctx.getString(R.string.ordered));
+        if(selected.getState().equals("delivered"))
+            holder.state.setText(ctx.getString(R.string.delivered));
+        if(selected.getState().equals("rejected")){
+            holder.state.setText(ctx.getString(R.string.rejected));
+            holder.state.setTextColor(ctx.getColor(R.color.colorAccent));
+        }
+        if(selected.getState().equals("confirmed")){
+            holder.state.setText(ctx.getString(R.string.confirmed));
+            holder.state.setTextColor(ctx.getColor(R.color.colorGreen));
+        }else {
+            holder.state.setTextColor(Color.BLACK);
+        }
+
+        if(selected.getState().equals("accepted"))
+            holder.state.setText(ctx.getString(R.string.accepted));
+        if(selected.getState().equals("shipped"))
+            holder.state.setText(ctx.getString(R.string.shipped));
+        if(selected.getState().equals("assigned"))
+            holder.state.setText(ctx.getString(R.string.assigned));
+
     }
 
     @Override

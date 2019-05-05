@@ -9,7 +9,9 @@
     <string name="assign_deliverer">Find a deliverer</string>
     <string name="not_registered">You have to fill the profile to add dishes.</string>
     <string name="order_state">State:</string>
-    <string name="order_delivery_time">Delivery time</string>
+    <string name="order_delivery_time">Delivery time: %s</string>
     <string name="order_customer_info">Customer:</string>
     <string name="set_as_shipped">Set as shipped</string>
+    <string name="no_free_deliverers">No free deliverers</string>
+    <string name="no_availabity">Quantity not available</string>
 </resources>

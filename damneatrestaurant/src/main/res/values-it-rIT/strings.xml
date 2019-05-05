@@ -5,9 +5,11 @@
     <string name="order_id">ID Ordine: #%d</string>
     <string name="not_registered">Devi compilare il profilo per aggiungere un piatto.</string>
     <string name="order_state">Stato:</string>
-    <string name="order_delivery_time">Orario di consegna</string>
+    <string name="order_delivery_time">Orario di consegna: %s</string>
     <string name="order_customer_info">"Cliente: "</string>
     <string name="set_as_shipped">Segna come spedito</string>
+    <string name="no_free_deliverers">Nessun corriere libero</string>
+    <string name="no_availabity">Quantità non disponibile</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->
