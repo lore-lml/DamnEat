@@ -50,7 +50,7 @@ public class Restaurant {
 
         for(String s : categories)
             sb.append(", ").append(s);
-        sb.delete(0,1);
+        sb.delete(0,2);
         return sb.toString();
     }
 
@@ -125,7 +125,9 @@ public class Restaurant {
         if(name.toLowerCase().contains(filterPattern))
             return true;
 
-        return getCategories().toLowerCase().contains(filterPattern);
+        if(getCategories().toLowerCase().contains(filterPattern))
+            return true;
+        return getCategories().contains(filterPattern);
     }
 
     @Override
