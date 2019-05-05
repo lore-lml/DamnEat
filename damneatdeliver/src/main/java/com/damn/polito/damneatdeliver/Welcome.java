@@ -225,7 +225,13 @@ public class Welcome extends AppCompatActivity {
         stateRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                currentState = dataSnapshot.getValue(Boolean.class);
+                if(dataSnapshot.getValue() == null) return;
+                Boolean state = dataSnapshot.getValue(Boolean.class);
+                if(state != null)
+                    currentState = state;
+                if(!currentState) {
+                    database.getReference("/deliverers_liberi/" + dbKey).removeValue();
+                }
                 Log.d("state", String.valueOf(currentState));
 //
 //                try {
@@ -237,7 +243,7 @@ public class Welcome extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Toast.makeText(Welcome.this, "Database error" , Toast.LENGTH_SHORT).show();
             }
         });
     }
