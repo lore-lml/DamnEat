@@ -166,6 +166,19 @@ public class OrderFragment extends Fragment {
                 });
                 //END SET BUTTON AS SHIPPED
 
+                //SET BUTTON AS REJECTED
+
+                adapter.setOnButtonRejectedClickListener(position -> {
+
+                    Log.d("tmz","pressed set as rejected");
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
+                    dbRef.setValue("rejected");
+
+                    adapter.notifyItemChanged(position);
+                });
+                //END SET BUTTON AS REJECTED
+
             }
 
 

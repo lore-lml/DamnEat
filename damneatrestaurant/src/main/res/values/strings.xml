@@ -12,4 +12,5 @@
     <string name="order_delivery_time">Delivery time</string>
     <string name="order_customer_info">Customer:</string>
     <string name="set_as_shipped">Set as shipped</string>
+    <string name="set_as_rejected">Reject order</string>
 </resources>
