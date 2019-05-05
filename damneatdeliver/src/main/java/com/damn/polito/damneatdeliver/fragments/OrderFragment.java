@@ -116,9 +116,8 @@ public class OrderFragment extends Fragment {
         ValueEventListener listener = dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("order", key);
-
-                Log.d("order", dataSnapshot.getValue().toString());
+                //Log.d("order", key);
+               // Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
                     order.sId(key);

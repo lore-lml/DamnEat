@@ -48,6 +48,7 @@ public class OrderFragment extends Fragment {
     private String key;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
+    private List<Dish> dishes= new ArrayList<>();
 
     @Nullable
     @Override
@@ -131,7 +132,7 @@ public class OrderFragment extends Fragment {
                                     return;
                                 }
 
-                                if (!refreshAvailabity(position)){
+                                if (refreshAvailabity(position)){
                                     DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                                     dbOrder.setValue("rejected");
                                 }
@@ -192,7 +193,7 @@ public class OrderFragment extends Fragment {
 
     private boolean refreshAvailabity(int position) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        ArrayList<Dish> dishes = new ArrayList<>();
+        dishes.clear();
         //AGGIORNO LE AVAILABILITY
         for (Dish dish : orders.get(position).getDishes()) {
             DatabaseReference ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/" + dish.getId());
@@ -200,11 +201,12 @@ public class OrderFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Dish dsh = dataSnapshot.getValue(Dish.class);
-                    if (dsh != null) {
+                    if (dsh == null) {
                         dsh = new Dish();
                         dsh.setAvailability(0);
                     }
                     dishes.add(position, dsh);
+                    Log.d("pos", String.valueOf(position));
                 }
 
                 @Override
@@ -212,6 +214,8 @@ public class OrderFragment extends Fragment {
                 }
             });
         }
+
+        Log.d("size", String.valueOf(dishes.size()));
         for(int i=0; i<dishes.size(); i++){
             int new_availability = dishes.get(i).getAvailability() - orders.get(position).getDishes().get(i).getQuantity();
             if(new_availability < 0)
