@@ -119,19 +119,20 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_Customer_name_textview"
-            app:layout_constraintVertical_bias="0.271" />
+            app:layout_constraintVertical_bias="0.12" />
 
         <TextView
             android:id="@+id/phone_big_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:text="@string/string"
             android:textAppearance="@style/PrimaryText"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/state_tv"
-            app:layout_constraintTop_toBottomOf="@id/restaurant_name" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/restaurant_name"
+            app:layout_constraintVertical_bias="0.144" />
 
         <TextView
             android:id="@+id/restaurant_name"

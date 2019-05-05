@@ -114,7 +114,7 @@ public class CurrentFragment extends Fragment {
         confirmButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                orderState.setValue("delivered");
+                orderState.setValue(ctx.getString(R.string.state_delivered));
             }
         });
 
@@ -124,7 +124,7 @@ public class CurrentFragment extends Fragment {
                     Log.d("button", "profile null");
                 }else {
                     DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                    orderState.setValue("assigned");
+                    orderState.setValue(ctx.getString(R.string.state_assigned));
                     DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
                     orderPhoto.setValue(Welcome.getProfile().getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
@@ -184,7 +184,7 @@ public class CurrentFragment extends Fragment {
 
         if(currentOrder==null){
             currentOrder = new Order();
-            currentOrder.setState("empty");
+            currentOrder.setState(ctx.getString(R.string.state_empty));
         }
 
         if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
