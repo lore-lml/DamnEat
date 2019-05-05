@@ -1,16 +1,14 @@
 package com.damn.polito.damneatdeliver.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,33 +19,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
-import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.damn.polito.damneatdeliver.Welcome;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
+import static android.view.View.GONE;
 
 
 public class CurrentFragment extends Fragment {
 
     private Context ctx;
 
-    private TextView id,date,price,nDish, deliverer_name, dishes_list, dishes_list_2, restaurant_info, state, note, delivery_time;
-    private CardView root, card_order, card_order_message, card_order_quest;
-    private ImageView deliverer_photo, restaurant_photo;
-    private Button confirmButton;
+    private TextView id,date, state_tv ,price,nDish, deliveryTime, name_big, address_big_text, phone_big_text, address_big, phone_big, waiting_confirm, accept_question;
+    private TextView name_small, address_small, phone_small, note_small;
+    private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
+
+    private CardView root, card_order, card_order_message, card_order_quest, card_avaible;
+    private ImageView photo;
+    private Button confirmButton, acceptButton, rejectButton;
     private Switch switch_available;
-    private Bitmap bitmap;
+    private Bitmap bitmap, default_image;
+
+    private Order currentOrder;
 
     private boolean empty = true;
     private Map orders;
@@ -61,7 +59,7 @@ public class CurrentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.order_layout_first, container, false);
+        return inflater.inflate(R.layout.current_fragment, container, false);
     }
 
     @Override
@@ -73,129 +71,316 @@ public class CurrentFragment extends Fragment {
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.alert_edit_profile_title);
 
         ctx = view.getContext();
+        database = FirebaseDatabase.getInstance();
 
         id= view.findViewById(R.id.order_id);
         date = view.findViewById(R.id.order_date_value);
-        price = view.findViewById(R.id.order_price);
-        nDish = view.findViewById(R.id.order_num_dishes);
-        deliverer_name = view.findViewById(R.id.order_Customer_name_textview);
-        deliverer_photo = view.findViewById(R.id.circleImageView);
-        dishes_list = view.findViewById(R.id.dishes_list);
-        restaurant_info =view.findViewById(R.id.order_customer_info);
-        delivery_time =view.findViewById(R.id.order_delivery_time);
-        note =view.findViewById(R.id.order_note);
-        confirmButton =view.findViewById(R.id.confirmOrder);
-        switch_available = view.findViewById(R.id.available_switch);
 
-        card_order = view.findViewById(R.id.card_order);
-        card_order_message = view.findViewById(R.id.card_order_message);
-        card_order_quest = view.findViewById(R.id.card_order_quest);
+        //BIG TextView
+        name_big = view.findViewById(R.id.name_big_tv);
+        address_big_text = view.findViewById(R.id.address_big_text);
+        phone_big_text = view.findViewById(R.id.phone_big_text);
+        address_big = view.findViewById(R.id.address_big_tv);
+        phone_big = view.findViewById(R.id.phone_big_tv);
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        if (key == null) {
-//CAMBIARE METTENDO LA CHIAVE DEL DELIVERER
-            key = pref.getString("name", null);
-            if (key == null) return;
-        }
-        database = FirebaseDatabase.getInstance();
+        //SMALL TextView
+        name_small = view.findViewById(R.id.name_small);
+        name_small_text= view.findViewById(R.id.name_small_text);
+        address_small = view.findViewById(R.id.address_small);
+        address_small_text = view.findViewById(R.id.address_small_text);
+        phone_small = view.findViewById(R.id.phone_small);
+        phone_small_text = view.findViewById(R.id.phone_small_text);
+        note_small = view.findViewById(R.id.note_small);
+        note_small_text = view.findViewById(R.id.note_small_text);
 
-        switch_available.setChecked(false);
-        switch_available.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked) {
-                card_order.setVisibility(View.VISIBLE);
-                SetAvailable();
-            } else {
-                Log.d("Switch", "Ha cambiato valore a " + isChecked);
-                card_order.setVisibility(View.GONE);
-                card_order_message.setVisibility(View.GONE);
-                card_order_quest.setVisibility(View.GONE);
-                SetUnavailable();
-            }
-        });
-    }
+        state_tv = view.findViewById(R.id.state_tv);
+        confirmButton = view.findViewById(R.id.confirmOrder);
+        card_avaible = view.findViewById(R.id.card_available);
+        deliveryTime = view.findViewById(R.id.delivery_time);
+        waiting_confirm = view.findViewById(R.id.waiting_confirm_tv);
+        accept_question = view.findViewById(R.id.accept_question);
 
-    private void SetUnavailable() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("tmp_deliverers/"+key);
-        dbRef.removeValue();
-    }
-
-    private void SetAvailable() {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference dbRef = database.getReference("tmp_deliverers/"+key);
-            dbRef.setValue(key);
-    }
-
-    private String getDishesList(Order selected){
-        String dish_list_str = "";
-        List<Dish> dishes = selected.getDishes();
-        Double price = 0.;
-        for (Dish d:dishes) {
-            String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
-            price += d.getQuantity()*d.getPrice();
-        }
-        if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
-            String p = String.format("%.2f", selected.getRestaurant().getRestaurant_price_ship());
-            dish_list_str += ctx.getString(R.string.ship) + " " + p + "€";
-            Log.d("test", selected.getRestaurant().getRestaurant_price_ship().toString());
-            price += selected.getRestaurant().getRestaurant_price_ship();
-        }
-        return dish_list_str;
-    }
-
-    private void load() {
-        DatabaseReference ref = database.getReference("ordini/");
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DateFormat dateFormat = new SimpleDateFormat(ctx.getString(R.string.date_format), Locale.getDefault());
-
-                Order order = dataSnapshot.getValue(Order.class);
-                if (order != null) {
-                    String dish_list_str = getDishesList(order);
-                    dishes_list.setText(dish_list_str);
-                    date.setText(dateFormat.format(order));
-                    String i = ctx.getString(R.string.order_id_s, order.Id());
-                    id.setText(i);
-                    nDish.setText(ctx.getString(R.string.order_num_dishes, order.DishesNumber()));
-                    price.setText(ctx.getString(R.string.order_price, order.getPrice()));
-                    restaurant_info.setText(ctx.getString(R.string.restaurant, order.getRestaurant().getRestaurantName()));
-                    if (order.getCustomer().getCustomerPhoto() != null) {
-                        String encodedBitmap = order.getCustomer().getCustomerPhoto();
-                        bitmap = Utility.StringToBitMap(encodedBitmap);
-                        if (bitmap != null)
-                            deliverer_photo.setImageBitmap(bitmap);
-                    }
-                    empty = false;
-                } else {
-                    dishes_list.setText(defaultValue);
-                    date.setText(defaultValue);
-                    nDish.setText(defaultValue);
-                    price.setText(defaultValue);
-                    restaurant_info.setText(defaultValue);
-                }
-            }
+        acceptButton = view.findViewById(R.id.acceptOrder);
+        rejectButton = view.findViewById(R.id.rejectOrder);
 
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+        photo = view.findViewById(R.id.circleImageView);
+
+        default_image = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.profile_sample);
+
+        confirmButton.setOnClickListener(v ->{
+            if(currentOrder!=null){
+                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                orderState.setValue("delivered");
             }
         });
 
-        DatabaseReference ordini = database.getReference("ordini/" + key);
-        ordini.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                orders = (Map) dataSnapshot.getValue();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+        acceptButton.setOnClickListener(v ->{
+            if(currentOrder!=null){
+                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                orderState.setValue("assigned");
             }
         });
+        rejectButton.setOnClickListener(v ->{
+            if(currentOrder!=null){
+                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                orderState.setValue("rejected");
+            }
+        });
+
+
+
+
+    }
+
+
+
+    public void update() {
+        currentOrder = Welcome.getCurrentOrder();
+
+        if(currentOrder==null){
+            currentOrder = new Order();
+            currentOrder.setState("empty");
+        }
+
+        if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
+            date.setVisibility(GONE);
+            id.setVisibility(GONE);
+            card_avaible.setVisibility(View.VISIBLE);
+            confirmButton.setVisibility(GONE);
+            name_small.setVisibility(GONE);
+            name_small_text.setVisibility(GONE);
+            address_small.setVisibility(GONE);
+            address_small_text.setVisibility(GONE);
+            phone_small.setVisibility(GONE);
+            phone_small_text.setVisibility(GONE);
+            note_small.setVisibility(GONE);
+            note_small_text.setVisibility(GONE);
+            deliveryTime.setVisibility(GONE);
+            confirmButton.setVisibility(GONE);
+            address_big.setVisibility(GONE);
+            name_big.setVisibility(GONE);
+            address_big.setVisibility(GONE);
+            address_big_text.setVisibility(GONE);
+            phone_big.setVisibility(GONE);
+            phone_big_text.setVisibility(GONE);
+            waiting_confirm.setVisibility(View.VISIBLE);
+            photo.setVisibility(GONE);
+            acceptButton.setVisibility(GONE);
+            rejectButton.setVisibility(GONE);
+            accept_question.setVisibility(GONE);
+            state_tv.setVisibility(GONE);
+            waiting_confirm.setText(ctx.getString(R.string.waiting_order));
+            return;
+
+        }else {
+            card_avaible.setVisibility(GONE);
+            date.setVisibility(View.VISIBLE);
+            id.setVisibility(View.VISIBLE);
+            date.setText(Utility.dateString(currentOrder.getDate()));
+            id.setText(currentOrder.getId());
+            address_big.setVisibility(View.VISIBLE);
+            name_big.setVisibility(View.VISIBLE);
+            address_big.setVisibility(View.VISIBLE);
+            address_big_text.setVisibility(GONE);
+            phone_big.setVisibility(View.VISIBLE);
+            phone_big_text.setVisibility(View.VISIBLE);
+            photo.setVisibility(View.VISIBLE);
+            waiting_confirm.setVisibility(View.VISIBLE);
+        }
+
+        if(currentOrder.getState().toLowerCase().equals("accepted")){
+            date.setVisibility(GONE);
+            id.setVisibility(GONE);
+            card_avaible.setVisibility(GONE);
+            confirmButton.setVisibility(GONE);
+            state_tv.setVisibility(GONE);
+            name_small.setVisibility(View.VISIBLE);
+            name_small_text.setVisibility(View.VISIBLE);
+            address_small.setVisibility(View.VISIBLE);
+            address_small_text.setVisibility(View.VISIBLE);
+            phone_small.setVisibility(View.VISIBLE);
+            phone_small_text.setVisibility(View.VISIBLE);
+            note_small.setVisibility(View.VISIBLE);
+            note_small_text.setVisibility(View.VISIBLE);
+            deliveryTime.setVisibility(View.VISIBLE);
+            confirmButton.setVisibility(GONE);
+            address_big.setVisibility(View.VISIBLE);
+            name_big.setVisibility(View.VISIBLE);
+            address_big.setVisibility(View.VISIBLE);
+            address_big_text.setVisibility(View.VISIBLE);
+            phone_big.setVisibility(View.VISIBLE);
+            phone_big_text.setVisibility(View.VISIBLE);
+            waiting_confirm.setVisibility(GONE);
+            photo.setVisibility(View.VISIBLE);
+
+            accept_question.setText(R.string.accept_question);
+            acceptButton.setVisibility(View.VISIBLE);
+            rejectButton.setVisibility(View.VISIBLE);
+            accept_question.setVisibility(View.VISIBLE);
+            name_big.setText(currentOrder.getRestaurant().getRestaurantName());
+            address_big_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
+            phone_big_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
+
+            phone_big.setText(ctx.getString(R.string.restaurant_phone));
+            address_big.setText(ctx.getString(R.string.restaurant_address));
+
+            if(currentOrder.getRestaurant().getPhoto().equals("NO_PHOTO"))
+                photo.setImageBitmap(default_image);
+            else
+                photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getRestaurant().getPhoto()));
+            name_small.setText(ctx.getText(R.string.customer_name));
+            name_small_text.setText(currentOrder.getCustomer().getCustomerName());
+
+            address_small.setText(ctx.getText(R.string.customer_address));
+            address_small_text.setText(currentOrder.getCustomer().getCustomerAddress());
+
+            phone_small.setText(ctx.getText(R.string.customer_phone));
+            phone_small_text.setText(currentOrder.getCustomer().getCustomerPhone());
+
+            note_small.setText(ctx.getText(R.string.note));
+            note_small_text.setText(currentOrder.getNote());
+            deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, currentOrder.getDeliveryTime()));
+
+
+
+
+        }else {
+            card_avaible.setVisibility(GONE);
+            date.setVisibility(View.VISIBLE);
+            id.setVisibility(View.VISIBLE);
+            state_tv.setVisibility(View.VISIBLE);
+            date.setText(Utility.dateString(currentOrder.getDate()));
+            id.setText(currentOrder.getId());
+            address_big.setVisibility(View.VISIBLE);
+            name_big.setVisibility(View.VISIBLE);
+            address_big.setVisibility(View.VISIBLE);
+            address_big_text.setVisibility(GONE);
+            phone_big.setVisibility(View.VISIBLE);
+            phone_big_text.setVisibility(View.VISIBLE);
+            photo.setVisibility(View.VISIBLE);
+            waiting_confirm.setVisibility(View.VISIBLE);
+            acceptButton.setVisibility(GONE);
+            rejectButton.setVisibility(GONE);
+            accept_question.setVisibility(GONE);
+        }
+
+
+
+
+        if(currentOrder.getState().toLowerCase().equals("assigned")){
+            name_big.setText(currentOrder.getRestaurant().getRestaurantName());
+            address_big_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
+            phone_big_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
+
+            phone_big.setText(ctx.getString(R.string.restaurant_phone));
+            address_big.setText(ctx.getString(R.string.restaurant_address));
+
+            if(currentOrder.getRestaurant().getPhoto().equals("NO_PHOTO"))
+                photo.setImageBitmap(default_image);
+            else
+                photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getRestaurant().getPhoto()));
+            name_small.setText(ctx.getText(R.string.customer_name));
+            name_small_text.setText(currentOrder.getCustomer().getCustomerName());
+
+            address_small.setText(ctx.getText(R.string.customer_address));
+            address_small_text.setText(currentOrder.getCustomer().getCustomerAddress());
+
+            phone_small.setText(ctx.getText(R.string.customer_phone));
+            phone_small_text.setText(currentOrder.getCustomer().getCustomerPhone());
+
+            note_small.setText(ctx.getText(R.string.note));
+            note_small_text.setText(currentOrder.getNote());
+
+            state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
+            confirmButton.setVisibility(GONE);
+            deliveryTime.setVisibility(GONE);
+            waiting_confirm.setVisibility(GONE);
+
+        }
+
+
+        if(currentOrder.getState().toLowerCase().equals("shipped")){
+            name_big.setText(currentOrder.getCustomer().getCustomerName());
+            address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
+            phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
+
+            phone_big.setText(ctx.getString(R.string.customer_phone));
+            address_big.setText(ctx.getString(R.string.customer_address));
+
+            if(currentOrder.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
+                photo.setImageBitmap(default_image);
+            else
+                photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getCustomer().getCustomerPhoto()));
+
+            name_small.setText(ctx.getText(R.string.restaurant_name));
+            name_small_text.setText(currentOrder.getRestaurant().getRestaurantName());
+
+            address_small.setText(ctx.getText(R.string.restaurant_address));
+            address_small_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
+
+            phone_small.setText(ctx.getText(R.string.restaurant_phone));
+            phone_small_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
+
+            note_small.setText(ctx.getText(R.string.note));
+            note_small_text.setText(currentOrder.getNote());
+
+            deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, currentOrder.getDeliveryTime()));
+
+            state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
+            deliveryTime.setVisibility(View.VISIBLE);
+            waiting_confirm.setVisibility(GONE);
+            confirmButton.setVisibility(View.VISIBLE);
+            confirmButton.setText(ctx.getString(R.string.confirm_delivery));
+        }
+
+
+
+        if(currentOrder.getState().toLowerCase().equals("delivered")){
+            name_big.setText(currentOrder.getCustomer().getCustomerName());
+            address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
+            phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
+
+            phone_big.setText(ctx.getString(R.string.customer_phone));
+            address_big.setText(ctx.getString(R.string.customer_address));
+
+            if(currentOrder.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
+                photo.setImageBitmap(default_image);
+            else
+                photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getCustomer().getCustomerPhoto()));
+
+            name_small.setVisibility(GONE);
+            name_small_text.setVisibility(GONE);
+            address_small.setVisibility(GONE);
+            address_small_text.setVisibility(GONE);
+            phone_small.setVisibility(GONE);
+            phone_small_text.setVisibility(GONE);
+            note_small.setVisibility(GONE);
+            note_small_text.setVisibility(GONE);
+            deliveryTime.setVisibility(GONE);
+            confirmButton.setVisibility(GONE);
+            waiting_confirm.setVisibility(View.VISIBLE);
+
+            waiting_confirm.setText(ctx.getString(R.string.waiting_customer_confirm));
+
+
+            state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
+        }
+
+        state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
+
+
+        if(currentOrder.getState().equals("confirmed")){
+            Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
+            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+            orderRef.removeValue();
+        }
+
+        if(currentOrder.getState().equals("rejected")){
+            Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
+            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+            orderRef.removeValue();
+        }
+
     }
 }

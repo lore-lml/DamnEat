@@ -66,6 +66,8 @@ public class Customer {
     }
 
     public String getCustomerPhoto() {
+        if(customerPhoto == null)
+            return "NO_PHOTO";
         return customerPhoto;
     }
 

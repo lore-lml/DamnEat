@@ -146,7 +146,7 @@ public class ProfileFragment extends Fragment{
             if (dbKey == null) return;
         }
 
-        DatabaseReference myRef = database.getReference("deliverers/" + dbKey);
+        DatabaseReference myRef = database.getReference("deliverers/" + dbKey + "/info/");
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -179,28 +179,13 @@ public class ProfileFragment extends Fragment{
                 Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
-
-        DatabaseReference ordini = database.getReference("deliverers/"+ dbKey +"/lista_ordini");
-        ordini.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                orders = (Map)dataSnapshot.getValue();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference ref;
         DatabaseReference ordini;
 
-        ref = database.getReference("deliverers/" + dbKey);
-        ordini = database.getReference("deliverers/" + dbKey + "/lista_ordini");
-
+        ref = database.getReference("deliverers/" + dbKey + "/info/");
 
         ref.runTransaction(new Transaction.Handler(){
             @NonNull
@@ -213,8 +198,6 @@ public class ProfileFragment extends Fragment{
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 if(committed) {
-                    if(orders != null && orders.size() != 0)
-                        ordini.updateChildren(orders);
                     SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
                     //editor.putString("dbkey", myRef.getKey());
                     editor.putString("deliverername", profile.getName());

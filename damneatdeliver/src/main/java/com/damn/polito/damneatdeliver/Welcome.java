@@ -1,16 +1,20 @@
 package com.damn.polito.damneatdeliver; //#7EE04A
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
 import com.damn.polito.damneatdeliver.fragments.OrderFragment;
@@ -19,6 +23,11 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,14 +35,22 @@ import java.util.List;
 public class Welcome extends AppCompatActivity {
     List<AuthUI.IdpConfig> providers;
     private final int REQUEST_CODE = 707;
+    private static Order currentOrder;
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
+    private DatabaseReference orderRef;
+    private ValueEventListener orderListener;
 
     private FragmentManager fragmentManager;
     private ProfileFragment profileFragment;
     private OrderFragment orderFragment;
     private CurrentFragment currentFragment;
+    private static boolean currentState;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
+    private static String dbKey;
+    private String orderKey;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -60,6 +77,11 @@ public class Welcome extends AppCompatActivity {
         return true;
     };
 
+    public static String getKey() {
+        return dbKey;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +91,15 @@ public class Welcome extends AppCompatActivity {
                 new AuthUI.IdpConfig.GoogleBuilder().build()
         );
         shownSignInOptions();
-
+        currentOrder = new Order();
+        currentOrder.setState("empty");
+        database = FirebaseDatabase.getInstance();
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
+
+        loadCurrentOrder(this);
     }
 
     @Override
@@ -123,5 +149,53 @@ public class Welcome extends AppCompatActivity {
         pref.putString("dbkey", user.getUid());
         pref.apply();
     }
+
+    public void loadCurrentOrder(Context ctx) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+            if (dbKey == null) return;
+        }
+
+        myRef = database.getReference("deliverers/" + dbKey + "/current_order/");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                orderKey = dataSnapshot.getValue(String.class);
+                orderRef = database.getReference("/ordini/" + orderKey);
+                if(orderListener != null)
+                    orderRef.removeEventListener(orderListener);
+                orderListener = orderRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        currentOrder = dataSnapshot.getValue(Order.class);
+                        if(currentOrder == null){
+                            currentOrder = new Order();
+                            currentOrder.setState("empty");
+                        }
+                        //Log.d("curren order", currentOrder.getId());
+                        if(selectedId == R.id.nav_current)
+                            currentFragment.update();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static Order getCurrentOrder(){
+        return currentOrder;
+    }
+
 
 }

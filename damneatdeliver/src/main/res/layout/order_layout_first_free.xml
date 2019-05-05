@@ -56,7 +56,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/order_Customer_name_textview" />
 
                     <TextView
-                        android:id="@+id/restaurant_info"
+                        android:id="@+id/phone_big_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -108,7 +108,7 @@
                         android:textColor="#fff"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/restaurant_info"
+                        app:layout_constraintTop_toBottomOf="@+id/phone_big_text"
                         app:layout_constraintVertical_bias="0.0" />
 
                     <TextView
@@ -124,7 +124,7 @@
                         android:textSize="22sp"
                         app:layout_constraintBottom_toTopOf="@+id/acceptOrder"
                         app:layout_constraintEnd_toStartOf="@+id/order_customer_info"
-                        app:layout_constraintStart_toEndOf="@+id/restaurant_info"
+                        app:layout_constraintStart_toEndOf="@+id/phone_big_text"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </android.support.constraint.ConstraintLayout>

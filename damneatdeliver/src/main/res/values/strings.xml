@@ -43,4 +43,22 @@
     <string name="restaurant">Restaurant:\n %s</string>
         <string name="order_available">AVAILABLE</string>
     <string name="order_message">Waiting for a order...</string>
+    <string name="customer_name">Customer name:</string>
+    <string name="customer_address">Customer address:</string>
+    <string name="phone">Phone</string>
+    <string name="note">Note:</string>
+    <string name="restaurant_phone">Restaurant phone:</string>
+    <string name="restaurant_address">Restaurant address:</string>
+    <string name="state">State: %s</string>
+    <string name="customer_phone">Customer phone:</string>
+    <string name="restaurant_name">Restaurant name:</string>
+    <string name="confirm_delivery">Confirm delivery</string>
+    <string name="delivery_time_tv">Delivery time: %s</string>
+    <string name="order_completed">Order completed</string>
+    <string name="waiting_customer_confirm">Waiting customer confirm</string>
+    <string name="waiting_order">Waiting order</string>
+    <string name="reject">Reject</string>
+    <string name="Accept">Accept</string>
+    <string name="accept_question">Do you want accept delivery?</string>
+    <string name="order_rejected">Order rejected</string>
 </resources>

@@ -17,10 +17,7 @@ import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     private List<Order> orders;
@@ -165,7 +162,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             nDish = itemView.findViewById(R.id.order_num_dishes);
             dishes_list = itemView.findViewById(R.id.dishes_list);
             customer_info =itemView.findViewById(R.id.order_customer_info);
-            restaurant_i = itemView.findViewById(R.id.restaurant_info);
+            restaurant_i = itemView.findViewById(R.id.phone_big_text);
             delivery_time = itemView.findViewById(R.id.order_delivery_time);
             note = itemView.findViewById(R.id.order_note);
             image = itemView.findViewById(R.id.circleImageView);

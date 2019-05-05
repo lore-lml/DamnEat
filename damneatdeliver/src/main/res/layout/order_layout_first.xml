@@ -26,6 +26,7 @@
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="30dp"
                 app:cardElevation="5dp"
+                android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintCircleRadius="5dp"
@@ -84,6 +85,7 @@
                 android:layout_marginBottom="4dp"
                 android:background="@color/colorBackground"
                 app:cardElevation="5dp"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_available"
@@ -161,7 +163,7 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/restaurant_info" />
+                        app:layout_constraintTop_toBottomOf="@+id/phone_big_text" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/circleImageView"
@@ -200,7 +202,7 @@
                         app:layout_constraintVertical_bias="0.1" />
 
                     <TextView
-                        android:id="@+id/restaurant_info"
+                        android:id="@+id/phone_big_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -247,7 +249,7 @@
                         android:textAppearance="@style/PrimaryText"
                         android:textSize="22sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/restaurant_info" />
+                        app:layout_constraintTop_toBottomOf="@+id/phone_big_text" />
 
                     <TextView
                         android:id="@+id/order_note"
@@ -274,6 +276,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="4dp"
                 android:background="@color/colorBackground"
+                android:visibility="gone"
                 app:cardElevation="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
