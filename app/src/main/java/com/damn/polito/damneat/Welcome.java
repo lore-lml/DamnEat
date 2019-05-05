@@ -94,7 +94,8 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("fragment_id", selectedId);
+        if(selectedId != null)
+            outState.putInt("fragment_id", selectedId);
     }
 
     @Override
