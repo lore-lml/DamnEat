@@ -40,7 +40,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment{
 
-    private String defaultValue, dbkey;
+    private String defaultValue;
     private ImageView profileImage;
     private TextView name, mail, description, address, phone, opening, categories, shipPrice;
     private Bitmap profileBitmap;
@@ -174,7 +174,7 @@ public class ProfileFragment extends Fragment{
 
     private void storeData(Intent data) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean hasProfile = false;
+        //boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
         String phone = data.getStringExtra("phone");
@@ -186,7 +186,7 @@ public class ProfileFragment extends Fragment{
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
-            hasProfile = true;
+            //hasProfile = true;
             pref.edit().remove("profile").apply();
         }
         double priceship = shipprice.equals(getString(R.string.price_free)) ? 0.0 : Double.valueOf(shipprice.replace(",","."));
@@ -249,13 +249,6 @@ public class ProfileFragment extends Fragment{
     }
 
     private void storeProfileOnFirebase(Profile profile){
-
-        //DA IMPLEMENTARE RETURN TRUE OR FALSE A SECONDA CHE LA TRANSAZIONE VADA A BUONFINE
-        //
-        //NON è IMPLEMENTATA LA POSSIBILITà DI MODIFICARE L'ACCOUNT, SI PUO' PER ADESSO SOLO
-        //CREARNE DI NUOVI
-
-        //SE LA MAIL ESISTE NON SI SALVA NULLA, SE NON ESISTE SI CREA UNA NUOVA KEY SU FIREBASE
         DatabaseReference myRef;
         //DatabaseReference ordini;
 

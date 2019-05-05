@@ -144,7 +144,7 @@ public class CurrentFragment extends Fragment {
             Boolean available = Welcome.getCurrentAvaibility();
             DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
             orderRef.setValue(!available);
-            switch_available.setChecked(!available);
+            //switch_available.setChecked(!available);
             if(!available){
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
                 freeDeliverersRef.setValue(Welcome.getKey());
