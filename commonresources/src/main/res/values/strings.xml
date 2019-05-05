@@ -108,6 +108,7 @@
     <string name="delivered">Delivered</string>
     <string name="note" translatable="false">Note: %s</string>
     <string name="shipped">Shipped</string>
+    <string name="assigned">Assigned</string>
     <string name="accepted">Accepted</string>
     <string name="confirmed">Completed</string>
     <string name="rejected">Rejected</string>

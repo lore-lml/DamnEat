@@ -168,6 +168,7 @@ public class Welcome extends AppCompatActivity {
                 if(error == null)
                     error = getString(R.string.login_error);
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                finish();
             }
         }
     }

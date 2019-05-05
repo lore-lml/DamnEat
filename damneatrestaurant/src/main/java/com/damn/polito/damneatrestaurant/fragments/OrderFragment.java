@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
@@ -126,6 +127,7 @@ public class OrderFragment extends Fragment {
                                 if (delivererKey == null){
                                     DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                                     dbOrder.setValue("rejected");
+                                    Toast.makeText(ctx, R.string.no_availabity, Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
@@ -146,6 +148,7 @@ public class OrderFragment extends Fragment {
                                 String orderKey = orders.get(position).getId();
                                 DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                                 dbOrder.setValue("rejected");
+                                Toast.makeText(ctx, R.string.no_free_deliverers, Toast.LENGTH_LONG).show();
                             }
 
                         }
@@ -213,56 +216,12 @@ public class OrderFragment extends Fragment {
             int new_availability = dishes.get(i).getAvailability() - orders.get(position).getDishes().get(i).getQuantity();
             if(new_availability < 0)
                 return false;
-            DatabaseReference dishRef = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_totali/" + dishes.get(i).getId() + "/availability/");
+            DatabaseReference dishRef = db.getReference("ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_totali/" + dishes.get(i).getId() + "/availability");
             dishRef.setValue(new_availability);
-            dishRef = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/" + dishes.get(i).getId() + "/availability/");
+            dishRef = db.getReference("ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/" + dishes.get(i).getId() + "/availability");
             dishRef.setValue(new_availability);
         }
         return true;
-    }
-
-    private void initExample(){
-        orders.clear();
-        List<Dish> tmp = new ArrayList<>();
-        tmp.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-
-        List<Dish> tmp2 = new ArrayList<>();
-        tmp2.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp2.add(new Dish("Carbonara", "Un piatto buonissimo", 7,10));
-        tmp2.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-
-        List<Dish> tmp3 = new ArrayList<>();
-        tmp3.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp3.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp3.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp3.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-
-        List<Dish> tmp4 = new ArrayList<>();
-        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-        tmp4.add(new Dish("Pizza", "Chi non conosce la pizza??", 6,20));
-        tmp4.add(new Dish("Gelato", "Un qualcosa ancora più buono", 3,15));
-        tmp4.add(new Dish("Pasta al pesto", "Una roba verde", (float) 6.50,3));
-        tmp4.add(new Dish("Gelato più grosso", "Un gelato ma più grosso", (float) 6.50,10));
-
-//
-//        orders.add(new Order(123121, tmp, new Date(), "Via Pastrengo 5", "Osvaldo Osvaldi", "Mario Rossi", 10.5));
-//        orders.add(new Order(456551, tmp2, new Date(), "Via Pastrengo 180", "Paperino", "Luigi Bianchi", 10.5));
-//        orders.add(new Order(454542, tmp3, new Date(), "Via Pastrengo 8", "Gigi", "Marco Verdi", 10.5));
-//        orders.add(new Order(845663, tmp2, new Date(), "Via pastrengo 1", "Steve", "Francesco Gialli", 10.5));
-//        orders.add(new Order(895241, tmp, new Date(), "Corso Duca 9", "Pippo", "Stefano Arancioni", 10.5));
-//        orders.add(new Order(123121, tmp4, new Date(), "Via pastrengo 5", "Osvaldo Osvaldi", "Giuseppe Blu", 10.5));
-//        orders.add(new Order(456551, tmp2, new Date(), "Via pastrengo 180", "Paperino", "Gianfranco Neri", 10.5));
-//        orders.add(new Order(454542, tmp3, new Date(), "Via pastrengo 8", "Gigi", "Lorenzo Viola", 10.5));
-//        orders.add(new Order(845663, tmp, new Date(), "Via pastrengo 1", "Steve", "Matteo Azzurri", 10.5));
-//        orders.add(new Order(895241, tmp, new Date(), "Corso Duca 9", "Pippo", "Alessandro Rosa", 10.5));
-
     }
 
     private boolean initOrders(){
