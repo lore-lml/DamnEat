@@ -57,9 +57,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         }
         holder.root.setVisibility(View.VISIBLE);
 
-        if(selected.getCustomer().getCustomerPhoto()!=null)
-            if(selected.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
-                 img = Utility.StringToBitMap(selected.getCustomer().getCustomerPhoto());
+        if(selected.getRestaurant().getPhoto()!=null)
+            if(!selected.getRestaurant().getPhoto().equals("NO_PHOTO")){
+                img = Utility.StringToBitMap(selected.getRestaurant().getPhoto());
+                holder.image.setImageBitmap(img);
+            }
 
         String id = ctx.getString(R.string.order_id_s) + selected.Id();
         holder.id.setText(id);

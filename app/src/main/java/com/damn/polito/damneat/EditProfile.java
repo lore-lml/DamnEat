@@ -387,10 +387,4 @@ public class EditProfile extends AppCompatActivity{
         }
     }
 
-    public boolean isEmailPresent(){
-
-
-
-        return true;
-    }
 }

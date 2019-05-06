@@ -112,5 +112,6 @@
     <string name="accepted">Accepted</string>
     <string name="confirmed">Completed</string>
     <string name="rejected">Rejected</string>
+    <string name="not_registered">You have to fill the profile to place an order.</string>
 
 </resources>
