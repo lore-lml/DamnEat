@@ -41,7 +41,8 @@ public class Welcome extends AppCompatActivity {
     private DatabaseReference myRef;
     private DatabaseReference orderRef;
     private ValueEventListener orderListener;
-
+    private ValueEventListener v;
+    private DatabaseReference profileRef;
     private FragmentManager fragmentManager;
     private ProfileFragment profileFragment;
     private OrderFragment orderFragment;
@@ -191,6 +192,8 @@ public class Welcome extends AppCompatActivity {
                 //b.setEnabled(true);
                 storeData(user);
                 profile = null;
+                if(profileRef!=null && v!=null)
+                    profileRef.removeEventListener(v);
                 loadProfile();
                 //if(selectedId == R.id.nav_current)
             }
@@ -223,8 +226,8 @@ public class Welcome extends AppCompatActivity {
             dbKey = pref.getString("dbkey", null);
             if (dbKey == null) return;
         }
-        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info/");
-        profileRef.addValueEventListener(new ValueEventListener() {
+        profileRef = database.getReference("/deliverers/" + dbKey + "/info/");
+        v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 profile = dataSnapshot.getValue(Profile.class);
@@ -232,7 +235,7 @@ public class Welcome extends AppCompatActivity {
                     logged = false;
                 else
                     logged = true;
-                if(currentFragment!=null)
+                if (currentFragment != null)
                     currentFragment.update();
             }
 
