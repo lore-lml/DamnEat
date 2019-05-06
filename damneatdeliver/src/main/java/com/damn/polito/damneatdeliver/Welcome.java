@@ -55,6 +55,7 @@ public class Welcome extends AppCompatActivity {
     private static String dbKey;
     private String orderKey;
     private static Context ctx;
+    private static boolean logged;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -98,6 +99,10 @@ public class Welcome extends AppCompatActivity {
         return profile;
     }
 
+    public static boolean registered() {
+        return logged;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,11 +130,20 @@ public class Welcome extends AppCompatActivity {
             dbKey = pref.getString("dbkey", null);
             if (dbKey == null) return;
         }
-        DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
-        freeDeliverersRef.setValue(Welcome.getKey());
-        Log.d("key", dbKey);
-        DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
-        orderRef.setValue(true);
+        if(profile != null) {
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+            freeDeliverersRef.setValue(Welcome.getKey());
+            Log.d("key", dbKey);
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+            orderRef.setValue(true);
+            logged = true;
+        }else{
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+            freeDeliverersRef.removeValue();
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+            orderRef.setValue(false);
+            logged = false;
+        }
         loadCurrentState();
 
 
@@ -205,6 +219,8 @@ public class Welcome extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 profile = dataSnapshot.getValue(Profile.class);
+                if(profile!=null)
+                    logged = true;
             }
 
             @Override
@@ -265,6 +281,8 @@ public class Welcome extends AppCompatActivity {
                 orderRef = database.getReference("/ordini/" + orderKey);
                 if(orderListener != null)
                     orderRef.removeEventListener(orderListener);
+                currentFragment.update();
+
                 orderListener = orderRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

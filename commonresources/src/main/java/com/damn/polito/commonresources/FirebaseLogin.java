@@ -36,7 +36,7 @@ public class FirebaseLogin {
                     public void onComplete(@NonNull Task<Void> task) {
                         //b.setEnabled(false);
                         clearData(ctx);
-                        shownSignInOptions(ctx);
+                        //sshownSignInOptions(ctx);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override

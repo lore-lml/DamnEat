@@ -346,7 +346,7 @@ public class ProfileFragment extends Fragment{
                 return true;
             case R.id.item_disconnect:
                 FirebaseLogin.logout((Activity) ctx);
-                updateProfile();
+                ((Activity) ctx).finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
