@@ -175,6 +175,8 @@ public class Welcome extends AppCompatActivity {
                     editor.putString("clientmail", prof.getMail());
                     editor.putString("clientphoto", prof.getBitmapProf());
                     editor.apply();
+                }else if(selectedId == null){
+                    navigation.setSelectedItemId(R.id.nav_restaurant);
                 }
 
                 if(selectedId != null && selectedId == R.id.nav_profile)
@@ -195,7 +197,7 @@ public class Welcome extends AppCompatActivity {
 
     private void storeProfile(Profile profile){
         accountExist = true;
-        if(selectedId == null || selectedId != R.id.nav_restaurant)
+        if(selectedId == null)
             navigation.setSelectedItemId(R.id.nav_restaurant);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
@@ -224,7 +226,7 @@ public class Welcome extends AppCompatActivity {
                 int old = pref.getInt("nOrder", -1);
                 if(old != map.size()){
                     pref.edit().putInt("nOrder", map.size()).apply();
-                    if(old != -1)
+                    if(old != -1 || map.size() == 1)
                         refreshBadgeView(true);
                 }
             }
