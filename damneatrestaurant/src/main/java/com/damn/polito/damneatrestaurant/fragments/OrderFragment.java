@@ -110,7 +110,7 @@ public class OrderFragment extends Fragment {
                                         deliverers_keys.add(s);
                                     }
                                 }
-                                if (deliverers_keys.size() < 1)
+                                if (deliverers_keys.isEmpty())
                                     return Transaction.abort();
 
                                 String delivererKey = deliverers_keys.get(0);
@@ -118,9 +118,10 @@ public class OrderFragment extends Fragment {
 
                                 for (MutableData child : mutableData.getChildren()) {
                                     if (child != null) {
-                                        String s = child.getKey();
+                                        String s = child.getValue(String.class);
                                         if (s.equals(delivererKey)) {
                                             mutableData.child(s).setValue(null);
+                                            Log.d("tmz", "eliminate"+s);
                                             return Transaction.success(mutableData);
                                         }
                                     }
