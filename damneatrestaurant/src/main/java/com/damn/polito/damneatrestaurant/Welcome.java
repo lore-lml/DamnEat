@@ -7,14 +7,19 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.notifications.NotificationListener;
 import com.damn.polito.damneatrestaurant.beans.Profile;
 import com.damn.polito.damneatrestaurant.fragments.DishesFragment;
 import com.damn.polito.damneatrestaurant.fragments.OrderFragment;
@@ -22,14 +27,21 @@ import com.damn.polito.damneatrestaurant.fragments.ProfileFragment;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class Welcome extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+public class Welcome extends AppCompatActivity implements NotificationListener {
+
+    public static boolean accountExist = false;
 
     private FragmentManager fragmentManager;
     private DishesFragment dishesFragment;
@@ -38,10 +50,15 @@ public class Welcome extends AppCompatActivity {
     private String dbKey;
 
     private FirebaseDatabase database;
-    private DatabaseReference myRef;
+    private DatabaseReference myRef, orderRef;
+    private ValueEventListener listener, orderListener;
+    private Map<String, ChildEventListener> children = new HashMap<>();
 
     private BottomNavigationView navigation;
+    private View notificationBadge;
     private Integer selectedId = null;
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -56,6 +73,7 @@ public class Welcome extends AppCompatActivity {
                     case R.id.nav_reservations:
                         if(orderFragment == null)
                             orderFragment = new OrderFragment();
+                        refreshNotificationBadge(false);
                         selected = orderFragment;
                         break;
                     case R.id.nav_profile:
@@ -64,7 +82,8 @@ public class Welcome extends AppCompatActivity {
                         selected = profileFragment;
                         break;
                 }
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commit();
+                if(selected != null)
+                    fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commit();
                 return true;
             };
 
@@ -81,11 +100,10 @@ public class Welcome extends AppCompatActivity {
         navigation.setSelectedItemId(R.id.nav_dishes);
         database = FirebaseDatabase.getInstance();
         if(Utility.firstON) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-            Utility.firstON = false;
+            database.setPersistenceEnabled(true);
         }
-        //loadDataProfile(this);
 
+        addNotificationBadge();
     }
 
     @Override
@@ -97,7 +115,7 @@ public class Welcome extends AppCompatActivity {
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                Toast.makeText(this, ""+user.getEmail().toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
                 //set button signout
                 //b.setEnabled(true);
                 dbKey = user.getUid();
@@ -106,13 +124,9 @@ public class Welcome extends AppCompatActivity {
             }
             else{
                 String error = null;
-                try {
+                if(response != null && response.getError() != null)
                     error = response.getError().getMessage();
-
-                }catch (Exception e){
-
-                }
-                if(error == null)
+                else
                     error = getString(R.string.login_error);
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
                 finish();
@@ -120,6 +134,9 @@ public class Welcome extends AppCompatActivity {
         }
     }
     private void storeProfile(Profile profile){
+        accountExist = true;
+        if(selectedId == null)
+            navigation.setSelectedItemId(R.id.nav_dishes);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         //editor.putString("dbkey", myRef.getKey());
         editor.putString("address", profile.getAddress());
@@ -134,6 +151,80 @@ public class Welcome extends AppCompatActivity {
         editor.apply();
     }
 
+    @SuppressWarnings("unchecked")
+    private void setOrderListener() {
+        if(dbKey == null) return;
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        Map<String, Object> map = new HashMap<>();
+        orderRef = database.getReference("ristoranti/" + dbKey + "/ordini_pendenti");
+        orderListener = orderRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null)
+                    map.putAll((Map) dataSnapshot.getValue());
+                else{
+                    pref.edit().putInt("nOrder", 0).apply();
+                    return;
+                }
+
+                int old = pref.getInt("nOrder", -1);
+                if(old != map.size()){
+                    pref.edit().putInt("nOrder", map.size()).apply();
+                    if(old != -1 && selectedId != R.id.nav_reservations)
+                        refreshNotificationBadge(true);
+                }
+
+                for(Map.Entry entry : map.entrySet()){
+                    if(!children.containsKey(entry.getValue().toString())){
+                        ChildEventListener child = newChildEvent();
+                        children.put(entry.getValue().toString(), child);
+
+                        database.getReference("/ordini/" + entry.getValue())
+                                .addChildEventListener(child);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        if(Utility.firstON) {
+            Utility.firstON = false;
+        }
+
+
+
+    }
+
+    private ChildEventListener newChildEvent(){
+        return new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue() != null && selectedId != R.id.nav_reservations)
+                    refreshNotificationBadge(true);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+    }
+
     public void loadDataProfile(Context ctx) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 
@@ -144,7 +235,7 @@ public class Welcome extends AppCompatActivity {
 
         myRef = database.getReference("ristoratori/" + dbKey);
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        listener = myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -160,7 +251,30 @@ public class Welcome extends AppCompatActivity {
                 Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
+        setOrderListener();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        myRef.removeEventListener(listener);
+        orderRef.removeEventListener(orderListener);
+    }
+
+    @Override
+    public void addNotificationBadge() {
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigation.getChildAt(0);
+        BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(0);
+
+        notificationBadge = LayoutInflater.from(this).inflate(R.layout.icon_badge, menuView, false);
+
+        itemView.addView(notificationBadge);
+        refreshNotificationBadge(false);
+    }
+
+    @Override
+    public void refreshNotificationBadge(boolean visible) {
+        notificationBadge.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
 }
 
