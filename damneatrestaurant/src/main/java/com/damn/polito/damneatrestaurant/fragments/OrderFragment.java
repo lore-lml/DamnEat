@@ -104,6 +104,18 @@ public class OrderFragment extends Fragment {
                             @NonNull
                             @Override
                             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                            }
+                        });
+                        dbRef.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                                 for (MutableData child : mutableData.getChildren()) {
                                     if (child != null) {
                                         String s = child.getValue(String.class);

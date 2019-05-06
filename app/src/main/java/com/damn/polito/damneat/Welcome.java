@@ -168,8 +168,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 if(selectedId != null && selectedId == R.id.nav_profile)
                     profileFragment.updateProfile();
 
-
-
             }
 
             @Override
