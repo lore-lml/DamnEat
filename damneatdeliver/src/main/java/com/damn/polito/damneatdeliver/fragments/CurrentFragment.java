@@ -172,7 +172,7 @@ public class CurrentFragment extends Fragment {
         });
 
 
-
+        Registered();
         notRegistered();
 
 
@@ -185,10 +185,13 @@ public class CurrentFragment extends Fragment {
     public void update() {
         currentOrder = Welcome.getCurrentOrder();
         switch_available.setChecked(Welcome.getCurrentAvaibility());
+        Registered();
 
         if(currentOrder==null){
             currentOrder = new Order();
             currentOrder.setState("empty");
+            Registered();
+
             notRegistered();
         }
 
@@ -225,6 +228,7 @@ public class CurrentFragment extends Fragment {
 
         }else {
             card_avaible.setVisibility(GONE);
+            Registered();
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
             date.setText(Utility.dateString(currentOrder.getDate()));
@@ -440,10 +444,19 @@ public class CurrentFragment extends Fragment {
     }
 
     private void notRegistered(){
+        boolean w = Welcome.registered();
         if(!Welcome.registered()){
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
+        }
+    }
+
+    private void Registered(){
+        boolean w = Welcome.registered();
+        if(Welcome.registered()){
+            waiting_confirm.setVisibility(View.GONE);
+            card_avaible.setVisibility(View.VISIBLE);
         }
     }
 }
