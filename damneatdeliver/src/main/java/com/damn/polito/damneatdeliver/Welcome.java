@@ -54,7 +54,6 @@ public class Welcome extends AppCompatActivity {
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
-    private static String dbKey;
     private String orderKey;
     private static Context ctx;
     private static boolean logged;
@@ -110,6 +109,7 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ctx = this;
         setContentView(R.layout.activity_welcome);
         providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -123,32 +123,29 @@ public class Welcome extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
+
+
+    }
+
+    private void init(){
         loadProfile();
         loadCurrentOrder(this);
         ctx = this;
-
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
-        }
         if(profile != null) {
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
             freeDeliverersRef.setValue(Welcome.getKey());
-            Log.d("key", dbKey);
+            Log.d("key", getKey());
             DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
             orderRef.setValue(true);
             logged = true;
         }else{
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
             freeDeliverersRef.removeValue();
             DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
             orderRef.setValue(false);
             logged = false;
         }
         loadCurrentState();
-
 
     }
 
@@ -185,14 +182,17 @@ public class Welcome extends AppCompatActivity {
                 Toast.makeText(this, user.getEmail().toString(), Toast.LENGTH_LONG).show();
                 //set button signout
                 //b.setEnabled(true);
-                storeData(user);
-                profile = null;
-                if (currentFragment != null)
-                    if(selectedId == R.id.nav_current)
-                        currentFragment.checkRegistered();
-                if(profileRef!=null && v!=null)
-                    profileRef.removeEventListener(v);
-                loadProfile();
+                if(user != null) {
+                    storeData(user);
+                    profile = null;
+                    if (currentFragment != null)
+                        if (selectedId == R.id.nav_current)
+                            currentFragment.checkRegistered();
+                    if (profileRef != null && v != null)
+                        profileRef.removeEventListener(v);
+                    if(getKey()!=null)
+                        init();
+                }
                 //if(selectedId == R.id.nav_current)
             }
             else{
@@ -218,13 +218,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     private void loadProfile(){
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
-        }
-        profileRef = database.getReference("/deliverers/" + dbKey + "/info/");
+        profileRef = database.getReference("/deliverers/" + getKey() + "/info/");
         v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -247,12 +241,7 @@ public class Welcome extends AppCompatActivity {
         }
 
     private void loadCurrentState(){
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
-        }
-        DatabaseReference stateRef = database.getReference("/deliverers/" + dbKey + "/state/");
+        DatabaseReference stateRef = database.getReference("/deliverers/" + getKey() + "/state/");
         stateRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -261,7 +250,7 @@ public class Welcome extends AppCompatActivity {
                 if(state != null)
                     currentState = state;
                 if(!currentState) {
-                    database.getReference("/deliverers_liberi/" + dbKey).removeValue();
+                    database.getReference("/deliverers_liberi/" + getKey()).removeValue();
                 }
                 Log.d("state", String.valueOf(currentState));
 //
@@ -281,14 +270,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     public void loadCurrentOrder(Context ctx) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
-        }
-
-        myRef = database.getReference("deliverers/" + dbKey + "/current_order/");
+        myRef = database.getReference("deliverers/" + getKey() + "/current_order/");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -334,7 +316,7 @@ public class Welcome extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if(currentState){
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
             freeDeliverersRef.setValue(Welcome.getKey());
             if(selectedId == R.id.nav_current)
                 currentFragment.update();
