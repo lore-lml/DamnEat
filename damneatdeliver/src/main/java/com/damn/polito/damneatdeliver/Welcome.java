@@ -297,8 +297,14 @@ public class Welcome extends AppCompatActivity {
                             currentOrder = new Order();
                             currentOrder.setState("empty");
                         }else {
-                            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
-                            orderRef.setValue(false);
+                            if(currentOrder.getState().equals("empty")){
+                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+                                orderRef.setValue(true);
+                            }else {
+                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+                                orderRef.setValue(false);
+                            }
+
                         }
                         //Log.d("curren order", currentOrder.getId());
                         if(selectedId == R.id.nav_current)

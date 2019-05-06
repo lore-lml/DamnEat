@@ -341,30 +341,18 @@ public class CurrentFragment extends Fragment {
         if(currentOrder.getState().equals("confirmed")){
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
-            orderRef.removeValue();
-            try {
-                Thread.sleep(100);
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
-                freeDeliverersRef.setValue(true);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Order o = new Order();
+            o.setState("empty");
+            orderRef.setValue(o);
 
         }
 
         if(currentOrder.getState().equals("rejected")){
             Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
-            orderRef.removeValue();
-            try {
-                Thread.sleep(100);
-
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
-                freeDeliverersRef.setValue(true);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+            Order o = new Order();
+            o.setState("empty");
+            orderRef.setValue(o);
         }
 
 //        if(currentOrder.getState().equals("ordered")){
