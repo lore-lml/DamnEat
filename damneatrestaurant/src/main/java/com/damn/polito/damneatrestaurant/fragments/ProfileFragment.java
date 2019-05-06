@@ -25,6 +25,7 @@ import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.Welcome;
 import com.damn.polito.damneatrestaurant.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,7 +45,7 @@ public class ProfileFragment extends Fragment{
     private ImageView profileImage;
     private TextView name, mail, description, address, phone, opening, categories, shipPrice;
     private Bitmap profileBitmap;
-    private boolean empty = true;
+    //private boolean empty = true;
     private Context ctx;
     private String dbKey;
     private FirebaseDatabase database;
@@ -91,7 +92,7 @@ public class ProfileFragment extends Fragment{
         Intent intent = new Intent(ctx, EditProfile.class);
 
         //Se il profilo esisteva, passa le informazioni a EditProfile
-        if (!empty) {
+        if (Welcome.accountExist) {
             intent.putExtra("name", name.getText().toString().trim());
             intent.putExtra("mail", mail.getText().toString().trim());
             intent.putExtra("phone", phone.getText().toString().trim());
@@ -138,9 +139,6 @@ public class ProfileFragment extends Fragment{
             prof.setPriceShip(Double.valueOf(ship));
         else
             prof.setPriceShip(0.0);
-
-        if(!prof.getName().isEmpty())
-            empty = false;
     }
 
     public void updateProfile(){
@@ -208,7 +206,7 @@ public class ProfileFragment extends Fragment{
         else
             this.shipPrice.setText(shipprice);
         if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
-        empty = false;
+        Welcome.accountExist = true;
 
         /*
         JSONObject values = new JSONObject();

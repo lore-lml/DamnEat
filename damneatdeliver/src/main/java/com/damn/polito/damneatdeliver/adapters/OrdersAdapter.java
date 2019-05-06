@@ -63,7 +63,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.image.setImageBitmap(img);
             }
 
-        String id = ctx.getString(R.string.order_id_s) + selected.Id();
+        String id = ctx.getString(R.string.order_id_s, selected.Id());
         holder.id.setText(id);
         holder.date.setText(Utility.dateString(selected.getDate()));
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));

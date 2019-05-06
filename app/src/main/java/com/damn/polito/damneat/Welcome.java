@@ -101,23 +101,6 @@ public class Welcome extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if(selectedId != null)
-            outState.putInt("fragment_id", selectedId);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        selectedId = savedInstanceState.getInt("fragment_id");
-        if(selectedId != 0)
-            navigation.setSelectedItemId(selectedId);
-    }
-
-
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == FirebaseLogin.REQUEST_CODE){
@@ -220,12 +203,15 @@ public class Welcome extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null)
                     map.putAll((Map) dataSnapshot.getValue());
-                else return;
+                else {
+                    pref.edit().putInt("nOrder", 0).apply();
+                    return;
+                }
 
                 int old = pref.getInt("nOrder", -1);
                 if(old != map.size()){
                     pref.edit().putInt("nOrder", map.size()).apply();
-                    if(old != -1 || map.size() == 1)
+                    if(old != -1)
                         refreshBadgeView(true);
                 }
             }
