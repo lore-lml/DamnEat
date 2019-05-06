@@ -41,13 +41,15 @@ public class Welcome extends AppCompatActivity {
     private DatabaseReference myRef;
     private DatabaseReference orderRef;
     private ValueEventListener orderListener;
-
+    private ValueEventListener v;
+    private DatabaseReference profileRef;
     private FragmentManager fragmentManager;
     private ProfileFragment profileFragment;
     private OrderFragment orderFragment;
     private CurrentFragment currentFragment;
     private static boolean currentState;
     private static Profile profile;
+    private static String hasSetName;
     private FirebaseUser user;
 
     private BottomNavigationView navigation;
@@ -56,6 +58,7 @@ public class Welcome extends AppCompatActivity {
     private String orderKey;
     private static Context ctx;
     private static boolean logged;
+    private static boolean isRegistered;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -100,8 +103,13 @@ public class Welcome extends AppCompatActivity {
     }
 
     public static boolean registered() {
+        if(profile!=null)
+            logged = true;
+        else
+            logged = false;
         return logged;
     }
+
 
 
     @Override
@@ -183,7 +191,11 @@ public class Welcome extends AppCompatActivity {
                 //set button signout
                 //b.setEnabled(true);
                 storeData(user);
-
+                profile = null;
+                if(profileRef!=null && v!=null)
+                    profileRef.removeEventListener(v);
+                loadProfile();
+                //if(selectedId == R.id.nav_current)
             }
             else{
                 String error = null;
@@ -214,13 +226,18 @@ public class Welcome extends AppCompatActivity {
             dbKey = pref.getString("dbkey", null);
             if (dbKey == null) return;
         }
-        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info/");
-        profileRef.addValueEventListener(new ValueEventListener() {
+        profileRef = database.getReference("/deliverers/" + dbKey + "/info/");
+        v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 profile = dataSnapshot.getValue(Profile.class);
-                if(profile!=null)
+                if(profile==null)
+                    logged = false;
+                else
                     logged = true;
+                if (currentFragment != null)
+                    if(selectedId == R.id.nav_current)
+                        currentFragment.update();
             }
 
             @Override
@@ -254,7 +271,8 @@ public class Welcome extends AppCompatActivity {
 //                }catch (Exception e){
 //                    currentState = false;
 //                }
-                currentFragment.update();
+                if(selectedId == R.id.nav_current)
+                    currentFragment.update();
             }
 
             @Override
@@ -281,7 +299,8 @@ public class Welcome extends AppCompatActivity {
                 orderRef = database.getReference("/ordini/" + orderKey);
                 if(orderListener != null)
                     orderRef.removeEventListener(orderListener);
-                currentFragment.update();
+                if(selectedId == R.id.nav_current)
+                    currentFragment.update();
 
                 orderListener = orderRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -319,7 +338,8 @@ public class Welcome extends AppCompatActivity {
         if(currentState){
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
             freeDeliverersRef.setValue(Welcome.getKey());
-            currentFragment.update();
+            if(selectedId == R.id.nav_current)
+                currentFragment.update();
         }
     }
 }

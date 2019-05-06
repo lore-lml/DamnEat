@@ -1,9 +1,11 @@
 package com.damn.polito.damneatdeliver.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -17,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +28,11 @@ import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 import java.util.Objects;
@@ -111,7 +115,7 @@ public class CurrentFragment extends Fragment {
         acceptButton = view.findViewById(R.id.acceptOrder);
         rejectButton = view.findViewById(R.id.rejectOrder);
         switch_available = view.findViewById(R.id.available_switch);
-
+        card_order_message = view.findViewById(R.id.card_order_message);
         photo = view.findViewById(R.id.circleImageView);
 
         default_image = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.profile_sample);
@@ -177,6 +181,8 @@ public class CurrentFragment extends Fragment {
         });
 
 
+        Registered();
+        notRegistered();
 
 
         update();
@@ -187,10 +193,13 @@ public class CurrentFragment extends Fragment {
     public void update() {
         currentOrder = Welcome.getCurrentOrder();
         switch_available.setChecked(Welcome.getCurrentAvaibility());
+        Registered();
 
         if(currentOrder==null){
             currentOrder = new Order();
-            currentOrder.setState(ctx.getString(R.string.state_empty));
+            currentOrder.setState("empty");
+            Registered();
+
             notRegistered();
         }
 
@@ -257,6 +266,7 @@ public class CurrentFragment extends Fragment {
             return;
         } else {
             card_avaible.setVisibility(GONE);
+            Registered();
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
             date.setText(Utility.dateString(currentOrder.getDate()));
@@ -472,10 +482,84 @@ public class CurrentFragment extends Fragment {
     }
 
     private void notRegistered(){
-        if(!Welcome.registered()){
+        //boolean w = Welcome.registered();
+        String dbKey,hasSetName;
+        /*
+        boolean w = Welcome.isRegistered();
+        if(!Welcome.isRegistered()){
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
         }
+        */
+        //
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        dbKey = pref.getString("dbkey", null);
+
+        FirebaseDatabase database= FirebaseDatabase.getInstance();
+        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info/name");
+        profileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String hasSetName = dataSnapshot.getValue(String.class);
+                if(hasSetName==null){
+                    waiting_confirm.setText(getString(R.string.not_registered));
+                    waiting_confirm.setVisibility(View.VISIBLE);
+                    card_avaible.setVisibility(GONE);
+                }
+                else{
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        //
+    }
+
+    private void Registered(){
+        //boolean w = Welcome.registered();
+        String dbKey,hasSetName;
+        /*
+        boolean w = Welcome.isRegistered();
+        if(Welcome.isRegistered()){
+            waiting_confirm.setVisibility(View.GONE);
+            card_avaible.setVisibility(View.VISIBLE);
+        }
+        */
+
+        //
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        dbKey = pref.getString("dbkey", null);
+
+        FirebaseDatabase database= FirebaseDatabase.getInstance();
+        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info/name");
+        profileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String hasSetName = dataSnapshot.getValue(String.class);
+                if(hasSetName==null){
+
+                }
+                else{
+                    waiting_confirm.setText(ctx.getString(R.string.waiting_order));
+                    waiting_confirm.setVisibility(View.VISIBLE);
+                    card_avaible.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        //
     }
 }
