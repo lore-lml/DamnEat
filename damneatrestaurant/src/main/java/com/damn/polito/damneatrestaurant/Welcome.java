@@ -33,10 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Welcome extends AppCompatActivity implements NotificationListener {
@@ -97,7 +94,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
-        navigation.setSelectedItemId(R.id.nav_dishes);
+        //navigation.setSelectedItemId(R.id.nav_dishes);
         database = FirebaseDatabase.getInstance();
         if(Utility.firstON) {
             database.setPersistenceEnabled(true);
