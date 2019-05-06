@@ -134,13 +134,6 @@ public class Welcome extends AppCompatActivity {
         ctx = this;
 
         if(profile != null) {
-            if(currentState) {
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-                freeDeliverersRef.setValue(Welcome.getKey());
-            }else {
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-                freeDeliverersRef.removeValue();
-            }
             Log.d("key", getKey());
 //            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
 //            orderRef.setValue(currentState);
@@ -254,6 +247,12 @@ public class Welcome extends AppCompatActivity {
                 else {
                     DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
                     orderRef.setValue(false);
+                    currentState = false;
+                }
+                if(currentState) {
+                    DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
+                    freeDeliverersRef.setValue(Welcome.getKey());
+                }else {
                     DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
                     freeDeliverersRef.removeValue();
                 }
@@ -297,6 +296,9 @@ public class Welcome extends AppCompatActivity {
                         if(currentOrder == null){
                             currentOrder = new Order();
                             currentOrder.setState("empty");
+                        }else {
+                            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+                            orderRef.setValue(false);
                         }
                         //Log.d("curren order", currentOrder.getId());
                         if(selectedId == R.id.nav_current)
