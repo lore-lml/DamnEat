@@ -197,8 +197,7 @@ public class Welcome extends AppCompatActivity {
 
     private void storeProfile(Profile profile){
         accountExist = true;
-        if(selectedId == null)
-            navigation.setSelectedItemId(R.id.nav_restaurant);
+        navigation.setSelectedItemId(R.id.nav_restaurant);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         editor.putString("address", profile.getAddress());
@@ -246,7 +245,8 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        myRef.removeEventListener(listener);
+        if (myRef != null)
+            myRef.removeEventListener(listener);
         orderRef.removeEventListener(orderListener);
     }
 

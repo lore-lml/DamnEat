@@ -63,9 +63,10 @@
                 android:id="@+id/state_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="State: delivered"
                 android:textAppearance="@style/PrimaryText"
                 android:visibility="gone"
@@ -188,18 +189,18 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryCardView">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/id_shipped"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorPrimaryCardView">
+                    android:layout_height="match_parent">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/circleImageView"
@@ -453,121 +454,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/order_id" />
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/id1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorPrimaryCardView"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/order_num_dishes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/order_num_dishes"
-                        android:textAppearance="@style/SecondaryText"
-                        app:layout_constraintBottom_toTopOf="@+id/dishes_list"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/order_delivery_time" />
-
-                    <TextView
-                        android:id="@+id/order_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="16dp"
-                        android:text="@string/order_price"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/PrimaryText"
-                        android:textSize="25sp"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.498"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <TextView
-                        android:id="@+id/order_Customer_name_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/order_customer"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textSize="12sp"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/phone_big_text" />
-
-                    <TextView
-                        android:id="@+id/dishes_list"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="8dp"
-                        android:text="--"
-                        app:layout_constraintBottom_toTopOf="@+id/order_price"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/order_num_dishes" />
-
-                    <TextView
-                        android:id="@+id/order_customer_info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:layout_marginBottom="24dp"
-                        android:gravity="end"
-                        android:text="@string/string"
-                        android:textAppearance="@style/PrimaryText"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/order_Customer_name_textview"
-                        app:layout_constraintVertical_bias="0.1" />
-
-                    <TextView
-                        android:id="@+id/restaurant_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="24dp"
-                        android:text="@string/order_restaurant"
-                        android:textAppearance="@style/SecondaryText"
-                        android:textSize="12sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/order_id" />
-
-
-                    <TextView
-                        android:id="@+id/order_delivery_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="64dp"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/delivery_time"
-                        android:textAppearance="@style/PrimaryText"
-                        android:textSize="22sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/phone_big_text" />
-
-                    <TextView
-                        android:id="@+id/order_note"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/string"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.421"
-                        app:layout_constraintStart_toEndOf="@+id/dishes_list"
-                        app:layout_constraintTop_toBottomOf="@+id/order_customer_info" />
-
-
                 </android.support.constraint.ConstraintLayout>
             </LinearLayout>
         </ScrollView>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -46,8 +47,9 @@ public class CurrentFragment extends Fragment {
     private TextView id,date, state_tv ,price,nDish, deliveryTime, name_big, address_big_text, phone_big_text, address_big, phone_big, waiting_confirm, accept_question;
     private TextView name_small, address_small, phone_small, note_small;
     private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
+    private ConstraintLayout id_shipped;
 
-    private CardView root, card_order, card_order_message, card_order_quest, card_avaible;
+    private CardView root, card_order, card_order_message, card_order_quest, card_avaible, card_small;
     private ImageView photo;
     private Button confirmButton, acceptButton, rejectButton;
     private Switch switch_available;
@@ -92,8 +94,10 @@ public class CurrentFragment extends Fragment {
         phone_big_text = view.findViewById(R.id.phone_big_text);
         address_big = view.findViewById(R.id.address_big_tv);
         phone_big = view.findViewById(R.id.phone_big_tv);
+        id_shipped = view.findViewById(R.id.id_shipped);
 
         //SMALL TextView
+        card_small = view.findViewById(R.id.card_small);
         name_small = view.findViewById(R.id.name_small);
         name_small_text= view.findViewById(R.id.name_small_text);
         address_small = view.findViewById(R.id.address_small);
@@ -121,7 +125,7 @@ public class CurrentFragment extends Fragment {
         confirmButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                orderState.setValue("delivered");
+                orderState.setValue(ctx.getString(R.string.state_delivered));
             }
         });
 
@@ -131,7 +135,7 @@ public class CurrentFragment extends Fragment {
                     Log.d("button", "profile null");
                 }else {
                     DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                    orderState.setValue("assigned");
+                    orderState.setValue(ctx.getString(R.string.state_assigned));
                     DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
                     orderPhoto.setValue(prof.getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");

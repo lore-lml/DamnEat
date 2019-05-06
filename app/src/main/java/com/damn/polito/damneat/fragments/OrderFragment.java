@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -96,6 +97,12 @@ public class OrderFragment extends Fragment {
 
             }
         });
+
+        if (!orderList.isEmpty()) {
+            Collections.sort(orderList,
+                    (a, b) -> b.getDate().compareTo(a.getDate()));
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void getOrderFirebase(String key){

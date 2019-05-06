@@ -59,4 +59,9 @@
     <string name="state">Stato: %s</string>
     <string name="waiting_customer_confirm">In attesa della conferma del cliente</string>
     <string name="waiting_order">In attesa di un ordine</string>
+    <string name="state_empty">vuoto</string>
+    <string name="state_ordered">ordinato</string>
+    <string name="state_delivered">consegnato</string>
+    <string name="state_assigned">assegnato</string>
+    <string name="state_accepted">accettato</string>
 </resources>

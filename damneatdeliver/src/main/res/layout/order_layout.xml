@@ -22,26 +22,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/order_id"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/order_date_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/nullText"
             android:textAppearance="@style/SecondaryText"
             android:textStyle="italic"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread" />
+            app:layout_constraintTop_toBottomOf="@+id/order_id" />
 
         <TextView
             android:id="@+id/order_num_dishes"
@@ -76,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
 
             android:text="@string/order_customer"
             android:textAlignment="center"
@@ -90,11 +89,10 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:src="@drawable/profile_sample"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/dishes_list"
@@ -111,7 +109,7 @@
             android:id="@+id/order_customer_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="24dp"
             android:gravity="end"
             android:text="@string/string"
@@ -119,31 +117,31 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_Customer_name_textview"
-            app:layout_constraintVertical_bias="0.271" />
+            app:layout_constraintVertical_bias="0.12" />
 
         <TextView
             android:id="@+id/phone_big_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:text="@string/string"
             android:textAppearance="@style/PrimaryText"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/state_tv"
-            app:layout_constraintTop_toBottomOf="@id/restaurant_name" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/restaurant_name"
+            app:layout_constraintVertical_bias="0.238" />
 
         <TextView
             android:id="@+id/restaurant_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:text="@string/order_restaurant"
             android:textAppearance="@style/SecondaryText"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_id" />
+            app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
 
         <TextView
             android:id="@+id/state_tv"
