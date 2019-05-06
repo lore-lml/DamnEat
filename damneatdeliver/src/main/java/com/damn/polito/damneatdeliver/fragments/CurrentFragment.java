@@ -42,7 +42,7 @@ public class CurrentFragment extends Fragment {
     private TextView name_small, address_small, phone_small, note_small;
     private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
 
-    private CardView root, card_order, card_order_message, card_order_quest, card_avaible;
+    private CardView root, card_order, card_order_message, card_order_quest, card_avaible, card_small;
     private ImageView photo;
     private Button confirmButton, acceptButton, rejectButton;
     private Switch switch_available;
@@ -87,6 +87,7 @@ public class CurrentFragment extends Fragment {
         phone_big = view.findViewById(R.id.phone_big_tv);
 
         //SMALL TextView
+        card_small = view.findViewById(R.id.card_small);
         name_small = view.findViewById(R.id.name_small);
         name_small_text= view.findViewById(R.id.name_small_text);
         address_small = view.findViewById(R.id.address_small);
@@ -171,6 +172,15 @@ public class CurrentFragment extends Fragment {
             }
         });
 
+        if (!switch_available.isChecked()){
+            card_order.setVisibility(GONE);
+            card_small.setVisibility(GONE);
+            waiting_confirm.setVisibility(GONE);
+        } else {
+            card_order.setVisibility(View.VISIBLE);
+            card_small.setVisibility(View.VISIBLE);
+            waiting_confirm.setVisibility(View.VISIBLE);
+        }
 
 
         update();
