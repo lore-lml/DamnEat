@@ -236,7 +236,8 @@ public class Welcome extends AppCompatActivity {
                 else
                     logged = true;
                 if (currentFragment != null)
-                    currentFragment.update();
+                    if(selectedId == R.id.nav_current)
+                        currentFragment.update();
             }
 
             @Override
@@ -270,7 +271,8 @@ public class Welcome extends AppCompatActivity {
 //                }catch (Exception e){
 //                    currentState = false;
 //                }
-                currentFragment.update();
+                if(selectedId == R.id.nav_current)
+                    currentFragment.update();
             }
 
             @Override
@@ -297,7 +299,8 @@ public class Welcome extends AppCompatActivity {
                 orderRef = database.getReference("/ordini/" + orderKey);
                 if(orderListener != null)
                     orderRef.removeEventListener(orderListener);
-                currentFragment.update();
+                if(selectedId == R.id.nav_current)
+                    currentFragment.update();
 
                 orderListener = orderRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -335,7 +338,8 @@ public class Welcome extends AppCompatActivity {
         if(currentState){
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
             freeDeliverersRef.setValue(Welcome.getKey());
-            currentFragment.update();
+            if(selectedId == R.id.nav_current)
+                currentFragment.update();
         }
     }
 }
