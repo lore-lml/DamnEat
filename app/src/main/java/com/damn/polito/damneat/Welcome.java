@@ -94,7 +94,6 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (selectedId == null) selectedId = R.id.nav_reservations;
         outState.putInt("fragment_id", selectedId);
     }
 
