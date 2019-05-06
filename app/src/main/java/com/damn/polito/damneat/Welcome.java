@@ -75,6 +75,7 @@ public class Welcome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+        deleteShared();
         FirebaseLogin.init();
         FirebaseLogin.shownSignInOptions(this);
 
@@ -167,9 +168,9 @@ public class Welcome extends AppCompatActivity {
                     editor.putString("clientphoto", prof.getBitmapProf());
                     editor.apply();
                 }
-
-                if(selectedId == R.id.nav_profile)
-                    profileFragment.updateProfile();
+                if(selectedId!=null)
+                    if(selectedId == R.id.nav_profile)
+                        profileFragment.updateProfile();
             }
 
             @Override
@@ -197,5 +198,16 @@ public class Welcome extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         myRef.removeEventListener(listener);
+    }
+
+    private void deleteShared(){
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.remove("address");
+        editor.remove("name");
+        editor.remove("profile");
+        editor.remove("phone");
+        editor.remove("profile");
+        editor.remove("mail");
+        editor.apply();
     }
 }

@@ -173,7 +173,11 @@ public class CurrentFragment extends Fragment {
 
 
 
+        notRegistered();
+
+
         update();
+
     }
 
 
@@ -185,6 +189,7 @@ public class CurrentFragment extends Fragment {
         if(currentOrder==null){
             currentOrder = new Order();
             currentOrder.setState("empty");
+            notRegistered();
         }
 
         if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
@@ -215,6 +220,7 @@ public class CurrentFragment extends Fragment {
             accept_question.setVisibility(GONE);
             state_tv.setVisibility(GONE);
             waiting_confirm.setText(ctx.getString(R.string.waiting_order));
+            notRegistered();
             return;
 
         }else {
@@ -430,6 +436,14 @@ public class CurrentFragment extends Fragment {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
             freeDeliverersRef.setValue(Welcome.getKey());
         }
+        notRegistered();
+    }
 
+    private void notRegistered(){
+        if(!Welcome.registered()){
+            waiting_confirm.setText(getString(R.string.not_registered));
+            waiting_confirm.setVisibility(View.VISIBLE);
+            card_avaible.setVisibility(GONE);
+        }
     }
 }
