@@ -130,22 +130,24 @@ public class Welcome extends AppCompatActivity {
     private void init(){
         loadProfile();
         loadCurrentOrder(this);
+        loadCurrentState();
         ctx = this;
+
         if(profile != null) {
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-            freeDeliverersRef.setValue(Welcome.getKey());
+            if(currentState) {
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
+                freeDeliverersRef.setValue(Welcome.getKey());
+            }else {
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
+                freeDeliverersRef.removeValue();
+            }
             Log.d("key", getKey());
-            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
-            orderRef.setValue(true);
+//            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+//            orderRef.setValue(currentState);
             logged = true;
         }else{
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-            freeDeliverersRef.removeValue();
-            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
-            orderRef.setValue(false);
             logged = false;
         }
-        loadCurrentState();
 
     }
 
@@ -249,6 +251,12 @@ public class Welcome extends AppCompatActivity {
                 Boolean state = dataSnapshot.getValue(Boolean.class);
                 if(state != null)
                     currentState = state;
+                else {
+                    DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+                    orderRef.setValue(false);
+                    DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
+                    freeDeliverersRef.removeValue();
+                }
                 if(!currentState) {
                     database.getReference("/deliverers_liberi/" + getKey()).removeValue();
                 }
