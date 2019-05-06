@@ -51,9 +51,6 @@ public class ProfileFragment extends Fragment{
     private FirebaseDatabase database;
     private String dbKey;
 
-    private Map<String, Object> orders;
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -173,7 +170,6 @@ public class ProfileFragment extends Fragment{
                     mail.setText(defaultValue);
                     phone.setText(defaultValue);
                     description.setText(defaultValue);
-                    //address.setText(defaultValue);
                 }
 
             }
@@ -186,7 +182,6 @@ public class ProfileFragment extends Fragment{
 
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference ref;
-        DatabaseReference ordini;
 
         ref = database.getReference("deliverers/" + dbKey + "/info/");
 
