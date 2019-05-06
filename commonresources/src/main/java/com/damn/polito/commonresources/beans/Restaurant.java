@@ -55,6 +55,8 @@ public class Restaurant {
     public String getPhoto() {
         if(photo == null)
             return "NO_PHOTO";
+        if(photo.equals(""))
+            return "NO_PHOTO";
         return photo;
     }
 
