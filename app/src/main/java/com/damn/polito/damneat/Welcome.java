@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.notifications.NotificationListener;
 import com.damn.polito.damneat.beans.Profile;
 import com.damn.polito.damneat.fragments.OrderFragment;
 import com.damn.polito.damneat.fragments.ProfileFragment;
@@ -25,6 +26,7 @@ import com.damn.polito.damneat.fragments.RestaurantFragment;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Welcome extends AppCompatActivity {
+public class Welcome extends AppCompatActivity implements NotificationListener {
 
     public static boolean accountExist = false;
 
@@ -52,6 +54,7 @@ public class Welcome extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference myRef, orderRef;
     private ValueEventListener listener, orderListener;
+    private Map<String, ChildEventListener> children = new HashMap<>();
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
@@ -67,7 +70,7 @@ public class Welcome extends AppCompatActivity {
             case R.id.nav_reservations:
                 orderFragment = new OrderFragment();
                 selected = orderFragment;
-                refreshBadgeView(false);
+                refreshNotificationBadge(false);
                 break;
             case R.id.nav_profile:
                 profileFragment = new ProfileFragment();
@@ -97,7 +100,7 @@ public class Welcome extends AppCompatActivity {
             database.setPersistenceEnabled(true);
         }
 
-        addBadgeView();
+        addNotificationBadge();
     }
 
     @Override
@@ -212,7 +215,17 @@ public class Welcome extends AppCompatActivity {
                 if(old != map.size()){
                     pref.edit().putInt("nOrder", map.size()).apply();
                     if(old != -1)
-                        refreshBadgeView(true);
+                        refreshNotificationBadge(true);
+                }
+
+                for(Map.Entry entry : map.entrySet()){
+                    if(!children.containsKey(entry.getValue().toString())){
+                        ChildEventListener child = newChildEvent();
+                        children.put(entry.getValue().toString(), child);
+
+                        database.getReference("/ordini/" + entry.getValue())
+                                .addChildEventListener(child);
+                    }
                 }
             }
 
@@ -228,6 +241,32 @@ public class Welcome extends AppCompatActivity {
 
     }
 
+    private ChildEventListener newChildEvent(){
+        return new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue() != null && selectedId != R.id.nav_reservations)
+                    refreshNotificationBadge(true);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -236,17 +275,19 @@ public class Welcome extends AppCompatActivity {
         orderRef.removeEventListener(orderListener);
     }
 
-    private void addBadgeView() {
+    @Override
+    public void addNotificationBadge() {
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigation.getChildAt(0);
         BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(0);
 
         notificationBadge = LayoutInflater.from(this).inflate(R.layout.icon_badge, menuView, false);
 
         itemView.addView(notificationBadge);
-        refreshBadgeView(false);
+        refreshNotificationBadge(false);
     }
 
-    private void refreshBadgeView(boolean visible) {
+    @Override
+    public void refreshNotificationBadge(boolean visible) {
         notificationBadge.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 }
