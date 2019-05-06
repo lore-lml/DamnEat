@@ -1,4 +1,4 @@
-package com.damn.polito.damneatdeliver; //#7EE04A
+package com.damn.polito.damneatdeliver;
 
 import android.content.Context;
 import android.content.Intent;
