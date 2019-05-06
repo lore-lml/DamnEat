@@ -48,6 +48,7 @@ public class Welcome extends AppCompatActivity {
     private CurrentFragment currentFragment;
     private static boolean currentState;
     private static Profile profile;
+    private static String hasSetName;
     private FirebaseUser user;
 
     private BottomNavigationView navigation;
@@ -56,6 +57,7 @@ public class Welcome extends AppCompatActivity {
     private String orderKey;
     private static Context ctx;
     private static boolean logged;
+    private static boolean isRegistered;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -106,6 +108,7 @@ public class Welcome extends AppCompatActivity {
             logged = false;
         return logged;
     }
+
 
 
     @Override
@@ -226,7 +229,7 @@ public class Welcome extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 profile = dataSnapshot.getValue(Profile.class);
                 if(profile==null)
-                    logged = true;
+                    logged = false;
                 else
                     logged = true;
                 if(currentFragment!=null)
