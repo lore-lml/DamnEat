@@ -85,9 +85,7 @@ public class Welcome extends AppCompatActivity {
     };
 
     public static String getKey() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String dbKey = pref.getString("dbkey", null);
-        return dbKey;
+        return PreferenceManager.getDefaultSharedPreferences(ctx).getString("dbkey", null);
     }
 
     public static Boolean getCurrentAvaibility() {
