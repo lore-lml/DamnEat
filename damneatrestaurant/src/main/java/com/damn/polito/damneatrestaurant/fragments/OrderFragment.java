@@ -118,9 +118,9 @@ public class OrderFragment extends Fragment {
 
                                 for (MutableData child : mutableData.getChildren()) {
                                     if (child != null) {
-                                        String s = child.getValue(String.class);
+                                        String s = child.getKey();
                                         if (s.equals(delivererKey)) {
-                                            mutableData.setValue(null);
+                                            mutableData.child(s).setValue(null);
                                             return Transaction.success(mutableData);
                                         }
                                     }
@@ -226,7 +226,32 @@ public class OrderFragment extends Fragment {
                 }
             }
         });
+        ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_totali/");
+        ref.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                for(MutableData child: mutableData.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    if(d!=null) {
+                        for (Dish d_ord : orders.get(position).getDishes()) {
+                            int new_quantity = d.getAvailability() - d_ord.getQuantity();
+                            if (new_quantity < 0)
+                                return Transaction.abort();
+                            else {
+                                d.setAvailability(new_quantity);
+                                child.setValue(d);
+                            }
+                        }
+                    }
+                }
+                return Transaction.success(mutableData);
+            }
 
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+            }
+        });
     }
 
     private boolean initOrders(){
