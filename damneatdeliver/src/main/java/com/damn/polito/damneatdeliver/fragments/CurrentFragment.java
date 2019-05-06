@@ -125,7 +125,7 @@ public class CurrentFragment extends Fragment {
         confirmButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                orderState.setValue(ctx.getString(R.string.state_delivered));
+                orderState.setValue("confirmed");
             }
         });
 
@@ -135,7 +135,7 @@ public class CurrentFragment extends Fragment {
                     Log.d("button", "profile null");
                 }else {
                     DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                    orderState.setValue(ctx.getString(R.string.state_assigned));
+                    orderState.setValue("assigned");
                     DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
                     orderPhoto.setValue(prof.getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
@@ -353,6 +353,14 @@ public class CurrentFragment extends Fragment {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
             freeDeliverersRef.setValue(Welcome.getKey());
         }
+
+//        if(currentOrder.getState().equals("ordered")){
+//            Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
+//            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+//            orderRef.removeValue();
+//            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+//            freeDeliverersRef.setValue(Welcome.getKey());
+//        }
 
         notRegistered();
     }
