@@ -5,11 +5,15 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
@@ -27,6 +31,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Welcome extends AppCompatActivity {
 
@@ -38,12 +45,13 @@ public class Welcome extends AppCompatActivity {
     private OrderFragment orderFragment;
 
     private BottomNavigationView navigation;
+    private View notificationBadge;
     private Integer selectedId = null;
     
     private String dbKey;
     private FirebaseDatabase database;
-    private DatabaseReference myRef;
-    private ValueEventListener listener;
+    private DatabaseReference myRef, orderRef;
+    private ValueEventListener listener, orderListener;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
@@ -59,6 +67,7 @@ public class Welcome extends AppCompatActivity {
             case R.id.nav_reservations:
                 orderFragment = new OrderFragment();
                 selected = orderFragment;
+                refreshBadgeView(false);
                 break;
             case R.id.nav_profile:
                 profileFragment = new ProfileFragment();
@@ -86,9 +95,9 @@ public class Welcome extends AppCompatActivity {
         
         if(Utility.firstON) {
             database.setPersistenceEnabled(true);
-            Utility.firstON = false;
         }
 
+        addBadgeView();
     }
 
     @Override
@@ -168,20 +177,26 @@ public class Welcome extends AppCompatActivity {
                     editor.apply();
                 }
 
-                if(selectedId == R.id.nav_profile)
+                if(selectedId != null && selectedId == R.id.nav_profile)
                     profileFragment.updateProfile();
+
+
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
+
+        setOrderListener();
     }
 
     private void storeProfile(Profile profile){
         accountExist = true;
-        navigation.setSelectedItemId(R.id.nav_restaurant);
+        if(selectedId == null || selectedId != R.id.nav_restaurant)
+            navigation.setSelectedItemId(R.id.nav_restaurant);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         editor.putString("address", profile.getAddress());
@@ -193,9 +208,57 @@ public class Welcome extends AppCompatActivity {
         editor.apply();
     }
 
+    @SuppressWarnings("unchecked")
+    private void setOrderListener() {
+        if(dbKey == null) return;
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        Map<String, Object> map = new HashMap<>();
+        orderRef = database.getReference("clienti/" + dbKey + "/lista_ordini");
+        orderListener = orderRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null)
+                    map.putAll((Map) dataSnapshot.getValue());
+                else return;
+
+                int old = pref.getInt("nOrder", -1);
+                if(old != map.size()){
+                    pref.edit().putInt("nOrder", map.size()).apply();
+                    if(old != -1)
+                        refreshBadgeView(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        if(Utility.firstON) {
+            Utility.firstON = false;
+        }
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         myRef.removeEventListener(listener);
+        orderRef.removeEventListener(orderListener);
+    }
+
+    private void addBadgeView() {
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) navigation.getChildAt(0);
+        BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(0);
+
+        notificationBadge = LayoutInflater.from(this).inflate(R.layout.icon_badge, menuView, false);
+
+        itemView.addView(notificationBadge);
+        refreshBadgeView(false);
+    }
+
+    private void refreshBadgeView(boolean visible) {
+        notificationBadge.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 }
