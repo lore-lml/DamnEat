@@ -56,8 +56,10 @@ public class CurrentFragment extends Fragment {
     private Order currentOrder;
 
     private boolean empty = true;
+    private boolean registered = false;
     private Map orders;
 
+    private Profile prof;
 
     private FirebaseDatabase database;
     private String key, defaultValue = "- -";
@@ -131,9 +133,9 @@ public class CurrentFragment extends Fragment {
                     DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                     orderState.setValue("assigned");
                     DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
-                    orderPhoto.setValue(Welcome.getProfile().getBitmapProf());
+                    orderPhoto.setValue(prof.getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
-                    orderName.setValue(Welcome.getProfile().getName());
+                    orderName.setValue(prof.getName());
                     DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/orders_list/" + currentOrder.getId() );
                     orderRef.setValue(currentOrder.getId());
                 }
@@ -176,107 +178,44 @@ public class CurrentFragment extends Fragment {
             }
         });
 
-
-        Registered();
-        notRegistered();
-
+        checkRegistered();
 
         update();
 
     }
 
+    private void notRegistered(){
+        if(!registered) {
+            date.setVisibility(GONE);
+            id.setVisibility(GONE);
+            waiting_confirm.setText(getString(R.string.not_registered));
+            waiting_confirm.setVisibility(View.VISIBLE);
+            card_avaible.setVisibility(GONE);
+        }
+    }
 
 
     public void update() {
         currentOrder = Welcome.getCurrentOrder();
         switch_available.setChecked(Welcome.getCurrentAvaibility());
-        Registered();
 
         if(currentOrder==null){
             currentOrder = new Order();
             currentOrder.setState("empty");
-            Registered();
-
-            notRegistered();
         }
+        setVisibility(currentOrder.getState());
 
         if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
-            date.setVisibility(GONE);
-            id.setVisibility(GONE);
-            card_avaible.setVisibility(View.VISIBLE);
-            confirmButton.setVisibility(GONE);
-            name_small.setVisibility(GONE);
-            name_small_text.setVisibility(GONE);
-            address_small.setVisibility(GONE);
-            address_small_text.setVisibility(GONE);
-            phone_small.setVisibility(GONE);
-            phone_small_text.setVisibility(GONE);
-            note_small.setVisibility(GONE);
-            note_small_text.setVisibility(GONE);
-            deliveryTime.setVisibility(GONE);
-            confirmButton.setVisibility(GONE);
-            address_big.setVisibility(GONE);
-            name_big.setVisibility(GONE);
-            address_big.setVisibility(GONE);
-            address_big_text.setVisibility(GONE);
-            phone_big.setVisibility(GONE);
-            phone_big_text.setVisibility(GONE);
-            waiting_confirm.setVisibility(View.VISIBLE);
-            photo.setVisibility(GONE);
-            acceptButton.setVisibility(GONE);
-            rejectButton.setVisibility(GONE);
-            accept_question.setVisibility(GONE);
-            state_tv.setVisibility(GONE);
             waiting_confirm.setText(ctx.getString(R.string.waiting_order));
             notRegistered();
             return;
-
         }else {
-            card_avaible.setVisibility(GONE);
-            Registered();
-            date.setVisibility(View.VISIBLE);
-            id.setVisibility(View.VISIBLE);
             date.setText(Utility.dateString(currentOrder.getDate()));
             id.setText(currentOrder.getId());
-            address_big.setVisibility(View.VISIBLE);
-            name_big.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
-            address_big_text.setVisibility(GONE);
-            phone_big.setVisibility(View.VISIBLE);
-            phone_big_text.setVisibility(View.VISIBLE);
-            photo.setVisibility(View.VISIBLE);
-            waiting_confirm.setVisibility(View.VISIBLE);
         }
 
         if(currentOrder.getState().toLowerCase().equals("accepted")){
-            date.setVisibility(GONE);
-            id.setVisibility(GONE);
-            card_avaible.setVisibility(GONE);
-            confirmButton.setVisibility(GONE);
-            state_tv.setVisibility(GONE);
-            name_small.setVisibility(View.VISIBLE);
-            name_small_text.setVisibility(View.VISIBLE);
-            address_small.setVisibility(View.VISIBLE);
-            address_small_text.setVisibility(View.VISIBLE);
-            phone_small.setVisibility(View.VISIBLE);
-            phone_small_text.setVisibility(View.VISIBLE);
-            note_small.setVisibility(View.VISIBLE);
-            note_small_text.setVisibility(View.VISIBLE);
-            deliveryTime.setVisibility(View.VISIBLE);
-            confirmButton.setVisibility(GONE);
-            address_big.setVisibility(View.VISIBLE);
-            name_big.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
-            address_big_text.setVisibility(View.VISIBLE);
-            phone_big.setVisibility(View.VISIBLE);
-            phone_big_text.setVisibility(View.VISIBLE);
-            waiting_confirm.setVisibility(GONE);
-            photo.setVisibility(View.VISIBLE);
-
             accept_question.setText(R.string.accept_question);
-            acceptButton.setVisibility(View.VISIBLE);
-            rejectButton.setVisibility(View.VISIBLE);
-            accept_question.setVisibility(View.VISIBLE);
             name_big.setText(currentOrder.getRestaurant().getRestaurantName());
             address_big_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
             phone_big_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
@@ -288,41 +227,24 @@ public class CurrentFragment extends Fragment {
                 photo.setImageBitmap(default_image);
             else
                 photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getRestaurant().getPhoto()));
-            name_small.setText(ctx.getText(R.string.customer_name));
-            name_small_text.setText(currentOrder.getCustomer().getCustomerName());
+                name_small.setText(ctx.getText(R.string.customer_name));
+                name_small_text.setText(currentOrder.getCustomer().getCustomerName());
 
-            address_small.setText(ctx.getText(R.string.customer_address));
-            address_small_text.setText(currentOrder.getCustomer().getCustomerAddress());
+                address_small.setText(ctx.getText(R.string.customer_address));
+                address_small_text.setText(currentOrder.getCustomer().getCustomerAddress());
 
-            phone_small.setText(ctx.getText(R.string.customer_phone));
-            phone_small_text.setText(currentOrder.getCustomer().getCustomerPhone());
+                phone_small.setText(ctx.getText(R.string.customer_phone));
+                phone_small_text.setText(currentOrder.getCustomer().getCustomerPhone());
 
-            note_small.setText(ctx.getText(R.string.note));
-            note_small_text.setText(currentOrder.getNote());
-            String delivery_t = currentOrder.getDeliveryTime();
-            deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
-
-
-
+                note_small.setText(ctx.getText(R.string.note));
+                note_small_text.setText(currentOrder.getNote());
+                String delivery_t = currentOrder.getDeliveryTime();
+                deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
 
         }else {
-            card_avaible.setVisibility(GONE);
-            date.setVisibility(View.VISIBLE);
-            id.setVisibility(View.VISIBLE);
-            state_tv.setVisibility(View.VISIBLE);
             date.setText(Utility.dateString(currentOrder.getDate()));
             id.setText(currentOrder.getId());
-            address_big.setVisibility(View.VISIBLE);
-            name_big.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
-            address_big_text.setVisibility(View.VISIBLE);
-            phone_big.setVisibility(View.VISIBLE);
-            phone_big_text.setVisibility(View.VISIBLE);
-            photo.setVisibility(View.VISIBLE);
-            waiting_confirm.setVisibility(View.VISIBLE);
-            acceptButton.setVisibility(GONE);
-            rejectButton.setVisibility(GONE);
-            accept_question.setVisibility(GONE);
+
         }
 
 
@@ -353,10 +275,6 @@ public class CurrentFragment extends Fragment {
             note_small_text.setText(currentOrder.getNote());
 
             state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
-            confirmButton.setVisibility(GONE);
-            deliveryTime.setVisibility(GONE);
-            waiting_confirm.setVisibility(GONE);
-
         }
 
 
@@ -368,7 +286,7 @@ public class CurrentFragment extends Fragment {
             phone_big.setText(ctx.getString(R.string.customer_phone));
             address_big.setText(ctx.getString(R.string.customer_address));
 
-            if(currentOrder.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
+            if(currentOrder.getCustomer().getCustomerPhoto().equals("NO_PHOTO") || currentOrder.getCustomer().getCustomerPhoto().equals("") )
                 photo.setImageBitmap(default_image);
             else
                 photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getCustomer().getCustomerPhoto()));
@@ -388,9 +306,6 @@ public class CurrentFragment extends Fragment {
             deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, currentOrder.getDeliveryTime()));
 
             state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
-            deliveryTime.setVisibility(View.VISIBLE);
-            waiting_confirm.setVisibility(GONE);
-            confirmButton.setVisibility(View.VISIBLE);
             confirmButton.setText(ctx.getString(R.string.confirm_delivery));
         }
 
@@ -409,17 +324,6 @@ public class CurrentFragment extends Fragment {
             else
                 photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getCustomer().getCustomerPhoto()));
 
-            name_small.setVisibility(GONE);
-            name_small_text.setVisibility(GONE);
-            address_small.setVisibility(GONE);
-            address_small_text.setVisibility(GONE);
-            phone_small.setVisibility(GONE);
-            phone_small_text.setVisibility(GONE);
-            note_small.setVisibility(GONE);
-            note_small_text.setVisibility(GONE);
-            deliveryTime.setVisibility(GONE);
-            confirmButton.setVisibility(GONE);
-            waiting_confirm.setVisibility(View.VISIBLE);
 
             waiting_confirm.setText(ctx.getString(R.string.waiting_customer_confirm));
 
@@ -445,88 +349,193 @@ public class CurrentFragment extends Fragment {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
             freeDeliverersRef.setValue(Welcome.getKey());
         }
+
         notRegistered();
     }
 
-    private void notRegistered(){
-        //boolean w = Welcome.registered();
-        String dbKey,hasSetName;
-        /*
-        boolean w = Welcome.isRegistered();
-        if(!Welcome.isRegistered()){
+    public void checkRegistered(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        String dbKey = pref.getString("dbkey", null);
+
+        FirebaseDatabase database= FirebaseDatabase.getInstance();
+        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info");
+        profileRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                prof = dataSnapshot.getValue(Profile.class);
+                if(prof==null){
+                    registered = false;
+                }
+                else registered = true;
+                update();
+                Log.d("registered", String.valueOf(registered));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    private void setVisibility(String state){
+        removeAllVisibility();
+        Log.d("registered", String.valueOf(registered));
+        if(!registered) {
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
-            card_avaible.setVisibility(GONE);
+            return;
         }
-        */
-        //
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 
-        dbKey = pref.getString("dbkey", null);
-
-        FirebaseDatabase database= FirebaseDatabase.getInstance();
-        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info/name");
-        profileRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String hasSetName = dataSnapshot.getValue(String.class);
-                if(hasSetName==null){
-                    waiting_confirm.setText(getString(R.string.not_registered));
-                    waiting_confirm.setVisibility(View.VISIBLE);
-                    card_avaible.setVisibility(GONE);
-                }
-                else{
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        //
-    }
-
-    private void Registered(){
-        //boolean w = Welcome.registered();
-        String dbKey,hasSetName;
-        /*
-        boolean w = Welcome.isRegistered();
-        if(Welcome.isRegistered()){
-            waiting_confirm.setVisibility(View.GONE);
+        if(state.equals("empty") || state.equals("ordered")){
             card_avaible.setVisibility(View.VISIBLE);
+            waiting_confirm.setVisibility(View.VISIBLE);
         }
-        */
+        if(state.equals("shipped")) {
+            date.setVisibility(View.VISIBLE);
+            id.setVisibility(View.VISIBLE);
 
-        //
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+            confirmButton.setVisibility(View.VISIBLE);
 
-        dbKey = pref.getString("dbkey", null);
+            name_small.setVisibility(View.VISIBLE);
+            name_small_text.setVisibility(View.VISIBLE);
+            address_small.setVisibility(View.VISIBLE);
+            address_small_text.setVisibility(View.VISIBLE);
+            phone_small.setVisibility(View.VISIBLE);
+            phone_small_text.setVisibility(View.VISIBLE);
+            note_small.setVisibility(View.VISIBLE);
+            note_small_text.setVisibility(View.VISIBLE);
 
-        FirebaseDatabase database= FirebaseDatabase.getInstance();
-        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info/name");
-        profileRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String hasSetName = dataSnapshot.getValue(String.class);
-                if(hasSetName==null){
+            deliveryTime.setVisibility(View.VISIBLE);
 
-                }
-                else{
-                    waiting_confirm.setText(ctx.getString(R.string.waiting_order));
-                    waiting_confirm.setVisibility(View.VISIBLE);
-                    card_avaible.setVisibility(View.VISIBLE);
-                }
+            address_big.setVisibility(View.VISIBLE);
+            name_big.setVisibility(View.VISIBLE);
+            address_big.setVisibility(View.VISIBLE);
+            address_big_text.setVisibility(View.VISIBLE);
+            phone_big.setVisibility(View.VISIBLE);
+            phone_big_text.setVisibility(View.VISIBLE);
+            photo.setVisibility(View.VISIBLE);
+        }
 
-            }
+        if(state.equals("accepted")){
+            acceptButton.setVisibility(View.VISIBLE);
+            rejectButton.setVisibility(View.VISIBLE);
+            accept_question.setVisibility(View.VISIBLE);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            date.setVisibility(View.VISIBLE);
+            id.setVisibility(View.VISIBLE);
 
-            }
-        });
-        //
+            name_small.setVisibility(View.VISIBLE);
+            name_small_text.setVisibility(View.VISIBLE);
+            address_small.setVisibility(View.VISIBLE);
+            address_small_text.setVisibility(View.VISIBLE);
+            phone_small.setVisibility(View.VISIBLE);
+            phone_small_text.setVisibility(View.VISIBLE);
+            note_small.setVisibility(View.VISIBLE);
+            note_small_text.setVisibility(View.VISIBLE);
+
+            deliveryTime.setVisibility(View.VISIBLE);
+
+            address_big.setVisibility(View.VISIBLE);
+            name_big.setVisibility(View.VISIBLE);
+            address_big.setVisibility(View.VISIBLE);
+            address_big_text.setVisibility(View.VISIBLE);
+            phone_big.setVisibility(View.VISIBLE);
+            phone_big_text.setVisibility(View.VISIBLE);
+            photo.setVisibility(View.VISIBLE);
+
+        }
+        if(state.equals("assigned")){
+            date.setVisibility(View.VISIBLE);
+            id.setVisibility(View.VISIBLE);
+
+            name_small.setVisibility(View.VISIBLE);
+            name_small_text.setVisibility(View.VISIBLE);
+            address_small.setVisibility(View.VISIBLE);
+            address_small_text.setVisibility(View.VISIBLE);
+            phone_small.setVisibility(View.VISIBLE);
+            phone_small_text.setVisibility(View.VISIBLE);
+            note_small.setVisibility(View.VISIBLE);
+            note_small_text.setVisibility(View.VISIBLE);
+
+            deliveryTime.setVisibility(View.VISIBLE);
+            state_tv.setVisibility(View.VISIBLE);
+
+            address_big.setVisibility(View.VISIBLE);
+            name_big.setVisibility(View.VISIBLE);
+            address_big.setVisibility(View.VISIBLE);
+            address_big_text.setVisibility(View.VISIBLE);
+            phone_big.setVisibility(View.VISIBLE);
+            phone_big_text.setVisibility(View.VISIBLE);
+            photo.setVisibility(View.VISIBLE);
+        }
+
+        if(state.equals("delivered")){
+            date.setVisibility(View.VISIBLE);
+            id.setVisibility(View.VISIBLE);
+
+            name_small.setVisibility(View.VISIBLE);
+            name_small_text.setVisibility(View.VISIBLE);
+            address_small.setVisibility(View.VISIBLE);
+            address_small_text.setVisibility(View.VISIBLE);
+            phone_small.setVisibility(View.VISIBLE);
+            phone_small_text.setVisibility(View.VISIBLE);
+            note_small.setVisibility(View.VISIBLE);
+            note_small_text.setVisibility(View.VISIBLE);
+
+            deliveryTime.setVisibility(View.VISIBLE);
+            state_tv.setVisibility(View.VISIBLE);
+
+            address_big.setVisibility(View.VISIBLE);
+            name_big.setVisibility(View.VISIBLE);
+            address_big.setVisibility(View.VISIBLE);
+            address_big_text.setVisibility(View.VISIBLE);
+            phone_big.setVisibility(View.VISIBLE);
+            phone_big_text.setVisibility(View.VISIBLE);
+            photo.setVisibility(View.VISIBLE);
+        }
+
+        //}
+
+
     }
+
+    private void removeAllVisibility(){
+        card_avaible.setVisibility(GONE);
+
+        name_big.setVisibility(GONE);
+
+        address_big.setVisibility(GONE);
+        address_big_text.setVisibility(GONE);
+        phone_big.setVisibility(GONE);
+        phone_big_text.setVisibility(GONE);
+
+        photo.setVisibility(GONE);
+
+        name_small.setVisibility(GONE);
+        name_small_text.setVisibility(GONE);
+        address_small.setVisibility(GONE);
+        address_small_text.setVisibility(GONE);
+        phone_small.setVisibility(GONE);
+        phone_small_text.setVisibility(GONE);
+        note_small.setVisibility(GONE);
+        note_small_text.setVisibility(GONE);
+
+        deliveryTime.setVisibility(GONE);
+        confirmButton.setVisibility(GONE);
+        waiting_confirm.setVisibility(GONE);
+
+        state_tv.setVisibility(GONE);
+
+        acceptButton.setVisibility(GONE);
+        rejectButton.setVisibility(GONE);
+        accept_question.setVisibility(GONE);
+
+        date.setVisibility(GONE);
+        id.setVisibility(GONE);
+    }
+
 }

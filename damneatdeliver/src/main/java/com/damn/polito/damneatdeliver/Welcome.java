@@ -192,6 +192,9 @@ public class Welcome extends AppCompatActivity {
                 //b.setEnabled(true);
                 storeData(user);
                 profile = null;
+                if (currentFragment != null)
+                    if(selectedId == R.id.nav_current)
+                        currentFragment.checkRegistered();
                 if(profileRef!=null && v!=null)
                     profileRef.removeEventListener(v);
                 loadProfile();
