@@ -96,9 +96,9 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         //navigation.setSelectedItemId(R.id.nav_restaurant);
         database = FirebaseDatabase.getInstance();
         
-        if(Utility.firstON) {
+        /*if(Utility.firstON) {
             database.setPersistenceEnabled(true);
-        }
+        }*/
 
         addNotificationBadge();
     }

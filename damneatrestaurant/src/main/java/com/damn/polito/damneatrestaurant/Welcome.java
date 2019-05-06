@@ -96,9 +96,9 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         fragmentManager = getSupportFragmentManager();
         //navigation.setSelectedItemId(R.id.nav_dishes);
         database = FirebaseDatabase.getInstance();
-        if(Utility.firstON) {
+        /*if(Utility.firstON) {
             database.setPersistenceEnabled(true);
-        }
+        }*/
 
         addNotificationBadge();
     }

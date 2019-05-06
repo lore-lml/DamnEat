@@ -21,6 +21,7 @@ import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,8 +48,10 @@ public class OrderFragment extends Fragment {
     private Context ctx;
     private String key;
     private FirebaseDatabase database;
-    private DatabaseReference dbRef;
+    private DatabaseReference dbRef, delFreeRef;
     private List<Dish> dishes= new ArrayList<>();
+    private List<String> deliverersFree = new ArrayList<>();
+    private ChildEventListener delFreeListener;
 
     @Nullable
     @Override
@@ -68,6 +71,7 @@ public class OrderFragment extends Fragment {
         recyclerView = view.findViewById(R.id.orders_recyclerview);
         layoutManager = new LinearLayoutManager(ctx);
         recyclerView.setLayoutManager(layoutManager);
+        initFreeDeliveresListener();
 
         // OTTENGO L'ID DALLE SHARED PREF
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -95,43 +99,26 @@ public class OrderFragment extends Fragment {
                         dbOrder.setValue("rejected");
                         Toast.makeText(ctx, R.string.no_customer_info, Toast.LENGTH_LONG).show();
                     }else {
-
                         Log.d("tmz", "pressed find deliverer");
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        List<String> deliverers_keys = new ArrayList<>();
+
                         DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
+                        StringBuilder delivererKey = new StringBuilder();
                         dbRef.runTransaction(new Transaction.Handler() {
                             @NonNull
                             @Override
                             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                return Transaction.success(mutableData);
-                            }
 
-                            @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-                            }
-                        });
-                        dbRef.runTransaction(new Transaction.Handler() {
-                            @NonNull
-                            @Override
-                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                for (MutableData child : mutableData.getChildren()) {
-                                    if (child != null) {
-                                        String s = child.getValue(String.class);
-                                        deliverers_keys.add(s);
-                                    }
-                                }
-                                if (deliverers_keys.isEmpty())
+                                if (deliverersFree.isEmpty())
                                     return Transaction.abort();
 
-                                String delivererKey = deliverers_keys.get(0);
+                                delivererKey.append(deliverersFree.get(0));
 
 
                                 for (MutableData child : mutableData.getChildren()) {
-                                    if (child != null) {
+                                    if (child.getValue() != null) {
                                         String s = child.getValue(String.class);
-                                        if (s.equals(delivererKey)) {
+                                        if (s!= null && s.equals(delivererKey.toString())) {
                                             mutableData.child(s).setValue(null);
                                             Log.d("tmz", "eliminate"+s);
                                             return Transaction.success(mutableData);
@@ -144,14 +131,13 @@ public class OrderFragment extends Fragment {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                                 if (b) {
-                                    String delivererKey = deliverers_keys.get(0);
-                                    if (delivererKey == null) {
+                                    if (delivererKey.toString().isEmpty()) {
                                         DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                                         dbOrder.setValue("rejected");
                                         Toast.makeText(ctx, R.string.no_availabity, Toast.LENGTH_LONG).show();
                                         return;
                                     }
-                                    refreshAvailabityAndAccept(position, delivererKey);
+                                    refreshAvailabityAndAccept(position, delivererKey.toString());
                                 } else {
                                     DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                                     dbOrder.setValue("rejected");
@@ -195,6 +181,38 @@ public class OrderFragment extends Fragment {
         }
 
 
+    }
+
+    private void initFreeDeliveresListener() {
+        delFreeRef = FirebaseDatabase.getInstance().getReference("/deliverers_liberi/");
+        delFreeListener = delFreeRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue() != null)
+                    deliverersFree.add(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null)
+                    deliverersFree.remove(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

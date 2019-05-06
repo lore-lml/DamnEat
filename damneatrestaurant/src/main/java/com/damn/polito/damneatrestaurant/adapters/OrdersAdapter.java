@@ -190,6 +190,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private CardView root;
         private Button findDeliverer, setAsShipped, setAsRejected;
         private CircleImageView deliverer_image;
+
         public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener, OnButtonShippedClickListener bShipListener, OnButtonRejectedClickListener bRejectedListener) {
             super(itemView);
 
