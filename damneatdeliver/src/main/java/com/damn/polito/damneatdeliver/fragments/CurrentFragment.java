@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +43,7 @@ public class CurrentFragment extends Fragment {
     private TextView id,date, state_tv ,price,nDish, deliveryTime, name_big, address_big_text, phone_big_text, address_big, phone_big, waiting_confirm, accept_question;
     private TextView name_small, address_small, phone_small, note_small;
     private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
+    private ConstraintLayout id_shipped;
 
     private CardView root, card_order, card_order_message, card_order_quest, card_avaible, card_small;
     private ImageView photo;
@@ -85,6 +88,7 @@ public class CurrentFragment extends Fragment {
         phone_big_text = view.findViewById(R.id.phone_big_text);
         address_big = view.findViewById(R.id.address_big_tv);
         phone_big = view.findViewById(R.id.phone_big_tv);
+        id_shipped = view.findViewById(R.id.id_shipped);
 
         //SMALL TextView
         card_small = view.findViewById(R.id.card_small);
@@ -172,15 +176,7 @@ public class CurrentFragment extends Fragment {
             }
         });
 
-        if (!switch_available.isChecked()){
-            card_order.setVisibility(GONE);
-            card_small.setVisibility(GONE);
-            waiting_confirm.setVisibility(GONE);
-        } else {
-            card_order.setVisibility(View.VISIBLE);
-            card_small.setVisibility(View.VISIBLE);
-            waiting_confirm.setVisibility(View.VISIBLE);
-        }
+
 
 
         update();
@@ -198,12 +194,12 @@ public class CurrentFragment extends Fragment {
             notRegistered();
         }
 
-        if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
+        if((currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")) && switch_available.isChecked()){
             date.setVisibility(GONE);
             id.setVisibility(GONE);
             card_avaible.setVisibility(View.VISIBLE);
             confirmButton.setVisibility(GONE);
-            name_small.setVisibility(GONE);
+            card_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(GONE);
             address_small.setVisibility(GONE);
             address_small_text.setVisibility(GONE);
@@ -229,7 +225,37 @@ public class CurrentFragment extends Fragment {
             notRegistered();
             return;
 
-        }else {
+        }else if((currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")) && !switch_available.isChecked()) {
+            date.setVisibility(GONE);
+            id.setVisibility(GONE);
+            card_avaible.setVisibility(View.VISIBLE);
+            confirmButton.setVisibility(GONE);
+            card_small.setVisibility(GONE);
+            name_small_text.setVisibility(GONE);
+            address_small.setVisibility(GONE);
+            address_small_text.setVisibility(GONE);
+            phone_small.setVisibility(GONE);
+            phone_small_text.setVisibility(GONE);
+            note_small.setVisibility(GONE);
+            note_small_text.setVisibility(GONE);
+            deliveryTime.setVisibility(GONE);
+            confirmButton.setVisibility(GONE);
+            address_big.setVisibility(GONE);
+            name_big.setVisibility(GONE);
+            address_big.setVisibility(GONE);
+            address_big_text.setVisibility(GONE);
+            phone_big.setVisibility(GONE);
+            phone_big_text.setVisibility(GONE);
+            waiting_confirm.setVisibility(GONE);
+            photo.setVisibility(GONE);
+            acceptButton.setVisibility(GONE);
+            rejectButton.setVisibility(GONE);
+            accept_question.setVisibility(GONE);
+            state_tv.setVisibility(GONE);
+            waiting_confirm.setText(ctx.getString(R.string.waiting_order));
+            notRegistered();
+            return;
+        } else {
             card_avaible.setVisibility(GONE);
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
