@@ -98,9 +98,11 @@ public class OrderFragment extends Fragment {
             }
         });
 
-        Collections.sort(orderList,
-                (a,b)->b.getDate().compareTo(a.getDate()));
-        adapter.notifyDataSetChanged();
+        if (!orderList.isEmpty()) {
+            Collections.sort(orderList,
+                    (a, b) -> b.getDate().compareTo(a.getDate()));
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void getOrderFirebase(String key){

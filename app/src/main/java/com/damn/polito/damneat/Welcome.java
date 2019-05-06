@@ -82,7 +82,7 @@ public class Welcome extends AppCompatActivity {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
-        //navigation.setSelectedItemId(R.id.nav_restaurant);
+        navigation.setSelectedItemId(R.id.nav_restaurant);
         database = FirebaseDatabase.getInstance();
         
         if(Utility.firstON) {
@@ -182,7 +182,7 @@ public class Welcome extends AppCompatActivity {
 
     private void storeProfile(Profile profile){
         accountExist = true;
-        navigation.setSelectedItemId(R.id.nav_restaurant);
+        //navigation.setSelectedItemId(R.id.nav_restaurant);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         editor.putString("address", profile.getAddress());
