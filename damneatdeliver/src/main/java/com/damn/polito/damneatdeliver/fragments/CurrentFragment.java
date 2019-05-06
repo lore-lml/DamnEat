@@ -125,7 +125,7 @@ public class CurrentFragment extends Fragment {
         confirmButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                orderState.setValue("confirmed");
+                orderState.setValue("delivered");
             }
         });
 
@@ -341,18 +341,14 @@ public class CurrentFragment extends Fragment {
         if(currentOrder.getState().equals("confirmed")){
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
-            Order o = new Order();
-            o.setState("empty");
-            orderRef.setValue(o);
+            orderRef.setValue("0");
 
         }
 
         if(currentOrder.getState().equals("rejected")){
             Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
-            Order o = new Order();
-            o.setState("empty");
-            orderRef.setValue(o);
+            orderRef.setValue("0");
         }
 
 //        if(currentOrder.getState().equals("ordered")){
