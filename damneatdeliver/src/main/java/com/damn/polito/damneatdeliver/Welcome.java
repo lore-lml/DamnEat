@@ -100,6 +100,10 @@ public class Welcome extends AppCompatActivity {
     }
 
     public static boolean registered() {
+        if(profile!=null)
+            logged = true;
+        else
+            logged = false;
         return logged;
     }
 
@@ -183,7 +187,9 @@ public class Welcome extends AppCompatActivity {
                 //set button signout
                 //b.setEnabled(true);
                 storeData(user);
-
+                profile = null;
+                loadProfile();
+                //if(selectedId == R.id.nav_current)
             }
             else{
                 String error = null;
@@ -219,8 +225,12 @@ public class Welcome extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 profile = dataSnapshot.getValue(Profile.class);
-                if(profile!=null)
+                if(profile==null)
                     logged = true;
+                else
+                    logged = true;
+                if(currentFragment!=null)
+                    currentFragment.update();
             }
 
             @Override
