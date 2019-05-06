@@ -197,7 +197,8 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        myRef.removeEventListener(listener);
+        if (myRef != null)
+            myRef.removeEventListener(listener);
     }
 
     private void deleteShared(){
