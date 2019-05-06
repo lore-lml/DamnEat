@@ -342,6 +342,7 @@ public class CurrentFragment extends Fragment {
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
             orderRef.setValue("0");
+            setVisibility("empty");
 
         }
 
@@ -349,6 +350,8 @@ public class CurrentFragment extends Fragment {
             Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
             orderRef.setValue("0");
+            setVisibility("empty");
+
         }
 
 //        if(currentOrder.getState().equals("ordered")){
