@@ -183,7 +183,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     private void storeProfile(Profile profile){
         accountExist = true;
-        navigation.setSelectedItemId(R.id.nav_restaurant);
+        if(selectedId == null)
+            navigation.setSelectedItemId(R.id.nav_restaurant);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         editor.putString("address", profile.getAddress());
