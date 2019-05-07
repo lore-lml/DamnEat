@@ -1,9 +1,24 @@
 <resources>
     <string name="app_name" translatable="false">DamnEat</string>
     <string name="profile_address">Address</string>
-    <string name="add_to_chart">Add to chart</string>
+    <string name="add_to_chart">Add</string>
     <string name="dish_added">Dish added to your shopping cart</string>
-    <string name="confirm_order">Confirm order</string>
     <string name="dishes_list">Dishes list</string>
     <string name="price">Price</string>
+    <string name="no_dishes">This restaurant has no dishes yet</string>
+    <string name="order_error">Order error</string>
+    <string name="order_succesfull">Order successfully completed</string>
+    <string name="ship">Delivery cost</string>
+    <string name="cart_empty">Cart empty</string>
+
+    <string name="restaurant">Restaurant:\n %s</string>
+    <string name="confirmOrder">Confirm delivered</string>
+    <string name="confirm_order">Confirm order</string>
+    <string name="delivery_time">Delivery time: %s</string>
+    <string name="state">State:</string>
+    <string name="dialog_time">Delivery time</string>
+    <string name="sort_alpha">Sort alphabetically</string>
+    <string name="sort_pricerangeasc">Sort by price range ascendent</string>
+    <string name="sort_pricerangedesc">Sort by price range descendent</string>
+    <string name="sort_mostrated">Sort most rated</string>
 </resources>

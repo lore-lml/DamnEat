@@ -3,9 +3,11 @@ package com.damn.polito.damneatrestaurant.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,9 +24,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.commonresources.beans.Dish;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -38,12 +44,24 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     private boolean select_dishes_layout;
     private Bitmap default_image;
     private OnLongItemClickListener mLongListener;
+    private Restaurant restaurant = new Restaurant();
 
     public DishesAdapter(Context context, List<Dish> dishesList, boolean select_dishes_layout) {
         this.dishesList = dishesList;
         this.context = context;
         default_image = BitmapFactory.decodeResource(context.getResources(),R.drawable.dishes_empty);
         this.select_dishes_layout = select_dishes_layout;
+
+        // OTTENGO LA MAIL DALLE SHARED PREF
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String s = pref.getString("dbkey", null);
+        if (s != null) {
+
+
+                String key = stringOrDefault(s);
+                restaurant.setRestaurantID(key);
+
+        }
     }
 
     public interface OnLongItemClickListener { void onLongItemClick(int position); }
@@ -63,29 +81,29 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
         Dish selected = dishesList.get(index);
         boolean editMode = selected.EditMode();
-        /*GESTIRE IN FASE DI LOAD*/
-        /*if(!selected.DishOtd() && !allDishes){
-            viewHolder.parentLayout.setVisibility(View.GONE);
-            return;
-        }*/
 
         //viewHolder.image.setImageBitmap(selected.getImage());
         viewHolder.name.setText(selected.getName());
         viewHolder.description.setText(selected.getDescription());
         viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
         viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
+
         if(!(selected.getPhoto().equals("NO_PHOTO"))){
-            viewHolder.image.setImageBitmap(selected.PhotoBmp());
+            viewHolder.image.setImageBitmap(Utility.StringToBitMap(selected.getPhoto()));
         }else {
             viewHolder.image.setImageBitmap(default_image);
         }
         //viewHolder.parentLayout.setOnClickListener(v -> Toast.makeText(context, selected.getName(), Toast.LENGTH_SHORT).show());
         if(select_dishes_layout && !editMode){
-            viewHolder.selected_switch.setChecked(selected.DishOtd());
+            viewHolder.selected_switch.setChecked(selected.isDishOtd());
             viewHolder.selected_switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 selected.setDishOtd(isChecked);
+                if(isChecked)
+                    saveDish(selected);
+                else
+                    deleteDish(selected);
                 Log.d("Switch", "Ha cambiato valore a " + isChecked);
-                ((SelectDishes)context).storeData();
+                //((SelectDishes)context).storeData();
             });
         }
 
@@ -102,7 +120,15 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
                     viewHolder.description.setText(selected.getDescription());
                     viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
                     viewHolder.quantity.setText((String.valueOf(selected.getAvailability())));
-                    ((SelectDishes)context).storeData();
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    String dishId = selected.getId();
+                    DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/" + dishId + "/");
+                    dbRef.setValue(selected);
+                    if(selected.isDishOtd()){
+                        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dishId + "/");
+                        dbRef.setValue(selected);
+                    }
+                    //((SelectDishes)context).storeData();
                 }
             });
             viewHolder.edit_img.setOnClickListener(v -> {itemGallery(index);});
@@ -292,4 +318,31 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         ((Activity)context).startActivityForResult(intent, 2000+index);
     }
 
+    private void saveDish(Dish dish){
+        String dishId = dish.getId();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef;
+        if(dish.isDishOtd()) {
+            dbRef = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/piatti_del_giorno/" + dishId + "/");
+            dbRef.setValue(dish);
+        }
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/"+ dishId +"/dishOtd/");
+        dbRef.setValue(true);
+    }
+
+    private void deleteDish(Dish dish){
+        String dishId = dish.getId();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/" + dishId + "/");
+        dbRef.removeValue();
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_totali/"+ dishId +"/dishOtd/");
+        dbRef.setValue(false);
+    }
+
+    public String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
+    }
+
 }
+

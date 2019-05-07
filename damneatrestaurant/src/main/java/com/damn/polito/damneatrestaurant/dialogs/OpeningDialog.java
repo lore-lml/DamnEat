@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.DayOfTheWeekAdapter;
 import com.damn.polito.damneatrestaurant.beans.DayOfTheWeek;
@@ -86,6 +87,8 @@ public class OpeningDialog extends DialogFragment {
                 if(slots.size() == 2) {
                     String[] ss = slots.get(1).split("\\s+");
                     d.setSecondTimeSlot(ss[0], ss[1]);
+                }else{
+                    d.setSecondTimeSlot("", "");
                 }
             }
         }
@@ -106,7 +109,6 @@ public class OpeningDialog extends DialogFragment {
     }
 
     private List<DayOfTheWeek> load(){
-        List<DayOfTheWeek> days = new ArrayList<>();
         /*String t = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("days", null);
         if(t != null){
             try {
@@ -115,32 +117,15 @@ public class OpeningDialog extends DialogFragment {
                     JSONObject json = array.getJSONObject(i);
                     days.add(new DayOfTheWeek(json));
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }*/
         if(text != null && !text.isEmpty()){
-            String[] t = text.split("\n");
-            for(String line : t){
-                String[] field = line.split("\\s+");
-                String d = field[0].substring(0,field[0].length()-1);
-                if(field[1].equalsIgnoreCase("closed")){
-                    days.add(new DayOfTheWeek(d, true));
-                }else{
-                    String[] fs = field[1].split("-");
-                    String open2=null, close2=null;
-                    if(field.length == 3) {
-                        String[] ss = field[2].split("-");
-                        open2 = ss[0];
-                        close2 = ss[1];
-                    }
-                    days.add(new DayOfTheWeek(d, false, fs[0], fs[1], open2, close2));
-                }
-            }
+            return DayOfTheWeek.listOfDays(text);
         }
 
-        return days;
+        return new ArrayList<>();
     }
 
     private void initDays() {
@@ -167,7 +152,7 @@ public class OpeningDialog extends DialogFragment {
             for(DayOfTheWeek d : days)
                 sb.append(d.toString()).append("\n");
 
-            ((HandleDismissDialog) activity).handleOnDismiss(sb.toString());
+            ((HandleDismissDialog) activity).handleOnDismiss(EditProfile.DialogType.Opening, sb.toString());
         }
     }
 

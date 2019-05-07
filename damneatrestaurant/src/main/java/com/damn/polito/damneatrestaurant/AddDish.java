@@ -20,6 +20,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.damneatrestaurant.beans.Profile;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -141,9 +153,49 @@ public class AddDish extends AppCompatActivity {
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("price", price.getText().toString().trim());
         i.putExtra("availabity", availabity.getText().toString().trim());
-        if(dishImg != null){
+        if (dishImg != null) {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("dish_photo", BitMapToString(dishImg)).apply();
+        }
+
+        //
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String s = pref.getString("dbkey", null);
+        if (s != null) {
+
+
+                //CARICO I DATI DA FIREBASE, di ciò che è salvato nelle shared al momento
+                // viene usata solamete la mail, in modo che la pagina possa essere chiamata
+                // automaticamente
+
+                //
+                String key = stringOrDefault(s);
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("ristoranti/" + key+"/piatti_totali").push();
+                String id = myRef.getKey();
+                if (dishImg != null) {
+                    Dish d = new Dish(name.getText().toString().trim(),
+                            description.getText().toString().trim(),
+                            Float.parseFloat(price.getText().toString().trim()),
+                            Integer.parseInt(availabity.getText().toString().trim()),
+                            BitMapToString(dishImg));
+                    myRef.setValue(d);
+                }
+                else {
+                    Dish d = new Dish(name.getText().toString().trim(),
+                            description.getText().toString().trim(),
+                            Float.parseFloat(price.getText().toString().trim()),
+                            Integer.parseInt(availabity.getText().toString().trim()));
+                    myRef.setValue(d);
+                }
+
+
+
+
+            //
+
+
         }
         return i;
     }
@@ -174,10 +226,7 @@ public class AddDish extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(checkChanges())
-                    showWarning(this, checkField(), getActivityResult());
-                else
-                    this.finish();
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -186,30 +235,26 @@ public class AddDish extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(checkChanges())
-            // Facciamo comparire il messagio solo se sono stati cambiati dei campi
-            showWarning(this, checkField(), getActivityResult());
-        else
-            this.finish();
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
-    private boolean checkChanges() {
+    /*private boolean checkChanges() {
         String name = this.name.getText().toString();
         if(!name.equals(""))
             return true;
 
-        String mail = this.description.getText().toString();
-        if(!(mail.equals("")))
-            return true;
-
-        String description = this.price.getText().toString();
+        String description = this.description.getText().toString();
         if(!(description.equals("")))
             return true;
 
-        String address = this.availabity.getText().toString();
-        return (!(address.equals("")));
+        String price = this.price.getText().toString();
+        if(!(price.equals("")))
+            return true;
 
-    }
+        String availability = this.availabity.getText().toString();
+        return (!(availability.equals("")));
+    }*/
 
     private boolean checkField() {
         String name = this.name.getText().toString();
@@ -227,17 +272,6 @@ public class AddDish extends AppCompatActivity {
             return false;
         }
 
-        String availabity = this.availabity.getText().toString();
-        if(availabity.trim().isEmpty()){
-            Toast.makeText(this, getString(R.string.empty_availabity), Toast.LENGTH_SHORT).show();
-            this.availabity.requestFocus();
-            return false;
-        }
-        if(Integer.parseInt(availabity)<0){
-            Toast.makeText(this, getString(R.string.availabity_too_low), Toast.LENGTH_SHORT).show();
-            this.availabity.requestFocus();
-            return false;
-        }
         String price = this.price.getText().toString();
         if(price.trim().isEmpty()){
             Toast.makeText(this, getString(R.string.empty_price), Toast.LENGTH_SHORT).show();
@@ -250,9 +284,24 @@ public class AddDish extends AppCompatActivity {
             return false;
         }
 
-
+        String availabity = this.availabity.getText().toString();
+        if(availabity.trim().isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_availabity), Toast.LENGTH_SHORT).show();
+            this.availabity.requestFocus();
+            return false;
+        }
+        if(Integer.parseInt(availabity)<0){
+            Toast.makeText(this, getString(R.string.availabity_too_low), Toast.LENGTH_SHORT).show();
+            this.availabity.requestFocus();
+            return false;
+        }
 
         return true;
+    }
+
+
+    public String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
     }
 
 

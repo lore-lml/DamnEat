@@ -30,8 +30,9 @@
     <string name="sab_text">SAT</string>
     <string name="dom_text">SUN</string>
     <string name="nav_dishes">Dishes</string>
-    <string name="nav_reservations">Reservations</string>
+    <string name="nav_reservations">Orders</string>
     <string name="nav_profile">Profile</string>
+    <string name="nav_restaurant">Restaurants</string>
     <string name="dish_available">Available:</string>
     <string name="dish_name">Dish name</string>
     <string name="dish_price">Dish price</string>
@@ -39,7 +40,7 @@
     <string name="profile_opening">Opening hours</string>
     <string name="profile_phone">Phone number</string>
     <string name="title_activity_select_menu">Select Menu</string>
-    <string name="order_id">Order ID: #%d</string>
+    <string name="order_id_s">Order ID: %s</string>
     <string name="order_num_dishes"># Dishes: %d</string>
     <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
@@ -49,7 +50,7 @@
     <string name="invalid_phone">Invalid phone number</string>
     <string name="close">"Close "</string>
     <string name="empty_price">No price has been inserted</string>
-    <string name="empty_availabity">No availabity has been inserted</string>
+    <string name="empty_availabity">No availability has been inserted</string>
     <string name="price_too_low">Price must be positive</string>
     <string name="availabity_too_low">Availabity must be positive or null</string>
     <string name="context_delete">Delete</string>
@@ -57,10 +58,60 @@
     <string name="second_text">2nd</string>
     <string name="first_text">1st</string>
     <string name="slot_text" translatable="false">Slot</string>
-    <string name="order_customer">Customer:\n%s</string>
+    <string name="order_customer">Customer:</string>
+    <string name="string" translatable="false">%s</string>
+    <string name="order_restaurant_name" translatable="false">%s</string>
+    <string name="order_restaurant_address" translatable="false">%s</string>
+
 
     <string name="undo_string">Undo</string>
     <string name="dish_deletted">Dish deleted</string>
     <string name="invalid_slot">%s should at least have a time slot!</string>
     <string name="open">Open</string>
+    <string name="price_free">Free</string>
+    <string name="restaurant_reviews" translatable="false">(%d)</string>
+    <string name="menu_search">Search</string>
+    <string name="offline_warning">You are Offline\nCheck your internet connection</string>
+    <string name="ship">Ship</string>
+    <string name="insert_note">Do you have any recommendation?</string>
+    <string name="oreder_time">Time</string>
+    <string name="summary_ship">Ship price:</string>
+    <string name="summary_dish">Dishes:</string>
+    <string name="summary_total">Total:</string>
+    <string name="category_cuisine">Cuisine</string>
+    <string name="category_price">Price range</string>
+    <string name="cuisine_italian">Italian</string>
+    <string name="cuisine_greek">Greek</string>
+    <string name="cuisine_mexican">Mexican</string>
+    <string name="cuisine_japanese">Japanese</string>
+    <string name="cuisine_chinese">Chinese</string>
+    <string name="cuisine_other">Other</string>
+    <string name="cuisine_new">Your cuisine</string>
+    <string name="dish_hamburger" translatable="false">Hamburger</string>
+    <string name="dish_pizza" translatable="false">Pizza</string>
+    <string name="dish_sandwich">Sandwich</string>
+    <string name="dish_sushi" translatable="false">Sushi</string>
+    <string name="dish_new">Your dish</string>
+    <string name="dish_starter">Starter</string>
+    <string name="dish_tacos" translatable="false">Tacos</string>
+    <string name="dish_meat">Meat</string>
+    <string name="dish_others">Others</string>
+    <string name="restaurant_category">Categories</string>
+    <string name="empty_categories">No categories have been inserted</string>
+    <string name="time_asap">As soon as possible</string>
+    <string name="disconnect">disconnect</string>
+    <string name="logout_error">Logout error</string>
+    <string name="login_error">Login error</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="ordered">Ordered</string>
+    <string name="delivered">Delivered</string>
+    <string name="note" translatable="false">Note: %s</string>
+    <string name="shipped">Shipped</string>
+    <string name="assigned">Assigned</string>
+    <string name="accepted">Accepted</string>
+    <string name="confirmed">Completed</string>
+    <string name="rejected">Rejected</string>
+    <string name="not_registered">You have to fill the profile to place an order.</string>
+
 </resources>

@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_address">Indirizzo</string>
-    <string name="add_to_chart">Aggiungi al carrello</string>
+    <string name="add_to_chart">Aggiungi</string>
     <string name="dish_added">Piatto aggiunto al carrello</string>
-    <string name="confirm_order">Conferma ordine</string>
     <string name="dishes_list">Lista piatti</string>
     <string name="price">Prezzo</string>
+    <string name="no_dishes">Il ristorante non ha ancora piatti disponibili</string>
+    <string name="order_error">Errore nell\'effettuare l\'ordine</string>
+    <string name="order_succesfull">Ordine effettuato</string>
+    <string name="cart_empty">Carrello vuoto</string>
+    <string name="restaurant">Ristorante:\n %s</string>
+    <string name="confirmOrder">Conferma consegna</string>
+    <string name="delivery_time">Ora di consegna: %s</string>
+    <string name="ship">Costo di spedizione</string>
+    <string name="state">Stato:</string>
+    <string name="confirm_order">Conferma ordine</string>
+    <string name="dialog_time">Ora di consegna</string>
+    <string name="sort_alpha">Ordine alfabetico</string>
+    <string name="sort_pricerangeasc">Ordine fascia di prezzo più bassa</string>
+    <string name="sort_mostrated">Ordine migliore valutazione</string>
+    <string name="sort_pricerangedesc">Ordine fascia di prezzo più alta</string>
 </resources>

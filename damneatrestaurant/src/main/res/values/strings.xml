@@ -1,40 +1,19 @@
 <resources>
-    <string name="app_name">DamnEat - Restaurant</string>
+    <string name="app_name" translatable="false">DamnEat - Restaurant</string>
     <string name="profile_restaurant_address">Restaurant address</string>
-    <string name="profile_name">Restaurant name</string>
-    <string name="profile_address">Restaurant address</string>
-    <string name="nav_dishes">Dishes</string>
-    <string name="nav_reservations">Reservations</string>
-    <string name="nav_profile">Profile</string>
-    <string name="dish_available">Available:</string>
-    <string name="dish_name">Dish name</string>
-    <string name="dish_price">Dish price</string>
-    <string name="dish_availability">Dish availabity</string>
-    <string name="profile_opening">Opening hours</string>
-    <string name="profile_phone">Phone number</string>
-    <string name="title_activity_select_menu">Select Menu</string>
     <string name="order_id">Order ID: #%d</string>
-    <string name="order_num_dishes"># Dishes: %d</string>
-    <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
-    <string name="empty_phone">No phone number has been inserted</string>
-    <string name="empty_opening">No opening info has been inserted</string>
     <string name="phone_prefix" translatable="false">+39</string>
-    <string name="invalid_phone">Invalid phone number</string>
-    <string name="close">"Close "</string>
-    <string name="empty_price">No price has been inserted</string>
-    <string name="empty_availabity">No availabity has been inserted</string>
-    <string name="price_too_low">Price must be positive</string>
-    <string name="availabity_too_low">Availabity must be positive or null</string>
-    <string name="context_delete">Delete</string>
-    <string name="context_edit">Edit</string>
-    <string name="second_text">2nd</string>
-    <string name="first_text">1st</string>
     <string name="slot_text" translatable="false">Slot</string>
-    <string name="order_customer">Customer:\n%s</string>
 
-    <string name="undo_string">Undo</string>
-    <string name="dish_deletted">Dish deleted</string>
-    <string name="invalid_slot">%s should at least have a time slot!</string>
-    <string name="open">Open</string>
+    <string name="assign_deliverer">Find a deliverer</string>
+    <string name="not_registered">You have to fill the profile to add dishes.</string>
+    <string name="order_state">State:</string>
+    <string name="order_delivery_time">Delivery time: %s</string>
+    <string name="order_customer_info">Customer:</string>
+    <string name="set_as_shipped">Set as shipped</string>
+    <string name="set_as_rejected">Reject order</string>
+    <string name="no_free_deliverers">No free deliverers</string>
+    <string name="no_availabity">Quantity not available</string>
+    <string name="no_customer_info">No customer info</string>
 </resources>

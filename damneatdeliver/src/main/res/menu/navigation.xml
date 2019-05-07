@@ -7,6 +7,11 @@
         android:title="@string/nav_reservations" />
 
     <item
+        android:id="@+id/nav_current"
+        android:icon="@drawable/ic_current"
+        android:title="@string/nav_current" />
+
+    <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_person"
         android:title="@string/nav_profile" />

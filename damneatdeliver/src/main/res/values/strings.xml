@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">DamnEat - Deliver</string>
-    <string name="profile_restaurant_address">Resturant address</string>
+    <string name="profile_restaurant_address">Restaurant address</string>
     <string name="profile_name">Name</string>
     <string name="profile_address">Address</string>
     <string name="nav_reservations">Reservations</string>
@@ -12,7 +12,7 @@
     <string name="profile_opening">Opening hours</string>
     <string name="profile_phone">Phone number</string>
     <string name="title_activity_select_menu">Select Menu</string>
-    <string name="order_id">Order ID: #%d</string>
+    <string name="order_id">Order ID: #%s</string>
     <string name="order_num_dishes"># Dishes: %d</string>
     <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
@@ -29,10 +29,43 @@
     <string name="second_text">2nd</string>
     <string name="first_text">1st</string>
     <string name="slot_text" translatable="false">Slot</string>
-    <string name="order_customer">Customer:\n%s</string>
+    <string name="order_customer">Customer</string>
+    <string name="order_restaurant">Restaurant</string>
 
     <string name="undo_string">Undo</string>
     <string name="dish_deletted">Dish deleted</string>
     <string name="invalid_slot">%s should at least have a time slot!</string>
     <string name="confirmOrder">Delivered</string>
+    <string name="delivery_time">%s</string>
+    <string name="refuseOrder">NO</string>
+    <string name="acceptOrder">YES</string>
+    <string name="nav_current">Current</string>
+    <string name="restaurant">Restaurant:\n %s</string>
+        <string name="order_available">AVAILABLE</string>
+    <string name="order_message">Waiting for a order...</string>
+    <string name="customer_name">Customer name:</string>
+    <string name="customer_address">Customer address:</string>
+    <string name="phone">Phone</string>
+    <string name="note">Note:</string>
+    <string name="restaurant_phone">Restaurant phone:</string>
+    <string name="restaurant_address">Restaurant address:</string>
+    <string name="state">State: %s</string>
+    <string name="customer_phone">Customer phone:</string>
+    <string name="restaurant_name">Restaurant name:</string>
+    <string name="confirm_delivery">Confirm delivery</string>
+    <string name="delivery_time_tv">Delivery time: %s</string>
+    <string name="order_completed">Order completed</string>
+    <string name="waiting_customer_confirm">Waiting customer confirm</string>
+    <string name="waiting_order">Waiting order</string>
+    <string name="reject">Reject</string>
+    <string name="Accept">Accept</string>
+    <string name="accept_question">Do you want accept delivery?</string>
+    <string name="order_rejected">Order rejected</string>
+    <string name="assigned">Assigned</string>
+    <string name="state_empty">empty</string>
+    <string name="state_ordered">ordered</string>
+    <string name="state_delivered">delivered</string>
+    <string name="state_assigned">assigned</string>
+    <string name="state_accepted">accepted</string>
+    <string name="state_shipped">shipped</string>
 </resources>

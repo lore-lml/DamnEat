@@ -2,8 +2,10 @@ package com.damn.polito.damneatrestaurant.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -16,13 +18,21 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
 import com.damn.polito.commonresources.beans.Dish;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.damn.polito.commonresources.Utility.BitMapToString;
+
 public class DishesFragment extends Fragment {
 
     private List<Dish> dishesList = new ArrayList<>();
@@ -45,7 +57,12 @@ public class DishesFragment extends Fragment {
     private DishesAdapter adapter;
     private FloatingActionButton fab;
     private Context ctx;
-    private String srcFile = "dishes.save";
+    private TextView registered_tv;
+    private ImageView registered_im;
+    //private String srcFile = "dishes.save";
+    private Restaurant restaurant = new Restaurant();
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
 
     @Nullable
     @Override
@@ -60,15 +77,34 @@ public class DishesFragment extends Fragment {
         AppCompatActivity activity = ((AppCompatActivity)getActivity());
         assert activity != null;
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.app_name);
-
+        registered_tv = view.findViewById(R.id.not_registered_tv);
+        registered_im = view.findViewById(R.id.not_registered_im);
         fab = view.findViewById(R.id.fab_add_dish);
-        dishesList.clear();
-        loadData();
+        //dishesList.clear();
+
+        // OTTENGO LA MAIL DALLE SHARED PREF
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String s = pref.getString("dbkey", null);
+        if (s != null) {
+
+
+                String key = stringOrDefault(s);
+                restaurant.setRestaurantID(key);
+
+
+        }
+
+        init();
+        //loadData();
         initReyclerView(view);
+        adapter.notifyDataSetChanged();
 
         fab.setOnClickListener(v-> {
-            Intent i = new Intent(view.getContext(), SelectDishes.class);
-            startActivityForResult(i, UPDATE_DISHES_OF_DAY);
+            if(userRegistered()) {
+                Intent i = new Intent(view.getContext(), SelectDishes.class);
+                startActivityForResult(i, UPDATE_DISHES_OF_DAY);
+            }else
+                Toast.makeText(ctx, R.string.not_registered, Toast.LENGTH_LONG).show();
         });
 
         /*adapter.setOnLongItemClickListener(position -> {
@@ -89,6 +125,33 @@ public class DishesFragment extends Fragment {
                 });
                 pop.show();
         });*/
+
+        if(!userRegistered()){
+            registered_tv.setVisibility(View.VISIBLE);
+            registered_im.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+
+        }else {
+            registered_tv.setVisibility(View.GONE);
+            registered_im.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean userRegistered() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        Log.d("shared addr", pref.getString("address", ""));
+        if(pref.getString("address", "").equals(""))
+            return false;
+
+        if(pref.getString("name", "").equals(""))
+            return false;
+
+        if(pref.getString("phone", "").equals(""))
+            return false;
+        Log.d("shared clientphone", pref.getString("clientphone", ""));
+
+        return !pref.getString("mail", "").equals("");
     }
 
     private void itemDelete() {
@@ -110,46 +173,76 @@ public class DishesFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        dishesList.clear();
-        loadData();
+        //dishesList.clear();
+        //loadData();
         adapter.notifyDataSetChanged();
     }
-
-    private void loadData() {
-        File f = new File(ctx.getFilesDir(), srcFile);
-        if(f.exists()) {
-            try {
-                FileInputStream fis = ctx.openFileInput(srcFile);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                Object o = ois.readObject();
-                if(o instanceof String){
-                    Log.d("loadData", (String) o);
-                    JSONArray array = new JSONArray((String) o);
-                    JSONObject values;
-                    for (int i=0; i<array.length(); i++) {
-                        values = array.getJSONObject(i);
-                        if(values.getBoolean("dotd")) {
-                            dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
-                            if (!values.get("photo").equals("NO_PHOTO")) {
-                                Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
-                                dishesList.get(dishesList.size()-1).setPhotoBmp(bmp);
-                            }
-                        }
-                    }
+//
+//    private void loadData() {
+//        File f = new File(ctx.getFilesDir(), srcFile);
+//        if(f.exists()) {
+//            try {
+//                FileInputStream fis = ctx.openFileInput(srcFile);
+//                ObjectInputStream ois = new ObjectInputStream(fis);
+//                Object o = ois.readObject();
+//                if(o instanceof String){
+//                    Log.d("loadData", (String) o);
+//                    JSONArray array = new JSONArray((String) o);
+//                    JSONObject values;
+//                    for (int i=0; i<array.length(); i++) {
+//                        values = array.getJSONObject(i);
+//                        if(values.getBoolean("dotd")) {
+//                            dishesList.add(new Dish(values.getString("name"), values.getString("description"), (float) values.getDouble("price"), values.getInt("available")));
+//                            if (!values.get("photo").equals("NO_PHOTO")) {
+//                                Bitmap bmp = Utility.StringToBitMap(values.getString("photo"));
+//                                dishesList.get(dishesList.size()-1).setPhotoBmp(bmp);
+//                            }
+//                        }
+//                    }
+//                }
+//                ois.close();
+//                fis.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+    private void init(){
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference("ristoranti/"+ restaurant.getRestaurantID() +"/piatti_del_giorno/");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String key;
+                Dish dish;
+                dishesList.clear();
+                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
+//                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
+//                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
+//                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
+                    key = chidSnap.getKey();
+                    dish = chidSnap.getValue(Dish.class);
+                    dishesList.add(dish);
+                    dishesList.get(dishesList.size()-1).setId(key);
                 }
-                ois.close();
-                fis.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
+                adapter.notifyDataSetChanged();
+                //Log.d("Load", dishesList.get(0).getName());
+
             }
-        }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
+
 //    private void loadData() {
 //        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 //        String s = pref.getString("dishes", null);
@@ -199,5 +292,8 @@ public class DishesFragment extends Fragment {
         }
 
 
+    }
+    public String stringOrDefault(String s) {
+        return (s == null || s.trim().isEmpty()) ? "" : s;
     }
 }

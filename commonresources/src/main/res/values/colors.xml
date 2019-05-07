@@ -22,7 +22,8 @@
     <color name="colorPrimaryDark">#c7a500</color>
     <color name="colorPrimaryLight">#ffff52</color>
     <color name="colorPrimaryCardView">#ffe24d</color>
-    <color name="colorAccent">#ff6659</color>
+    <color name="colorAccent">#FF6659</color>
+    <color name="colorGreen">#59FF66</color>
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#757575</color>
     <color name="hint">#88878b8d</color>
