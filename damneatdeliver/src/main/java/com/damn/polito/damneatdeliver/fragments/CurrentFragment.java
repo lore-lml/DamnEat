@@ -1,6 +1,7 @@
 package com.damn.polito.damneatdeliver.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.damneatdeliver.LocationActivity;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
@@ -49,7 +51,7 @@ public class CurrentFragment extends Fragment {
     private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
     private ConstraintLayout id_shipped;
 
-    private CardView root, card_order, card_order_message, card_order_quest, card_avaible, card_small;
+    private CardView root, card_order, card_avaible, card_small;
     private ImageView photo;
     private Button confirmButton, acceptButton, rejectButton;
     private Switch switch_available;
@@ -57,14 +59,11 @@ public class CurrentFragment extends Fragment {
 
     private Order currentOrder;
 
-    private boolean empty = true;
     private boolean registered = false;
-    private Map orders;
 
     private Profile prof;
 
     private FirebaseDatabase database;
-    private String key, defaultValue = "- -";
 
 
     @Nullable
@@ -117,7 +116,7 @@ public class CurrentFragment extends Fragment {
         acceptButton = view.findViewById(R.id.acceptOrder);
         rejectButton = view.findViewById(R.id.rejectOrder);
         switch_available = view.findViewById(R.id.available_switch);
-        card_order_message = view.findViewById(R.id.card_order_message);
+        card_order = view.findViewById(R.id.card_order);
         photo = view.findViewById(R.id.circleImageView);
 
         default_image = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.profile_sample);

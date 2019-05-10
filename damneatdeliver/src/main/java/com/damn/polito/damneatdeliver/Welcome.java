@@ -1,17 +1,29 @@
 package com.damn.polito.damneatdeliver;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Order;
@@ -59,23 +71,26 @@ public class Welcome extends AppCompatActivity {
     private static boolean logged;
     private static boolean isRegistered;
 
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
         Fragment selected = null;
         selectedId = item.getItemId();
         switch (selectedId) {
             case R.id.nav_reservations:
-                if(orderFragment == null)
+                if (orderFragment == null)
                     orderFragment = new OrderFragment();
                 selected = orderFragment;
                 break;
             case R.id.nav_current:
-                if(currentFragment == null)
+                if (currentFragment == null)
                     currentFragment = new CurrentFragment();
                 selected = currentFragment;
                 break;
             case R.id.nav_profile:
-                if(profileFragment == null)
+                if (profileFragment == null)
                     profileFragment = new ProfileFragment();
                 selected = profileFragment;
                 break;
@@ -97,13 +112,12 @@ public class Welcome extends AppCompatActivity {
     }
 
     public static boolean registered() {
-        if(profile!=null)
+        if (profile != null)
             logged = true;
         else
             logged = false;
         return logged;
     }
-
 
 
     @Override
@@ -124,7 +138,61 @@ public class Welcome extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
 
+        StartLocationManager();
 
+    }
+
+    private void StartLocationManager() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
+                DatabaseReference RefLat = database.getReference("/deliverers/" + Welcome.getKey() + "/Coordiante/Latitude");
+                RefLat.setValue(location.getLatitude());
+                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/Coordiante/Longitude");
+                RefLong.setValue(location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+                }, 1);
+                return;
+            }
+        } else {
+            startManager();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                startManager();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startManager() {
+        locationManager.requestLocationUpdates("gps", 5000, 5, locationListener);
     }
 
     private void init(){
