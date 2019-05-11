@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Deliverer;
+import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -44,15 +47,13 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
 
     private RecyclerView recyclerView;
     private DelivererAdapter adapter;
-    private TextView registered_tv;
-    private ImageView registered_im;
     private Button sort,map;
     private Context ctx;
 
     private DatabaseReference freeDelRef;
-    private ChildEventListener listener;
 
     private List<Deliverer> deliverers = new ArrayList<>();
+    private List<String> freeDeliverers = new ArrayList<>();
 
     private SortType sortType;
     private String categories;
@@ -105,76 +106,117 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
     }
 
     private void loadData() {
-        freeDelRef = FirebaseDatabase.getInstance().getReference("deliverers/");
-
-        listener = freeDelRef.addChildEventListener(new ChildEventListener() {
+        freeDelRef = FirebaseDatabase.getInstance().getReference("deliverers_liberi/");
+        ValueEventListener listener = freeDelRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String key = dataSnapshot.getKey();
-                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("deliverers/" + key + "info");
-
-//                ValueEventListener listener = dbRef.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//////                        deliverers.clear();
-////                        String delKey;
-////                        for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
-////                            //DataPacket value = dataSnapshot.getValue(DataPacket.class);
-////                            delKey = chidSnap.getValue(String.class);
-////                            if(delKey == null){
-////                                deliverers.add(getDelivererFirebase(delKey));
-////                            }
-////                        }
-                        Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                        assert key != null;
-                        assert d != null;
-                         d.setKey(key);
-                        deliverers.add(d);
-                        adapter.notifyItemInserted(deliverers.size()-1);
-//                    }
-
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String key = dataSnapshot.getKey();
-                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                assert key != null;
-                assert d != null;
-                d.setKey(key);
-                int pos = deliverers.indexOf(d);
-                deliverers.remove(d);
-                deliverers.add(pos, d);
-                adapter.notifyItemChanged(pos);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getKey();
-                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                assert key != null;
-                assert d != null;
-                d.setKey(key);
-                int pos = deliverers.indexOf(d);
-                deliverers.remove(d);
-                adapter.notifyItemRemoved(pos);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                freeDeliverers.clear();
+                for (DataSnapshot d : dataSnapshot.getChildren()) {
+                    String key = d.getValue(String.class);
+                    if (key != null) {
+                        getDelivererFireBase(key);
+                        //freeDeliverers.add(key);
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, "Somethings is wrong", Toast.LENGTH_LONG).show();
             }
         });
     }
+
+    private void getDelivererFireBase(String key) {
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("deliverers/" + key );
+        dbref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Deliverer d = dataSnapshot.getValue(Deliverer.class);
+                assert d != null;
+                if (d.getName() != null) {
+                    deliverers.add(d);
+                    //Toast.makeText(ctx, d.getName(), Toast.LENGTH_LONG).show();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ctx, "Somethings is wrong", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+
+//        listener = freeDelRef.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                String key = dataSnapshot.getKey();
+//                assert key != null;
+//                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("deliverers/" + key + "/info/");
+//                ValueEventListener listener = new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        Deliverer d = dataSnapshot.getValue(Deliverer.class);
+//                        assert d != null;
+//                        d.setKey(key);
+//                        deliverers.add(d);
+//                        adapter.notifyItemInserted(deliverers.size()-1);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                };
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                String key = dataSnapshot.getKey();
+//                Deliverer d = dataSnapshot.getValue(Deliverer.class);
+//                assert key != null;
+//                assert d != null;
+//                d.setKey(key);
+//                int pos = deliverers.indexOf(d);
+//                deliverers.remove(d);
+//                deliverers.add(pos, d);
+//                adapter.notifyItemChanged(pos);
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//                String key = dataSnapshot.getKey();
+//                assert key != null;
+//                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("deliverers/" + key + "/info/");
+//                ValueEventListener listener = new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        Deliverer d = dataSnapshot.getValue(Deliverer.class);
+//                        assert d != null;
+//                        d.setKey(key);
+//                        deliverers.remove(d);
+//                        adapter.notifyItemInserted(deliverers.size()-1);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                };
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
@@ -197,11 +239,11 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         });
     }
 
-    public void onDestroy() {
-        super.onDestroy();
-        if(listener!=null)
-            freeDelRef.removeEventListener(listener);
-    }
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if(listener!=null)
+//            freeDelRef.removeEventListener(listener);
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

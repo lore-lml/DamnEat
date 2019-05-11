@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.LocationActivity;
 import com.damn.polito.damneatdeliver.R;
@@ -370,12 +371,12 @@ public class CurrentFragment extends Fragment {
         String dbKey = pref.getString("dbkey", null);
 
         FirebaseDatabase database= FirebaseDatabase.getInstance();
-        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info");
+        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey );
         profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                prof = dataSnapshot.getValue(Profile.class);
-                if(prof==null){
+                Deliverer del = dataSnapshot.getValue(Deliverer.class);
+                if(del==null){
                     registered = false;
                 }
                 else registered = true;

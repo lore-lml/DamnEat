@@ -8,6 +8,7 @@ public class Deliverer {
     private String description;
     private long latitude, longitude;
     private String bitmapProf;
+    private boolean state;
 
     private String key;
 
@@ -90,6 +91,14 @@ public class Deliverer {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public boolean getState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
     }
 }
 
