@@ -216,7 +216,7 @@ public class CategoryDialog extends DialogFragment {
 
         Activity activity = getActivity();
         if(activity instanceof HandleDismissDialog){
-            ((HandleDismissDialog) activity).handleOnDismiss(EditProfile.DialogType.Categories, result);
+            ((HandleDismissDialog) activity).handleOnDismiss(DialogType.Categories, result);
         }
     }
 

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.dialogs.CategoryDialog;
+import com.damn.polito.damneatrestaurant.dialogs.DialogType;
 import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.damn.polito.damneatrestaurant.dialogs.OpeningDialog;
 
@@ -449,9 +450,8 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         }
     }
 
-
     @Override
-    public void handleOnDismiss(DialogType type, String text) {
+    public void handleOnDismiss(com.damn.polito.damneatrestaurant.dialogs.DialogType type, String text) {
         switch (type){
             case Opening:
                 opening.setText(text);

@@ -1,5 +1,6 @@
 package com.damn.polito.damneatrestaurant;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,6 +36,7 @@ import com.damn.polito.damneatrestaurant.Welcome;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
+import com.damn.polito.damneatrestaurant.dialogs.SortDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -58,10 +60,9 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
 
     private RecyclerView recyclerView;
     private DelivererAdapter adapter;
-    private LinearLayout offline;
     private TextView registered_tv;
     private ImageView registered_im;
-    private Button sort,filter;
+    private Button sort,map;
     private Context ctx;
 
     private DatabaseReference freeDelRef;
@@ -85,23 +86,25 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         adapter = new DelivererAdapter(this, deliverers);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
+        sort = findViewById(R.id.button_sort);
+        map = findViewById(R.id.button_map);
 
-        if(InternetConnection.haveInternetConnection(ctx)) {
             init();
             loadData();
-            offline.setVisibility(View.GONE);
-//        offline = view.findViewById(R.id.restaurant_offline);
-        }else{
-            offline.setVisibility(View.VISIBLE);
-        }
-
-//        init();
 
     }
 
     //Menu click Listener
     private void init(){
-        sort.setOnClickListener(v->{
+        sort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog d = new Dialog(FindDelivererActivity.this);
+                d.setContentView(R.layout.dialog_sort);
+                d.show();
+            }
+        });
+//        sort.setOnClickListener(v->{
 //            assert getActivity() != null;
 //            FragmentManager fm = getActivity().getSupportFragmentManager();
 //            SortDialog sortDialog = new SortDialog();
@@ -109,16 +112,11 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
 //            if(sortType != null)
 //                sortDialog.setSortType(sortType);
 //            sortDialog.show(fm, "Sort Dialog");
-        });
+//        });
 
-        filter.setOnClickListener(v->{
-//            assert getActivity() != null;
-//            FragmentManager fm = getActivity().getSupportFragmentManager();
-//            FilterDialog filterDialog = new FilterDialog();
-//            filterDialog.setListener(this);
-//            if(categories != null)
-//                filterDialog.setCategories(categories);
-//            filterDialog.show(fm, "Filter Dialog");
+        map.setOnClickListener(v->{
+            Toast.makeText(this, "Open Map", Toast.LENGTH_LONG).show();
+//           TODO: Start the map activity to show the deliverers positions
         });
     }
 
