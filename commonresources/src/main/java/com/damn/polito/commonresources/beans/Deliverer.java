@@ -11,20 +11,30 @@ public class Deliverer {
 
     private String key;
 
-    public Deliverer(String name, String mail, String phone, String description, long latitude, long longitude, String bitmapProf) {
+    public Deliverer(){}
+
+    public Deliverer(String name, String mail, String phone, String description, String bitmapProf, long latitude, long longitude) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
         this.description = description;
+        this.bitmapProf = bitmapProf;
         this.latitude = latitude;
         this.longitude = longitude;
+
+    }
+
+    public Deliverer(String name, String mail, String phone, String description, String bitmapProf) {
+        this.name = name;
+        this.mail = mail;
+        this.phone = phone;
+        this.description = description;
         this.bitmapProf = bitmapProf;
     }
 
     public Deliverer(Deliverer p) {
-        this(p.name, p.mail, p.phone, p.description, p.latitude, p.longitude, p.bitmapProf);
+        this(p.name, p.mail, p.phone, p.description, p.bitmapProf, p.latitude, p.longitude);
     }
-    public Deliverer() {}
 
     public String getName() {
         return name;

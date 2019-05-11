@@ -3,53 +3,37 @@ package com.damn.polito.damneatrestaurant;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.damn.polito.commonresources.InternetConnection;
-import com.damn.polito.commonresources.beans.Deliverer;
-import com.damn.polito.commonresources.beans.Haversine;
-import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.damneatrestaurant.Welcome;
-import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
-import com.damn.polito.damneatrestaurant.dialogs.SortDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import static android.app.Activity.RESULT_OK;
 
 public class FindDelivererActivity extends AppCompatActivity {//extends Fragment {//implements HandleDismissDialog {
 
@@ -127,13 +111,33 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 String key = dataSnapshot.getKey();
-//                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("deliverers/" + key);
-                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                assert key != null;
-                assert d != null;
-                d.setKey(key);
-                deliverers.add(d);
-                adapter.notifyItemInserted(deliverers.size()-1);
+                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("deliverers/" + key + "info");
+
+//                ValueEventListener listener = dbRef.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//////                        deliverers.clear();
+////                        String delKey;
+////                        for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
+////                            //DataPacket value = dataSnapshot.getValue(DataPacket.class);
+////                            delKey = chidSnap.getValue(String.class);
+////                            if(delKey == null){
+////                                deliverers.add(getDelivererFirebase(delKey));
+////                            }
+////                        }
+                        Deliverer d = dataSnapshot.getValue(Deliverer.class);
+                        assert key != null;
+                        assert d != null;
+                         d.setKey(key);
+                        deliverers.add(d);
+                        adapter.notifyItemInserted(deliverers.size()-1);
+//                    }
+
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
             }
 
             @Override
