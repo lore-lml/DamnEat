@@ -17,4 +17,8 @@
     <string name="no_availabity">Quantity not available</string>
     <string name="no_customer_info">No customer info</string>
     <string name="show_map">Show on the map</string>
+    <string name="sort_closer">Sort by distance</string>
+    <string name="sort_alpha">Sort alphabetically</string>
+    <string name="sort_rating">Sort by rating</string>
+    <string name="sort_totdeliveries">Sort by total number of deliveries</string>
 </resources>

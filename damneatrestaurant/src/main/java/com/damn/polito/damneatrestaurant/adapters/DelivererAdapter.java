@@ -1,29 +1,18 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.commonresources.beans.Deliverer;
-import com.damn.polito.damneatrestaurant.FindDelivererActivity;
-import com.damn.polito.damneatrestaurant.R;
-
-import static com.damn.polito.damneatrestaurant.adapters.DelivererAdapter.DelivererViewHolder.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,23 +23,22 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
     private Context ctx;
     private List<Deliverer> deliverers;
-    private List<Deliverer> filtered;
 
     public DelivererAdapter(Context ctx, List<Deliverer> deliverers) {
         this.ctx = ctx;
-        this.filtered = deliverers;
+        this.deliverers = deliverers;
     }
 
     @NonNull
     @Override
     public DelivererViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(ctx).inflate(R.layout.deliverer_layout, viewGroup, false);
-        return new DelivererAdapter.DelivererViewHolder(view);
+        return new DelivererViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull DelivererViewHolder holder, int pos) {
-        Deliverer current = filtered.get(pos);
+        Deliverer current = deliverers.get(pos);
         Bitmap img = Utility.StringToBitMap(current.getBitmapProf());
 
         if(img != null)
@@ -79,15 +67,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
     @Override
     public int getItemCount() {
-        return filtered.size();
-    }
-
-    public void setFullList(@NonNull List<Deliverer> list){
-        deliverers = new ArrayList<>(list);
-    }
-
-    public List<Deliverer> getFullList(){
-        return deliverers;
+        return deliverers.size();
     }
 
     public class DelivererViewHolder extends RecyclerView.ViewHolder {
