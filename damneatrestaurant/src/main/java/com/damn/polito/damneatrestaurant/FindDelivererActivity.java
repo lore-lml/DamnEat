@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Deliverer;
+import com.damn.polito.commonresources.beans.Haversine;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
 import com.damn.polito.damneatrestaurant.dialogs.DialogType;
@@ -33,7 +34,6 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
     public enum SortType{Alpha, Closer, Rating, TotDeliver}
 
     public static final int REQUEST_CODE = 9000;
-    public static final String REDO = "REDO";
 
     private RecyclerView recyclerView;
     private DelivererAdapter adapter;
@@ -44,9 +44,8 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
     private List<Deliverer> deliverers = new ArrayList<>();
 
     private SortType sortType;
-    private String categories;
-
     private int oldPosition = -1;
+
 
 
     @Override
@@ -206,7 +205,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
         DatabaseReference longitude = database.getReference("ristoranti/" + resturant_key + "/Coordinate/Longitude");
 
 //        Collections.sort(deliverers,
-//                (a,b)-> Haversine.distance(b.getLatitude(), b.getLongitude(), latitude.val, longitude.)
+//                (a,b)-> Haversine.distance(b.getLatitude(), b.getLongitude(), latitude, longitude)
 //                      - Haversine.distance(a.getLatitude(), a.getLongitude(), restauarant.getLatitude(), restaurant.getLongitude())
 //        );
 
