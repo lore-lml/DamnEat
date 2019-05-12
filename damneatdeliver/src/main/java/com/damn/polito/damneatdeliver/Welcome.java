@@ -148,9 +148,9 @@ public class Welcome extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
                 Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
-                DatabaseReference RefLat = database.getReference("/deliverers/" + Welcome.getKey() + "/Coordiante/Latitude");
+                DatabaseReference RefLat = database.getReference("/deliverers/" + Welcome.getKey() + "/latitude");
                 RefLat.setValue(location.getLatitude());
-                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/Coordiante/Longitude");
+                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/longitude");
                 RefLong.setValue(location.getLongitude());
             }
 

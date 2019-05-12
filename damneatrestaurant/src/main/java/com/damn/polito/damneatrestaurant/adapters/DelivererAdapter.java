@@ -34,7 +34,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
     private Context ctx;
     private List<Deliverer> deliverers;
-    private List<Order> orders;
+    private Order order;
     private OnItemClickListener mListener;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -42,10 +42,10 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
     public void setOnItemClickListener (OnItemClickListener listener) { mListener = listener; }
 
-    public DelivererAdapter(Context ctx, List<Deliverer> deliverers, List<Order> orders) {
+    public DelivererAdapter(Context ctx, List<Deliverer> deliverers, Order order) {
         this.ctx = ctx;
         this.deliverers = deliverers;
-        this.orders = orders;
+        this.order = order;
     }
 
     @NonNull
@@ -123,14 +123,14 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                     if (b) {
                         if (delivererKey.toString().isEmpty()) {
-                            DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                            DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                             dbOrder.setValue("rejected");
                             Toast.makeText(ctx, R.string.no_availabity, Toast.LENGTH_LONG).show();
                             return;
                         }
                         refreshAvailabityAndAccept(position, delivererKey.toString());
                     } else {
-                        DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                        DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                         dbOrder.setValue("rejected");
                         Toast.makeText(ctx, R.string.no_free_deliverers, Toast.LENGTH_LONG).show();
                     }
@@ -142,7 +142,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
     private void refreshAvailabityAndAccept(int position, String delivererKey) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         //AGGIORNO LE AVAILABILITY
-        DatabaseReference ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
+        DatabaseReference ref = db.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
         ref.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
@@ -150,7 +150,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 for(MutableData child: mutableData.getChildren()){
                     Dish d = child.getValue(Dish.class);
                     if(d!=null) {
-                        for (Dish d_ord : orders.get(position).getDishes()) {
+                        for (Dish d_ord : order.getDishes()) {
                             int new_quantity = d.getAvailability() - d_ord.getQuantity();
                             if (new_quantity < 0)
                                 return Transaction.abort();
@@ -169,18 +169,18 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 if(b){
 
                     DatabaseReference dbDeliverer = database.getReference("/deliverers/" + delivererKey + "/current_order/");
-                    dbDeliverer.setValue(orders.get(position).getId());
-                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                    dbDeliverer.setValue(order.getId());
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("accepted");
 
                     notifyItemChanged(position);
                 }else {
-                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("rejected");
                 }
             }
         });
-        ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_totali/");
+        ref = db.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
         ref.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
@@ -188,7 +188,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 for(MutableData child: mutableData.getChildren()){
                     Dish d = child.getValue(Dish.class);
                     if(d!=null) {
-                        for (Dish d_ord : orders.get(position).getDishes()) {
+                        for (Dish d_ord : order.getDishes()) {
                             int new_quantity = d.getAvailability() - d_ord.getQuantity();
                             if (new_quantity < 0)
                                 return Transaction.abort();

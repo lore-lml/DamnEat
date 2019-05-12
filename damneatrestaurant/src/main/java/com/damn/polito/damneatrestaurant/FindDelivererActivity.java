@@ -8,18 +8,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
+import com.damn.polito.damneatrestaurant.dialogs.DialogType;
+import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class FindDelivererActivity extends AppCompatActivity {//extends Fragment {//implements HandleDismissDialog {
+public class FindDelivererActivity extends AppCompatActivity implements HandleDismissDialog {
 
     public enum SortType{Alpha, Closer, Rating, TotDeliver}
 
@@ -63,9 +60,9 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         recyclerView.setHasFixedSize(true);
 
         loadData();
-        ArrayList<Order> orders = (ArrayList<Order>) getIntent().getSerializableExtra("orders_list");
+        Order order = (Order) getIntent().getSerializableExtra("order");
 
-        adapter = new DelivererAdapter(this, deliverers, orders);
+        adapter = new DelivererAdapter(this, deliverers, order);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
         sort = findViewById(R.id.button_sort);
@@ -153,27 +150,6 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         });
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView)item.getActionView();
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                Toast.makeText(ctx, "CIAO", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String filterText) {
-//                adapter.getFilter().filter(filterText);
-                return false;
-            }
-
-        });
-    }
-
     public void onDestroy() {
         super.onDestroy();
     }
@@ -189,72 +165,40 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         }
     }
 
-//    @Override
-//    public void handleOnDismiss(DialogType type, String text) {
-//        if(type == DialogType.SortDialog)
-//            sortDismiss(text);
-//        else if(type == DialogType.FilterDialog)
-//            filterDismiss(text);
-//    }
-//    private void reDoFilter(String text){
-//        filterDismiss(text);
-//    }
-//    private void filterDismiss(String text){
-//        deliverers.clear();
-//
-//
-//        if(text == null || text.isEmpty()){
-//            deliverers.addAll(adapter.getFullList());
-//            adapter.notifyDataSetChanged();
-//            categories = null;
-//            return;
-//        }else if(text.equals(REDO) && categories != null) {
-//            text = categories;
-//        }
-//
-//        String[] categories = text.split(",\\s?");
-//        List<Deliverer> fullList = new ArrayList<>(adapter.getFullList());
-//        for(Deliverer d : fullList){
-//            for(String cat : categories)
-//                if(d.contains(cat)) {
-//                    deliverers.add(d);
-//                    break;
-//                }
-//        }
-//
-//        adapter.notifyDataSetChanged();
-//        this.categories = text;
-//    }
+    @Override
+    public void handleOnDismiss(DialogType type, String text) {
+        if(type == DialogType.SortDialog)
+            sortDismiss(text);
+    }
 
     private void sortDismiss(String text) {
         if(text == null || text.isEmpty()) return;
         SortType sort = SortType.valueOf(text);
         switch (sort){
             case Alpha:
-                orderAlpha();
+                sortAlpha();
                 break;
             case Closer:
-                orderClosest();
+                sortClosest();
                 break;
             case Rating:
-                orderRating();
+                sortRating();
                 break;
             case TotDeliver:
-                orderTotDeliveries();
+                sortTotDeliveries();
                 break;
         }
     }
 
-    private void orderAlpha() {
+    private void sortAlpha() {
         Collections.sort(deliverers,
                 (a,b)->a.getName().compareTo(b.getName()));
 
         adapter.notifyDataSetChanged();
-
         sortType = SortType.Alpha;
     }
 
-    private void orderClosest() {
+    private void sortClosest() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         Bundle extras = getIntent().getExtras();
         String resturant_key = extras.getString("resturant_key");
@@ -271,7 +215,7 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         sortType = SortType.Closer;
     }
 
-    private void orderRating() {
+    private void sortRating() {
 //        Collections.sort(deliverers,
 //                (a,b)->b.rate() - a.rate());
 //
@@ -281,7 +225,7 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
 //        sortType = SortType.Rating;
     }
 
-    private void orderTotDeliveries() {
+    private void sortTotDeliveries() {
 //        Collections.sort(deliverers,
 //                (a,b)->b.totDeliveries() - a.totDeliveries());
 //

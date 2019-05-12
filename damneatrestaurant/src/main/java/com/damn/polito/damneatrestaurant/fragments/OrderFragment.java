@@ -103,7 +103,7 @@ public class OrderFragment extends Fragment {
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
                         Intent intent = new Intent(ctx, FindDelivererActivity.class);
-                        intent.putExtra("orders_list", orders);
+                        intent.putExtra("order", orders.get(position));
                         startActivity(intent);
                     }
                 });
