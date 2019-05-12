@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,24 +15,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Deliverer;
-import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -51,12 +44,12 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
     private Context ctx;
 
     private DatabaseReference freeDelRef;
-
     private List<Deliverer> deliverers = new ArrayList<>();
-    private List<String> freeDeliverers = new ArrayList<>();
 
     private SortType sortType;
     private String categories;
+
+    private int oldPosition = -1;
 
 
     @Override
@@ -68,15 +61,27 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
 
         recyclerView = findViewById(R.id.deliverer_recycler);
         recyclerView.setHasFixedSize(true);
-        adapter = new DelivererAdapter(this, deliverers);
+
+        loadData();
+        ArrayList<Order> orders = (ArrayList<Order>) getIntent().getSerializableExtra("orders_list");
+
+        adapter = new DelivererAdapter(this, deliverers, orders);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
         sort = findViewById(R.id.button_sort);
         map = findViewById(R.id.button_map);
 
-            init();
-            loadData();
+        init();
 
+        adapter.setOnItemClickListener(position -> {
+            if (oldPosition >= 0) {
+                deliverers.get(oldPosition).changeExpanded();
+                oldPosition = position;
+                adapter.notifyItemChanged(oldPosition);
+            }
+            deliverers.get(position).changeExpanded();
+            adapter.notifyItemChanged(position);
+        });
     }
 
     //Menu click Listener
@@ -89,6 +94,8 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
                 d.show();
             }
         });
+
+        //ESEMPIO PER SETONCLICKLISTENER SOPRA
 //        sort.setOnClickListener(v->{
 //            assert getActivity() != null;
 //            FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -110,12 +117,11 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         ValueEventListener listener = freeDelRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                freeDeliverers.clear();
+                deliverers.clear();
                 for (DataSnapshot d : dataSnapshot.getChildren()) {
                     String key = d.getValue(String.class);
                     if (key != null) {
                         getDelivererFireBase(key);
-                        //freeDeliverers.add(key);
                     }
                 }
             }
@@ -136,7 +142,6 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
                 assert d != null;
                 if (d.getName() != null) {
                     deliverers.add(d);
-                    //Toast.makeText(ctx, d.getName(), Toast.LENGTH_LONG).show();
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -147,76 +152,6 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
             }
         });
     }
-
-
-//        listener = freeDelRef.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                String key = dataSnapshot.getKey();
-//                assert key != null;
-//                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("deliverers/" + key + "/info/");
-//                ValueEventListener listener = new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        Deliverer d = dataSnapshot.getValue(Deliverer.class);
-//                        assert d != null;
-//                        d.setKey(key);
-//                        deliverers.add(d);
-//                        adapter.notifyItemInserted(deliverers.size()-1);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                };
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                String key = dataSnapshot.getKey();
-//                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-//                assert key != null;
-//                assert d != null;
-//                d.setKey(key);
-//                int pos = deliverers.indexOf(d);
-//                deliverers.remove(d);
-//                deliverers.add(pos, d);
-//                adapter.notifyItemChanged(pos);
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//                String key = dataSnapshot.getKey();
-//                assert key != null;
-//                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("deliverers/" + key + "/info/");
-//                ValueEventListener listener = new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        Deliverer d = dataSnapshot.getValue(Deliverer.class);
-//                        assert d != null;
-//                        d.setKey(key);
-//                        deliverers.remove(d);
-//                        adapter.notifyItemInserted(deliverers.size()-1);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                };
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
@@ -239,11 +174,9 @@ public class FindDelivererActivity extends AppCompatActivity {//extends Fragment
         });
     }
 
-//    public void onDestroy() {
-//        super.onDestroy();
-//        if(listener!=null)
-//            freeDelRef.removeEventListener(listener);
-//    }
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

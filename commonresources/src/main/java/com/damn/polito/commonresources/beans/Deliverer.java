@@ -8,7 +8,7 @@ public class Deliverer {
     private String description;
     private long latitude, longitude;
     private String bitmapProf;
-    private boolean state;
+    private boolean state, expanded = false;
 
     private String key;
 
@@ -100,5 +100,9 @@ public class Deliverer {
     public void setState(boolean state) {
         this.state = state;
     }
+
+    public void changeExpanded() { expanded = !expanded; }
+
+    public boolean Expanded() { return expanded; }
 }
 
