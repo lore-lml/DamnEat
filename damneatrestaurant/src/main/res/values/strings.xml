@@ -22,4 +22,5 @@
     <string name="sort_rating">Sort by rating</string>
     <string name="sort_totdeliveries">Sort by total number of deliveries</string>
     <string name="assigned_deliverer">Choose as a deliverer</string>
+    <string name="title_activity_maps">Maps</string>
 </resources>

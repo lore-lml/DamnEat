@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
@@ -13,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.FindDelivererActivity;
+import com.damn.polito.damneatrestaurant.R;
 
 public class SortDialog extends AppCompatDialogFragment {
 
@@ -35,7 +34,6 @@ public class SortDialog extends AppCompatDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         radioGroup = view.findViewById(R.id.sort_group);
 

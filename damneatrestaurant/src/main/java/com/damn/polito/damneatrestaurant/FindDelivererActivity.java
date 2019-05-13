@@ -1,10 +1,16 @@
 package com.damn.polito.damneatrestaurant;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +24,11 @@ import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
 import com.damn.polito.damneatrestaurant.dialogs.DialogType;
 import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,13 +42,14 @@ import java.util.Objects;
 
 public class FindDelivererActivity extends AppCompatActivity implements HandleDismissDialog {
 
-    public enum SortType{Alpha, Closer, Rating, TotDeliver}
+    public enum SortType {Alpha, Closer, Rating, TotDeliver}
 
+    private static final int ERROR_DIALOG_REQUEST = 9001;
     public static final int REQUEST_CODE = 9000;
 
     private RecyclerView recyclerView;
     private DelivererAdapter adapter;
-    private Button sort,map;
+    private Button sort, map;
     private Context ctx;
 
     private DatabaseReference freeDelRef;
@@ -45,8 +57,6 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 
     private SortType sortType;
     private int oldPosition = -1;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +88,24 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
             deliverers.get(position).changeExpanded();
             adapter.notifyItemChanged(position);
         });
+
+        if (isServicesOk()) {
+            initMap();
+        }
+    }
+
+    private void initMap() {
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FindDelivererActivity.this, MapsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     //Menu click Listener
-    private void init(){
+    private void init() {
         sort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,7 +126,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 //            sortDialog.show(fm, "Sort Dialog");
 //        });
 
-        map.setOnClickListener(v->{
+        map.setOnClickListener(v -> {
             Toast.makeText(this, "Open Map", Toast.LENGTH_LONG).show();
 //           TODO: Start the map activity to show the deliverers positions
         });
@@ -130,7 +154,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
     }
 
     private void getDelivererFireBase(String key) {
-        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("deliverers/" + key );
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("deliverers/" + key);
         dbref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -157,8 +181,8 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            int pos = requestCode-REQUEST_CODE;
-            if(pos < 0 || pos > deliverers.size()) return;
+            int pos = requestCode - REQUEST_CODE;
+            if (pos < 0 || pos > deliverers.size()) return;
 
             /*TODO: gestire stato ordine effettuato*/
         }
@@ -166,14 +190,14 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 
     @Override
     public void handleOnDismiss(DialogType type, String text) {
-        if(type == DialogType.SortDialog)
+        if (type == DialogType.SortDialog)
             sortDismiss(text);
     }
 
     private void sortDismiss(String text) {
-        if(text == null || text.isEmpty()) return;
+        if (text == null || text.isEmpty()) return;
         SortType sort = SortType.valueOf(text);
-        switch (sort){
+        switch (sort) {
             case Alpha:
                 sortAlpha();
                 break;
@@ -191,7 +215,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 
     private void sortAlpha() {
         Collections.sort(deliverers,
-                (a,b)->a.getName().compareTo(b.getName()));
+                (a, b) -> a.getName().compareTo(b.getName()));
 
         adapter.notifyDataSetChanged();
         sortType = SortType.Alpha;
@@ -232,5 +256,19 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 //        adapter.notifyDataSetChanged();
 //
 //        sortType = SortType.TotDeliver;
+    }
+
+    public boolean isServicesOk() {
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(FindDelivererActivity.this);
+
+        if (available == ConnectionResult.SUCCESS) {
+            return true;
+        } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(FindDelivererActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        } else {
+            Toast.makeText(this, "Impossible to map request", Toast.LENGTH_LONG).show();
+        }
+        return false;
     }
 }
