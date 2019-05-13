@@ -18,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -56,7 +57,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             Location currLoc = (Location) task.getResult();
 
-                            moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), 15);
+                            MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
+
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bike));
+
+                            moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), 15, "MyLocation");
+
                         } else {
                             Toast.makeText(MapsActivity.this, "Unable to get current Location", Toast.LENGTH_LONG).show();
                         }
@@ -67,8 +73,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom) {
+    private void moveCamera(LatLng latLng, float zoom, String title) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title(title);
+        mMap.addMarker(options);
     }
 
     @Override
