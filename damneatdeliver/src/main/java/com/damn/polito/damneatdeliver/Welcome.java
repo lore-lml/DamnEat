@@ -19,6 +19,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +35,8 @@ import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -68,9 +71,11 @@ public class Welcome extends AppCompatActivity {
     private Integer selectedId = null;
     private String orderKey;
     private static Context ctx;
-    private static boolean logged;
-    private static boolean isRegistered;
+    private static boolean logged, isRegistred;
 
+        //LOCATION VARIABLES
+    public static final int LOCATION_PERMISSION_REQUESt_CODE = 1212;
+    private boolean mLocGranted;
     private LocationManager locationManager;
     private LocationListener locationListener;
 
@@ -138,61 +143,8 @@ public class Welcome extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
 
-        StartLocationManager();
+        getLocationPermissions();
 
-    }
-
-    private void StartLocationManager() {
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
-                DatabaseReference RefLat = database.getReference("/deliverers/" + Welcome.getKey() + "/latitude");
-                RefLat.setValue(location.getLatitude());
-                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/longitude");
-                RefLong.setValue(location.getLongitude());
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
-                }, 1);
-                return;
-            }
-        } else {
-            startManager();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                startManager();
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private void startManager() {
-        locationManager.requestLocationUpdates("gps", 5000, 5, locationListener);
     }
 
     private void init(){
@@ -405,5 +357,88 @@ public class Welcome extends AppCompatActivity {
             if(selectedId == R.id.nav_current)
                 currentFragment.update();
         }
+    }
+
+
+    //LOCATION CODE
+    private void StartLocationManager() {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
+                DatabaseReference RefLat = database.getReference("/deliverers/" + Welcome.getKey() + "/latitude");
+                RefLat.setValue(location.getLatitude());
+                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/longitude");
+                RefLong.setValue(location.getLongitude());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
+                }, 1);
+                return;
+            }
+        } else {
+            startManager();
+        }
+    }
+
+    private void getLocationPermissions() {
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocGranted = true;
+                StartLocationManager();
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUESt_CODE);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUESt_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mLocGranted = false;
+
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUESt_CODE: {
+
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < grantResults.length; i++) {
+                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                            mLocGranted = false;
+                            return;
+                        }
+                    }
+                    mLocGranted = true;
+                    StartLocationManager();
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startManager() {
+        locationManager.requestLocationUpdates("gps", 5000, 5, locationListener);
     }
 }
