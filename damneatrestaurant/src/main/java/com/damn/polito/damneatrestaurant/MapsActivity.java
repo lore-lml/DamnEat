@@ -2,6 +2,7 @@ package com.damn.polito.damneatrestaurant;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -59,8 +61,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
 
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bike));
-
                             moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), 15, "MyLocation");
 
                         } else {
@@ -70,6 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         } catch (SecurityException e) {
+
         }
     }
 
@@ -78,7 +79,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
-                .title(title);
+                .title(title)
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bike))
+                ;
         mMap.addMarker(options);
     }
 
