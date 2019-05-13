@@ -134,6 +134,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 
     private void loadData() {
         freeDelRef = FirebaseDatabase.getInstance().getReference("deliverers_liberi/");
+
         ValueEventListener listener = freeDelRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -160,10 +161,18 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Deliverer d = dataSnapshot.getValue(Deliverer.class);
                 assert d != null;
+                d.setKey(key);
                 if (d.getName() != null) {
+                    for(int i=0;i<deliverers.size();i++) {
+                        if(deliverers.get(i).getKey().equals(d.getKey())){
+                            deliverers.remove(deliverers.get(i));
+                            //deliverers.add(d);
+                        }
+                    }
                     deliverers.add(d);
-                    adapter.notifyDataSetChanged();
+
                 }
+                adapter.notifyDataSetChanged();
             }
 
             @Override
