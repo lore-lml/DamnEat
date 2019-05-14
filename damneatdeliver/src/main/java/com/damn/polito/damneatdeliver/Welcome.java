@@ -242,7 +242,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     private void loadProfile() {
-        profileRef = database.getReference("/deliverers/" + getKey());
+        profileRef = database.getReference("/deliverers/" + getKey() + "/info");
         v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -265,7 +265,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     private void loadCurrentState() {
-        DatabaseReference stateRef = database.getReference("/deliverers/" + getKey() + "/state/");
+        DatabaseReference stateRef = database.getReference("/deliverers/" + getKey() + "/info/state/");
         stateRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -274,7 +274,7 @@ public class Welcome extends AppCompatActivity {
                 if (state != null)
                     profile.setState(state);
                 else {
-                    DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+                    DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
                     orderRef.setValue(false);
                     profile.setState(false);
                 }
@@ -331,10 +331,10 @@ public class Welcome extends AppCompatActivity {
                             currentOrder.setState("empty");
                         } else {
                             if (currentOrder.getState().equals("empty")) {
-                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
                                 orderRef.setValue(true);
                             } else {
-                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
                                 orderRef.setValue(false);
                             }
 
@@ -365,6 +365,8 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(profile==null)
+            profile.setState(false);
         if (profile.getState()) {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
             freeDeliverersRef.setValue(Welcome.getKey());
@@ -396,9 +398,9 @@ public class Welcome extends AppCompatActivity {
                     String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
                     Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
                     //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
-                    DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/latitude");
+                    DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/info/latitude");
                     RefLat.setValue(location.getLatitude());
-                    DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/longitude");
+                    DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/info/longitude");
                     RefLong.setValue(location.getLongitude());
                 }
             }

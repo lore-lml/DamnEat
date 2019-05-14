@@ -62,6 +62,8 @@ public class Profile {
     }
 
     public Boolean getState() {
+        if(state==null)
+            return false;
         return state;
     }
 
