@@ -11,6 +11,10 @@
         <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
+    <style name="Background" parent="AppTheme">
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
     <style name="PrimaryText" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:textColor">@color/colorPrimaryText</item>
         <item name="android:textSize">20sp</item>
@@ -54,5 +58,10 @@
         <item name="colorSwitchThumbNormal">@color/colorSecondaryText</item>
         <!-- inactive track color (30% transparency) -->
         <item name="android:colorForeground">@color/colorCorners</item>
+    </style>
+
+    <style name="NoDishes" parent="Base.TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">20sp</item>
     </style>
 </resources>

@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,16 +30,16 @@ import static com.damn.polito.commonresources.Utility.*;
 import java.io.IOException;
 import java.util.Objects;
 
-public class EditProfile extends AppCompatActivity {
+public class EditProfile extends AppCompatActivity{
 
     private ImageView profile;
     private ImageButton camera;
-    private EditText name, mail, description, address;
+    private EditText name, mail, description, address, phone;
     private Button save;
     private Bitmap profImg;
 
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
-    private String sName, sMail, sDesc, sAddress;
+    private String sName, sMail, sDesc, sAddress, sPhone;
     private Bitmap profImgPrec;
 
     @Override
@@ -52,20 +53,26 @@ public class EditProfile extends AppCompatActivity {
         camera = findViewById(R.id.btn_camera);
         name = findViewById(R.id.edit_name);
         mail = findViewById(R.id.edit_mail);
+        phone = findViewById(R.id.edit_phone);
         description = findViewById(R.id.edit_desc);
         address = findViewById(R.id.edit_address);
-        save = findViewById(R.id.confirm_button);
+        save = findViewById(R.id.edit_save);
 
         init();
-
     }
 
     private void init() {
-        //Recupera le informazioni passate da Profile
+        //Recupera le informazioni passate da ProfileFragment
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Intent intent = getIntent();
+
         sName = intent.getStringExtra("name");
         sMail = intent.getStringExtra("mail");
+        sPhone = intent.getStringExtra("phone");
+
+        if(sPhone != null && !sPhone.isEmpty() && sPhone.length()>3)
+            sPhone = sPhone.substring(4);
+
         sDesc = intent.getStringExtra("description");
         sAddress = intent.getStringExtra("address");
         String bitmapString = pref.getString("profile", null);
@@ -77,6 +84,7 @@ public class EditProfile extends AppCompatActivity {
 
         name.setText(sName);
         mail.setText(sMail);
+        phone.setText(sPhone);
         description.setText(sDesc);
         address.setText(sAddress);
         if(profImg != null){
@@ -144,9 +152,12 @@ public class EditProfile extends AppCompatActivity {
     private Intent getActivityResult() {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
-        i.putExtra("mail", mail.getText().toString().trim());
+        i.putExtra("mail", mail.getText().toString().trim().replace("|", "."));
+        i.putExtra("phone", getString(R.string.phone_prefix) + " " +phone.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
         i.putExtra("address", address.getText().toString().trim());
+        if(checkChanges())
+            i.putExtra("hasChanged", true);
         if(profImg != null){
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
@@ -241,6 +252,17 @@ public class EditProfile extends AppCompatActivity {
             return false;
         }
 
+        String phone = this.phone.getText().toString().trim();
+        if(phone.isEmpty()){
+            Toast.makeText(this, getString(R.string.empty_phone), Toast.LENGTH_SHORT).show();
+            this.phone.requestFocus();
+            return false;
+        }else if(!phone.matches(Utility.Regex.MOBILE_PHONE) && !phone.matches(Utility.Regex.TELEPHONE)){
+            Toast.makeText(this, getString(R.string.invalid_phone), Toast.LENGTH_SHORT).show();
+            this.phone.requestFocus();
+            return false;
+        }
+
         String description = this.description.getText().toString();
         if(description.trim().isEmpty()){
             Toast.makeText(this, getString(R.string.empty_desc), Toast.LENGTH_SHORT).show();
@@ -258,7 +280,6 @@ public class EditProfile extends AppCompatActivity {
         return true;
     }
 
-
     private boolean checkChanges() {
         String name = this.name.getText().toString();
         if(!name.equals(sName))
@@ -266,6 +287,10 @@ public class EditProfile extends AppCompatActivity {
 
         String mail = this.mail.getText().toString();
         if(!(mail.equals(sMail)))
+            return true;
+
+        String phone = this.phone.getText().toString();
+        if(!(phone.equals(sPhone)))
             return true;
 
         String description = this.description.getText().toString();
@@ -276,6 +301,7 @@ public class EditProfile extends AppCompatActivity {
         if(!(address.equals(sAddress)))
             return true;
 
+        if(profImg == null) return false;
         return (!(profImg.equals(profImgPrec)));
 
     }
@@ -317,10 +343,12 @@ public class EditProfile extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(checkChanges())
-        // Facciamo comparire il messagio solo se sono stati cambiati dei campi
+            // Facciamo comparire il messagio solo se sono stati cambiati dei campi
             showWarning(this, checkField(), getActivityResult());
-        else
+        else {
+            setResult(RESULT_CANCELED);
             this.finish();
+        }
     }
 
     @Override
@@ -329,8 +357,10 @@ public class EditProfile extends AppCompatActivity {
             case android.R.id.home:
                 if(checkChanges())
                     showWarning(this, checkField(), getActivityResult());
-                else
+                else {
+                    setResult(RESULT_CANCELED);
                     this.finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -344,6 +374,7 @@ public class EditProfile extends AppCompatActivity {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("profile", BitMapToString(profImg)).apply();
     }
 
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -355,4 +386,5 @@ public class EditProfile extends AppCompatActivity {
             pref.edit().remove("profile").apply();
         }
     }
+
 }

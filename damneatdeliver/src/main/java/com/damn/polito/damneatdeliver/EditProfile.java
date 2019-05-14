@@ -39,7 +39,7 @@ public class EditProfile extends AppCompatActivity {
     private Bitmap profImg;
 
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
-    private String sName, sMail, sDesc, sAddress, sPhone, sOpening;
+    private String sName, sMail, sDesc, sPhone, sOpening;
     private Bitmap profImgPrec;
 
     @Override
@@ -148,10 +148,12 @@ public class EditProfile extends AppCompatActivity {
     private Intent getActivityResult() {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
-        i.putExtra("mail", mail.getText().toString().trim());
-        i.putExtra("phone", getString(R.string.phone_prefix) + " " + phone.getText().toString().trim());
+        i.putExtra("mail", mail.getText().toString().trim().replace("|", "."));
+        i.putExtra("phone", getString(R.string.phone_prefix) + " " +phone.getText().toString().trim());
         i.putExtra("description", description.getText().toString().trim());
-        if (profImg != null) {
+        if(checkChanges())
+            i.putExtra("hasChanged", true);
+        if(profImg != null){
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
         }
@@ -282,10 +284,8 @@ public class EditProfile extends AppCompatActivity {
         if (!(description.equals(sDesc)))
             return true;
 
-        String address = this.address.getText().toString();
-        if (!(address.equals(sAddress)))
-            return true;
 
+        if(profImg == null) return false;
         return (!(profImg.equals(profImgPrec)));
 
     }
@@ -329,18 +329,22 @@ public class EditProfile extends AppCompatActivity {
         if (checkChanges())
             // Facciamo comparire il messagio solo se sono stati cambiati dei campi
             showWarning(this, checkField(), getActivityResult());
-        else
+        else {
+            setResult(RESULT_CANCELED);
             this.finish();
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch (item.getItemId()){
             case android.R.id.home:
                 if (checkChanges())
                     showWarning(this, checkField(), getActivityResult());
-                else
+                else {
+                    setResult(RESULT_CANCELED);
                     this.finish();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -365,5 +369,12 @@ public class EditProfile extends AppCompatActivity {
             profile.setImageBitmap(profImg);
             pref.edit().remove("profile").apply();
         }
+    }
+
+    public boolean isEmailPresent(){
+
+
+
+        return true;
     }
 }

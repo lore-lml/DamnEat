@@ -2,7 +2,6 @@ package com.damn.polito.damneatrestaurant.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -32,10 +31,8 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class OrderFragment extends Fragment {
@@ -253,7 +250,6 @@ public class OrderFragment extends Fragment {
 
                     adapter.notifyItemChanged(position);
                 }else {
-                    Toast.makeText(ctx, R.string.availabity_too_low, Toast.LENGTH_LONG).show();
                     DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                     dbOrder.setValue("rejected");
                 }
@@ -327,7 +323,7 @@ public class OrderFragment extends Fragment {
                 //Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
-                    order.sId(key);
+                    order.setId(key);
                     for(int i=0; i<orders.size(); i++)
                         if(orders.get(i).Id().equals(order.Id())){
                             orders.remove(i);

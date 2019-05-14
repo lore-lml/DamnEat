@@ -1,39 +1,32 @@
 package com.damn.polito.damneatrestaurant.beans;
 
-import android.graphics.Bitmap;
-
 public class Profile {
 
-    private String name;
-    private String mail;
-    private String phone;
-    private String description;
-    private String address;
-    private String opening;
-    private String bitmapProf;
-    //Bitmap bitmap;
+    private String name = "";
+    private String mail = "";
+    private String phone = "";
+    private String description = "";
+    private String address = "";
+    private String opening = "";
+    private String image = "NO_PHOTO";
+    private String categories = "";
+    private double priceShip = .0;
 
-    public Profile(String name, String mail, String phone, String description, String address, String opening, String bitmapProf) {
+    public Profile(String name, String mail, String phone, String description, String address, String opening,
+                   String categories, double priceShip, String image) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
         this.description = description;
         this.address = address;
         this.opening = opening;
-        this.bitmapProf = bitmapProf;
+        this.image = image;
+        this.categories = categories;
+        this.priceShip = priceShip;
     }
-/*
-    public Profile(String name, String mail, String phone, String description, String address, String opening, Bitmap bitmap) {
-        this.name = name;
-        this.mail = mail;
-        this.phone = phone;
-        this.description = description;
-        this.address = address;
-        this.opening = opening;
-        this.bitmap = bitmap;
-    }*/
+
     public Profile(Profile p) {
-        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.bitmapProf);
+        this(p.name, p.mail, p.phone, p.description, p.address, p.opening, p.categories, p.priceShip, p.image);
     }
     public Profile() {}
 
@@ -85,20 +78,28 @@ public class Profile {
         this.opening = opening;
     }
 
-    public String getBitmapProf() {
-        return bitmapProf;
+    public String getImage() {
+        return image;
     }
 
-    public void setBitmapProf(String bitmapProf) {
-        this.bitmapProf = bitmapProf;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-   /* public Bitmap getBitmap() {
-        return bitmap;
+    public String getCategories() {
+        return categories;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }*/
+    public void setCategories(String categories) {
+        this.categories = categories;
+    }
+
+    public Double getPriceShip() {
+        return priceShip;
+    }
+
+    public void setPriceShip(Double priceShip) {
+        this.priceShip = priceShip;
+    }
 }
 

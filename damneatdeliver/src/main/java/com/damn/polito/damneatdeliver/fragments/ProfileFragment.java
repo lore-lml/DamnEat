@@ -1,5 +1,6 @@
 package com.damn.polito.damneatdeliver.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,14 +19,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatdeliver.EditProfile;
+import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -34,10 +43,16 @@ public class ProfileFragment extends Fragment{
 
     private String defaultValue;
     private ImageView profileImage;
-    private TextView name, mail, description, phone;
+    private TextView name, mail, description, address, phone;
     private Bitmap profileBitmap;
     private boolean empty = true;
     private Context ctx;
+
+    private FirebaseDatabase database;
+    private String dbKey;
+
+    private Map<String, Object> orders;
+
 
     @Nullable
     @Override
@@ -63,6 +78,7 @@ public class ProfileFragment extends Fragment{
         mail = view.findViewById(R.id.editText_email);
         phone = view.findViewById(R.id.editText_phone);
         description = view.findViewById(R.id.editText_desc);
+        database = FirebaseDatabase.getInstance();
 
         loadData();
     }
@@ -72,7 +88,7 @@ public class ProfileFragment extends Fragment{
         Intent intent = new Intent(ctx, EditProfile.class);
 
         //Se il profilo esisteva, passa le informazioni a EditProfile
-        if (!empty) {
+        if (!empty && !name.getText().toString().trim().equals(defaultValue)) {
             intent.putExtra("name", name.getText().toString().trim());
             intent.putExtra("mail", mail.getText().toString().trim());
             intent.putExtra("phone", phone.getText().toString().trim());
@@ -100,8 +116,10 @@ public class ProfileFragment extends Fragment{
     }
 
     private void storeData(Intent data) {
+        boolean hasChanged = data.getBooleanExtra("hasChanged", false);
+        if(!hasChanged) return;
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
         String phone = data.getStringExtra("phone");
@@ -109,67 +127,95 @@ public class ProfileFragment extends Fragment{
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
-            hasProfile = true;
             pref.edit().remove("profile").apply();
         }
 
-        JSONObject values = new JSONObject();
-        try {
-            values.put("name", name);
-            values.put("mail", mail);
-            values.put("phone", phone);
-            values.put("description", description);
-            if (profileBitmap != null) {
-                String bts = Utility.BitMapToString(profileBitmap);
-                values.put("profile", bts);
-                hasProfile = true;
-            }
-            values.put("hasProfile", hasProfile);
+        storeProfileOnFirebase(new Profile(name,mail,phone,description,bitmapProf));
 
-
-            pref.edit().putString("info", values.toString()).apply();
-
-            this.name.setText(name);
-            this.mail.setText(mail);
-            this.phone.setText(phone);
-            this.description.setText(description);
-            if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
-
-            empty = false;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        this.name.setText(name);
+        this.mail.setText(mail);
+        this.phone.setText(phone);
+        this.description.setText(description);
+        if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
+        empty = false;
     }
 
+    @SuppressWarnings("unchecked")
     private void loadData() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String s = pref.getString("info", null);
-        if (s == null) return;
 
-        try {
-            JSONObject values = new JSONObject(s);
-            name.setText(stringOrDefault(values.getString("name")));
-            mail.setText(stringOrDefault(values.getString("mail")));
-            phone.setText(stringOrDefault(values.getString("phone")));
-            description.setText(stringOrDefault(values.getString("description")));
-            if (values.getBoolean("hasProfile")) {
-                String encodedBitmap = values.getString("profile");
-                profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                if (profileBitmap != null)
-                    profileImage.setImageBitmap(profileBitmap);
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+            if (dbKey == null) return;
+        }
+
+        DatabaseReference myRef = database.getReference("deliverers/" + dbKey + "/info/");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Profile prof = dataSnapshot.getValue(Profile.class);
+                if (prof != null) {
+                    name.setText(prof.getName());
+                    mail.setText(prof.getMail());
+                    phone.setText(prof.getPhone());
+                    description.setText(prof.getDescription());
+                    if (prof.getBitmapProf() != null) {
+                        String encodedBitmap = prof.getBitmapProf();
+                        profileBitmap = Utility.StringToBitMap(encodedBitmap);
+                        if (profileBitmap != null)
+                            profileImage.setImageBitmap(profileBitmap);
+                    }
+                    empty = false;
+                }else{
+                    name.setText(defaultValue);
+                    mail.setText(defaultValue);
+                    phone.setText(defaultValue);
+                    description.setText(defaultValue);
+                    //address.setText(defaultValue);
+                }
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void storeProfileOnFirebase(Profile profile){
+        DatabaseReference ref;
+        DatabaseReference ordini;
+
+        ref = database.getReference("deliverers/" + dbKey + "/info/");
+
+        ref.runTransaction(new Transaction.Handler(){
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction (@NonNull MutableData currentData){
+                currentData.setValue(profile);
+                return Transaction.success(currentData);
             }
 
-            empty = false;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
+                if(committed) {
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+                    //editor.putString("dbkey", myRef.getKey());
+                    editor.putString("deliverername", profile.getName());
+                    editor.putString("delivererphone", profile.getPhone());
+                    editor.putString("deliverermail", profile.getMail());
+                    editor.apply();
+                }
+            }
+        });
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.action_bar_profile, menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -179,6 +225,9 @@ public class ProfileFragment extends Fragment{
             case R.id.item_edit:
                 editProfile();
                 return true;
+            case R.id.item_disconnect:
+                FirebaseLogin.logout((Activity) ctx);
+                ((Activity) ctx).finish();
             default:
                 return super.onOptionsItemSelected(item);
         }

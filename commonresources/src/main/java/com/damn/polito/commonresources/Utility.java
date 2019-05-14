@@ -11,6 +11,8 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 
+import com.damn.polito.commonresources.beans.DayOfTheWeek;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,14 +20,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 public class Utility {
-
+    public static boolean firstON = true;
     public static final int REQUEST_IMAGE_CAPTURE = 2;
     public static final int IMAGE_GALLERY_REQUEST = 10;
     public static final int CROP_REQUEST = 20;
@@ -33,6 +43,8 @@ public class Utility {
     public static final int PERMISSION_CODE_WRITE_EXTERNAL = 1001;
     public static final String REQUEST_PERM_CAMERA = Manifest.permission.CAMERA;
     public static final String REQUEST_PERM_WRITE_EXTERNAL = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+    private static Calendar instance;
 
     public static Bitmap StringToBitMap(String encodedString){
         try {
@@ -135,6 +147,71 @@ public class Utility {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
+    }
+
+    public static String dateString(Date date){
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy", Locale.getDefault());
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC+2"));
+        return formatter.format(date);
+    }
+
+    private static int getDayOfWeek(int englishVersion){
+        if(englishVersion-2 < 0)
+            return englishVersion +5;
+
+        return englishVersion-2;
+    }
+
+    public static boolean isRestaurantOpen(String opening){
+        if(opening == null)
+            throw new IllegalArgumentException("The opening arg cannot be null");
+
+        instance = Calendar.getInstance();
+        int weekday = getDayOfWeek(instance.get(Calendar.DAY_OF_WEEK));
+        DayOfTheWeek day = DayOfTheWeek.listOfDays(opening).get(weekday);
+
+        if(day.getFirstTimeSlot() != null && checkHours(day.getFirstOpenTime(), day.getFirstCloseTime()))
+            return true;
+
+        return day.getSecondTimeSlot() != null && checkHours(day.getSecondOpenTime(), day.getSecondCloseTime());
+
+    }
+
+    private static boolean checkHours(String open, String close){
+        int myHour = instance.get(Calendar.HOUR_OF_DAY);
+        int myMinute = instance.get(Calendar.MINUTE);
+
+        String[] openTime = open.split(":");
+        int openHour = Integer.valueOf(openTime[0]);
+        int openMin = Integer.valueOf(openTime[1]);
+
+        if(myHour < openHour) return false;
+        if(myHour == openHour && myMinute < openMin) return false;
+
+        String[] closeTime = close.split(":");
+        int closeHour = Integer.valueOf(closeTime[0]);
+        int closeMin = Integer.valueOf(closeTime[1]);
+
+        //Calcolo differenza di ore tra chiusura e apertura
+        int diffHour = closeHour - openHour < 0 ? 24-(closeHour-openHour)*-1 : closeHour - openHour;
+        int diffMin = closeMin - openMin;
+        if(diffMin < 0){
+            diffHour--;
+            diffMin = 60 - diffMin;
+        }
+
+        int tmpHour = openHour + diffHour;
+        int tmpMin = openMin + diffMin;
+        if(tmpMin >= 60){
+            tmpMin %= 60;
+            tmpHour++;
+        }
+
+        if(myHour > tmpHour) return false;
+        if(myHour == tmpHour && myMinute > tmpMin) return false;
+        if((tmpHour * 60 + tmpMin)-(myHour*60 +myMinute) < 25 ) return false;
+
+        return true;
     }
 
     public class Regex{
