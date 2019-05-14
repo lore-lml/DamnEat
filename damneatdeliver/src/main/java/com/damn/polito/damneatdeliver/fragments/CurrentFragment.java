@@ -30,6 +30,7 @@ import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
+import com.google.android.gms.maps.MapView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +56,7 @@ public class CurrentFragment extends Fragment {
     private Button confirmButton, acceptButton, rejectButton;
     private Switch switch_available;
     private Bitmap bitmap, default_image;
+    private MapView map;
 
     private Order currentOrder;
 
@@ -84,6 +86,7 @@ public class CurrentFragment extends Fragment {
         id= view.findViewById(R.id.order_id);
         date = view.findViewById(R.id.order_date_value);
 
+        map = view.findViewById(R.id.mapView);
         //BIG TextView
         name_big = view.findViewById(R.id.name_big_tv);
         address_big_text = view.findViewById(R.id.address_big_text);
@@ -149,6 +152,7 @@ public class CurrentFragment extends Fragment {
                 orderState.setValue("rejected");
             }
         });
+
         switch_available.setChecked(Welcome.getCurrentAvaibility());
         /*switch_available.setOnClickListener(v -> {
             Boolean available = Welcome.getCurrentAvaibility();
@@ -218,6 +222,8 @@ public class CurrentFragment extends Fragment {
         }
 
         if(currentOrder.getState().toLowerCase().equals("accepted")){
+            map.setOnClickListener(v -> {});
+
             accept_question.setText(R.string.accept_question);
             name_big.setText(currentOrder.getRestaurant().getRestaurantName());
             address_big_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
@@ -254,6 +260,8 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().toLowerCase().equals("assigned")){
+            map.setOnClickListener(v -> startGoogleMaps(currentOrder.getRestaurant().getRestaurantAddress()));
+
             name_big.setText(currentOrder.getRestaurant().getRestaurantName());
             address_big_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
             phone_big_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
@@ -282,6 +290,8 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().toLowerCase().equals("shipped")){
+            map.setOnClickListener(v -> startGoogleMaps(currentOrder.getCustomer().getCustomerAddress()));
+
             name_big.setText(currentOrder.getCustomer().getCustomerName());
             address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
             phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
@@ -315,6 +325,7 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().toLowerCase().equals("delivered")){
+            map.setOnClickListener(v -> {});
             name_big.setText(currentOrder.getCustomer().getCustomerName());
             address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
             phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
@@ -338,6 +349,7 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().equals("confirmed")){
+            map.setOnClickListener(v -> {});
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
             orderRef.setValue("0");
@@ -410,6 +422,7 @@ public class CurrentFragment extends Fragment {
             id.setVisibility(View.VISIBLE);
 
             confirmButton.setVisibility(View.VISIBLE);
+            map.setVisibility(View.VISIBLE);
 
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
@@ -421,7 +434,6 @@ public class CurrentFragment extends Fragment {
             note_small_text.setVisibility(View.VISIBLE);
 
             deliveryTime.setVisibility(View.VISIBLE);
-
             address_big.setVisibility(View.VISIBLE);
             name_big.setVisibility(View.VISIBLE);
             address_big.setVisibility(View.VISIBLE);
@@ -435,6 +447,7 @@ public class CurrentFragment extends Fragment {
             acceptButton.setVisibility(View.VISIBLE);
             rejectButton.setVisibility(View.VISIBLE);
             accept_question.setVisibility(View.VISIBLE);
+            map.setVisibility(View.VISIBLE);
 
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
@@ -462,6 +475,7 @@ public class CurrentFragment extends Fragment {
         if(state.equals("assigned")){
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
+            map.setVisibility(View.VISIBLE);
 
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
@@ -518,6 +532,7 @@ public class CurrentFragment extends Fragment {
         card_avaible.setVisibility(GONE);
 
         name_big.setVisibility(GONE);
+        map.setVisibility(GONE);
 
         address_big.setVisibility(GONE);
         address_big_text.setVisibility(GONE);
