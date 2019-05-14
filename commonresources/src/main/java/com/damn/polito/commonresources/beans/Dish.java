@@ -4,9 +4,11 @@ import android.graphics.Bitmap;
 
 import com.damn.polito.commonresources.Utility;
 
+import java.io.Serializable;
+
 import static com.damn.polito.commonresources.Utility.StringToBitMap;
 
-public class Dish {
+public class Dish implements Serializable {
 
     private String name;
     private String id;

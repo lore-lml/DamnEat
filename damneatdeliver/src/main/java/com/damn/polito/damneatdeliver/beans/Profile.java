@@ -6,7 +6,6 @@ public class Profile {
     private String mail;
     private String phone;
     private String description;
-    private String address;
     private String bitmapProf;
 
     public Profile(String name, String mail, String phone, String description, String bitmapProf) {

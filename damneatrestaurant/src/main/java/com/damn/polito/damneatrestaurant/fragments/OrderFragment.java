@@ -1,6 +1,7 @@
 package com.damn.polito.damneatrestaurant.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,10 +18,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.damneatrestaurant.FindDelivererActivity;
+import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -100,50 +102,9 @@ public class OrderFragment extends Fragment {
                         Log.d("tmz", "pressed find deliverer");
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-                        DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
-                        StringBuilder delivererKey = new StringBuilder();
-                        dbRef.runTransaction(new Transaction.Handler() {
-                            @NonNull
-                            @Override
-                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-
-                                if (deliverersFree.isEmpty())
-                                    return Transaction.abort();
-
-                                delivererKey.append(deliverersFree.get(0));
-
-
-                                for (MutableData child : mutableData.getChildren()) {
-                                    if (child.getValue() != null) {
-                                        String s = child.getValue(String.class);
-                                        if (s!= null && s.equals(delivererKey.toString())) {
-                                            mutableData.child(s).setValue(null);
-                                            Log.d("tmz", "eliminate"+s);
-                                            return Transaction.success(mutableData);
-                                        }
-                                    }
-                                }
-                                return Transaction.abort();
-                            }
-
-                            @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                                if (b) {
-                                    if (delivererKey.toString().isEmpty()) {
-                                        DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                                        dbOrder.setValue("rejected");
-                                        Toast.makeText(ctx, R.string.no_availabity, Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                    refreshAvailabityAndAccept(position, delivererKey.toString());
-                                } else {
-                                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                                    dbOrder.setValue("rejected");
-                                    Toast.makeText(ctx, R.string.no_free_deliverers, Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-                        });
+                        Intent intent = new Intent(ctx, FindDelivererActivity.class);
+                        intent.putExtra("order", orders.get(position));
+                        startActivity(intent);
                     }
                 });
 
@@ -174,11 +135,7 @@ public class OrderFragment extends Fragment {
                 //END SET BUTTON AS REJECTED
 
             }
-
-
         }
-
-
     }
 
     private void initFreeDeliveresListener() {
@@ -209,76 +166,6 @@ public class OrderFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
-    }
-
-
-    private void refreshAvailabityAndAccept(int position, String delivererKey) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        //AGGIORNO LE AVAILABILITY
-        DatabaseReference ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
-        ref.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                for(MutableData child: mutableData.getChildren()){
-                    Dish d = child.getValue(Dish.class);
-                    if(d!=null) {
-                        for (Dish d_ord : orders.get(position).getDishes()) {
-                            int new_quantity = d.getAvailability() - d_ord.getQuantity();
-                            if (new_quantity < 0)
-                                return Transaction.abort();
-                            else {
-                                d.setAvailability(new_quantity);
-                                child.setValue(d);
-                            }
-                        }
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                if(b){
-
-                    DatabaseReference dbDeliverer = database.getReference("/deliverers/" + delivererKey + "/current_order/");
-                    dbDeliverer.setValue(orders.get(position).getId());
-                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                    dbOrder.setValue("accepted");
-
-                    adapter.notifyItemChanged(position);
-                }else {
-                    DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                    dbOrder.setValue("rejected");
-                }
-            }
-        });
-        ref = db.getReference("/ristoranti/" + orders.get(position).getRestaurant().getRestaurantID() + "/piatti_totali/");
-        ref.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                for(MutableData child: mutableData.getChildren()){
-                    Dish d = child.getValue(Dish.class);
-                    if(d!=null) {
-                        for (Dish d_ord : orders.get(position).getDishes()) {
-                            int new_quantity = d.getAvailability() - d_ord.getQuantity();
-                            if (new_quantity < 0)
-                                return Transaction.abort();
-                            else {
-                                d.setAvailability(new_quantity);
-                                child.setValue(d);
-                            }
-                        }
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
             }
         });
     }

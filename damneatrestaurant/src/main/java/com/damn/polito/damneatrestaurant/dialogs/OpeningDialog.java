@@ -152,7 +152,7 @@ public class OpeningDialog extends DialogFragment {
             for(DayOfTheWeek d : days)
                 sb.append(d.toString()).append("\n");
 
-            ((HandleDismissDialog) activity).handleOnDismiss(EditProfile.DialogType.Opening, sb.toString());
+            ((HandleDismissDialog) activity).handleOnDismiss(DialogType.Opening, sb.toString());
         }
     }
 

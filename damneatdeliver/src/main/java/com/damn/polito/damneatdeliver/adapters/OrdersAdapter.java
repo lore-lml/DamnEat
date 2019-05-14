@@ -1,5 +1,6 @@
 package com.damn.polito.damneatdeliver.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -79,16 +80,18 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         else
             holder.image.setImageResource(R.drawable.dish_preview);
 
-        String dish_list_str = "";
+        String dish_list_str;
         List<Dish> dishes = selected.getDishes();
         Double price = 0.;
+        StringBuilder dish_list_strBuilder = new StringBuilder();
         for (Dish d:dishes) {
-            String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
+            @SuppressLint("DefaultLocale") String p = String.format("%.2f", d.getPrice());
+            dish_list_strBuilder.append(d.getQuantity()).append("\tx\t").append(d.getName()).append("\t").append(p).append("€\n");
             price += d.getQuantity()*d.getPrice();
         }
+        dish_list_str = dish_list_strBuilder.toString();
         if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
-            String p = String.format("\n%.2f", selected.getRestaurant().getRestaurant_price_ship());
+            @SuppressLint("DefaultLocale") String p = String.format("\n%.2f", selected.getRestaurant().getRestaurant_price_ship());
             dish_list_str += ctx.getString(R.string.ship) + " " + p + "€";
             Log.d("test", selected.getRestaurant().getRestaurant_price_ship().toString());
             price += selected.getRestaurant().getRestaurant_price_ship();
@@ -192,12 +195,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             dishes_list = itemView.findViewById(R.id.dishes_list);
             customer_info =itemView.findViewById(R.id.order_customer_info);
             restaurant_i = itemView.findViewById(R.id.phone_big_text);
-            delivery_time = itemView.findViewById(R.id.order_delivery_time);
-            note = itemView.findViewById(R.id.order_note);
             image = itemView.findViewById(R.id.circleImageView);
             state_tv = itemView.findViewById(R.id.state_tv);
 
-            message = itemView.findViewById(R.id.order_message_id);
 
             itemView.setOnClickListener(view -> {
                 if (listener != null) {

@@ -17,13 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
@@ -34,7 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Map;
 import java.util.Objects;
 
 import static android.view.View.GONE;
@@ -49,7 +48,7 @@ public class CurrentFragment extends Fragment {
     private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
     private ConstraintLayout id_shipped;
 
-    private CardView root, card_order, card_order_message, card_order_quest, card_avaible, card_small;
+    private CardView root, card_order, card_avaible, card_small;
     private ImageView photo;
     private Button confirmButton, acceptButton, rejectButton;
     private Switch switch_available;
@@ -57,14 +56,11 @@ public class CurrentFragment extends Fragment {
 
     private Order currentOrder;
 
-    private boolean empty = true;
     private boolean registered = false;
-    private Map orders;
 
     private Profile prof;
 
     private FirebaseDatabase database;
-    private String key, defaultValue = "- -";
 
 
     @Nullable
@@ -117,7 +113,7 @@ public class CurrentFragment extends Fragment {
         acceptButton = view.findViewById(R.id.acceptOrder);
         rejectButton = view.findViewById(R.id.rejectOrder);
         switch_available = view.findViewById(R.id.available_switch);
-        card_order_message = view.findViewById(R.id.card_order_message);
+        card_order = view.findViewById(R.id.card_order);
         photo = view.findViewById(R.id.circleImageView);
 
         default_image = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.profile_sample);
@@ -371,12 +367,12 @@ public class CurrentFragment extends Fragment {
         String dbKey = pref.getString("dbkey", null);
 
         FirebaseDatabase database= FirebaseDatabase.getInstance();
-        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey + "/info");
+        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey );
         profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                prof = dataSnapshot.getValue(Profile.class);
-                if(prof==null){
+                Deliverer del = dataSnapshot.getValue(Deliverer.class);
+                if(del==null){
                     registered = false;
                 }
                 else registered = true;

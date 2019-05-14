@@ -1,6 +1,8 @@
 package com.damn.polito.commonresources.beans;
 
-public class Customer {
+import java.io.Serializable;
+
+public class Customer implements Serializable {
     private String customerName;
     private String customerID;
     private String customerMail;

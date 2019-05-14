@@ -12,11 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.adapters.OrdersAdapter;
-import com.damn.polito.commonresources.beans.Order;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,12 +66,7 @@ public class OrderFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-//        if(orders.size()>0) {
-//            if (!orders.get(0).Expanded())
-//                orders.get(0).changeExpanded();
-//        }
         adapter.setOnItemClickListener(position -> {
-//            if (position != 0)
                 orderList.get(position).changeExpanded();
             adapter.notifyItemChanged(position);
         });
@@ -111,8 +105,6 @@ public class OrderFragment extends Fragment {
         ValueEventListener listener = dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //Log.d("order", key);
-               // Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
                     order.setId(key);
@@ -124,8 +116,6 @@ public class OrderFragment extends Fragment {
                 }
                 orderList.addFirst(order);
                 List<Dish> tmp = new ArrayList<>();
-
-                //Log.d("order", order.getCustomer().getCustomerName());
                 adapter.notifyDataSetChanged();
             }
 

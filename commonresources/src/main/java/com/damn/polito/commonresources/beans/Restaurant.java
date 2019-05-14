@@ -1,6 +1,8 @@
 package com.damn.polito.commonresources.beans;
 
-public class Restaurant {
+import java.io.Serializable;
+
+public class Restaurant implements Serializable {
     private String restaurantName;
     private String restaurantPhone;
     private String restaurantID;
