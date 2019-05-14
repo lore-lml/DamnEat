@@ -25,17 +25,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/filter_refresh"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/image_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_refresh" />
-
         <android.support.v7.widget.CardView
             android:id="@+id/card_cuisine"
             android:layout_width="match_parent"
@@ -130,6 +119,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
                         android:text="@string/cuisine_mexican" />
+
+                    <CheckBox
+                        android:id="@+id/box_other"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:text="@string/cuisine_other" />
 
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>
@@ -272,6 +268,13 @@
                         android:layout_weight="0"
                         android:text="@string/dish_sushi" />
 
+                    <CheckBox
+                        android:id="@+id/box_otherdish"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:text="@string/dish_others" />
+
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
@@ -304,36 +307,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/category_pricerange">
 
-            <LinearLayout
+            <RadioGroup
+                android:id="@+id/group_pricerange"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/box_cheap"
-                    android:layout_width="0dp"
+                <RadioButton
+                    android:id="@+id/radio_cheap"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
                     android:layout_weight="1"
+                    android:checked="false"
                     android:text="€" />
 
-                <CheckBox
-                    android:id="@+id/box_medium"
-                    android:layout_width="0dp"
+                <RadioButton
+                    android:id="@+id/radio_medium"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
                     android:layout_weight="1"
                     android:text="€€" />
 
-                <CheckBox
-                    android:id="@+id/box_expensive"
-                    android:layout_width="0dp"
+                <RadioButton
+                    android:id="@+id/radio_expensive"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
                     android:layout_weight="1"
                     android:text="€€€" />
-            </LinearLayout>
+            </RadioGroup>
         </android.support.v7.widget.CardView>
 
         <Button

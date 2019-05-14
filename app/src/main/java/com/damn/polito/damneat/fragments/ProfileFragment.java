@@ -33,11 +33,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
-import static com.damn.polito.damneat.Welcome.*;
 
 public class ProfileFragment extends Fragment {
 
@@ -45,10 +46,14 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImage;
     private TextView name, mail, description, address, phone;
     private Bitmap profileBitmap;
+    //private boolean empty = true;
     private Context ctx;
 
     private FirebaseDatabase database;
+    private String dbKey;
+
     private Profile prof;
+    private Map<String, Object> orders;
 
 
     @Nullable
@@ -77,6 +82,7 @@ public class ProfileFragment extends Fragment {
         description = view.findViewById(R.id.editText_desc);
         address = view.findViewById(R.id.editText_address);
 
+        dbKey = PreferenceManager.getDefaultSharedPreferences(ctx).getString("dbkey", null);
         prof = new Profile();
 
         database = FirebaseDatabase.getInstance();
@@ -149,12 +155,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private void storeProfileOnFirebase(Profile profile){
-        if(getDbKey() == null) return;
+        if(dbKey == null) return;
         DatabaseReference myRef;
         DatabaseReference ordini;
 
-        myRef = database.getReference("clienti/" + getDbKey());
-        ordini = database.getReference("clienti/" + getDbKey() + "/lista_ordini");
+        myRef = database.getReference("clienti/" + dbKey);
+        ordini = database.getReference("clienti/" + dbKey + "/lista_ordini");
 
 
         myRef.runTransaction(new Transaction.Handler(){
@@ -168,8 +174,16 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 //this method will be called once with the result of the transaction
-                if(!committed) {
-                    Toast.makeText(ctx, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                if(committed) {
+                    if(orders != null && orders.size() != 0)
+                        ordini.updateChildren(orders);
+                    /*SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
+
+                    editor.putString("clientaddress", profile.getAddress());
+                    editor.putString("clientname", profile.getName());
+                    editor.putString("clientphone", profile.getPhone());
+                    editor.putString("clientmail", profile.getMail());
+                    editor.apply();*/
                 }
             }
         });
@@ -205,6 +219,21 @@ public class ProfileFragment extends Fragment {
         prof.setPhone(pref.getString("phone", ""));
         prof.setDescription(pref.getString("description", ""));
         prof.setBitmapProf(pref.getString("profile", ""));
+
+
+        DatabaseReference ordini = database.getReference("clienti/"+ dbKey +"/lista_ordini");
+        ordini.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!= null)
+                    orders = (Map)dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

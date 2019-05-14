@@ -1,7 +1,6 @@
 package com.damn.polito.damneat.adapters;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -36,10 +35,9 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     private List<Restaurant> restaurants;
     private List<Restaurant> filtered;
 
-    public RestaurantAdapter(Context ctx, List<Restaurant> filtered, List<Restaurant> restaurants) {
+    public RestaurantAdapter(Context ctx, List<Restaurant> restaurants) {
         this.ctx = ctx;
-        this.filtered = filtered;
-        this.restaurants = restaurants;
+        this.filtered = restaurants;
     }
 
     @NonNull
@@ -69,15 +67,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
                 ctx.getString(R.string.price_free) : ctx.getString(R.string.order_price, current.getPriceShip()));
 
         holder.root.setOnClickListener(v->{
-            if(!Utility.isRestaurantOpen(current.getOpening())){
-                new AlertDialog.Builder(ctx)
-                        .setTitle(R.string.restaurant_closed)
-                        .setMessage(ctx.getString(R.string.restaurant_closed_text, current.getOpening()))
-                        .setNeutralButton("OK", ((dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                        })).show();
-                return;
-            }
             //INFO RISTORANTE
             Intent intent = new Intent(ctx, ChooseDishes.class);
             intent.putExtra("rest_address", current.getAddress());
@@ -89,6 +78,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             intent.putExtra("rest_priceship", current.getPriceShip());
 
             PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString("rest_opening", current.getOpening()).apply();
+//            intent.putExtra("rest_rating", holder.ratingBar.getProgress());
+//            intent.putExtra("rest_reviews", current.getReviews());
             ((Activity)ctx).startActivityForResult(intent, RestaurantFragment.REQUEST_CODE + pos);
         });
     }
@@ -107,25 +98,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Restaurant> filteredList;
-            String[] doubleFilter = constraint.toString().split("\\n+");
-            int sum = 0;
-            for(String s : doubleFilter) sum += s.length();
 
-            if(sum == 0){
+            if(constraint == null || constraint.length() == 0){
                 filteredList = new ArrayList<>(restaurants);
             }else{
-                List<Restaurant> partialResult = new ArrayList<>();
-
-                filterCategories(partialResult, doubleFilter[0]);
-                if(doubleFilter.length == 2){
-                    String filterPattern = doubleFilter[1];
-                    filteredList = new ArrayList<>();
-                    for(Restaurant r : partialResult){
-                        if(r.contains(filterPattern))
-                            filteredList.add(r);
-                    }
-                }else
-                    filteredList = partialResult;
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                filteredList = new ArrayList<>();
+                for(Restaurant r : restaurants){
+                    if(r.contains(filterPattern))
+                        filteredList.add(r);
+                }
             }
             FilterResults results = new FilterResults();
             results.values = filteredList;
@@ -138,26 +120,17 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             filtered.clear();
             if(filterResults.values instanceof List)
                 filtered.addAll((List<Restaurant>)filterResults.values);
-
             notifyDataSetChanged();
         }
-
-        private void filterCategories(List<Restaurant> filteredList, String text){
-            if(text.isEmpty()){
-                filteredList.addAll(restaurants);
-                return;
-            }
-
-            String[] categories = text.split(",\\s?");
-            for(Restaurant r : restaurants){
-                for(String cat : categories)
-                    if(r.contains(cat)) {
-                        filteredList.add(r);
-                        break;
-                    }
-            }
-        }
     };
+
+    public void setFullList(@NonNull List<Restaurant> list){
+        restaurants = new ArrayList<>(list);
+    }
+
+    public List<Restaurant> getFullList(){
+        return restaurants;
+    }
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder {
 

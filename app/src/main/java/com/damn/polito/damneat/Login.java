@@ -37,10 +37,18 @@ public class Login extends AppCompatActivity {
                     // logout
             AuthUI.getInstance()
                     .signOut(Login.this)
-                    .addOnCompleteListener(task -> {
-                        b.setEnabled(false);
-                        shownSignInOptions();
-                    }).addOnFailureListener(e -> {});
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            b.setEnabled(false);
+                            shownSignInOptions();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
         }
             //startActivity(new Intent(this, Welcome.class))
 

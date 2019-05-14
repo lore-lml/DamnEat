@@ -18,7 +18,7 @@ import com.damn.polito.damneat.fragments.RestaurantFragment;
 public class SortDialog extends DialogFragment {
 
     private RadioGroup radioGroup;
-    private HandleDismissDialog from;
+    private Fragment from;
     private boolean ok = false;
     private RestaurantFragment.SortType sortType;
 
@@ -26,7 +26,7 @@ public class SortDialog extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if(from == null)
-            throw new IllegalStateException("You must call setListener() before create show the dialog");
+            throw new RuntimeException("You have to call setFragment() method before show the sort dialog");
         this.getDialog().setTitle(R.string.sort);
         return inflater.inflate(R.layout.dialog_sort, container, false);
     }
@@ -64,9 +64,7 @@ public class SortDialog extends DialogFragment {
         }
     }
 
-    public void setListener(HandleDismissDialog from) {
-        if(from == null)
-            throw new IllegalArgumentException("You cannot pass a null listener");
+    public void setFragment(Fragment from) {
         this.from = from;
     }
 
@@ -92,7 +90,7 @@ public class SortDialog extends DialogFragment {
                 break;
         }
 
-        from.handleOnDismiss(DialogType.SortDialog, result);
+        ((HandleDismissDialog)from).handleOnDismiss(DialogType.SortDialog, result);
     }
 
     public void setSortType(RestaurantFragment.SortType sortType) {

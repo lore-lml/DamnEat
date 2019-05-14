@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneat.R;
-import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.adapters.OrdersAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,18 +30,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class OrderFragment extends Fragment {
-
-    private Welcome parent;
-    private List<Order> orderList;
+    private List<String> orderKeyList = new ArrayList<>();
+    private LinkedList<Order> orderList = new LinkedList<>();
     private RecyclerView recyclerView;
     private OrdersAdapter adapter;
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
     private Context ctx;
+    private Customer customer = new Customer();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        parent = (Welcome)getActivity();
         return inflater.inflate(R.layout.orders_fragment, container, false);
     }
 
@@ -51,7 +51,9 @@ public class OrderFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ctx = getContext();
         assert ctx != null;
-        orderList = parent.getOrders();
+
+        getSharedData();
+        init();
         initReyclerView(view);
 
     }
@@ -63,15 +65,75 @@ public class OrderFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
     }
 
-    public void onChildAdded() {
-        adapter.notifyItemInserted(0);
+    private void getSharedData() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        customer.setCustomerName(pref.getString("clientname", ""));
+        customer.setCustomerAddress(pref.getString("clientaddress", ""));
+        customer.setCustomerMail(pref.getString("clientmail", ""));
+        customer.setCustomerPhone(pref.getString("clientphone", ""));
+        customer.setCustomerID(pref.getString("dbkey", ""));
+    }
+    private void init(){
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference("clienti/"+ customer.getCustomerID() +"/lista_ordini/");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String key;
+                orderKeyList.clear();
+                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
+                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
+                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
+                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
+                    key = chidSnap.getValue(String.class);
+                    getOrderFirebase(key);
+                    orderKeyList.add(key);
+                }
+                //adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        if (!orderList.isEmpty()) {
+            Collections.sort(orderList,
+                    (a, b) -> b.getDate().compareTo(a.getDate()));
+            adapter.notifyDataSetChanged();
+        }
     }
 
-    public void onChildChanged(){
-        adapter.notifyItemChanged(0);
+    private void getOrderFirebase(String key){
+        database = FirebaseDatabase.getInstance();
+        dbRef = database.getReference("ordini/"+ key);
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("order", key);
+                if(dataSnapshot.getValue() == null) return;
+                Log.d("order", dataSnapshot.getValue().toString());
+                Order order = dataSnapshot.getValue(Order.class);
+                if(order!=null){
+                    order.sId(key);
+                    for(int i=0; i<orderList.size(); i++)
+                        if(orderList.get(i).Id().equals(order.Id())){
+                            orderList.remove(i);
+                            break;
+                        }
+                }
+                orderList.addFirst(order);
+                Log.d("order", order.getCustomer().getCustomerName());
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    public void onChildRemoved(int pos) {
-        adapter.notifyItemRemoved(pos);
-    }
+
 }

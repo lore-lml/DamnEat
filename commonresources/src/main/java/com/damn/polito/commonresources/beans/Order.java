@@ -1,11 +1,13 @@
 package com.damn.polito.commonresources.beans;
 
+import com.damn.polito.commonresources.beans.Dish;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 public class Order implements Serializable {
 
@@ -206,7 +208,7 @@ public class Order implements Serializable {
         return id;
     }
 
-    public void setId(String id) {
+    public void sId(String id) {
         this.id = id;
     }
 
@@ -220,18 +222,5 @@ public class Order implements Serializable {
 
     public void setDelivererPhoto(String delivererPhoto) {
         this.delivererPhoto = delivererPhoto;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order)) return false;
-        Order order = (Order) o;
-        return id.equals(order.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 }

@@ -210,7 +210,7 @@ public class OrderFragment extends Fragment {
                 //Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
-                    order.setId(key);
+                    order.sId(key);
                     for(int i=0; i<orders.size(); i++)
                         if(orders.get(i).Id().equals(order.Id())){
                             orders.remove(i);

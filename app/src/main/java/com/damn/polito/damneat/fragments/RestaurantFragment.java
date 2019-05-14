@@ -43,6 +43,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -50,22 +51,24 @@ import java.util.Objects;
 import static android.app.Activity.RESULT_OK;
 
 public class RestaurantFragment extends Fragment implements HandleDismissDialog {
+
     public enum SortType{Alpha, PriceAsc, PriceDesc, MostRated}
 
     public static final int REQUEST_CODE = 9000;
-    private Welcome parent;
+    public static final String REDO = "REDO";
 
     private RecyclerView recyclerView;
     private RestaurantAdapter adapter;
     private LinearLayout offline;
     private TextView registered_tv;
     private ImageView registered_im;
-    private Button sortButton, filterButton;
+    private Button sort,filter;
     private Context ctx;
 
+    private DatabaseReference dbRef;
+    private ChildEventListener listener;
 
     private List<Restaurant> restaurants;
-    private List<Restaurant> filteredRestaurants;
 
     private SortType sortType;
     private String categories;
@@ -74,7 +77,6 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        parent = (Welcome)getActivity();
         return inflater.inflate(R.layout.restaurant_fragment, container, false);
     }
 
@@ -93,12 +95,13 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         registered_tv = view.findViewById(R.id.not_registered_tv);
         registered_im = view.findViewById(R.id.not_registered_im);
         recyclerView = view.findViewById(R.id.restaurant_recycler);
-        sortButton = view.findViewById(R.id.button_sort);
-        filterButton = view.findViewById(R.id.button_filter);
+        sort = view.findViewById(R.id.button_sort);
+        filter = view.findViewById(R.id.button_filter);
 
 
         if(InternetConnection.haveInternetConnection(ctx)) {
             init();
+            loadData();
             offline.setVisibility(View.GONE);
         }else{
             offline.setVisibility(View.VISIBLE);
@@ -109,15 +112,15 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
             registered_im.setVisibility(View.VISIBLE);
             offline.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);
-            sortButton.setVisibility(View.GONE);
-            filterButton.setVisibility(View.GONE);
+            sort.setVisibility(View.GONE);
+            filter.setVisibility(View.GONE);
 
         }else {
             registered_tv.setVisibility(View.GONE);
             registered_im.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            sortButton.setVisibility(View.VISIBLE);
-            filterButton.setVisibility(View.VISIBLE);
+            sort.setVisibility(View.VISIBLE);
+            filter.setVisibility(View.VISIBLE);
         }
     }
 
@@ -141,25 +144,26 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         return !pref.getString("clientphone", "").equals("");
     }
 
+    private void getSharedData() {}
+
     private void init(){
-        restaurants = parent.getRestaurants();
-        filteredRestaurants = new ArrayList<>(parent.getRestaurants());
-        adapter = new RestaurantAdapter(getActivity(), filteredRestaurants, restaurants);
+        restaurants = new ArrayList<>();
+        adapter = new RestaurantAdapter(getActivity(), restaurants);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
 
-        sortButton.setOnClickListener(v->{
+        sort.setOnClickListener(v->{
             assert getActivity() != null;
             FragmentManager fm = getActivity().getSupportFragmentManager();
             SortDialog sortDialog = new SortDialog();
-            sortDialog.setListener(this);
+            sortDialog.setFragment(this);
             if(sortType != null)
                 sortDialog.setSortType(sortType);
             sortDialog.show(fm, "Sort Dialog");
         });
 
-        filterButton.setOnClickListener(v->{
+        filter.setOnClickListener(v->{
             assert getActivity() != null;
             FragmentManager fm = getActivity().getSupportFragmentManager();
             FilterDialog filterDialog = new FilterDialog();
@@ -170,6 +174,59 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         });
     }
 
+    private void loadData() {
+        dbRef = FirebaseDatabase.getInstance().getReference("ristoratori/");
+
+        listener = dbRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getKey();
+                Restaurant r = dataSnapshot.getValue(Restaurant.class);
+                assert key != null;
+                assert r != null;
+                r.setFbKey(key);
+                restaurants.add(r);
+                adapter.setFullList(restaurants);
+                adapter.notifyItemInserted(restaurants.size()-1);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getKey();
+                Restaurant r = dataSnapshot.getValue(Restaurant.class);
+                assert key != null;
+                assert r != null;
+                r.setFbKey(key);
+                int pos = restaurants.indexOf(r);
+                restaurants.remove(r);
+                restaurants.add(pos, r);
+                adapter.setFullList(restaurants);
+                adapter.notifyItemChanged(pos);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getKey();
+                Restaurant r = dataSnapshot.getValue(Restaurant.class);
+                assert key != null;
+                assert r != null;
+                r.setFbKey(key);
+                int pos = restaurants.indexOf(r);
+                restaurants.remove(r);
+                adapter.setFullList(restaurants);
+                adapter.notifyItemRemoved(pos);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -180,16 +237,24 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                Toast.makeText(ctx, "CIAO", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String filterText) {
-                String cat = (categories == null || categories.isEmpty()) ? "" : categories;
-                adapter.getFilter().filter(cat + "\n" + filterText);
+                adapter.getFilter().filter(filterText);
                 return false;
             }
+
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(listener!=null)
+            dbRef.removeEventListener(listener);
     }
 
     @Override
@@ -210,10 +275,34 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         else if(type == DialogType.FilterDialog)
             filterDismiss(text);
     }
-
+    private void reDoFilter(String text){
+        filterDismiss(text);
+    }
     private void filterDismiss(String text){
-        categories = text;
-        adapter.getFilter().filter(((categories == null || categories.isEmpty()) ? "" : categories)+"\n");
+        restaurants.clear();
+
+
+        if(text == null || text.isEmpty()){
+            restaurants.addAll(adapter.getFullList());
+            adapter.notifyDataSetChanged();
+            categories = null;
+            return;
+        }else if(text.equals(REDO) && categories != null) {
+            text = categories;
+        }
+
+        String[] categories = text.split(",\\s?");
+        List<Restaurant> fullList = new ArrayList<>(adapter.getFullList());
+        for(Restaurant r : fullList){
+            for(String cat : categories)
+                if(r.contains(cat)) {
+                    restaurants.add(r);
+                    break;
+                }
+        }
+
+        adapter.notifyDataSetChanged();
+        this.categories = text;
     }
 
     private void sortDismiss(String text) {
@@ -236,15 +325,17 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     }
 
     private void orderMostRated() {
-        Collections.sort(filteredRestaurants,
+        Collections.sort(restaurants,
                 (a,b)->b.rate() - a.rate());
 
+        adapter.setFullList(restaurants);
         adapter.notifyDataSetChanged();
+
         sortType = SortType.MostRated;
     }
 
     private void orderPriceDesc() {
-        Collections.sort(filteredRestaurants,
+        Collections.sort(restaurants,
                 (a,b)->{
                     Restaurant.PriceRange a1 = a.priceRange();
                     Restaurant.PriceRange b1 = b.priceRange();
@@ -254,12 +345,14 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
                     return a1.equals(b1) ? rate2 - rate1 : b1.compareTo(a1);
                 });
 
+        adapter.setFullList(restaurants);
         adapter.notifyDataSetChanged();
+
         sortType = SortType.PriceDesc;
     }
 
     private void orderPriceAsc() {
-        Collections.sort(filteredRestaurants,
+        Collections.sort(restaurants,
                 (a,b)->{
             Restaurant.PriceRange a1 = a.priceRange();
             Restaurant.PriceRange b1 = b.priceRange();
@@ -269,36 +362,19 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
             return a1.equals(b1) ? rate2 - rate1 : a1.compareTo(b1);
         });
 
+        adapter.setFullList(restaurants);
         adapter.notifyDataSetChanged();
+
         sortType = SortType.PriceAsc;
     }
 
     private void orderAlpha() {
-        Collections.sort(filteredRestaurants,
+        Collections.sort(restaurants,
                 (a,b)->a.getName().compareTo(b.getName()));
 
+        adapter.setFullList(restaurants);
         adapter.notifyDataSetChanged();
+
         sortType = SortType.Alpha;
-    }
-
-    public void onChildAdded(Restaurant r){
-        filteredRestaurants.add(r);
-        adapter.notifyItemInserted(filteredRestaurants.size()-1);
-    }
-
-    public void onChildChanged(Restaurant r){
-        int pos = filteredRestaurants.indexOf(r);
-        if(pos == -1) return;
-
-        filteredRestaurants.remove(r);
-        filteredRestaurants.add(pos, r);
-        adapter.notifyItemChanged(pos);
-    }
-
-    public void onChildRemoved(Restaurant r) {
-        int pos = filteredRestaurants.indexOf(r);
-        filteredRestaurants.remove(r);
-        if(pos!= -1)
-            adapter.notifyItemRemoved(pos);
     }
 }

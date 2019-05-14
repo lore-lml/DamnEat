@@ -21,6 +21,4 @@
     <string name="sort_pricerangeasc">Sort by price range ascendent</string>
     <string name="sort_pricerangedesc">Sort by price range descendent</string>
     <string name="sort_mostrated">Sort most rated</string>
-    <string name="restaurant_closed">We are closed</string>
-    <string name="restaurant_closed_text">The restaurant is closed or it\'s about to!\n\n%s</string>
 </resources>

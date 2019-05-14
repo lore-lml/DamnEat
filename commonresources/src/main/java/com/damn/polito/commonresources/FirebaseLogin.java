@@ -31,11 +31,20 @@ public class FirebaseLogin {
         // logout
         AuthUI.getInstance()
                 .signOut(ctx)
-                .addOnCompleteListener(task -> {
-                    //b.setEnabled(false);
-                    clearData(ctx);
-                    //sshownSignInOptions(ctx);
-                }).addOnFailureListener(e -> Toast.makeText(ctx, ctx.getString(R.string.logout_error), Toast.LENGTH_LONG).show());
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //b.setEnabled(false);
+                        clearData(ctx);
+                        //sshownSignInOptions(ctx);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ctx, ctx.getString(R.string.logout_error), Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
     public static void shownSignInOptions(Activity ctx) {
         ctx.startActivityForResult(
