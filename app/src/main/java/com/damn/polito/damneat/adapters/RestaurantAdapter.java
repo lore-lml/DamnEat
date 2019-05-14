@@ -35,9 +35,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     private List<Restaurant> restaurants;
     private List<Restaurant> filtered;
 
-    public RestaurantAdapter(Context ctx, List<Restaurant> restaurants) {
+    public RestaurantAdapter(Context ctx, List<Restaurant> filtered, List<Restaurant> restaurants) {
         this.ctx = ctx;
-        this.filtered = restaurants;
+        this.filtered = filtered;
+        this.restaurants = restaurants;
     }
 
     @NonNull
@@ -98,16 +99,25 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Restaurant> filteredList;
+            String[] doubleFilter = constraint.toString().split("\\n+");
+            int sum = 0;
+            for(String s : doubleFilter) sum += s.length();
 
-            if(constraint == null || constraint.length() == 0){
+            if(sum == 0){
                 filteredList = new ArrayList<>(restaurants);
             }else{
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                filteredList = new ArrayList<>();
-                for(Restaurant r : restaurants){
-                    if(r.contains(filterPattern))
-                        filteredList.add(r);
-                }
+                List<Restaurant> partialResult = new ArrayList<>();
+
+                filterCategories(partialResult, doubleFilter[0]);
+                if(doubleFilter.length == 2){
+                    String filterPattern = doubleFilter[1];
+                    filteredList = new ArrayList<>();
+                    for(Restaurant r : partialResult){
+                        if(r.contains(filterPattern))
+                            filteredList.add(r);
+                    }
+                }else
+                    filteredList = partialResult;
             }
             FilterResults results = new FilterResults();
             results.values = filteredList;
@@ -120,17 +130,26 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             filtered.clear();
             if(filterResults.values instanceof List)
                 filtered.addAll((List<Restaurant>)filterResults.values);
+
             notifyDataSetChanged();
         }
+
+        private void filterCategories(List<Restaurant> filteredList, String text){
+            if(text.isEmpty()){
+                filteredList.addAll(restaurants);
+                return;
+            }
+
+            String[] categories = text.split(",\\s?");
+            for(Restaurant r : restaurants){
+                for(String cat : categories)
+                    if(r.contains(cat)) {
+                        filteredList.add(r);
+                        break;
+                    }
+            }
+        }
     };
-
-    public void setFullList(@NonNull List<Restaurant> list){
-        restaurants = new ArrayList<>(list);
-    }
-
-    public List<Restaurant> getFullList(){
-        return restaurants;
-    }
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder {
 

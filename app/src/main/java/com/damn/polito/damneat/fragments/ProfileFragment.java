@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
+import static com.damn.polito.damneat.Welcome.*;
 
 public class ProfileFragment extends Fragment {
 
@@ -50,7 +51,6 @@ public class ProfileFragment extends Fragment {
     private Context ctx;
 
     private FirebaseDatabase database;
-    private String dbKey;
 
     private Profile prof;
     private Map<String, Object> orders;
@@ -82,7 +82,6 @@ public class ProfileFragment extends Fragment {
         description = view.findViewById(R.id.editText_desc);
         address = view.findViewById(R.id.editText_address);
 
-        dbKey = PreferenceManager.getDefaultSharedPreferences(ctx).getString("dbkey", null);
         prof = new Profile();
 
         database = FirebaseDatabase.getInstance();
@@ -155,12 +154,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private void storeProfileOnFirebase(Profile profile){
-        if(dbKey == null) return;
+        if(getDbKey() == null) return;
         DatabaseReference myRef;
         DatabaseReference ordini;
 
-        myRef = database.getReference("clienti/" + dbKey);
-        ordini = database.getReference("clienti/" + dbKey + "/lista_ordini");
+        myRef = database.getReference("clienti/" + getDbKey());
+        ordini = database.getReference("clienti/" + getDbKey() + "/lista_ordini");
 
 
         myRef.runTransaction(new Transaction.Handler(){
@@ -221,7 +220,7 @@ public class ProfileFragment extends Fragment {
         prof.setBitmapProf(pref.getString("profile", ""));
 
 
-        DatabaseReference ordini = database.getReference("clienti/"+ dbKey +"/lista_ordini");
+        DatabaseReference ordini = database.getReference("clienti/"+ getDbKey() +"/lista_ordini");
         ordini.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
