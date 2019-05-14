@@ -8,14 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Dish;
-import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.adapters.OrdersAdapter;
@@ -27,11 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class OrderFragment extends Fragment {
 
@@ -120,7 +115,7 @@ public class OrderFragment extends Fragment {
                // Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
-                    order.sId(key);
+                    order.setId(key);
                     for(int i=0; i<orderList.size(); i++)
                         if(orderList.get(i).Id().equals(order.Id())){
                             orderList.remove(i);

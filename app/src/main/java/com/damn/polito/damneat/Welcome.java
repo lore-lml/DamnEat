@@ -33,12 +33,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 
 public class Welcome extends AppCompatActivity implements NotificationListener {
@@ -59,15 +59,15 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     
     //FirebaseReferences
     private FirebaseDatabase database;
-    private DatabaseReference profileRef, orderRef, restaurantsRef;
+    private DatabaseReference profileRef, restaurantsRef;
+    private Query orderQuery;
     //Listeners
-    private ValueEventListener profileListener, orderListener;
-    private ChildEventListener restaurantsListener;
-    private Map<String, ChildEventListener> childrenOrder = new HashMap<>();
+    private ValueEventListener profileListener, orderListenerNotifier;
+    private ChildEventListener restaurantsListener, orderListener;
 
     //Collections
     private List<Restaurant> restaurants = new ArrayList<>();
-    private List<Order> orders = new ArrayList<>();
+    private List<Order> orders = new LinkedList<>();
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
@@ -76,14 +76,15 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         selectedId = item.getItemId();
         switch (selectedId) {
             case R.id.nav_restaurant:
-                if(restaurantFragment == null) {
+                if(restaurantFragment == null)
                     restaurantFragment = new RestaurantFragment();
-                    restaurantFragment.setParent(this);
-                }
+
                 selected = restaurantFragment;
                 break;
             case R.id.nav_reservations:
-                orderFragment = new OrderFragment();
+                if(orderFragment == null)
+                    orderFragment = new OrderFragment();
+
                 selected = orderFragment;
                 refreshNotificationBadge(false);
                 break;
@@ -187,7 +188,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             }
         });
 
-        setOrderListener();
+        //setOrderListener();
     }
 
     private void storeProfile(Profile profile){
@@ -195,6 +196,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         if(selectedId == null)
             navigation.setSelectedItemId(R.id.nav_restaurant);
         setRestaurantListener();
+        setOrderListener();
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         editor.putString("address", profile.getAddress());
@@ -265,39 +267,110 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     private void setOrderListener() {
         if(dbKey == null) return;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        Map<String, Object> map = new HashMap<>();
-        orderRef = database.getReference("clienti/" + dbKey + "/lista_ordini");
-        orderListener = orderRef.addValueEventListener(new ValueEventListener() {
+        //orderRef = database.getReference("clienti/" + dbKey + "/lista_ordini");
+        DatabaseReference orderRef = database.getReference("ordini/");
+
+        /*orderListenerNotifier = orderRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() != null)
-                    map.putAll((Map) dataSnapshot.getValue());
+                if(dataSnapshot.getValue() != null) {
+                    for(DataSnapshot child : dataSnapshot.getChildren())
+                        ordersKey.add(child.getValue(String.class));
+                }
                 else {
                     pref.edit().putInt("nOrder", 0).apply();
                     return;
                 }
 
                 int old = pref.getInt("nOrder", -1);
-                if(old != map.size()){
-                    pref.edit().putInt("nOrder", map.size()).apply();
+                if(old != ordersKey.size()){
+                    pref.edit().putInt("nOrder", ordersKey.size()).apply();
                     if(old != -1)
                         refreshNotificationBadge(true);
-                }
-
-                for(Map.Entry entry : map.entrySet()){
-                    if(!childrenOrder.containsKey(entry.getValue().toString())){
-                        ChildEventListener child = newChildEvent();
-                        childrenOrder.put(entry.getValue().toString(), child);
-
-                        database.getReference("/ordini/" + entry.getValue())
-                                .addChildEventListener(child);
-                    }
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+        orderQuery = orderRef.orderByChild("customer/customerID").equalTo(dbKey);
+        orderListenerNotifier = orderQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.getValue() == null) {
+                    pref.edit().putInt("nOrder", 0).apply();
+                    return;
+                }
+
+                long old = pref.getLong("nOrder", -1);
+                long count = dataSnapshot.getChildrenCount();
+                if(old != count){
+                    pref.edit().putLong("nOrder", count).apply();
+                    if(old != -1)
+                        refreshNotificationBadge(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        orderListener = orderQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getKey();
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                o.setId(key);
+                orders.add(0, o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildAdded();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getKey();
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                o.setId(key);
+                orders.remove(o);
+                orders.add(0, o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildChanged();
+                else
+                    refreshNotificationBadge(true);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getKey();
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                o.setId(key);
+                int pos = orders.indexOf(o);
+                orders.remove(o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildRemoved(pos);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -306,35 +379,16 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         }
     }
 
-    private ChildEventListener newChildEvent(){
-        return new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.getValue() != null && selectedId != R.id.nav_reservations)
-                    refreshNotificationBadge(true);
-            }
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };
-    }
+    public List<Order> getOrders(){return orders;}
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (profileRef != null)
             profileRef.removeEventListener(profileListener);
-        if(orderRef != null) {
-            orderRef.removeEventListener(orderListener);
-            for (Map.Entry<String, ChildEventListener> e : childrenOrder.entrySet()) {
-                DatabaseReference ref = database.getReference(e.getKey());
-                ref.removeEventListener(e.getValue());
-            }
+        if(orderQuery != null) {
+            orderQuery.removeEventListener(orderListenerNotifier);
+            orderQuery.removeEventListener(orderListener);
         }
         if(restaurantsRef != null)
             restaurantsRef.removeEventListener(restaurantsListener);

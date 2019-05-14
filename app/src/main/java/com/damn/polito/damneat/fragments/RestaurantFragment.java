@@ -63,8 +63,6 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     private Button sortButton, filterButton;
     private Context ctx;
 
-    private DatabaseReference dbRef;
-    private ChildEventListener listener;
 
     private List<Restaurant> restaurants;
     private List<Restaurant> filteredRestaurants;
@@ -76,8 +74,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        if(parent == null)
-            throw new IllegalStateException("You must call setParent() before start the fragment transaction");
+        parent = (Welcome)getActivity();
         return inflater.inflate(R.layout.restaurant_fragment, container, false);
     }
 
@@ -156,7 +153,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
             assert getActivity() != null;
             FragmentManager fm = getActivity().getSupportFragmentManager();
             SortDialog sortDialog = new SortDialog();
-            sortDialog.setFragment(this);
+            sortDialog.setListener(this);
             if(sortType != null)
                 sortDialog.setSortType(sortType);
             sortDialog.show(fm, "Sort Dialog");
@@ -188,18 +185,11 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
 
             @Override
             public boolean onQueryTextChange(String filterText) {
-                String cat = (categories == null || categories.isEmpty()) ? "\n" : categories;
+                String cat = (categories == null || categories.isEmpty()) ? "" : categories;
                 adapter.getFilter().filter(cat + "\n" + filterText);
                 return false;
             }
         });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if(listener!=null)
-            dbRef.removeEventListener(listener);
     }
 
     @Override
@@ -222,8 +212,8 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     }
 
     private void filterDismiss(String text){
-        categories = (text == null || text.isEmpty()) ? "\n" : text;
-        adapter.getFilter().filter(categories+"\n");
+        categories = text;
+        adapter.getFilter().filter(((categories == null || categories.isEmpty()) ? "" : categories)+"\n");
     }
 
     private void sortDismiss(String text) {
@@ -310,9 +300,5 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         filteredRestaurants.remove(r);
         if(pos!= -1)
             adapter.notifyItemRemoved(pos);
-    }
-
-    public void setParent(@NonNull Welcome parent) {
-        this.parent = parent;
     }
 }

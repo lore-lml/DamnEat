@@ -31,10 +31,8 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class OrderFragment extends Fragment {
@@ -325,7 +323,7 @@ public class OrderFragment extends Fragment {
                 //Log.d("order", dataSnapshot.getValue().toString());
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
-                    order.sId(key);
+                    order.setId(key);
                     for(int i=0; i<orders.size(); i++)
                         if(orders.get(i).Id().equals(order.Id())){
                             orders.remove(i);

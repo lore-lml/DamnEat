@@ -1,12 +1,8 @@
 package com.damn.polito.commonresources.beans;
 
-import com.damn.polito.commonresources.beans.Dish;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 public class Order {
 
@@ -207,7 +203,7 @@ public class Order {
         return id;
     }
 
-    public void sId(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -221,5 +217,18 @@ public class Order {
 
     public void setDelivererPhoto(String delivererPhoto) {
         this.delivererPhoto = delivererPhoto;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+        return id.equals(order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }
