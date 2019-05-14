@@ -71,7 +71,7 @@ public class Welcome extends AppCompatActivity {
     private Integer selectedId = null;
     private String orderKey;
     private static Context ctx;
-    private static boolean logged, isRegistred;
+    private static boolean logged;
 
         //LOCATION VARIABLES
     public static final int LOCATION_PERMISSION_REQUESt_CODE = 1212;
@@ -200,9 +200,9 @@ public class Welcome extends AppCompatActivity {
                 if(user != null) {
                     storeData(user);
                     profile = null;
-                    if (currentFragment != null)
-                        if (selectedId == R.id.nav_current)
-                            currentFragment.checkRegistered();
+//                    if (currentFragment != null)
+//                        if (selectedId == R.id.nav_current)
+//                            currentFragment.checkRegistered();
                     if (profileRef != null && v != null)
                         profileRef.removeEventListener(v);
                     if(getKey()!=null)
@@ -233,7 +233,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     private void loadProfile(){
-        profileRef = database.getReference("/deliverers/" + getKey() + "/info/");
+        profileRef = database.getReference("/deliverers/" + getKey() + "/info");
         v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -367,7 +367,7 @@ public class Welcome extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
                 Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
-                DatabaseReference RefLat = database.getReference("/deliverers/" + Welcome.getKey() + "/latitude");
+                DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/latitude");
                 RefLat.setValue(location.getLatitude());
                 DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/longitude");
                 RefLong.setValue(location.getLongitude());
@@ -394,7 +394,6 @@ public class Welcome extends AppCompatActivity {
                 requestPermissions(new String[]{
                         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
                 }, 1);
-                return;
             }
         } else {
             startManager();

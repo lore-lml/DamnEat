@@ -25,6 +25,7 @@ import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneatdeliver.EditProfile;
+import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.R;
 import com.google.android.gms.tasks.Task;
@@ -53,8 +54,6 @@ public class ProfileFragment extends Fragment{
     private FirebaseDatabase database;
     private String dbKey;
 
-    private Map<String, Object> deliverers;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -81,7 +80,7 @@ public class ProfileFragment extends Fragment{
         description = view.findViewById(R.id.editText_desc);
         database = FirebaseDatabase.getInstance();
 
-        loadData();
+        loadData(Welcome.getProfile());
     }
 
     private void editProfile() {
@@ -141,55 +140,30 @@ public class ProfileFragment extends Fragment{
         empty = false;
     }
 
-    @SuppressWarnings("unchecked")
-    private void loadData() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
+    private void loadData(Profile prof) {
+        if (prof != null) {
+            name.setText(prof.getName());
+            mail.setText(prof.getMail());
+            phone.setText(prof.getPhone());
+            description.setText(prof.getDescription());
+            if (prof.getBitmapProf() != null) {
+                String encodedBitmap = prof.getBitmapProf();
+                profileBitmap = Utility.StringToBitMap(encodedBitmap);
+                if (profileBitmap != null)
+                    profileImage.setImageBitmap(profileBitmap);
+            }
+            empty = false;
+        }else{
+            name.setText(defaultValue);
+            mail.setText(defaultValue);
+            phone.setText(defaultValue);
+            description.setText(defaultValue);
         }
-
-        DatabaseReference myRef = database.getReference("deliverers/" + dbKey);
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                deliverers = (Map)dataSnapshot.getValue();
-                Deliverer del = dataSnapshot.getValue(Deliverer.class);
-                deliverers = (Map)dataSnapshot.getValue();
-                if (del != null) {
-                    name.setText(del.getName());
-                    mail.setText(del.getMail());
-                    phone.setText(del.getPhone());
-                    description.setText(del.getDescription());
-                    if (del.getBitmapProf() != null) {
-                        String encodedBitmap = del.getBitmapProf();
-                        profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                        if (profileBitmap != null)
-                            profileImage.setImageBitmap(profileBitmap);
-                    }
-                    empty = false;
-                }else{
-                    name.setText(defaultValue);
-                    mail.setText(defaultValue);
-                    phone.setText(defaultValue);
-                    description.setText(defaultValue);
-                }
-
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference ref;
-
-        ref = database.getReference("deliverers/" + dbKey);
-
+        ref = database.getReference("deliverers/" + Welcome.getKey() + "/info");
         ref.runTransaction(new Transaction.Handler(){
             @NonNull
             @Override
@@ -201,14 +175,7 @@ public class ProfileFragment extends Fragment{
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 if(committed) {
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-//                  //editor.putString("dbkey", myRef.getKey());
-//                    editor.putString("deliverername", profile.getName());
-//                    editor.putString("delivererphone", profile.getPhone());
-//                    editor.putString("deliverermail", profile.getMail());
-                    if (deliverers != null && deliverers.size()!= 0) {
-                        ref.updateChildren(deliverers);
-                    }
+                    loadData(profile);
                 }
             }
         });

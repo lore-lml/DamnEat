@@ -58,8 +58,6 @@ public class CurrentFragment extends Fragment {
 
     private boolean registered = false;
 
-    private Profile prof;
-
     private FirebaseDatabase database;
 
 
@@ -129,7 +127,9 @@ public class CurrentFragment extends Fragment {
             if(currentOrder!=null){
                 if(Welcome.getProfile()== null){
                     Log.d("button", "profile null");
+                    Toast.makeText(ctx, R.string.not_registered, Toast.LENGTH_LONG).show();
                 }else {
+                    Profile prof = Welcome.getProfile();
                     DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                     orderState.setValue("assigned");
                     DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
@@ -178,7 +178,6 @@ public class CurrentFragment extends Fragment {
             }
         });
 
-        checkRegistered();
 
         update();
 
@@ -196,6 +195,8 @@ public class CurrentFragment extends Fragment {
 
 
     public void update() {
+        registered = Welcome.registered();
+
         currentOrder = Welcome.getCurrentOrder();
         switch_available.setChecked(Welcome.getCurrentAvaibility());
 
@@ -361,32 +362,32 @@ public class CurrentFragment extends Fragment {
         notRegistered();
     }
 
-    public void checkRegistered(){
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        String dbKey = pref.getString("dbkey", null);
-
-        FirebaseDatabase database= FirebaseDatabase.getInstance();
-        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey );
-        profileRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Deliverer del = dataSnapshot.getValue(Deliverer.class);
-                if(del==null){
-                    registered = false;
-                }
-                else registered = true;
-                update();
-                Log.d("registered", String.valueOf(registered));
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    public void checkRegistered(){
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+//
+//        String dbKey = pref.getString("dbkey", null);
+//
+//        FirebaseDatabase database= FirebaseDatabase.getInstance();
+//        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey );
+//        profileRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Deliverer del = dataSnapshot.getValue(Deliverer.class);
+//                if(del==null){
+//                    registered = false;
+//                }
+//                else registered = true;
+//                update();
+//                Log.d("registered", String.valueOf(registered));
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
 
     private void setVisibility(String state){
