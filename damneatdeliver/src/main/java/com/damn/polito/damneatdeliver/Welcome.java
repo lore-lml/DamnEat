@@ -65,7 +65,6 @@ public class Welcome extends AppCompatActivity {
     private static boolean currentState;
     private static Profile profile;
     private static String hasSetName;
-    private FirebaseUser user;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
@@ -134,16 +133,18 @@ public class Welcome extends AppCompatActivity {
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build()
         );
-        shownSignInOptions();
+        database = FirebaseDatabase.getInstance();
+        if(Welcome.getKey()!=null)
+            init();
+        else
+            shownSignInOptions();
         currentOrder = new Order();
         currentOrder.setState("empty");
-        database = FirebaseDatabase.getInstance();
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
 
-        getLocationPermissions();
 
     }
 
@@ -155,6 +156,8 @@ public class Welcome extends AppCompatActivity {
 
         if(profile != null) {
             Log.d("key", getKey());
+            getLocationPermissions();
+            StartLocationManager();
 //            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
 //            orderRef.setValue(currentState);
             logged = true;
@@ -192,7 +195,7 @@ public class Welcome extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if(resultCode==RESULT_OK){
                 //get user
-                user = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
                 Toast.makeText(this, user.getEmail().toString(), Toast.LENGTH_LONG).show();
                 //set button signout
