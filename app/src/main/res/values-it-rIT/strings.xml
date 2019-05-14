@@ -20,4 +20,6 @@
     <string name="sort_pricerangeasc">Ordine fascia di prezzo più bassa</string>
     <string name="sort_mostrated">Ordine migliore valutazione</string>
     <string name="sort_pricerangedesc">Ordine fascia di prezzo più alta</string>
+    <string name="restaurant_closed">Siamo chiusi</string>
+    <string name="restaurant_closed_text">Il ristorante è chiuso o sta per chiudere!\n\n%s</string>
 </resources>

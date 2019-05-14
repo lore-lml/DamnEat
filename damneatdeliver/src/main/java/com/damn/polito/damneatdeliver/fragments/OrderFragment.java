@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
@@ -108,7 +107,7 @@ public class OrderFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
-                    order.sId(key);
+                    order.setId(key);
                     for(int i=0; i<orderList.size(); i++)
                         if(orderList.get(i).Id().equals(order.Id())){
                             orderList.remove(i);
