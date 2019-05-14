@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.beans.Profile;
@@ -246,6 +247,7 @@ public class Welcome extends AppCompatActivity {
         v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 profile = dataSnapshot.getValue(Profile.class);
                 if (profile == null)
                     logged = false;

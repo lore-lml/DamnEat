@@ -123,7 +123,7 @@ public class CurrentFragment extends Fragment {
 
         confirmButton.setOnClickListener(v ->{
             if(currentOrder!=null){
-                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/info/state/");
                 orderState.setValue("delivered");
             }
         });
@@ -135,7 +135,7 @@ public class CurrentFragment extends Fragment {
                     Toast.makeText(ctx, R.string.not_registered, Toast.LENGTH_LONG).show();
                 }else {
                     Profile prof = Welcome.getProfile();
-                    DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                    DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/info/state/");
                     orderState.setValue("assigned");
                     DatabaseReference orderPhoto = database.getReference("ordini/" + currentOrder.getId() + "/delivererPhoto/");
                     orderPhoto.setValue(prof.getBitmapProf());
@@ -148,7 +148,7 @@ public class CurrentFragment extends Fragment {
         });
         rejectButton.setOnClickListener(v ->{
             if(currentOrder!=null){
-                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/info/state/");
                 orderState.setValue("rejected");
             }
         });
@@ -172,7 +172,7 @@ public class CurrentFragment extends Fragment {
         });*/
 
         switch_available.setOnCheckedChangeListener((compoundButton, b) -> {
-            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
             orderRef.setValue(b);
             if(b){
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
