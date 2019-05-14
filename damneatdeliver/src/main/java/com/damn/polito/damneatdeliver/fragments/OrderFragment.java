@@ -17,6 +17,7 @@ import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.adapters.OrdersAdapter;
+import com.damn.polito.commonresources.beans.Order;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -108,7 +109,8 @@ public class OrderFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
-                    order.sId(key);
+                    //todo: non so se serve
+                    order.setId(key);
                     for(int i=0; i<orderList.size(); i++)
                         if(orderList.get(i).Id().equals(order.Id())){
                             orderList.remove(i);

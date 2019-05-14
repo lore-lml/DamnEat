@@ -1,6 +1,7 @@
 package com.damn.polito.damneat.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -68,6 +69,15 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
                 ctx.getString(R.string.price_free) : ctx.getString(R.string.order_price, current.getPriceShip()));
 
         holder.root.setOnClickListener(v->{
+            if(!Utility.isRestaurantOpen(current.getOpening())){
+                new AlertDialog.Builder(ctx)
+                        .setTitle(R.string.restaurant_closed)
+                        .setMessage(ctx.getString(R.string.restaurant_closed_text, current.getOpening()))
+                        .setNeutralButton("OK", ((dialogInterface, i) -> {
+                            dialogInterface.dismiss();
+                        })).show();
+                return;
+            }
             //INFO RISTORANTE
             Intent intent = new Intent(ctx, ChooseDishes.class);
             intent.putExtra("rest_address", current.getAddress());
@@ -79,8 +89,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             intent.putExtra("rest_priceship", current.getPriceShip());
 
             PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString("rest_opening", current.getOpening()).apply();
-//            intent.putExtra("rest_rating", holder.ratingBar.getProgress());
-//            intent.putExtra("rest_reviews", current.getReviews());
             ((Activity)ctx).startActivityForResult(intent, RestaurantFragment.REQUEST_CODE + pos);
         });
     }
