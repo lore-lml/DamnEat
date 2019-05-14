@@ -1,9 +1,11 @@
 package com.damn.polito.damneatdeliver.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -545,6 +547,13 @@ public class CurrentFragment extends Fragment {
 
         date.setVisibility(GONE);
         id.setVisibility(GONE);
+    }
+
+    private void startGoogleMaps(String address){
+        address = address + ", Torino";
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("google.navigation:q=" + address));
+        startActivity(intent);
     }
 
 }
