@@ -175,7 +175,7 @@ public class CurrentFragment extends Fragment {
         });*/
 
         switch_available.setOnCheckedChangeListener((compoundButton, b) -> {
-            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
             orderRef.setValue(b);
             if(b){
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
