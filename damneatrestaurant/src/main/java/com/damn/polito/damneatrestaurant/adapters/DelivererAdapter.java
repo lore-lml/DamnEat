@@ -1,5 +1,6 @@
 package com.damn.polito.damneatrestaurant.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.damneatrestaurant.FindDelivererActivity;
 import com.damn.polito.damneatrestaurant.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -95,7 +97,8 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
     }
 
     private void startTransaction(int position) {
-        DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
+
+        Deliverer current = deliverers.get(position);
         /*    StringBuilder delivererKey = new StringBuilder();
             dbRef.runTransaction(new Transaction.Handler() {
                 @NonNull
@@ -138,7 +141,50 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
                 }
             });*/
-        Deliverer current = deliverers.get(position);
+        //AGGIORNO LE AVAILABILITY
+        DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
+        ref.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                for(MutableData child: mutableData.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    if(d!=null) {
+                        for (Dish d_ord : order.getDishes()) {
+                            int new_quantity = d.getAvailability() - d_ord.getQuantity();
+                            if (new_quantity < 0)
+                                return Transaction.abort();
+                            else {
+                                d.setAvailability(new_quantity);
+                                child.setValue(d);
+                                DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID()
+                                        + "/piatti_totali/" + d.getId());
+                                ref.setValue(d);
+                            }
+                        }
+                    }
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                if(b){
+                    pickDeliverer(current);
+
+                }else {
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
+                    dbOrder.setValue("rejected");
+                    Toast.makeText(ctx, "Insufficient quantity", Toast.LENGTH_SHORT).show();
+                    ((Activity)ctx).finish();
+                }
+            }
+        });
+    }
+
+    private void pickDeliverer(Deliverer current) {
+        DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
         dbRef.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
@@ -163,76 +209,15 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 if(b){
                     DatabaseReference ref = database.getReference("deliverers/" + current.getKey() + "/current_order");
                     ref.setValue(order.getId());
-                }
-            }
-        });
-    }
-
-    private void refreshAvailabityAndAccept(int position, String delivererKey) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        //AGGIORNO LE AVAILABILITY
-        DatabaseReference ref = db.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
-        ref.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                for(MutableData child: mutableData.getChildren()){
-                    Dish d = child.getValue(Dish.class);
-                    if(d!=null) {
-                        for (Dish d_ord : order.getDishes()) {
-                            int new_quantity = d.getAvailability() - d_ord.getQuantity();
-                            if (new_quantity < 0)
-                                return Transaction.abort();
-                            else {
-                                d.setAvailability(new_quantity);
-                                child.setValue(d);
-                            }
-                        }
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(@android.support.annotation.Nullable DatabaseError databaseError, boolean b, @android.support.annotation.Nullable DataSnapshot dataSnapshot) {
-                if(b){
-
-                    DatabaseReference dbDeliverer = database.getReference("/deliverers/" + delivererKey + "/current_order/");
-                    dbDeliverer.setValue(order.getId());
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("accepted");
-
-                    notifyItemChanged(position);
-                }else {
+                }
+                else{
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("rejected");
                 }
-            }
-        });
-        ref = db.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
-        ref.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                for(MutableData child: mutableData.getChildren()){
-                    Dish d = child.getValue(Dish.class);
-                    if(d!=null) {
-                        for (Dish d_ord : order.getDishes()) {
-                            int new_quantity = d.getAvailability() - d_ord.getQuantity();
-                            if (new_quantity < 0)
-                                return Transaction.abort();
-                            else {
-                                d.setAvailability(new_quantity);
-                                child.setValue(d);
-                            }
-                        }
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
 
-            @Override
-            public void onComplete(@android.support.annotation.Nullable DatabaseError databaseError, boolean b, @android.support.annotation.Nullable DataSnapshot dataSnapshot) {
+                ((Activity)ctx).finish();
             }
         });
     }

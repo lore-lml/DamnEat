@@ -133,8 +133,8 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
         assert restAddress != null;
 
         freeDelRef = FirebaseDatabase.getInstance().getReference("deliverers_liberi/");
-        freeDeliverersQuery = freeDelRef.orderByChild("state").equalTo(true).limitToFirst(50);
-        /*freeDelivererListener = freeDeliverersQuery.addChildEventListener(new ChildEventListener() {
+        /*freeDeliverersQuery = freeDelRef.orderByChild("state").equalTo(true).limitToFirst(50);
+        freeDelivererListener = freeDeliverersQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 String key = dataSnapshot.getKey();
