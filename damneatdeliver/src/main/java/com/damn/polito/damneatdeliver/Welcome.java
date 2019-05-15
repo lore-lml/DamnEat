@@ -273,6 +273,8 @@ public class Welcome extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null) return;
                 Boolean state = dataSnapshot.getValue(Boolean.class);
+                if(profile == null)
+                    return;
                 if (state != null)
                     profile.setState(state);
                 else {

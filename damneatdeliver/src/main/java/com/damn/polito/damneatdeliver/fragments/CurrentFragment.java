@@ -150,6 +150,9 @@ public class CurrentFragment extends Fragment {
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("rejected");
+                DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+                orderRef.setValue("0");
+                setVisibility("empty");
             }
         });
 

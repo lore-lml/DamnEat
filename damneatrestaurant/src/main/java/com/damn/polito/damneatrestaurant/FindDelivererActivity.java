@@ -127,7 +127,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
         Geocoder coder = new Geocoder(this);
         try {
             restAddress = coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress(), 1).get(0);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Toast.makeText(this, "Network Error! Try again later", Toast.LENGTH_SHORT).show();
         }
         assert restAddress != null;
@@ -231,13 +231,17 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
                         Deliverer d = child.child("info").getValue(Deliverer.class);
                         assert d != null;
                         d.setKey(child.getKey());
-                        deliverers.add(d);
+                        if(d.getName()!=null)
+                            deliverers.add(d);
                     }
                 }
                 Collections.sort(deliverers, (d1, d2) -> {
-                    Double distance1 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d1.getLatitude(), d1.getLongitude());
-                    Double distance2 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d2.getLatitude(), d2.getLongitude());
-                    return distance1.compareTo(distance2);
+                    if(restAddress!=null) {
+                        Double distance1 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d1.getLatitude(), d1.getLongitude());
+                        Double distance2 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d2.getLatitude(), d2.getLongitude());
+                        return distance1.compareTo(distance2);
+                    }else
+                        return Integer.MAX_VALUE;
                 });
                 adapter.notifyDataSetChanged();
             }

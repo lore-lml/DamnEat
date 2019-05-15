@@ -254,6 +254,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(myRef==null || orderRef==null)
+            return;
         myRef.removeEventListener(listener);
         orderRef.removeEventListener(orderListener);
     }

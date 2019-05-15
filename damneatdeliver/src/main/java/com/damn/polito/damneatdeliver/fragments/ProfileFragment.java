@@ -195,6 +195,8 @@ public class ProfileFragment extends Fragment{
                 editProfile();
                 return true;
             case R.id.item_disconnect:
+                database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/").setValue(false);
+                database.getReference("/deliverers_liberi/" + Welcome.getKey()).removeValue();
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
             default:
