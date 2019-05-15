@@ -53,19 +53,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             if (mLocGranted) {
                 Task location = mFLPC.getLastLocation();//setlocation with the variable;
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            Location currLoc = (Location) task.getResult();
+                location.addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Location currLoc = (Location) task.getResult();
 
-                            MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
+                        MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
 
-                            moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), 15, "MyLocation");
+                        moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), 15, "MyLocation");
 
-                        } else {
-                            Toast.makeText(MapsActivity.this, "Unable to get current Location", Toast.LENGTH_LONG).show();
-                        }
+                    } else {
+                        Toast.makeText(MapsActivity.this, "Unable to get current Location", Toast.LENGTH_LONG).show();
                     }
                 });
             }

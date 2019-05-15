@@ -197,7 +197,7 @@
             android:paddingStart="100dp"
             android:paddingEnd="100dp"
             android:text="@string/set_as_rejected"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="@color/colorWhite"
             android:textColorLink="#00FF0000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

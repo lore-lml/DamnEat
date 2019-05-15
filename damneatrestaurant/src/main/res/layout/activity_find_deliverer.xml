@@ -44,8 +44,8 @@
             android:layout_weight="1"
             android:background="@color/colorPrimary"
             android:text="@string/show_map"
-            android:textAllCaps="false"
             android:drawableStart="@drawable/ic_filter"
+            android:textAllCaps="false"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"/>
 

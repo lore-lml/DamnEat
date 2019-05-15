@@ -77,6 +77,14 @@ public class Deliverer {
         return longitude;
     }
 
+    public void setLatitude(long latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(long longitude) {
+        this.longitude = longitude;
+    }
+
     public String getBitmapProf() {
         return bitmapProf;
     }
@@ -104,5 +112,20 @@ public class Deliverer {
     public void changeExpanded() { expanded = !expanded; }
 
     public boolean Expanded() { return expanded; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Deliverer)) return false;
+
+        Deliverer deliverer = (Deliverer) o;
+
+        return key.equals(deliverer.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
 }
 

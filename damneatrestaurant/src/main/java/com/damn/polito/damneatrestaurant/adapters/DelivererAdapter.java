@@ -3,6 +3,7 @@ package com.damn.polito.damneatrestaurant.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,10 +24,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,7 +37,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
     private List<Deliverer> deliverers;
     private Order order;
     private OnItemClickListener mListener;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     public interface OnItemClickListener { void onItemClick(int position); }
 
@@ -95,7 +96,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
     private void startTransaction(int position) {
         DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
-            StringBuilder delivererKey = new StringBuilder();
+        /*    StringBuilder delivererKey = new StringBuilder();
             dbRef.runTransaction(new Transaction.Handler() {
                 @NonNull
                 @Override
@@ -136,7 +137,35 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                     }
 
                 }
-            });
+            });*/
+        Deliverer current = deliverers.get(position);
+        dbRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData){
+                if(mutableData.getValue() == null)
+                    return Transaction.abort();
+
+
+                for(MutableData child : mutableData.getChildren()){
+                    if(child.getValue() == null) continue;
+                    assert child.getValue() != null;
+                    if(Objects.equals(child.getValue(String.class), current.getKey())){
+                        database.getReference("deliverers_liberi/"+ child.getValue()).removeValue();
+                        return Transaction.success(child);
+                    }
+                }
+                return Transaction.abort();
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot){
+                if(b){
+                    DatabaseReference ref = database.getReference("deliverers/" + current.getKey() + "/current_order");
+                    ref.setValue(order.getId());
+                }
+            }
+        });
     }
 
     private void refreshAvailabityAndAccept(int position, String delivererKey) {
