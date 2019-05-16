@@ -72,6 +72,14 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         holder.name.setText(current.getName());
         holder.phone.setText(current.getPhone());
         holder.description.setText(current.getDescription());
+
+        double distance = (double)current.distance()/1000;
+        if(distance > 0)
+            holder.distance.setText(ctx.getString(R.string.distance_km, distance));
+        else
+            holder.distance.setText(ctx.getString(R.string.distance_meter, current.distance()));
+
+
         holder.button.setOnClickListener(v -> {
             if(checkCustomerInfo())
                 pickDeliverer(pos);
@@ -255,7 +263,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
     public class DelivererViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView delivererImage;
-        private TextView name, phone, description;
+        private TextView name, phone, description, distance;
         private CardView root;
         private Button button;
 
@@ -266,6 +274,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
             name = itemView.findViewById(R.id.deliverer_name);
             phone = itemView.findViewById(R.id.deliverer_phone_number);
             description = itemView.findViewById(R.id.deliverer_description);
+            distance = itemView.findViewById(R.id.deliverer_distance);
             root = itemView.findViewById(R.id.deliverer_root);
             button = itemView.findViewById(R.id.delivery_button);
             itemView.findViewById(R.id.divider).setVisibility(View.INVISIBLE);

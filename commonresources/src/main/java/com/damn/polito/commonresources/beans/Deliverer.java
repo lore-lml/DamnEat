@@ -6,15 +6,16 @@ public class Deliverer {
     private String mail;
     private String phone;
     private String description;
-    private long latitude, longitude;
+    private Double latitude, longitude;
     private String bitmapProf;
     private boolean state, expanded = false;
+    private int distance;
 
     private String key;
 
     public Deliverer(){}
 
-    public Deliverer(String name, String mail, String phone, String description, String bitmapProf, long latitude, long longitude) {
+    public Deliverer(String name, String mail, String phone, String description, String bitmapProf, Double latitude, Double longitude) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
@@ -69,20 +70,28 @@ public class Deliverer {
         this.description = description;
     }
 
-    public long getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public long getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLatitude(long latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public void setLongitude(long longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public int distance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 
     public String getBitmapProf() {

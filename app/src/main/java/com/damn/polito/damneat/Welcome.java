@@ -302,7 +302,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(dataSnapshot.getValue() == null) {
-                    pref.edit().putInt("nOrder", 0).apply();
+                    pref.edit().putLong("nOrder", 0).apply();
                     return;
                 }
 
