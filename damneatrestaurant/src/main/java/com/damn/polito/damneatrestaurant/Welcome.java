@@ -89,7 +89,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         FirebaseLogin.init();
-        FirebaseLogin.shownSignInOptions(this);
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
@@ -99,9 +98,19 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         /*if(Utility.firstON) {
             database.setPersistenceEnabled(true);
         }*/
-
+        if (getKey() == null)
+            FirebaseLogin.shownSignInOptions(this);
+        else
+            loadDataProfile(this);
         addNotificationBadge();
     }
+
+    private String getKey() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        dbKey = pref.getString("dbkey", null);
+        return dbKey;
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -112,7 +121,11 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
+                try {
+                    Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
+                } catch (Exception e){
+                    //Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
+                }
                 //set button signout
                 //b.setEnabled(true);
                 dbKey = user.getUid();

@@ -104,7 +104,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         FirebaseLogin.init();
-        FirebaseLogin.shownSignInOptions(this);
+
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
@@ -115,8 +115,17 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         /*if(Utility.firstON) {
             database.setPersistenceEnabled(true);
         }*/
-
+        if (getKey() == null)
+            FirebaseLogin.shownSignInOptions(this);
+        else
+            loadProfileData();
         addNotificationBadge();
+    }
+
+    private String getKey() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        dbKey = pref.getString("dbkey", null);
+        return dbKey;
     }
 
     @Override
