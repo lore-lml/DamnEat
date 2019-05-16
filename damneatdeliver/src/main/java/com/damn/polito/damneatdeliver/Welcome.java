@@ -50,6 +50,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.Provider;
 import java.util.Arrays;
 import java.util.List;
 
@@ -164,7 +165,7 @@ public class Welcome extends AppCompatActivity {
         profile.setState(false);
         loadProfile();
         loadCurrentOrder(this);
-        loadCurrentState();
+        //loadCurrentState();
         ctx = this;
 
         if (profile != null) {
@@ -257,13 +258,23 @@ public class Welcome extends AppCompatActivity {
                 profile = dataSnapshot.getValue(Profile.class);
                 if (profile == null)
                     logged = false;
-                else
+                else{
                     logged = true;
+                    if(profile.getLatitude()==null || profile.getLongitude()==null) {
+                        profile.setState(false);
+                    }
+                    if (profile.getState() == null) {
+                        database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/").setValue(false);
+                        profile.setState(false);
+                    }
+                }
+                setDeliverFreeList();
                 if (currentFragment != null)
                     if (selectedId == R.id.nav_current)
                         currentFragment.update();
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -271,40 +282,40 @@ public class Welcome extends AppCompatActivity {
         });
 
     }
-
-    private void loadCurrentState() {
-        DatabaseReference stateRef = database.getReference("/deliverers/" + getKey() + "/info/state/");
-        stateRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null) return;
-                Boolean state = dataSnapshot.getValue(Boolean.class);
-                if(profile == null)
-                    return;
-                if (state != null)
-                    profile.setState(state);
-                else {
-                    DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
-                    orderRef.setValue(false);
-                    profile.setState(false);
-                }
-                setDeliverFreeList();
-                Log.d("state", String.valueOf(profile.getState()));
 //
-//                try {
-//                }catch (Exception e){
-//                    currentState = false;
+//    private void loadCurrentState() {
+//        DatabaseReference stateRef = database.getReference("/deliverers/" + getKey() + "/info/state/");
+//        stateRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.getValue() == null) return;
+//                Boolean state = dataSnapshot.getValue(Boolean.class);
+//                if(profile == null)
+//                    return;
+//                if (state != null)
+//                    profile.setState(state);
+//                else {
+//                    DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
+//                    orderRef.setValue(false);
+//                    profile.setState(false);
 //                }
-                if (selectedId == R.id.nav_current)
-                    currentFragment.update();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database error", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//                setDeliverFreeList();
+//                Log.d("state", String.valueOf(profile.getState()));
+////
+////                try {
+////                }catch (Exception e){
+////                    currentState = false;
+////                }
+//                if (selectedId == R.id.nav_current)
+//                    currentFragment.update();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Toast.makeText(Welcome.this, "Database error", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     private void setDeliverFreeList(){
         if (profile.getState()) {
@@ -406,17 +417,15 @@ public class Welcome extends AppCompatActivity {
                 double latitude=location.getLatitude();
                 double longitude=location.getLongitude();
                 if(profile!=null) {
-                    if (profile.getState()) {
-                        profile.setPosition(latitude, longitude);
-                        String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
-                        Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
-                        //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
-                        DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/info/latitude");
-                        RefLat.setValue(location.getLatitude());
-                        DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/info/longitude");
-                        RefLong.setValue(location.getLongitude());
-                    }
+                    profile.setPosition(latitude, longitude);
+                    String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
+                    Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
+                DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/info/latitude");
+                RefLat.setValue(location.getLatitude());
+                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/info/longitude");
+                RefLong.setValue(location.getLongitude());
             }
 
             @Override
@@ -433,7 +442,23 @@ public class Welcome extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
             }
         };
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
+//        Criteria criteria = new Criteria();
+//        criteria.setPowerRequirement(Criteria.POWER_HIGH);
+//        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+//        criteria.setAltitudeRequired(false);
+//        String providerFine = locationManager.getBestProvider(criteria, true);
+//
+//        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+//        String providerCoarse = locationManager.getBestProvider(criteria, true);
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5*60000, 10, locationListener);
+
+//        if (providerCoarse != null) {
+//            locationManager.requestLocationUpdates(providerCoarse, 5*60000, 100, locationListener);
+//        }
+//        if (providerFine != null) {
+//            locationManager.requestLocationUpdates(providerFine, 5 * 60000, 100, locationListener);
+//        }
 //        locationListener = new LocationListener() {
 //            @Override
 //            public void onLocationChanged(Location location) {

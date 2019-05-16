@@ -123,6 +123,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 //        Deliverer current = deliverers.get(position);
         //AGGIORNO LE AVAILABILITY
         DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
+
         ref.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
@@ -149,12 +150,10 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                if(b){
-                    //updateTotalDishes();
-                    //updateTotalDishes();
-                }else {
+                if(!b){
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("rejected");
+                    //todo: tradurre
                     Toast.makeText(ctx, "Insufficient quantity", Toast.LENGTH_SHORT).show();
                     ((Activity)ctx).finish();
                 }
@@ -162,50 +161,6 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         });
     }
 
-    private void updateTotalDishes(Order current){
-        //Deliverer current = deliverers.get(position);
-        //AGGIORNO LE AVAILABILITY
-        DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        ref.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-
-                for(MutableData child: mutableData.getChildren()){
-                    Dish d = child.getValue(Dish.class);
-                    if(d!=null) {
-                        for (Dish d_ord : order.getDishes()) {
-                            if(d_ord.getId().equals(d.getId())){
-                                int new_quantity = d.getAvailability() - d_ord.getQuantity();
-                                if (new_quantity < 0)
-                                    return Transaction.abort();
-                                else {
-                                    d.setAvailability(new_quantity);
-                                    child.setValue(d);
-                                }
-                            }
-                        }
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-            }
-        });
-    }
 
     private void pickDeliverer(int position) {
         Deliverer current = deliverers.get(position);
