@@ -254,4 +254,8 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
             });
         }
     }
+
+    public void setFullList(@NonNull List<Deliverer> list){
+        deliverers = new ArrayList<>(list);
+    }
 }
