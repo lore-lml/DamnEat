@@ -401,7 +401,17 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 photo.setImageBitmap(default_image);
             else
                 photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getCustomer().getCustomerPhoto()));
+            name_small.setText(ctx.getText(R.string.restaurant_name));
+            name_small_text.setText(currentOrder.getRestaurant().getRestaurantName());
 
+            address_small.setText(ctx.getText(R.string.restaurant_address));
+            address_small_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
+
+            phone_small.setText(ctx.getText(R.string.restaurant_phone));
+            phone_small_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
+
+            note_small.setText(ctx.getText(R.string.note));
+            note_small_text.setText(currentOrder.getNote());
 
             waiting_confirm.setText(ctx.getString(R.string.waiting_customer_confirm));
 
