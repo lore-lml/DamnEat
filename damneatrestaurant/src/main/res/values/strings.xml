@@ -23,4 +23,7 @@
     <string name="sort_totdeliveries">Sort by total number of deliveries</string>
     <string name="assigned_deliverer">Choose as a deliverer</string>
     <string name="title_activity_maps">Maps</string>
+    <string name="distance_meter" translatable="false">%d m</string>
+    <string name="distance_km" translatable="false">%.1f km</string>
+    <string name="deliverer_phone">Phone:</string>
 </resources>
