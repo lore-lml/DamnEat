@@ -236,6 +236,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
                 freeDeliverersRef.removeValue();
             }
+            if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
+                Toast.makeText(ctx, R.string.no_position, Toast.LENGTH_LONG).show();
         });
 
         update();
@@ -655,7 +657,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     }
 
     private void startGoogleMaps(String address){
-        address = address + ", Torino";
+        //address = address + ", Torino";
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse("google.navigation:q=" + address));
         startActivity(intent);

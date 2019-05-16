@@ -65,4 +65,5 @@
     <string name="state_assigned">assegnato</string>
     <string name="state_accepted">accettato</string>
     <string name="start_navigation">Avvia Navigazione</string>
+    <string name="no_position">Nessuna posizione GPS disponibile</string>
 </resources>
