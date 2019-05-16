@@ -87,6 +87,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     private Order currentOrder;
 
     private boolean registered = false, switch_enabled;
+    protected static boolean isVisible = false;
 
     private FirebaseDatabase database;
 
@@ -260,6 +261,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
 
     public void update() {
+        if(!isVisible)
+            return;
         registered = Welcome.registered();
 
         currentOrder = Welcome.getCurrentOrder();
@@ -772,5 +775,17 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             Toast.makeText(ctx, "Address Error!", Toast.LENGTH_SHORT).show();
         }
         return addresses;
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible = true;
+        update();
     }
 }

@@ -70,7 +70,7 @@ public class Welcome extends AppCompatActivity {
     private CurrentFragment currentFragment;
     private static Profile profile;
     private static String hasSetName;
-    protected static boolean isVisible = false;
+    protected static boolean isVisible = true;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
@@ -562,7 +562,7 @@ public class Welcome extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        setVisible(true);
+        //setVisible(true);
         if(profile!=null) {
             //profile.setState(false);
             if (profile.getState()) {
@@ -575,9 +575,5 @@ public class Welcome extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        setVisible(false);
-    }
+
 }
