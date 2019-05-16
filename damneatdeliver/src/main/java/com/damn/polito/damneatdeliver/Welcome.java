@@ -80,6 +80,7 @@ public class Welcome extends AppCompatActivity {
     private boolean mLocGranted;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private static boolean switchEnabled;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -114,6 +115,10 @@ public class Welcome extends AppCompatActivity {
         if(profile == null)
             return false;
         return profile.getState();
+    }
+
+    public static boolean isSwitchEnabled() {
+        return switchEnabled;
     }
 
     public static Profile getProfile() {
@@ -389,6 +394,7 @@ public class Welcome extends AppCompatActivity {
             requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
             }, 1);
+//            switchEnabled = false;
             return;
         }
 
@@ -500,6 +506,7 @@ public class Welcome extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocGranted = true;
+                switchEnabled = true;
                 StartLocationManager();
             } else {
                 ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUESt_CODE);
@@ -512,6 +519,7 @@ public class Welcome extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocGranted = false;
+        switchEnabled = false;
 
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUESt_CODE: {
@@ -520,10 +528,12 @@ public class Welcome extends AppCompatActivity {
                     for (int i = 0; i < grantResults.length; i++) {
                         if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                             mLocGranted = false;
+                            switchEnabled = false;
                             return;
                         }
                     }
                     mLocGranted = true;
+                    switchEnabled = true;
                     StartLocationManager();
                 }
             }

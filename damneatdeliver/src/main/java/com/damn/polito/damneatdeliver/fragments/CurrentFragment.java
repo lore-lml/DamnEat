@@ -60,7 +60,7 @@ public class CurrentFragment extends Fragment {
 
     private Order currentOrder;
 
-    private boolean registered = false;
+    private boolean registered = false, switch_enabled;
 
     private FirebaseDatabase database;
 
@@ -187,7 +187,6 @@ public class CurrentFragment extends Fragment {
             }
         });
 
-
         update();
 
     }
@@ -202,12 +201,16 @@ public class CurrentFragment extends Fragment {
         }
     }
 
-
     public void update() {
         registered = Welcome.registered();
 
         currentOrder = Welcome.getCurrentOrder();
-        switch_available.setChecked(Welcome.getCurrentAvaibility());
+        if (Welcome.isSwitchEnabled()) {
+            switch_available.setChecked(Welcome.getCurrentAvaibility());
+        } else {
+            switch_available.setChecked(Welcome.isSwitchEnabled());
+        }
+        switch_available.setEnabled(Welcome.isSwitchEnabled());
 
         if(currentOrder==null){
             currentOrder = new Order();
