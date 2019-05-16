@@ -22,6 +22,7 @@ import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatrestaurant.FindDelivererActivity;
 import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.Welcome;
 import com.damn.polito.damneatrestaurant.adapters.OrdersAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -40,16 +41,13 @@ import java.util.Objects;
 public class OrderFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private LinkedList<Order> orders = new LinkedList<>();
+    private List<Order> orders;
     private List<String> orderKeyList = new ArrayList<>();
     private OrdersAdapter adapter;
-    private TextView mTextMessage;
     private Context ctx;
     private String key;
     private FirebaseDatabase database;
     private DatabaseReference dbRef, delFreeRef;
-    private List<Dish> dishes= new ArrayList<>();
     private List<String> deliverersFree = new ArrayList<>();
     private ChildEventListener delFreeListener;
 
@@ -62,80 +60,75 @@ public class OrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ctx = view.getContext();
+        ctx = getActivity();
 
         AppCompatActivity activity = ((AppCompatActivity)getActivity());
         assert activity != null;
         Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.app_name);
 
         recyclerView = view.findViewById(R.id.orders_recyclerview);
-        layoutManager = new LinearLayoutManager(ctx);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
         initFreeDeliveresListener();
+        
+        key = Welcome.getDbKey();
+        if (key != null && !key.isEmpty()) {
+            orders = ((Welcome)ctx).getOrders();
+            adapter = new OrdersAdapter(orders, ctx);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setAdapter(adapter);
 
-        // OTTENGO L'ID DALLE SHARED PREF
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String s = pref.getString("dbkey", null);
-        if (s != null|| !s.isEmpty()) {
+            adapter.setOnItemClickListener(position -> {
+                orders.get(position).changeExpanded();
+                adapter.notifyItemChanged(position);
+            });
 
-            key = stringOrDefault(s);
-            if (initOrders()){
-                adapter = new OrdersAdapter(orders, ctx);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setAdapter(adapter);
-
-                adapter.setOnItemClickListener(position -> {
-                    orders.get(position).changeExpanded();
-                    adapter.notifyItemChanged(position);
-                });
-
-
-                //ABBINAMENTO DELIVERER ORDINE
-                adapter.setOnButtonClickListener(position -> {
-
-                    //Controlla che il cliente abbia dei dati
-                    if(orders.get(position).getCustomerName().equals("") || orders.get(position).getCustomerAddress().equals("")){
-                        DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
-                        dbOrder.setValue("rejected");
-                        Toast.makeText(ctx, R.string.no_customer_info, Toast.LENGTH_LONG).show();
-                    }else {
-                        Log.d("tmz", "pressed find deliverer");
-                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-                        Intent intent = new Intent(ctx, FindDelivererActivity.class);
-                        intent.putExtra("order", orders.get(position));
-                        startActivity(intent);
-                    }
-                });
-
-                //SET BUTTON AS SHIPPED
-
-                adapter.setOnButtonShippedClickListener(position -> {
-
-                    Log.d("tmz","pressed set as shipped");
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
-                    dbRef.setValue("shipped");
-
-                    adapter.notifyItemChanged(position);
-                });
-                //END SET BUTTON AS SHIPPED
-
-                //SET BUTTON AS REJECTED
-
-                adapter.setOnButtonRejectedClickListener(position -> {
-
-                    Log.d("tmz","pressed set as rejected");
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
-                    dbRef.setValue("rejected");
-
-                    adapter.notifyItemChanged(position);
-                });
-                //END SET BUTTON AS REJECTED
-
-            }
+            setOrdersStateBehaviour();
         }
+    }
+
+    private void setOrdersStateBehaviour() {
+        //ABBINAMENTO DELIVERER ORDINE
+        adapter.setOnButtonClickListener(position -> {
+
+            //Controlla che il cliente abbia dei dati
+            if(orders.get(position).getCustomerName().equals("") || orders.get(position).getCustomerAddress().equals("")){
+                DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
+                dbOrder.setValue("rejected");
+                Toast.makeText(ctx, R.string.no_customer_info, Toast.LENGTH_LONG).show();
+            }else {
+                Log.d("tmz", "pressed find deliverer");
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+                Intent intent = new Intent(ctx, FindDelivererActivity.class);
+                intent.putExtra("order", orders.get(position));
+                startActivity(intent);
+            }
+        });
+
+        //SET BUTTON AS SHIPPED
+        adapter.setOnButtonShippedClickListener(position -> {
+
+            Log.d("tmz","pressed set as shipped");
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
+            dbRef.setValue("shipped");
+
+            adapter.notifyItemChanged(position);
+        });
+        //END SET BUTTON AS SHIPPED
+
+        //SET BUTTON AS REJECTED
+
+        adapter.setOnButtonRejectedClickListener(position -> {
+
+            Log.d("tmz","pressed set as rejected");
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
+            dbRef.setValue("rejected");
+
+            adapter.notifyItemChanged(position);
+        });
+        //END SET BUTTON AS REJECTED
     }
 
     private void initFreeDeliveresListener() {
@@ -146,31 +139,22 @@ public class OrderFragment extends Fragment {
                 if(dataSnapshot.getValue() != null)
                     deliverersFree.add(dataSnapshot.getValue(String.class));
             }
-
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null)
                     deliverersFree.remove(dataSnapshot.getValue(String.class));
             }
-
             @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
     }
 
-    private boolean initOrders(){
+    /*private void initOrders(){
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("ristoranti/"+key+"/ordini_pendenti/");
         dbRef.addValueEventListener(new ValueEventListener() {
@@ -196,7 +180,6 @@ public class OrderFragment extends Fragment {
 
             }
         });
-        return true;
     }
 
     private void getOrderFirebase(String key){
@@ -216,7 +199,7 @@ public class OrderFragment extends Fragment {
                             orders.remove(i);
                             break;
                         }
-                    orders.addFirst(order);
+                    orders.add(0,order);
                 }
                 //Log.d("order", order.getCustomer().getCustomerName());
                 adapter.notifyDataSetChanged();
@@ -227,9 +210,17 @@ public class OrderFragment extends Fragment {
 
             }
         });
+    }*/
+
+    public void onChildAdded() {
+        adapter.notifyItemInserted(0);
     }
 
-    public String stringOrDefault(String s) {
-        return (s == null || s.trim().isEmpty()) ? "" : s;
+    public void onChildChanged(){
+        adapter.notifyItemChanged(0);
+    }
+
+    public void onChildRemoved(int pos) {
+        adapter.notifyItemRemoved(pos);
     }
 }
