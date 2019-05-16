@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Deliverer;
+import com.damn.polito.damneatrestaurant.adapters.CustomInfoMarkerAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -78,12 +79,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                        MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
                         List<Deliverer> deliverers = (List<Deliverer>) intent.getSerializableExtra("deliverers");
                         for (Deliverer d : deliverers)  {
-                            MarkerOptions marker = new MarkerOptions().position(new LatLng(d.getLatitude(), d.getLongitude())).title(d.getName())
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                            mMap.addMarker(marker);
+//                            MarkerOptions marker = new MarkerOptions().position(new LatLng(d.getLatitude(), d.getLongitude())).title(d.getName())
+////                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+//                                            ;
+//                            mMap.addMarker(marker);
+//                            if (d != null) moveCamera(new LatLng(d.getLatitude(), d.getLongitude()), DEFAULT_ZOOM, d.getName());
                         }
 
-                        moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM, "MyLocation");
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
 
                     } else {
                         Toast.makeText(MapsActivity.this, "Unable to get current Location", Toast.LENGTH_LONG).show();
@@ -96,14 +99,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void moveCamera(LatLng latLng, float zoom, String title) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
 //                .title(title)
 //                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bike))
                 ;
-//        mMap.addMarker(options);
+        mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(MapsActivity.this));
+        mMap.addMarker(options);
     }
 
     @Override
