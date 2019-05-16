@@ -69,4 +69,5 @@
     <string name="state_accepted">accepted</string>
     <string name="state_shipped">shipped</string>
     <string name="title_activity_maps">Map</string>
+    <string name="start_navigation">Start navigation</string>
 </resources>

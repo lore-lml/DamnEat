@@ -37,6 +37,7 @@ import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
 import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
+import com.damn.polito.damneatdeliver.fragments.maphelpers.TaskLoadedCallback;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.maps.MapFragment;
@@ -374,13 +375,14 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(profile==null)
-            profile.setState(false);
-        if (profile.getState()) {
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-            freeDeliverersRef.setValue(Welcome.getKey());
-            if (selectedId == R.id.nav_current)
-                currentFragment.update();
+        if(profile!=null) {
+            //profile.setState(false);
+            if (profile.getState()) {
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
+                freeDeliverersRef.setValue(Welcome.getKey());
+                if (selectedId == R.id.nav_current)
+                    currentFragment.update();
+            }
         }
     }
 
@@ -403,15 +405,17 @@ public class Welcome extends AppCompatActivity {
             public void onLocationChanged(android.location.Location location) {
                 double latitude=location.getLatitude();
                 double longitude=location.getLongitude();
-                if(profile.getState()) {
-                    profile.setPosition(latitude, longitude);
-                    String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
-                    Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
-                    //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
-                    DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/info/latitude");
-                    RefLat.setValue(location.getLatitude());
-                    DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/info/longitude");
-                    RefLong.setValue(location.getLongitude());
+                if(profile!=null) {
+                    if (profile.getState()) {
+                        profile.setPosition(latitude, longitude);
+                        String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
+                        Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
+                        DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/info/latitude");
+                        RefLat.setValue(location.getLatitude());
+                        DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/info/longitude");
+                        RefLong.setValue(location.getLongitude());
+                    }
                 }
             }
 

@@ -28,6 +28,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
@@ -288,5 +289,9 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 }
             });
         }
+    }
+
+    public void setFullList(@NonNull List<Deliverer> list){
+        deliverers = new ArrayList<>(list);
     }
 }

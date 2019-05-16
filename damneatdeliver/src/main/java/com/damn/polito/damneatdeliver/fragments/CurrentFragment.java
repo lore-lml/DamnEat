@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -26,23 +29,39 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
+import com.damn.polito.commonresources.beans.Haversine;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
+import com.damn.polito.damneatdeliver.fragments.maphelpers.FetchURL;
+import com.damn.polito.damneatdeliver.fragments.maphelpers.TaskLoadedCallback;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static android.view.View.GONE;
 
 
-public class CurrentFragment extends Fragment {
+public class CurrentFragment extends  Fragment implements OnMapReadyCallback,TaskLoadedCallback {
 
     private Context ctx;
 
@@ -53,11 +72,17 @@ public class CurrentFragment extends Fragment {
 
     private CardView root, card_order, card_avaible, card_small;
     private ImageView photo;
-    private Button confirmButton, acceptButton, rejectButton;
+    private Button confirmButton, acceptButton, rejectButton, btnGetDirection;
     private Switch switch_available;
     private Bitmap bitmap, default_image;
-    private MapView map;
 
+    private SupportMapFragment map;
+    private GoogleMap gmap;
+    private MarkerOptions place1,place2;
+    private Polyline currentPolyline;
+    private FragmentManager fm;
+    //45.061511, 7.674472
+    //45.057780, 7.682858
     private Order currentOrder;
 
     private boolean registered = false, switch_enabled;
@@ -69,6 +94,8 @@ public class CurrentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+
         return inflater.inflate(R.layout.current_fragment, container, false);
     }
 
@@ -85,8 +112,25 @@ public class CurrentFragment extends Fragment {
 
         id= view.findViewById(R.id.order_id);
         date = view.findViewById(R.id.order_date_value);
+        //map=view.findViewById(R.id.mapView);
+        map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
+        map.getMapAsync(this);
+        currentOrder = Welcome.getCurrentOrder();
+        List<Address> addresses = getAddresses();
+        if(addresses.size() == 2){
+            place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                    .title(currentOrder.getRestaurant().getRestaurantName());
+            place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                    .title(currentOrder.getCustomer().getCustomerName());
+            String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
 
-        map = view.findViewById(R.id.mapView);
+            new FetchURL(CurrentFragment.this).execute(url,"driving");
+        }
+        btnGetDirection=view.findViewById(R.id.start_navigation);
+
+
+
+
         //BIG TextView
         name_big = view.findViewById(R.id.name_big_tv);
         address_big_text = view.findViewById(R.id.address_big_text);
@@ -125,6 +169,13 @@ public class CurrentFragment extends Fragment {
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("delivered");
+            }
+        });
+
+        btnGetDirection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startGoogleMaps((String) address_big_text.getText());
             }
         });
 
@@ -191,6 +242,18 @@ public class CurrentFragment extends Fragment {
 
     }
 
+    private List<Address> getAddresses() {
+        List<Address> addresses = new ArrayList<>();
+        Geocoder coder = new Geocoder(ctx);
+        try {
+            addresses.addAll(coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress() +", Torino", 1));
+            addresses.addAll(coder.getFromLocationName(currentOrder.getCustomer().getCustomerAddress() +", Torino", 1));
+        } catch (IOException e) {
+            Toast.makeText(ctx, "Address Error!", Toast.LENGTH_SHORT).show();
+        }
+        return addresses;
+    }
+
     private void notRegistered(){
         if(!registered) {
             date.setVisibility(GONE);
@@ -200,6 +263,7 @@ public class CurrentFragment extends Fragment {
             card_avaible.setVisibility(GONE);
         }
     }
+
 
     public void update() {
         registered = Welcome.registered();
@@ -228,7 +292,7 @@ public class CurrentFragment extends Fragment {
         }
 
         if(currentOrder.getState().toLowerCase().equals("accepted")){
-            map.setOnClickListener(v -> {});
+            //map.setOnClickListener(v -> {});
 
             accept_question.setText(R.string.accept_question);
             name_big.setText(currentOrder.getRestaurant().getRestaurantName());
@@ -266,7 +330,7 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().toLowerCase().equals("assigned")){
-            map.setOnClickListener(v -> startGoogleMaps(currentOrder.getRestaurant().getRestaurantAddress()));
+            //map.setOnClickListener(v -> startGoogleMaps(currentOrder.getRestaurant().getRestaurantAddress()));
 
             name_big.setText(currentOrder.getRestaurant().getRestaurantName());
             address_big_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
@@ -296,7 +360,7 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().toLowerCase().equals("shipped")){
-            map.setOnClickListener(v -> startGoogleMaps(currentOrder.getCustomer().getCustomerAddress()));
+            //map.setOnClickListener(v -> startGoogleMaps(currentOrder.getCustomer().getCustomerAddress()));
 
             name_big.setText(currentOrder.getCustomer().getCustomerName());
             address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
@@ -331,7 +395,7 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().toLowerCase().equals("delivered")){
-            map.setOnClickListener(v -> {});
+            //map.setOnClickListener(v -> {});
             name_big.setText(currentOrder.getCustomer().getCustomerName());
             address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
             phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
@@ -355,7 +419,7 @@ public class CurrentFragment extends Fragment {
 
 
         if(currentOrder.getState().equals("confirmed")){
-            map.setOnClickListener(v -> {});
+            //map.setOnClickListener(v -> {});
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
             orderRef.setValue("0");
@@ -428,8 +492,12 @@ public class CurrentFragment extends Fragment {
             id.setVisibility(View.VISIBLE);
 
             confirmButton.setVisibility(View.VISIBLE);
-            map.setVisibility(View.VISIBLE);
-
+            //map.setVisibility(View.VISIBLE);
+            fm = getFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .show(map)
+                    .commit();
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
             address_small.setVisibility(View.VISIBLE);
@@ -453,8 +521,13 @@ public class CurrentFragment extends Fragment {
             acceptButton.setVisibility(View.VISIBLE);
             rejectButton.setVisibility(View.VISIBLE);
             accept_question.setVisibility(View.VISIBLE);
-            map.setVisibility(View.VISIBLE);
-
+            //map.setVisibility(View.VISIBLE);
+            fm = getFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .show(map)
+                    .commit();
+            btnGetDirection.setVisibility(View.VISIBLE);
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
 
@@ -481,8 +554,14 @@ public class CurrentFragment extends Fragment {
         if(state.equals("assigned")){
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
-            map.setVisibility(View.VISIBLE);
-
+            //map.setVisibility(View.VISIBLE);
+            fm = getFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .show(map)
+                    .commit();
+            btnGetDirection.setVisibility(View.VISIBLE);
+            btnGetDirection.setVisibility(View.VISIBLE);
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
             address_small.setVisibility(View.VISIBLE);
@@ -538,8 +617,13 @@ public class CurrentFragment extends Fragment {
         card_avaible.setVisibility(GONE);
 
         name_big.setVisibility(GONE);
-        map.setVisibility(GONE);
-
+        //map.setVisibility(GONE);
+        fm = getFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .hide(map)
+                .commit();
+        btnGetDirection.setVisibility(GONE);
         address_big.setVisibility(GONE);
         address_big_text.setVisibility(GONE);
         phone_big.setVisibility(GONE);
@@ -577,4 +661,42 @@ public class CurrentFragment extends Fragment {
         startActivity(intent);
     }
 
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        Log.d("MAP",url);
+        return url;
+    }
+
+
+    @Override
+    public void onTaskDone(Object... values) {
+        if(currentPolyline!=null){
+            currentPolyline.remove();
+        }
+        currentPolyline=gmap.addPolyline((PolylineOptions)values[0]);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        gmap=googleMap;
+        gmap.addMarker(place1);
+        gmap.addMarker(place2);
+
+        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(midPoint(place1,place2), 13));
+    }
+
+    public LatLng midPoint(MarkerOptions m1,MarkerOptions m2){
+        return new LatLng((m1.getPosition().latitude+m2.getPosition().latitude)/2,(m1.getPosition().longitude+m2.getPosition().longitude)/2);
+    }
 }

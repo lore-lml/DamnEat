@@ -237,11 +237,13 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 Profile prof = dataSnapshot.getValue(Profile.class);
-                if(prof != null)
+                if (prof != null)
                     storeProfile(prof);
+                if (selectedId != null) {
+                    if (selectedId == R.id.nav_profile)
+                        profileFragment.updateProfile();
 
-                if(selectedId == R.id.nav_profile)
-                    profileFragment.updateProfile();
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
