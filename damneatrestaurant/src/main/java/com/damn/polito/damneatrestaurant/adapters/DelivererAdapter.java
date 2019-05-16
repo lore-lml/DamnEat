@@ -156,9 +156,40 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                     //todo: tradurre
                     Toast.makeText(ctx, "Insufficient quantity", Toast.LENGTH_SHORT).show();
                     ((Activity)ctx).finish();
-                }
+                }else
+                    updateTotalAvailabity(order);
             }
         });
+    }
+
+    private void updateTotalAvailabity(Order order_d){
+        DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child: dataSnapshot.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    d.setId(child.getKey());
+                    if(d!=null) {
+                        for (Dish d_ord : order_d.getDishes()) {
+                            if(d_ord.getId().equals(d.getId())){
+                                int new_quantity = d.getAvailability() - d_ord.getQuantity();
+                                if (new_quantity >= 0){
+                                    DatabaseReference dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/availability/");
+                                    dishRef.setValue(new_quantity);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 
@@ -211,6 +242,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
             }
         });
     }
+
 
     @Override
     public int getItemCount() {

@@ -209,7 +209,7 @@ public class Utility {
 
         if(myHour > tmpHour) return false;
         if(myHour == tmpHour && myMinute > tmpMin) return false;
-        if((tmpHour * 60 + tmpMin)-(myHour*60 +myMinute) < 25 ) return false;
+        if((tmpHour * 60 + tmpMin)-(myHour*60 +myMinute) < 5 ) return false;
 
         return true;
     }
