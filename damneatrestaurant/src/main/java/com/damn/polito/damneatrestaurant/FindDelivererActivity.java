@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -35,6 +36,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+
+import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class FindDelivererActivity extends AppCompatActivity implements HandleDismissDialog {
 
@@ -353,5 +356,15 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
             Toast.makeText(this, "Impossible to map request", Toast.LENGTH_LONG).show();
         }
         return false;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
