@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -51,6 +53,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static android.view.View.GONE;
@@ -75,7 +80,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     private GoogleMap gmap;
     private MarkerOptions place1,place2;
     private Polyline currentPolyline;
-    FragmentManager fm;
+    private FragmentManager fm;
     //45.061511, 7.674472
     //45.057780, 7.682858
     private Order currentOrder;
@@ -110,12 +115,17 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         //map=view.findViewById(R.id.mapView);
         map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
         map.getMapAsync(this);
-        place1 = new MarkerOptions().position(new LatLng(45.061511, 7.674472)).title("Location 1");
-        place2 = new MarkerOptions().position(new LatLng(45.057780, 7.682858)).title("Location 2");
-        String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+        currentOrder = Welcome.getCurrentOrder();
+        List<Address> addresses = getAddresses();
+        if(addresses.size() == 2){
+            place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                    .title(currentOrder.getRestaurant().getRestaurantName());
+            place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                    .title(currentOrder.getCustomer().getCustomerName());
+            String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
 
-        new FetchURL(CurrentFragment.this).execute(url,"driving");
-
+            new FetchURL(CurrentFragment.this).execute(url,"driving");
+        }
         btnGetDirection=view.findViewById(R.id.start_navigation);
 
 
@@ -233,6 +243,18 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     }
 
+    private List<Address> getAddresses() {
+        List<Address> addresses = new ArrayList<>();
+        Geocoder coder = new Geocoder(ctx);
+        try {
+            addresses.addAll(coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress() +", Torino", 1));
+            addresses.addAll(coder.getFromLocationName(currentOrder.getCustomer().getCustomerAddress() +", Torino", 1));
+        } catch (IOException e) {
+            Toast.makeText(ctx, "Address Error!", Toast.LENGTH_SHORT).show();
+        }
+        return addresses;
+    }
+
     private void notRegistered(){
         if(!registered) {
             date.setVisibility(GONE);
@@ -247,7 +269,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     public void update() {
         registered = Welcome.registered();
 
-        currentOrder = Welcome.getCurrentOrder();
         switch_available.setChecked(Welcome.getCurrentAvaibility());
 
         if(currentOrder==null){

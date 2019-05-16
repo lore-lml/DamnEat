@@ -42,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getLocationPermissions();
     }
 
+    @SuppressWarnings("unchecked")
     private void getDeviceLocation() {
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
