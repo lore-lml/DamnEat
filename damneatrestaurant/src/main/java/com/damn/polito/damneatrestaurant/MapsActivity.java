@@ -1,17 +1,23 @@
 package com.damn.polito.damneatrestaurant;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.beans.Deliverer;
+import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -22,17 +28,22 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     public static final int LOCATION_PERMISSION_REQUESt_CODE = 1212;
+    private static final int DEFAULT_ZOOM = 13;
 
     private boolean mLocGranted;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFLPC;
+    private Button choose_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,26 +51,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getLocationPermissions();
+
+        choose_button = findViewById(R.id.choose_button);
+        choose_button.setVisibility(View.GONE);
     }
 
     private void getDeviceLocation() {
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
         mFLPC = LocationServices.getFusedLocationProviderClient(this);
+        Intent intent = getIntent();
 
         try {
+
             if (mLocGranted) {
                 Task location = mFLPC.getLastLocation();//setlocation with the variable;
                 location.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Location currLoc = (Location) task.getResult();
 
-                        MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
+//                        MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
+                        List<Deliverer> deliverers = (List<Deliverer>) intent.getSerializableExtra("deliverers");
+                        for (Deliverer d : deliverers)  {
+                            MarkerOptions marker = new MarkerOptions().position(new LatLng(d.getLatitude(), d.getLongitude())).title(d.getName())
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            mMap.addMarker(marker);
+                        }
 
-                        moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), 15, "MyLocation");
+                        moveCamera(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM, "MyLocation");
 
                     } else {
                         Toast.makeText(MapsActivity.this, "Unable to get current Location", Toast.LENGTH_LONG).show();
@@ -76,10 +93,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
-                .title(title)
+//                .title(title)
 //                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bike))
                 ;
-        mMap.addMarker(options);
+//        mMap.addMarker(options);
     }
 
     @Override
@@ -95,8 +112,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return;
             }
             mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMapToolbarEnabled(false);
             //POSSIBILITY TO ADD SOME FEATURES mMap.getUISettings().......(true);
         }
+
+        mMap.setOnMarkerClickListener(marker -> {
+            choose_button.setVisibility(View.VISIBLE);
+            choose_button.setOnClickListener(v -> {
+//                DelivererAdapter.pick();
+            });
+            return false;
+        });
     }
 
     private void getLocationPermissions() {

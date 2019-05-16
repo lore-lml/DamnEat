@@ -1,6 +1,8 @@
 package com.damn.polito.commonresources.beans;
 
-public class Deliverer {
+import java.io.Serializable;
+
+public class Deliverer implements Serializable {
 
     private String name;
     private String mail;

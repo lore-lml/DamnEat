@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,7 +50,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
     private DatabaseReference freeDelRef;
     private Query freeDeliverersQuery;
     private ValueEventListener freeDelKeyListener, freeDelivererListener;
-    private List<Deliverer> deliverers = new ArrayList<>();
+    public List<Deliverer> deliverers = new ArrayList<>();
 
     private SortType sortType;
     private int oldPosition = -1;
@@ -88,6 +89,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
         if(isServicesOk()) {
             map.setOnClickListener(v -> {
                 Intent intent = new Intent(FindDelivererActivity.this, MapsActivity.class);
+                intent.putExtra("deliverers", (Serializable) deliverers);
                 startActivity(intent);
             });
         }else{
@@ -110,10 +112,10 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
         adapter.setOnItemClickListener(position -> {
             if (oldPosition >= 0) {
                 deliverers.get(oldPosition).changeExpanded();
-                oldPosition = position;
                 adapter.notifyItemChanged(oldPosition);
             }
             deliverers.get(position).changeExpanded();
+            oldPosition = position;
             adapter.notifyItemChanged(position);
         });
 
@@ -231,7 +233,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
                         Deliverer d = child.child("info").getValue(Deliverer.class);
                         assert d != null;
                         d.setKey(child.getKey());
-                        d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
+//                        d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
                         if(d.getName()!=null)
                             deliverers.add(d);
                     }
