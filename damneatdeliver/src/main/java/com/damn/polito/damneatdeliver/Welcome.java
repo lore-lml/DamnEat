@@ -37,6 +37,7 @@ import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
 import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
+import com.damn.polito.damneatdeliver.fragments.maphelpers.TaskLoadedCallback;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.maps.MapFragment;

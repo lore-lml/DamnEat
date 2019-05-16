@@ -12,11 +12,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class FetchURL extends AsyncTask<String, Void, String> {
-    Context mContext;
+public class FetchURL extends AsyncTask<String, Void, String>{
+    TaskLoadedCallback mContext;
     String directionMode = "driving";
 
-    public FetchURL(Context mContext) {
+    public FetchURL(TaskLoadedCallback mContext) {
         this.mContext = mContext;
     }
 
@@ -38,7 +38,7 @@ public class FetchURL extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        PointsParser parserTask = new PointsParser(mContext, directionMode);
+        PointsParser parserTask = new PointsParser( mContext, directionMode);
         // Invokes the thread for parsing the JSON data
         parserTask.execute(s);
     }

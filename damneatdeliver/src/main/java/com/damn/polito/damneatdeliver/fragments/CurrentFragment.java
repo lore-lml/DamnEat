@@ -113,7 +113,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         place1 = new MarkerOptions().position(new LatLng(45.061511, 7.674472)).title("Location 1");
         place2 = new MarkerOptions().position(new LatLng(45.057780, 7.682858)).title("Location 2");
         String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
-        //new FetchURL(ctx).execute(url,"driving");
+
+        new FetchURL(CurrentFragment.this).execute(url,"driving");
 
         btnGetDirection=view.findViewById(R.id.start_navigation);
 
