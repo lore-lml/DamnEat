@@ -76,6 +76,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     private Switch switch_available;
     private Bitmap bitmap, default_image;
 
+    List<Address> addresses;
     private SupportMapFragment map;
     private GoogleMap gmap;
     private MarkerOptions place1,place2;
@@ -114,7 +115,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         date = view.findViewById(R.id.order_date_value);
         //map=view.findViewById(R.id.mapView);
         map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
-        map.getMapAsync(this);
+        currentOrder = Welcome.getCurrentOrder();
+        /*map.getMapAsync(this);
         currentOrder = Welcome.getCurrentOrder();
         List<Address> addresses = getAddresses();
         if(addresses.size() == 2){
@@ -125,7 +127,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
 
             new FetchURL(CurrentFragment.this).execute(url,"driving");
-        }
+        }*/
         btnGetDirection=view.findViewById(R.id.start_navigation);
 
 
@@ -244,17 +246,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     }
 
-    private List<Address> getAddresses() {
-        List<Address> addresses = new ArrayList<>();
-        Geocoder coder = new Geocoder(ctx);
-        try {
-            addresses.addAll(coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress() +", Torino", 1));
-            addresses.addAll(coder.getFromLocationName(currentOrder.getCustomer().getCustomerAddress() +", Torino", 1));
-        } catch (IOException e) {
-            Toast.makeText(ctx, "Address Error!", Toast.LENGTH_SHORT).show();
-        }
-        return addresses;
-    }
+
 
     private void notRegistered(){
         if(!registered) {
@@ -445,6 +437,56 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 //            freeDeliverersRef.setValue(Welcome.getKey());
 //        }
 
+        //RETRIVE MAP ROUTES
+        if(currentOrder.getState().toLowerCase().equals("accepted")||
+           currentOrder.getState().toLowerCase().equals("assigned")){
+
+            addresses = getAddressesToRestaurant();
+            if(addresses.size() == 2){
+                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                        .title(currentOrder.getDelivererName());
+                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                        .title(currentOrder.getRestaurant().getRestaurantName());
+                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                new FetchURL(CurrentFragment.this).execute(url,"driving");
+            }
+            map.getMapAsync(this);
+
+            btnGetDirection.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startGoogleMaps((String) address_big_text.getText());
+                }
+            });
+
+        }else if(currentOrder.getState().toLowerCase().equals("shipped")||
+                currentOrder.getState().toLowerCase().equals("delivered")){
+
+            addresses = getAddressesToCustomer();
+            if(addresses.size() == 2){
+                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                        .title(currentOrder.getDelivererName());
+                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                        .title(currentOrder.getCustomer().getCustomerName());
+                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                new FetchURL(CurrentFragment.this).execute(url,"driving");
+            }
+            map.getMapAsync(this);
+
+            btnGetDirection.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startGoogleMaps(currentOrder.getCustomer().getCustomerAddress());
+                }
+            });
+
+        }
+        else{
+
+        }
+
         notRegistered();
     }
 
@@ -495,11 +537,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
             confirmButton.setVisibility(View.VISIBLE);
             //map.setVisibility(View.VISIBLE);
-            fm = getFragmentManager();
-            fm.beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .show(map)
-                    .commit();
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
             address_small.setVisibility(View.VISIBLE);
@@ -524,12 +561,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             rejectButton.setVisibility(View.VISIBLE);
             accept_question.setVisibility(View.VISIBLE);
             //map.setVisibility(View.VISIBLE);
-            fm = getFragmentManager();
-            fm.beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .show(map)
-                    .commit();
-            btnGetDirection.setVisibility(View.VISIBLE);
+
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
 
@@ -557,13 +589,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             date.setVisibility(View.VISIBLE);
             id.setVisibility(View.VISIBLE);
             //map.setVisibility(View.VISIBLE);
-            fm = getFragmentManager();
-            fm.beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .show(map)
-                    .commit();
-            btnGetDirection.setVisibility(View.VISIBLE);
-            btnGetDirection.setVisibility(View.VISIBLE);
+
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
             address_small.setVisibility(View.VISIBLE);
@@ -609,6 +635,23 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             phone_big_text.setVisibility(View.VISIBLE);
             photo.setVisibility(View.VISIBLE);
         }
+        //SHOW OR HIDE MAP
+        if(state.equals("accepted")|| state.equals("assigned")||state.equals("shipped")|| state.equals("delivered")){
+            fm = getFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .show(map)
+                    .commit();
+            btnGetDirection.setVisibility(View.VISIBLE);
+        }
+        else{
+            fm = getFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .hide(map)
+                    .commit();
+            btnGetDirection.setVisibility(View.GONE);
+        }
 
         //}
 
@@ -620,11 +663,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         name_big.setVisibility(GONE);
         //map.setVisibility(GONE);
-        fm = getFragmentManager();
-        fm.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .hide(map)
-                .commit();
+
         btnGetDirection.setVisibility(GONE);
         address_big.setVisibility(GONE);
         address_big_text.setVisibility(GONE);
@@ -700,5 +739,28 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     public LatLng midPoint(MarkerOptions m1,MarkerOptions m2){
         return new LatLng((m1.getPosition().latitude+m2.getPosition().latitude)/2,(m1.getPosition().longitude+m2.getPosition().longitude)/2);
+    }
+
+    private List<Address> getAddressesToRestaurant() {
+        List<Address> addresses = new ArrayList<>();
+        Geocoder coder = new Geocoder(ctx);
+        try {
+            addresses.addAll(coder.getFromLocation(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude(),1));
+            addresses.addAll(coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress() +", Torino", 1));
+        } catch (IOException e) {
+            Toast.makeText(ctx, "Address Error!", Toast.LENGTH_SHORT).show();
+        }
+        return addresses;
+    }
+    private List<Address> getAddressesToCustomer() {
+        List<Address> addresses = new ArrayList<>();
+        Geocoder coder = new Geocoder(ctx);
+        try {
+            addresses.addAll(coder.getFromLocation(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude(),1));
+            addresses.addAll(coder.getFromLocationName(currentOrder.getCustomer().getCustomerAddress() +", Torino", 1));
+        } catch (IOException e) {
+            Toast.makeText(ctx, "Address Error!", Toast.LENGTH_SHORT).show();
+        }
+        return addresses;
     }
 }
