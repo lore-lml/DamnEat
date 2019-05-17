@@ -4,6 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,6 +74,16 @@ public class FetchURL extends AsyncTask<String, Void, String>{
             iStream.close();
             urlConnection.disconnect();
         }
+
+        /*JSONArray arr = null;
+        try {
+            arr = new JSONArray(data);
+            JSONObject jObj = arr.getJSONObject(0);
+            String distance = jObj.getString("routes"["legs"]["distance"]["text"].toString;
+            Log.d("mylog", "string distance"+distance);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
         return data;
     }
 }

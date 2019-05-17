@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -42,6 +45,8 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -244,7 +249,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         });
 
         update();
-
+        removeAllVisibility();
+        setVisibility(currentOrder.getState());
     }
 
 
@@ -743,11 +749,26 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        LatLngBounds BOUNDS;
         gmap=googleMap;
+
+        Drawable bike = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp);
+        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(bike);
+
+        place1.icon(markerIcon);
         gmap.addMarker(place1);
         gmap.addMarker(place2);
-
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(midPoint(place1,place2), 13));
+        //if(place1.getPosition().latitude<=place2.getPosition().latitude) {
+        //    BOUNDS = new LatLngBounds(place1.getPosition(), place2.getPosition());
+        //}
+        //else{
+        //   BOUNDS = new LatLngBounds(place2.getPosition(), place1.getPosition());
+        //}
+        // Set the camera to the greatest possible zoom level that includes the
+        // bounds
+        //gmap.moveCamera(CameraUpdateFactory.newLatLngBounds(BOUNDS, 15));
+
     }
 
     public LatLng midPoint(MarkerOptions m1,MarkerOptions m2){
@@ -787,5 +808,14 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         super.onResume();
         isVisible = true;
         update();
+    }
+
+    private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
+        Canvas canvas = new Canvas();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }
