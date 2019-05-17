@@ -467,6 +467,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="@drawable/buttons"
                         android:text="@string/start_navigation"
+                        android:textColor="#fff"
                         app:layout_constraintBottom_toTopOf="@+id/card_small"
                         app:layout_constraintEnd_toEndOf="@+id/mapView"
                         app:layout_constraintStart_toStartOf="@+id/mapView"
