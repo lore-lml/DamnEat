@@ -42,7 +42,6 @@ public class Welcome extends AppCompatActivity {
     private static boolean logged;
     private static Profile profile;
     private static Order currentOrder;
-    protected static boolean isVisible = true;
     private static String dbKey;
     private static boolean switchEnabled;
 
@@ -254,7 +253,7 @@ public class Welcome extends AppCompatActivity {
                     }
                 }
                 setDeliverFreeList();
-                if (currentFragment != null && isVisible)
+                if (currentFragment != null)
                     if (selectedId == R.id.nav_current)
                         currentFragment.update();
             }
@@ -287,7 +286,7 @@ public class Welcome extends AppCompatActivity {
                 orderRef = database.getReference("/ordini/" + orderKey);
                 if (orderListener != null)
                     orderRef.removeEventListener(orderListener);
-                if (currentFragment != null && isVisible)
+                if (currentFragment != null)
                     if (selectedId == R.id.nav_current)
                     currentFragment.update();
 
@@ -309,7 +308,7 @@ public class Welcome extends AppCompatActivity {
 
                         }
                         //Log.d("curren order", currentOrder.getId());
-                        if (currentFragment != null && isVisible)
+                        if (currentFragment != null)
                             if (selectedId == R.id.nav_current)
                             currentFragment.update();
                     }
@@ -428,7 +427,7 @@ public class Welcome extends AppCompatActivity {
             if (profile.getState()) {
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
                 freeDeliverersRef.setValue(dbKey);
-                if (currentFragment != null && isVisible)
+                if (currentFragment != null)
                     if (selectedId == R.id.nav_current)
                     currentFragment.update();
             }
