@@ -14,25 +14,18 @@ import android.util.Base64;
 import com.damn.polito.commonresources.beans.DayOfTheWeek;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.TimeZone;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static android.content.Context.MODE_PRIVATE;
 
 public class Utility {
     public static boolean firstON = true;
