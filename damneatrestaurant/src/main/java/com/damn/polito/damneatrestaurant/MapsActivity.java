@@ -3,6 +3,9 @@ package com.damn.polito.damneatrestaurant;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -106,7 +110,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
 //                .title(title)
-//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bike))
+                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike)))
                 ;
         mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(MapsActivity.this, deliverer));
         mMap.addMarker(options);
@@ -185,5 +189,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         }
+    }
+
+    private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
+        Canvas canvas = new Canvas();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }

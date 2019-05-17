@@ -17,27 +17,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/button_sort"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:text="@string/sort"
-            android:drawableStart="@drawable/ic_sort"
-            android:textAllCaps="false"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"/>
-
-        <View
-            android:id="@+id/divider3"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="0"
-            android:background="@color/colorPrimaryDark" />
-
-        <Button
             android:id="@+id/button_map"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -46,8 +25,8 @@
             android:text="@string/show_map"
             android:drawableStart="@drawable/ic_filter"
             android:textAllCaps="false"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"/>
+            android:paddingStart="75dp"
+            android:paddingEnd="50dp"/>
 
     </LinearLayout>
 

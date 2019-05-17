@@ -39,7 +39,7 @@ import java.util.Objects;
 
 import static com.damn.polito.commonresources.Utility.showWarning;
 
-public class FindDelivererActivity extends AppCompatActivity implements HandleDismissDialog {
+public class FindDelivererActivity extends AppCompatActivity {
 
     public enum SortType {Alpha, Closer, Rating, TotDeliver}
 
@@ -87,12 +87,6 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 
     //Menu click Listener
     private void init() {
-        sort.setOnClickListener(v -> {
-            Dialog d = new Dialog(FindDelivererActivity.this);
-            d.setContentView(R.layout.dialog_sort);
-            d.show();
-        });
-
         if(isServicesOk()) {
             map.setOnClickListener(v -> {
                 Intent intent = new Intent(FindDelivererActivity.this, MapsActivity.class);
@@ -102,20 +96,6 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
         }else{
             map.setOnClickListener(v-> Toast.makeText(this, "Unable to open maps", Toast.LENGTH_SHORT).show());
         }
-
-        //ESEMPIO PER SETONCLICKLISTENER SOPRA
-//        sort.setOnClickListener(v->{
-//            assert getActivity() != null;
-//            FragmentManager fm = getActivity().getSupportFragmentManager();
-//            SortDialog sortDialog = new SortDialog();
-//            sortDialog.setFragment(this);
-//            if(sortType != null)
-//                sortDialog.setSortType(sortType);
-//            sortDialog.show(fm, "Sort Dialog");
-//        });
-
-
-
         adapter.setOnItemClickListener(position -> {
             if (oldPosition >= 0) {
                 deliverers.get(oldPosition).changeExpanded();
@@ -277,76 +257,6 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
 
             /*TODO: gestire stato ordine effettuato*/
         }
-    }
-
-    @Override
-    public void handleOnDismiss(DialogType type, String text) {
-        if (type == DialogType.SortDialog)
-            sortDismiss(text);
-    }
-
-    private void sortDismiss(String text) {
-        if (text == null || text.isEmpty()) return;
-        SortType sort = SortType.valueOf(text);
-        switch (sort) {
-            case Alpha:
-                sortAlpha();
-                break;
-            case Closer:
-                sortClosest();
-                break;
-            case Rating:
-                sortRating();
-                break;
-            case TotDeliver:
-                sortTotDeliveries();
-                break;
-        }
-    }
-
-    private void sortAlpha() {
-        Collections.sort(deliverers,
-                (a, b) -> a.getName().compareTo(b.getName()));
-
-        adapter.notifyDataSetChanged();
-        sortType = SortType.Alpha;
-    }
-
-    private void sortClosest() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        Bundle extras = getIntent().getExtras();
-        String resturant_key = extras.getString("resturant_key");
-        DatabaseReference latitude = database.getReference("ristoranti/" + resturant_key + "/Coordinate/Latitude");
-        DatabaseReference longitude = database.getReference("ristoranti/" + resturant_key + "/Coordinate/Longitude");
-
-//        Collections.sort(deliverers,
-//                (a,b)-> Haversine.distance(b.getLatitude(), b.getLongitude(), latitude, longitude)
-//                      - Haversine.distance(a.getLatitude(), a.getLongitude(), restauarant.getLatitude(), restaurant.getLongitude())
-//        );
-
-        adapter.notifyDataSetChanged();
-
-        sortType = SortType.Closer;
-    }
-
-    private void sortRating() {
-//        Collections.sort(deliverers,
-//                (a,b)->b.rate() - a.rate());
-//
-//        adapter.setFullList(deliverers);
-//        adapter.notifyDataSetChanged();
-//
-//        sortType = SortType.Rating;
-    }
-
-    private void sortTotDeliveries() {
-//        Collections.sort(deliverers,
-//                (a,b)->b.totDeliveries() - a.totDeliveries());
-//
-//        adapter.setFullList(deliverers);
-//        adapter.notifyDataSetChanged();
-//
-//        sortType = SortType.TotDeliver;
     }
 
     public boolean isServicesOk() {
