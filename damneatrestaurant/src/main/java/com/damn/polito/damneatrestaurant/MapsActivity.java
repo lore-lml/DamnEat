@@ -87,7 +87,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                        MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
                         for (Deliverer d : deliverers)  {
                             MarkerOptions marker = new MarkerOptions().position(new LatLng(d.getLatitude(), d.getLongitude())).title(d.getName())
-//                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                            .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)))
                                             ;
                             mMap.addMarker(marker);
                             moveCamera(new LatLng(d.getLatitude(), d.getLongitude()), DEFAULT_ZOOM, d);
@@ -110,10 +110,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
 //                .title(title)
-                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike)))
+//                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike)))
                 ;
         mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(MapsActivity.this, deliverer));
-        mMap.addMarker(options);
+//        mMap.addMarker(options);
     }
 
     @Override

@@ -48,7 +48,7 @@ public class FindDelivererActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private DelivererAdapter adapter;
-    private Button sort, map;
+    private Button map;
 
     private DatabaseReference freeDelRef;
     private Query freeDeliverersQuery;
@@ -75,7 +75,6 @@ public class FindDelivererActivity extends AppCompatActivity {
         adapter = new DelivererAdapter(this, deliverers, currentOrder);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        sort = findViewById(R.id.button_sort);
         map = findViewById(R.id.button_map);
 
         init();
