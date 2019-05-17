@@ -11,6 +11,7 @@ public class Restaurant implements Serializable {
     private String photo;
 
     public Restaurant() {
+        // @todo: todo test
     }
 
     public Restaurant(String restaurantName, String restaurantPhone, String restaurantID, String restaurantAddress, Double restaurant_price_ship, String photo) {

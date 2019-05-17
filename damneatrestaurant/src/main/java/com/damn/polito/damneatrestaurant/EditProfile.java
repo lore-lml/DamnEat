@@ -8,15 +8,14 @@ import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,15 +26,26 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.dialogs.CategoryDialog;
-import com.damn.polito.damneatrestaurant.dialogs.DialogType;
 import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.damn.polito.damneatrestaurant.dialogs.OpeningDialog;
-
-import static com.damn.polito.commonresources.Utility.*;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
+import static com.damn.polito.commonresources.Utility.BitMapToString;
+import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
+import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
+import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_CAMERA;
+import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
+import static com.damn.polito.commonresources.Utility.REQUEST_PERM_CAMERA;
+import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.StringToBitMap;
+import static com.damn.polito.commonresources.Utility.cameraIntent;
+import static com.damn.polito.commonresources.Utility.galleryIntent;
+import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
+import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class EditProfile extends AppCompatActivity implements HandleDismissDialog {
 
