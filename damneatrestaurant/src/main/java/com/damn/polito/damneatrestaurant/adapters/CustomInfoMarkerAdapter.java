@@ -33,6 +33,7 @@ public class CustomInfoMarkerAdapter implements GoogleMap.InfoWindowAdapter{
         TextView tvTitle = (TextView) view.findViewById(R.id.deliverer_name_marker);
         TextView tvDescriptiom = (TextView) view.findViewById(R.id.deliverer_description_marker);
         TextView tvPhone = (TextView) view.findViewById(R.id.deliverer_phone_number_marker);
+        TextView tvDistance = (TextView) view.findViewById(R.id.deliverer_distance_marker);
         CircleImageView delivererImage = view.findViewById(R.id.deliverer_img_marker);
         Bitmap img = Utility.StringToBitMap(deliverer.getBitmapProf());
 
@@ -55,6 +56,7 @@ public class CustomInfoMarkerAdapter implements GoogleMap.InfoWindowAdapter{
         tvTitle.setText(deliverer.getName());
         tvDescriptiom.setText(deliverer.getDescription());
         tvPhone.setText(deliverer.getPhone());
+        tvDistance.setText(mContext.getString(R.string.distance_km, (double)deliverer.distance()/1000));
 
     }
 
