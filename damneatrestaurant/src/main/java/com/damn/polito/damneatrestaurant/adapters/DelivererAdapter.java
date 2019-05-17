@@ -37,11 +37,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.DelivererViewHolder> {
 
-    private Context ctx;
-    private List<Deliverer> deliverers;
-    private Order order;
+    private static Context ctx;
+    private static List<Deliverer> deliverers;
+    private static Order order;
     private OnItemClickListener mListener;
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private static FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     public interface OnItemClickListener { void onItemClick(int position); }
 
@@ -107,7 +107,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
 //        });
     }
 
-    private boolean checkCustomerInfo() {
+    private static boolean checkCustomerInfo() {
         if (order.getCustomerName().equals("") || order.getCustomerAddress().equals("")) {
             DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
             dbOrder.setValue("rejected");
@@ -119,7 +119,15 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         }
     }
 
-    private void updateAvailabity(int position) {
+    public static boolean callCheckCustomerInfo() {
+        return checkCustomerInfo();
+    }
+
+    public static void callUpdateAvailability(int position) {
+        pickDeliverer(position);
+    }
+
+    private static void updateAvailabity(int position) {
 //        Deliverer current = deliverers.get(position);
         //AGGIORNO LE AVAILABILITY
         DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
@@ -162,7 +170,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         });
     }
 
-    private void updateTotalAvailabity(Order order_d){
+    private static void updateTotalAvailabity(Order order_d){
         DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -193,7 +201,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
     }
 
 
-    private void pickDeliverer(int position) {
+    private static void pickDeliverer(int position) {
         Deliverer current = deliverers.get(position);
         DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
         dbRef.runTransaction(new Transaction.Handler() {

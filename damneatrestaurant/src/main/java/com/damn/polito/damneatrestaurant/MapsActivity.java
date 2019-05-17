@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneatrestaurant.adapters.CustomInfoMarkerAdapter;
+import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,6 +41,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private FusedLocationProviderClient mFLPC;
     private Button choose_button;
+    private List<Deliverer> deliverers;
+    private int position;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         choose_button = findViewById(R.id.choose_button);
         choose_button.setVisibility(View.GONE);
+        deliverers = FindDelivererActivity.getDeliverers();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -69,7 +74,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent intent = getIntent();
 
         try {
-
             if (mLocGranted) {
                 Task location = mFLPC.getLastLocation();//setlocation with the variable;
                 location.addOnCompleteListener(task -> {
@@ -77,13 +81,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Location currLoc = (Location) task.getResult();
 
 //                        MarkerOptions marker = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude())).title("Hello Maps");
-                        List<Deliverer> deliverers = (List<Deliverer>) intent.getSerializableExtra("deliverers");
                         for (Deliverer d : deliverers)  {
-//                            MarkerOptions marker = new MarkerOptions().position(new LatLng(d.getLatitude(), d.getLongitude())).title(d.getName())
-////                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-//                                            ;
-//                            mMap.addMarker(marker);
-//                            if (d != null) moveCamera(new LatLng(d.getLatitude(), d.getLongitude()), DEFAULT_ZOOM, d.getName());
+                            MarkerOptions marker = new MarkerOptions().position(new LatLng(d.getLatitude(), d.getLongitude())).title(d.getName())
+//                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                            ;
+                            mMap.addMarker(marker);
+                            moveCamera(new LatLng(d.getLatitude(), d.getLongitude()), DEFAULT_ZOOM, d);
                         }
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
@@ -98,20 +101,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title) {
+    private void moveCamera(LatLng latLng, float zoom, Deliverer deliverer) {
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
 //                .title(title)
 //                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bike))
                 ;
-        mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(MapsActivity.this));
+        mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(MapsActivity.this, deliverer));
         mMap.addMarker(options);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(MapsActivity.this, "Map is ready", Toast.LENGTH_LONG).show();
+//        Toast.makeText(MapsActivity.this, "Map is ready", Toast.LENGTH_LONG).show();
         mMap = googleMap;
 
         if (mLocGranted) {
@@ -125,11 +128,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.getUiSettings().setMapToolbarEnabled(false);
             //POSSIBILITY TO ADD SOME FEATURES mMap.getUISettings().......(true);
         }
-
         mMap.setOnMarkerClickListener(marker -> {
             choose_button.setVisibility(View.VISIBLE);
+            for (int i = 0; i<deliverers.size(); i++ ) {//Deliverer d : deliverers) {
+                if (deliverers.get(i).getName().equals(marker.getTitle())) {
+                    mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(MapsActivity.this, deliverers.get(i)));
+                    position = i;
+                }
+            }
             choose_button.setOnClickListener(v -> {
-//                DelivererAdapter.pick();
+                if(DelivererAdapter.callCheckCustomerInfo()) {
+                    DelivererAdapter.callUpdateAvailability(position);
+                    finish();
+                }
             });
             return false;
         });
