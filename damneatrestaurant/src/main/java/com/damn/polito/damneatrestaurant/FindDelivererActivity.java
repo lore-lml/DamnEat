@@ -53,7 +53,7 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
     private DatabaseReference freeDelRef;
     private Query freeDeliverersQuery;
     private ValueEventListener freeDelKeyListener, freeDelivererListener;
-    public List<Deliverer> deliverers = new ArrayList<>();
+    public static List<Deliverer> deliverers = new ArrayList<>();
 
     private SortType sortType;
     private int oldPosition = -1;
@@ -79,6 +79,10 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
         map = findViewById(R.id.button_map);
 
         init();
+    }
+
+    public static List<Deliverer> getDeliverers() {
+        return  deliverers;
     }
 
     //Menu click Listener
