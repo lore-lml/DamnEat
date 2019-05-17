@@ -741,12 +741,14 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLngBounds BOUNDS;
-        gmap=googleMap;
-
+        if(gmap!=null)
+            gmap.clear();
+        gmap = googleMap;
         Drawable bike = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp);
         BitmapDescriptor markerIcon = getMarkerIconFromDrawable(bike);
 
         place1.icon(markerIcon);
+
         gmap.addMarker(place1);
         gmap.addMarker(place2);
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(midPoint(place1,place2), 13));
