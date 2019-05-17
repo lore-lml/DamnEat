@@ -13,6 +13,7 @@ import java.util.List;
 
 
 public class DataParser {
+    @SuppressWarnings("unchecked")
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
         List<List<HashMap<String, String>>> routes = new ArrayList<>();

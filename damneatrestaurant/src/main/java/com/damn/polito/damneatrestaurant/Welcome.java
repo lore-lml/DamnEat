@@ -1,6 +1,5 @@
 package com.damn.polito.damneatrestaurant;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
-import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.notifications.NotificationListener;
 import com.damn.polito.damneatrestaurant.beans.Profile;
@@ -35,10 +33,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import java.util.HashMap;
+
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class Welcome extends AppCompatActivity implements NotificationListener {
 
@@ -54,11 +51,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     //FIREBASE VARIABLES
     private FirebaseDatabase database;
-    private DatabaseReference myRef, orderRef;
+    private DatabaseReference myRef;
     private ValueEventListener listener, orderListenerNotifier;
     private ChildEventListener orderListener;
     private Query orderQuery;
-    //private Map<String, ChildEventListener> children = new HashMap<>();
 
     //COLLECTIONS
     private Profile profile;
@@ -92,7 +88,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                         break;
                 }
                 if(selected != null)
-                    fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commit();
+                    fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commitAllowingStateLoss();
                 return true;
             };
 
@@ -172,49 +168,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     @SuppressWarnings("unchecked")
     private void setOrderListener() {
-        /*if(dbKey == null) return;
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        Map<String, Object> map = new HashMap<>();
-        orderRef = database.getReference("ristoranti/" + dbKey + "/ordini_pendenti");
-        orderListener = orderRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() != null)
-                    map.putAll((Map) dataSnapshot.getValue());
-                else{
-                    pref.edit().putInt("nOrder", 0).apply();
-                    return;
-                }
-
-                int old = pref.getInt("nOrder", -1);
-                if(old != map.size()){
-                    pref.edit().putInt("nOrder", map.size()).apply();
-                    if(old != -1 && selectedId != R.id.nav_reservations)
-                        refreshNotificationBadge(true);
-                }
-
-                for(Map.Entry entry : map.entrySet()){
-                    if(!children.containsKey(entry.getValue().toString())){
-                        ChildEventListener child = newChildEvent();
-                        children.put(entry.getValue().toString(), child);
-
-                        database.getReference("/ordini/" + entry.getValue())
-                                .addChildEventListener(child);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        if(Utility.firstON) {
-            Utility.firstON = false;
-        }*/
-
-
         if(dbKey == null) return;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         DatabaseReference orderRef = database.getReference("ordini/");
@@ -301,32 +254,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     }
 
-    /*private ChildEventListener newChildEvent(){
-        return new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.getValue() != null && selectedId != R.id.nav_reservations)
-                    refreshNotificationBadge(true);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        };
-    }*/
-
     public void loadDataProfile() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -360,10 +287,12 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(myRef==null || orderRef==null)
-            return;
-        myRef.removeEventListener(listener);
-        orderRef.removeEventListener(orderListener);
+        if(myRef!=null)
+            myRef.removeEventListener(listener);
+        if(orderQuery != null) {
+            orderQuery.removeEventListener(orderListener);
+            orderQuery.removeEventListener(orderListenerNotifier);
+        }
     }
 
     @Override

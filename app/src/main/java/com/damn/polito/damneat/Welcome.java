@@ -94,7 +94,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 break;
         }
         if(selected != null)
-            fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commit();
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commitAllowingStateLoss();
         return true;
     };
     

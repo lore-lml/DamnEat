@@ -150,8 +150,8 @@ public class Utility {
     }
 
     public static String dateString(Date date){
-        DateFormat formatter = new SimpleDateFormat("HH:mm:ss - dd/MM/yyyy", Locale.getDefault());
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC+2"));
+        DateFormat formatter = new SimpleDateFormat("HH:mm - dd/MM/yyyy", Locale.ITALY);
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
         return formatter.format(date);
     }
 

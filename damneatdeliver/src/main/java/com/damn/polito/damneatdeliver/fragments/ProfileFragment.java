@@ -19,25 +19,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
-import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneatdeliver.EditProfile;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.R;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -163,7 +158,7 @@ public class ProfileFragment extends Fragment{
 
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference ref;
-        ref = database.getReference("deliverers/" + Welcome.getKey() + "/info");
+        ref = database.getReference("deliverers/" + Welcome.getDbKey() + "/info");
         ref.runTransaction(new Transaction.Handler(){
             @NonNull
             @Override
@@ -195,8 +190,8 @@ public class ProfileFragment extends Fragment{
                 editProfile();
                 return true;
             case R.id.item_disconnect:
-                database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/").setValue(false);
-                database.getReference("/deliverers_liberi/" + Welcome.getKey()).removeValue();
+                database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(false);
+                database.getReference("/deliverers_liberi/" + Welcome.getDbKey()).removeValue();
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
             default:

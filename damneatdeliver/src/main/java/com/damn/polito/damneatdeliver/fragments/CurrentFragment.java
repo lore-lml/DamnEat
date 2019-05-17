@@ -2,7 +2,6 @@ package com.damn.polito.damneatdeliver.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,7 +11,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -31,8 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
-import com.damn.polito.commonresources.beans.Deliverer;
-import com.damn.polito.commonresources.beans.Haversine;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
@@ -41,8 +37,6 @@ import com.damn.polito.damneatdeliver.fragments.maphelpers.FetchURL;
 import com.damn.polito.damneatdeliver.fragments.maphelpers.TaskLoadedCallback;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -52,11 +46,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -200,7 +191,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     orderPhoto.setValue(prof.getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
                     orderName.setValue(prof.getName());
-                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/orders_list/" + currentOrder.getId() );
+                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/" + currentOrder.getId() );
                     orderRef.setValue(currentOrder.getId());
                 }
             }
@@ -209,7 +200,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("rejected");
-                DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+                DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
                 orderRef.setValue("0");
                 setVisibility("empty");
             }
@@ -218,30 +209,30 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         switch_available.setChecked(Welcome.getCurrentAvaibility());
         /*switch_available.setOnClickListener(v -> {
             Boolean available = Welcome.getCurrentAvaibility();
-            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/state/");
             orderRef.setValue(!available);
             //switch_available.setChecked(!available);
             if(!available){
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
-                freeDeliverersRef.setValue(Welcome.getKey());
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
+                freeDeliverersRef.setValue(Welcome.getDbKey());
                 //Welcome.setCurrentAvaibility(true);
-                Log.d("key", Welcome.getKey());
+                Log.d("key", Welcome.getDbKey());
             } else{
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
                 freeDeliverersRef.removeValue();
                 //Welcome.setCurrentAvaibility(false);
             }
         });*/
 
         switch_available.setOnCheckedChangeListener((compoundButton, b) -> {
-            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
+            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/");
             orderRef.setValue(b);
             if(b){
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
-                freeDeliverersRef.setValue(Welcome.getKey());
-                Log.d("key", Welcome.getKey());
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
+                freeDeliverersRef.setValue(Welcome.getDbKey());
+                Log.d("key", Welcome.getDbKey());
             } else{
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
                 freeDeliverersRef.removeValue();
             }
             if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
@@ -434,7 +425,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         if(currentOrder.getState().equals("confirmed")){
             //map.setOnClickListener(v -> {});
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
-            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
             setVisibility("empty");
 
@@ -442,7 +433,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         if(currentOrder.getState().equals("rejected")){
             Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
-            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
             setVisibility("empty");
 
@@ -450,10 +441,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
 //        if(currentOrder.getState().equals("ordered")){
 //            Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
-//            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getKey() + "/current_order/");
+//            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
 //            orderRef.removeValue();
-//            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getKey());
-//            freeDeliverersRef.setValue(Welcome.getKey());
+//            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
+//            freeDeliverersRef.setValue(Welcome.getDbKey());
 //        }
 
         //RETRIVE MAP ROUTES

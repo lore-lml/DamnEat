@@ -154,70 +154,20 @@ public class OrderFragment extends Fragment {
         });
     }
 
-    /*private void initOrders(){
-        database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference("ristoranti/"+key+"/ordini_pendenti/");
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String key;
-                orderKeyList.clear();
-                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
-                    Log.d("tmz",""+ chidSnap.getKey()); //displays the key for the node
-                    Log.d("tmz",""+ chidSnap.getValue());   //gives the value for given keyname
-                    //DataPacket value = dataSnapshot.getValue(DataPacket.class);
-                    key = chidSnap.getValue(String.class);
-                    getOrderFirebase(key);
-                    orderKeyList.add(key);
-                }
-                //adapter.notifyDataSetChanged();
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
     }
-
-    private void getOrderFirebase(String key){
-        database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference("ordini/"+ key);
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //Log.d("order", key);
-                orderKeyList.clear();
-                //Log.d("order", dataSnapshot.getValue().toString());
-                Order order = dataSnapshot.getValue(Order.class);
-                if(order!=null){
-                    order.setId(key);
-                    for(int i=0; i<orders.size(); i++)
-                        if(orders.get(i).Id().equals(order.Id())){
-                            orders.remove(i);
-                            break;
-                        }
-                    orders.add(0,order);
-                }
-                //Log.d("order", order.getCustomer().getCustomerName());
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }*/
 
     public void onChildAdded() {
         adapter.notifyItemInserted(0);
+        recyclerView.smoothScrollToPosition(0);
     }
 
     public void onChildChanged(){
         adapter.notifyItemChanged(0);
+        recyclerView.smoothScrollToPosition(0);
     }
 
     public void onChildRemoved(int pos) {

@@ -73,6 +73,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void getDeviceLocation() {
         mFLPC = LocationServices.getFusedLocationProviderClient(this);
         Intent intent = getIntent();

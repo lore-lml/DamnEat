@@ -39,7 +39,7 @@ import java.util.Objects;
 
 import static com.damn.polito.commonresources.Utility.showWarning;
 
-public class FindDelivererActivity extends AppCompatActivity {
+public class    FindDelivererActivity extends AppCompatActivity {
 
     public enum SortType {Alpha, Closer, Rating, TotDeliver}
 

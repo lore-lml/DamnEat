@@ -1,20 +1,13 @@
 package com.damn.polito.damneatdeliver;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -22,26 +15,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Order;
-import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
 import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
-import com.damn.polito.damneatdeliver.fragments.maphelpers.TaskLoadedCallback;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -50,40 +34,46 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.security.Provider;
 import java.util.Arrays;
 import java.util.List;
 
 public class Welcome extends AppCompatActivity {
-    List<AuthUI.IdpConfig> providers;
-    private final int REQUEST_CODE = 707;
+    //STATIC VARIABLES
+    private static boolean logged;
+    private static Profile profile;
     private static Order currentOrder;
+    protected static boolean isVisible = true;
+    private static String dbKey;
+    private static boolean switchEnabled;
+
+    private List<AuthUI.IdpConfig> providers;
+    private final int REQUEST_CODE = 707;
+
+    //FIREBASE VARIABLES
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private DatabaseReference orderRef;
     private ValueEventListener orderListener;
     private ValueEventListener v;
     private DatabaseReference profileRef;
+
+    //FRAGMENT VARIABLES
     private FragmentManager fragmentManager;
     private ProfileFragment profileFragment;
     private OrderFragment orderFragment;
     private CurrentFragment currentFragment;
-    private static Profile profile;
-    private static String hasSetName;
-    protected static boolean isVisible = true;
 
+    //UI WIDGET
     private BottomNavigationView navigation;
     private Integer selectedId = null;
     private String orderKey;
-    private static Context ctx;
-    private static boolean logged;
 
     //LOCATION VARIABLES
     public static final int LOCATION_PERMISSION_REQUESt_CODE = 1212;
     private boolean mLocGranted;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    private static boolean switchEnabled;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -106,12 +96,15 @@ public class Welcome extends AppCompatActivity {
                 selected = profileFragment;
                 break;
         }
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commit();
+        if(selected != null)
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commitAllowingStateLoss();
         return true;
     };
 
-    public static String getKey() {
-        return PreferenceManager.getDefaultSharedPreferences(ctx).getString("dbkey", null);
+    private String getKey() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        dbKey = pref.getString("dbkey", null);
+        return dbKey;
     }
 
     public static Boolean getCurrentAvaibility() {
@@ -140,14 +133,13 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ctx = this;
         setContentView(R.layout.activity_welcome);
         providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build()
         );
         database = FirebaseDatabase.getInstance();
-        if (Welcome.getKey() != null)
+        if (getKey() != null)
             init();
         else
             shownSignInOptions();
@@ -165,15 +157,12 @@ public class Welcome extends AppCompatActivity {
         profile = new Profile();
         profile.setState(false);
         loadProfile();
-        loadCurrentOrder(this);
+        loadCurrentOrder();
         //loadCurrentState();
-        ctx = this;
 
         if (profile != null) {
             Log.d("key", getKey());
 
-//            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/state/");
-//            orderRef.setValue(currentState);
             logged = true;
         } else {
             logged = false;
@@ -213,15 +202,13 @@ public class Welcome extends AppCompatActivity {
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                Toast.makeText(this, user.getEmail().toString(), Toast.LENGTH_LONG).show();
-                //set button signout
-                //b.setEnabled(true);
                 if (user != null) {
+                    Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
+                    //set button signout
+                    //b.setEnabled(true);
                     storeData(user);
                     profile = null;
-//                    if (currentFragment != null)
-//                        if (selectedId == R.id.nav_current)
-//                            currentFragment.checkRegistered();
+
                     if (profileRef != null && v != null)
                         profileRef.removeEventListener(v);
                     if (getKey() != null)
@@ -230,12 +217,9 @@ public class Welcome extends AppCompatActivity {
                 //if(selectedId == R.id.nav_current)
             } else {
                 String error = null;
-                try {
+                if(response != null && response.getError() != null)
                     error = response.getError().getMessage();
 
-                } catch (Exception e) {
-
-                }
                 if (error == null)
                     error = getString(R.string.login_error);
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
@@ -251,7 +235,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     private void loadProfile() {
-        profileRef = database.getReference("/deliverers/" + getKey() + "/info");
+        profileRef = database.getReference("/deliverers/" + dbKey + "/info");
         v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -265,7 +249,7 @@ public class Welcome extends AppCompatActivity {
                         profile.setState(false);
                     }
                     if (profile.getState() == null) {
-                        database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/").setValue(false);
+                        database.getReference("/deliverers/" + dbKey + "/info/state/").setValue(false);
                         profile.setState(false);
                     }
                 }
@@ -275,64 +259,26 @@ public class Welcome extends AppCompatActivity {
                         currentFragment.update();
             }
 
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
-//
-//    private void loadCurrentState() {
-//        DatabaseReference stateRef = database.getReference("/deliverers/" + getKey() + "/info/state/");
-//        stateRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.getValue() == null) return;
-//                Boolean state = dataSnapshot.getValue(Boolean.class);
-//                if(profile == null)
-//                    return;
-//                if (state != null)
-//                    profile.setState(state);
-//                else {
-//                    DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
-//                    orderRef.setValue(false);
-//                    profile.setState(false);
-//                }
-//                setDeliverFreeList();
-//                Log.d("state", String.valueOf(profile.getState()));
-////
-////                try {
-////                }catch (Exception e){
-////                    currentState = false;
-////                }
-//                if (selectedId == R.id.nav_current)
-//                    currentFragment.update();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Toast.makeText(Welcome.this, "Database error", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
 
     private void setDeliverFreeList(){
         if (profile.getState()) {
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-            freeDeliverersRef.setValue(Welcome.getKey());
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+            freeDeliverersRef.setValue(dbKey);
         } else {
-            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
+            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
             freeDeliverersRef.removeValue();
         }
-//        if (!currentState) {
-//            database.getReference("/deliverers_liberi/" + getKey()).removeValue();
-//        }
     }
 
-    public void loadCurrentOrder(Context ctx) {
-        myRef = database.getReference("deliverers/" + getKey() + "/current_order/");
+    public void loadCurrentOrder() {
+        myRef = database.getReference("deliverers/" + dbKey + "/current_order/");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -354,10 +300,10 @@ public class Welcome extends AppCompatActivity {
                             currentOrder.setState("empty");
                         } else {
                             if (currentOrder.getState().equals("empty")) {
-                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
+                                DatabaseReference orderRef = database.getReference("/deliverers/" + dbKey + "/info/state/");
                                 orderRef.setValue(true);
                             } else {
-                                DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getKey() + "/info/state/");
+                                DatabaseReference orderRef = database.getReference("/deliverers/" + dbKey + "/info/state/");
                                 orderRef.setValue(false);
                             }
 
@@ -370,14 +316,14 @@ public class Welcome extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -385,9 +331,6 @@ public class Welcome extends AppCompatActivity {
     public static Order getCurrentOrder() {
         return currentOrder;
     }
-
-
-
 
     //LOCATION CODE
     private void StartLocationManager() {
@@ -412,10 +355,10 @@ public class Welcome extends AppCompatActivity {
                     //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
                 String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
-                Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
-                DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/info/latitude");
+                Toast.makeText(Welcome.this, msg, Toast.LENGTH_LONG).show();
+                DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
                 RefLat.setValue(location.getLatitude());
-                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/info/longitude");
+                DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
                 RefLong.setValue(location.getLongitude());
             }
 
@@ -433,93 +376,10 @@ public class Welcome extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
             }
         };
-//        Criteria criteria = new Criteria();
-//        criteria.setPowerRequirement(Criteria.POWER_HIGH);
-//        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-//        criteria.setAltitudeRequired(false);
-//        String providerFine = locationManager.getBestProvider(criteria, true);
-//
-//        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-//        String providerCoarse = locationManager.getBestProvider(criteria, true);
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, locationListener);
-
-//        if (providerCoarse != null) {
-//            locationManager.requestLocationUpdates(providerCoarse, 5*60000, 100, locationListener);
-//        }
-//        if (providerFine != null) {
-//            locationManager.requestLocationUpdates(providerFine, 5 * 60000, 100, locationListener);
-//        }
-//        locationListener = new LocationListener() {
-//            @Override
-//            public void onLocationChanged(Location location) {
-//                Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
-//                DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/latitude");
-//                RefLat.setValue(location.getLatitude());
-//                DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/longitude");
-//                RefLong.setValue(location.getLongitude());
-//            }
-//
-//            @Override
-//            public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderEnabled(String provider) {
-//
-//            }
-//
-//            @Override
-//            public void onProviderDisabled(String provider) {
-//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                startActivity(intent);
-//            }
-//        };
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//            }
-//        } else {
-//            startManager();
-//        }
     }
 
-
-
-//    private void isLocationEnabled() {
-//
-//        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-//            AlertDialog.Builder alertDialog=new AlertDialog.Builder(mContext);
-//            alertDialog.setTitle("Enable Location");
-//            alertDialog.setMessage("Your locations setting is not enabled. Please enabled it in settings menu.");
-//            alertDialog.setPositiveButton("Location Settings", new DialogInterface.OnClickListener(){
-//                public void onClick(DialogInterface dialog, int which){
-//                    Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    startActivity(intent);
-//                }
-//            });
-//            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-//                public void onClick(DialogInterface dialog, int which){
-//                    dialog.cancel();
-//                }
-//            });
-//            AlertDialog alert=alertDialog.create();
-//            alert.show();
-//        }
-//        else{
-//            AlertDialog.Builder alertDialog=new AlertDialog.Builder(mContext);
-//            alertDialog.setTitle("Confirm Location");
-//            alertDialog.setMessage("Your Location is enabled, please enjoy");
-//            alertDialog.setNegativeButton("Back to interface",new DialogInterface.OnClickListener(){
-//                public void onClick(DialogInterface dialog, int which){
-//                    dialog.cancel();
-//                }
-//            });
-//            AlertDialog alert=alertDialog.create();
-//            alert.show();
-//        }
-//    }
     private void getLocationPermissions() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
@@ -566,8 +426,8 @@ public class Welcome extends AppCompatActivity {
         if(profile!=null) {
             //profile.setState(false);
             if (profile.getState()) {
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-                freeDeliverersRef.setValue(Welcome.getKey());
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+                freeDeliverersRef.setValue(dbKey);
                 if (currentFragment != null && isVisible)
                     if (selectedId == R.id.nav_current)
                     currentFragment.update();
@@ -575,5 +435,7 @@ public class Welcome extends AppCompatActivity {
         }
     }
 
-
+    public static String getDbKey() {
+        return dbKey;
+    }
 }

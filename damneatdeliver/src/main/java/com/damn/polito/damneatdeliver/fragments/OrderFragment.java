@@ -17,7 +17,6 @@ import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.adapters.OrdersAdapter;
-import com.damn.polito.commonresources.beans.Order;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,7 +74,7 @@ public class OrderFragment extends Fragment {
     }
 
     private void init(){
-        DatabaseReference dbRef = database.getReference("deliverers/" + Welcome.getKey() + "/orders_list/");
+        DatabaseReference dbRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/");
         List<String> keyList = new LinkedList<>();
         ValueEventListener listener = dbRef.addValueEventListener(new ValueEventListener() {
             @Override

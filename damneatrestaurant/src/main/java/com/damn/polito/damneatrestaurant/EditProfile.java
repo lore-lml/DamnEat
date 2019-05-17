@@ -123,6 +123,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Impossible to find the location", Toast.LENGTH_LONG).show();
+                    return;
                 }
                 finish();
             }
@@ -210,14 +211,14 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
         }
 
-        FindLocationFromAddress(latitude, longitude);
+        FindLocationFromAddress();
         i.putExtra("latitude", latitude);
         i.putExtra("longitude", longitude);
 
         return i;
     }
 
-    private void FindLocationFromAddress(long latitude, long longitude) throws IOException {
+    private void FindLocationFromAddress() throws IOException {
 
         Geocoder geocoder = new Geocoder(this);
         List<Address> addresses;
@@ -225,6 +226,8 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         if(addresses.size() > 0) {
             latitude = (long) addresses.get(0).getLatitude();
             longitude = (long) addresses.get(0).getLongitude();
+        }else{
+            throw new IOException("Location not found");
         }
     }
 
