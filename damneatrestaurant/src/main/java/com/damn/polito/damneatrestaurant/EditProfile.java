@@ -60,7 +60,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
     private String sName, sMail, sDesc, sAddress, sPhone, sOpening, sCategories, sShipPrice;
     private Bitmap profImgPrec;
-
+    private boolean addressFound = true;
     private long latitude, longitude;
 
     @Override
@@ -236,7 +236,9 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         if(addresses.size() > 0) {
             latitude = (long) addresses.get(0).getLatitude();
             longitude = (long) addresses.get(0).getLongitude();
+            addressFound = true;
         }else{
+            addressFound = false;
             throw new IOException("Location not found");
         }
     }
@@ -370,6 +372,9 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     }
 
     private boolean checkChanges() {
+        if(!addressFound)
+            return false;
+
         String name = this.name.getText().toString();
         if(!name.equals(sName))
             return true;

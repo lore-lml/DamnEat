@@ -197,12 +197,15 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         //setOrderListener();
     }
 
-    private void storeProfile(Profile profile){
+    private void storeProfile(Profile profile) {
         accountExist = true;
-        if(selectedId == null)
+        if (selectedId == null)
             navigation.setSelectedItemId(R.id.nav_restaurant);
-        setRestaurantListener();
-        setOrderListener();
+        if (Utility.firstON){
+            setRestaurantListener();
+            setOrderListener();
+            Utility.firstON = false;
+        }
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         editor.putString("address", profile.getAddress());
@@ -352,10 +355,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        if(Utility.firstON) {
-            Utility.firstON = false;
-        }
     }
 
     public List<Order> getOrders(){return orders;}
