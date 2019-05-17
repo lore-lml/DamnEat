@@ -219,7 +219,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
                         Deliverer d = child.child("info").getValue(Deliverer.class);
                         assert d != null;
                         d.setKey(child.getKey());
-                        if(d.getName()!=null && d.getLatitude()!=null && d.getLongitude()!=null){
+                        if(d.getName()!=null && d.getLatitude()!=null && d.getLongitude()!=null && restAddress!=null){
                             d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
                             deliverers.add(d);
                         }
