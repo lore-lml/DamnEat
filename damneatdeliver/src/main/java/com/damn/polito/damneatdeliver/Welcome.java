@@ -353,6 +353,7 @@ public class Welcome extends AppCompatActivity {
                     profile.setPosition(latitude, longitude);
                     //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
+                // @TODO: todo test
                 String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
                 Toast.makeText(Welcome.this, msg, Toast.LENGTH_LONG).show();
                 DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
