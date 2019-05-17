@@ -109,12 +109,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
-        //navigation.setSelectedItemId(R.id.nav_restaurant);
         database = FirebaseDatabase.getInstance();
-        
-        /*if(Utility.firstON) {
-            database.setPersistenceEnabled(true);
-        }*/
+
         if (getKey() == null)
             FirebaseLogin.shownSignInOptions(this);
         else
@@ -137,12 +133,13 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                if(user !=  null && user.getEmail() != null)
-                    Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
-                //set button signout
-                //b.setEnabled(true);
-                FirebaseLogin.storeData(user, this);
-                loadProfileData();
+                if(user !=  null) {
+                    Toast.makeText(this, "" + user.getEmail(), Toast.LENGTH_LONG).show();
+                    //set button signout
+                    //b.setEnabled(true);
+                    FirebaseLogin.storeData(user, this);
+                    loadProfileData();
+                }
             }
             else{
                 String error = null;
@@ -276,34 +273,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     private void setOrderListener() {
         if(dbKey == null) return;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        //orderRef = database.getReference("clienti/" + dbKey + "/lista_ordini");
         DatabaseReference orderRef = database.getReference("ordini/");
-
-        /*orderListenerNotifier = orderRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() != null) {
-                    for(DataSnapshot child : dataSnapshot.getChildren())
-                        ordersKey.add(child.getValue(String.class));
-                }
-                else {
-                    pref.edit().putInt("nOrder", 0).apply();
-                    return;
-                }
-
-                int old = pref.getInt("nOrder", -1);
-                if(old != ordersKey.size()){
-                    pref.edit().putInt("nOrder", ordersKey.size()).apply();
-                    if(old != -1)
-                        refreshNotificationBadge(true);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });*/
 
         orderQuery = orderRef.orderByChild("customer/customerID").equalTo(dbKey);
         orderListenerNotifier = orderQuery.addValueEventListener(new ValueEventListener() {

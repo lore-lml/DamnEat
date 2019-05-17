@@ -240,9 +240,10 @@ public class FindDelivererActivity extends AppCompatActivity implements HandleDi
                         Deliverer d = child.child("info").getValue(Deliverer.class);
                         assert d != null;
                         d.setKey(child.getKey());
-//                        d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
-                        if(d.getName()!=null)
+                        if(d.getName()!=null && d.getLatitude()!=null && d.getLongitude()!=null){
+                            d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
                             deliverers.add(d);
+                        }
                     }
                 }
                 Collections.sort(deliverers, (d1, d2) -> {

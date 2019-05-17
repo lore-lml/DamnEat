@@ -109,18 +109,7 @@ public class OpeningDialog extends DialogFragment {
     }
 
     private List<DayOfTheWeek> load(){
-        /*String t = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("days", null);
-        if(t != null){
-            try {
-                JSONArray array = new JSONArray(t);
-                for(int i = 0; i<array.length(); i++){
-                    JSONObject json = array.getJSONObject(i);
-                    days.add(new DayOfTheWeek(json));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }*/
+
         if(text != null && !text.isEmpty()){
             return DayOfTheWeek.listOfDays(text);
         }

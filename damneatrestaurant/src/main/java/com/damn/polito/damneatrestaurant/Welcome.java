@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.notifications.NotificationListener;
 import com.damn.polito.damneatrestaurant.beans.Profile;
 import com.damn.polito.damneatrestaurant.fragments.DishesFragment;
@@ -32,30 +33,41 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Welcome extends AppCompatActivity implements NotificationListener {
 
+    //SYSTEM VARIABLES
     public static boolean accountExist = false;
+    public static String dbKey;
 
+    //FRAGMENTS VARIABLES
     private FragmentManager fragmentManager;
     private DishesFragment dishesFragment;
     private ProfileFragment profileFragment;
     private OrderFragment orderFragment;
-    private String dbKey;
 
+    //FIREBASE VARIABLES
     private FirebaseDatabase database;
     private DatabaseReference myRef, orderRef;
-    private ValueEventListener listener, orderListener;
-    private Map<String, ChildEventListener> children = new HashMap<>();
+    private ValueEventListener listener, orderListenerNotifier;
+    private ChildEventListener orderListener;
+    private Query orderQuery;
+    //private Map<String, ChildEventListener> children = new HashMap<>();
 
+    //COLLECTIONS
+    private Profile profile;
+    private List<Order> orders = new LinkedList<>();
+
+    //UI WIDGET
     private BottomNavigationView navigation;
     private View notificationBadge;
     private Integer selectedId = null;
-
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -93,15 +105,13 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
-        //navigation.setSelectedItemId(R.id.nav_dishes);
         database = FirebaseDatabase.getInstance();
-        /*if(Utility.firstON) {
-            database.setPersistenceEnabled(true);
-        }*/
+
         if (getKey() == null)
             FirebaseLogin.shownSignInOptions(this);
         else
-            loadDataProfile(this);
+            loadDataProfile();
+
         addNotificationBadge();
     }
 
@@ -121,16 +131,14 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                try {
-                    Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
-                } catch (Exception e){
-                    //Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
+                if(user != null) {
+                    Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
+                    //set button signout
+                    //b.setEnabled(true);
+                    dbKey = user.getUid();
+                    FirebaseLogin.storeData(user, this);
                 }
-                //set button signout
-                //b.setEnabled(true);
-                dbKey = user.getUid();
-                FirebaseLogin.storeData(user, this);
-                loadDataProfile(this);
+                loadDataProfile();
             }
             else{
                 String error = null;
@@ -147,8 +155,9 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         accountExist = true;
         if(selectedId == null)
             navigation.setSelectedItemId(R.id.nav_dishes);
+        setOrderListener();
+
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        //editor.putString("dbkey", myRef.getKey());
         editor.putString("address", profile.getAddress());
         editor.putString("name", profile.getName());
         editor.putString("phone", profile.getPhone());
@@ -163,7 +172,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     @SuppressWarnings("unchecked")
     private void setOrderListener() {
-        if(dbKey == null) return;
+        /*if(dbKey == null) return;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         Map<String, Object> map = new HashMap<>();
         orderRef = database.getReference("ristoranti/" + dbKey + "/ordini_pendenti");
@@ -203,13 +212,96 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
         if(Utility.firstON) {
             Utility.firstON = false;
-        }
+        }*/
+
+
+        if(dbKey == null) return;
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        DatabaseReference orderRef = database.getReference("ordini/");
+
+        orderQuery = orderRef.orderByChild("restaurant/restaurantID").equalTo(dbKey);
+        orderListenerNotifier = orderQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.getValue() == null) {
+                    pref.edit().putLong("nOrder", 0).apply();
+                    return;
+                }
+
+                long old = pref.getLong("nOrder", -1);
+                long count = dataSnapshot.getChildrenCount();
+                if(old != count){
+                    pref.edit().putLong("nOrder", count).apply();
+                    if(old != -1)
+                        refreshNotificationBadge(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        orderListener = orderQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getKey();
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                o.setId(key);
+                orders.add(0, o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildAdded();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getKey();
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                o.setId(key);
+                orders.remove(o);
+                orders.add(0, o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildChanged();
+                else
+                    refreshNotificationBadge(true);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getKey();
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                o.setId(key);
+                int pos = orders.indexOf(o);
+                orders.remove(o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildRemoved(pos);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
 
     }
 
-    private ChildEventListener newChildEvent(){
+    /*private ChildEventListener newChildEvent(){
         return new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -233,10 +325,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
-    }
+    }*/
 
-    public void loadDataProfile(Context ctx) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+    public void loadDataProfile() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         if(dbKey == null) {
             dbKey = pref.getString("dbkey", null);
@@ -260,10 +352,9 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
-        setOrderListener();
     }
 
     @Override
@@ -290,5 +381,11 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     public void refreshNotificationBadge(boolean visible) {
         notificationBadge.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public static String getDbKey() { return dbKey; }
 }
 

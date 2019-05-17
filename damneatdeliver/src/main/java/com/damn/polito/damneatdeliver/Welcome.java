@@ -70,6 +70,7 @@ public class Welcome extends AppCompatActivity {
     private CurrentFragment currentFragment;
     private static Profile profile;
     private static String hasSetName;
+    protected static boolean isVisible = true;
 
     private BottomNavigationView navigation;
     private Integer selectedId = null;
@@ -269,7 +270,7 @@ public class Welcome extends AppCompatActivity {
                     }
                 }
                 setDeliverFreeList();
-                if (currentFragment != null)
+                if (currentFragment != null && isVisible)
                     if (selectedId == R.id.nav_current)
                         currentFragment.update();
             }
@@ -340,7 +341,8 @@ public class Welcome extends AppCompatActivity {
                 orderRef = database.getReference("/ordini/" + orderKey);
                 if (orderListener != null)
                     orderRef.removeEventListener(orderListener);
-                if (selectedId == R.id.nav_current)
+                if (currentFragment != null && isVisible)
+                    if (selectedId == R.id.nav_current)
                     currentFragment.update();
 
                 orderListener = orderRef.addValueEventListener(new ValueEventListener() {
@@ -361,7 +363,8 @@ public class Welcome extends AppCompatActivity {
 
                         }
                         //Log.d("curren order", currentOrder.getId());
-                        if (selectedId == R.id.nav_current)
+                        if (currentFragment != null && isVisible)
+                            if (selectedId == R.id.nav_current)
                             currentFragment.update();
                     }
 
@@ -383,19 +386,7 @@ public class Welcome extends AppCompatActivity {
         return currentOrder;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(profile!=null) {
-            //profile.setState(false);
-            if (profile.getState()) {
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
-                freeDeliverersRef.setValue(Welcome.getKey());
-                if (selectedId == R.id.nav_current)
-                    currentFragment.update();
-            }
-        }
-    }
+
 
 
     //LOCATION CODE
@@ -418,10 +409,10 @@ public class Welcome extends AppCompatActivity {
                 double longitude=location.getLongitude();
                 if(profile!=null) {
                     profile.setPosition(latitude, longitude);
-                    String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
-                    Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
                     //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
+                String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
+                Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
                 DatabaseReference RefLat = database.getReference("deliverers/" + Welcome.getKey() + "/info/latitude");
                 RefLat.setValue(location.getLatitude());
                 DatabaseReference RefLong = database.getReference("deliverers/" + Welcome.getKey() + "/info/longitude");
@@ -451,7 +442,7 @@ public class Welcome extends AppCompatActivity {
 //        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 //        String providerCoarse = locationManager.getBestProvider(criteria, true);
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5*60000, 10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, locationListener);
 
 //        if (providerCoarse != null) {
 //            locationManager.requestLocationUpdates(providerCoarse, 5*60000, 100, locationListener);
@@ -568,5 +559,21 @@ public class Welcome extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        //setVisible(true);
+        if(profile!=null) {
+            //profile.setState(false);
+            if (profile.getState()) {
+                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + getKey());
+                freeDeliverersRef.setValue(Welcome.getKey());
+                if (currentFragment != null && isVisible)
+                    if (selectedId == R.id.nav_current)
+                    currentFragment.update();
+            }
+        }
+    }
+
 
 }
