@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.notifications.NotificationListener;
 import com.damn.polito.damneatrestaurant.beans.Profile;
@@ -151,7 +152,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         accountExist = true;
         if(selectedId == null)
             navigation.setSelectedItemId(R.id.nav_dishes);
-        setOrderListener();
+        if(Utility.firstON) {
+            setOrderListener();
+            Utility.firstON = false;
+        }
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("address", profile.getAddress());
