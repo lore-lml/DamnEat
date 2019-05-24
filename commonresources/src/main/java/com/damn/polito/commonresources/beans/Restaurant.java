@@ -1,6 +1,8 @@
 package com.damn.polito.commonresources.beans;
 
-public class Restaurant {
+import java.io.Serializable;
+
+public class Restaurant implements Serializable {
     private String restaurantName;
     private String restaurantPhone;
     private String restaurantID;
@@ -9,6 +11,7 @@ public class Restaurant {
     private String photo;
 
     public Restaurant() {
+        // @todo: todo test
     }
 
     public Restaurant(String restaurantName, String restaurantPhone, String restaurantID, String restaurantAddress, Double restaurant_price_ship, String photo) {

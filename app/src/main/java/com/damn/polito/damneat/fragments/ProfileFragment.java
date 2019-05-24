@@ -154,7 +154,7 @@ public class ProfileFragment extends Fragment {
         DatabaseReference ordini;
 
         myRef = database.getReference("clienti/" + getDbKey());
-        ordini = database.getReference("clienti/" + getDbKey() + "/lista_ordini");
+        //ordini = database.getReference("clienti/" + getDbKey() + "/lista_ordini");
 
 
         myRef.runTransaction(new Transaction.Handler(){

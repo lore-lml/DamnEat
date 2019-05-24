@@ -45,13 +45,11 @@ public class ProfileFragment extends Fragment{
     private ImageView profileImage;
     private TextView name, mail, description, address, phone, opening, categories, shipPrice;
     private Bitmap profileBitmap;
-    //private boolean empty = true;
     private Context ctx;
     private String dbKey;
     private FirebaseDatabase database;
     private Profile prof;
 
-    //private Map<String, Object> orders;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

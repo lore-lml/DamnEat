@@ -96,7 +96,7 @@
     <string name="dish_tacos" translatable="false">Tacos</string>
     <string name="dish_meat">Meat</string>
     <string name="dish_others">Others</string>
-    <string name="restaurant_category">Categories</string>
+    <string name="restaurant_category">Categories</string>k
     <string name="empty_categories">No categories have been inserted</string>
     <string name="time_asap">As soon as possible</string>
     <string name="disconnect">disconnect</string>
@@ -113,5 +113,6 @@
     <string name="confirmed">Completed</string>
     <string name="rejected">Rejected</string>
     <string name="not_registered">You have to fill the profile to place an order.</string>
+    <string name="google_key_API" translatable="false">AIzaSyD0uoGBEYALjB8GR-1Mpcks5UXylwrITtU</string>
 
 </resources>

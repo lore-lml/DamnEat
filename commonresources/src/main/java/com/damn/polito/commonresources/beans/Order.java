@@ -1,10 +1,13 @@
 package com.damn.polito.commonresources.beans;
 
+import com.damn.polito.commonresources.beans.Dish;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
-public class Order {
+public class Order implements Serializable {
 
     private String id;
     private List<Dish> dishes;

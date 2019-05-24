@@ -19,11 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatdeliver.EditProfile;
+import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.R;
 import com.google.firebase.database.DataSnapshot;
@@ -32,9 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -50,9 +48,6 @@ public class ProfileFragment extends Fragment{
 
     private FirebaseDatabase database;
     private String dbKey;
-
-    private Map<String, Object> orders;
-
 
     @Nullable
     @Override
@@ -80,7 +75,7 @@ public class ProfileFragment extends Fragment{
         description = view.findViewById(R.id.editText_desc);
         database = FirebaseDatabase.getInstance();
 
-        loadData();
+        loadData(Welcome.getProfile());
     }
 
     private void editProfile() {
@@ -140,56 +135,30 @@ public class ProfileFragment extends Fragment{
         empty = false;
     }
 
-    @SuppressWarnings("unchecked")
-    private void loadData() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
+    private void loadData(Profile prof) {
+        if (prof != null) {
+            name.setText(prof.getName());
+            mail.setText(prof.getMail());
+            phone.setText(prof.getPhone());
+            description.setText(prof.getDescription());
+            if (prof.getBitmapProf() != null) {
+                String encodedBitmap = prof.getBitmapProf();
+                profileBitmap = Utility.StringToBitMap(encodedBitmap);
+                if (profileBitmap != null)
+                    profileImage.setImageBitmap(profileBitmap);
+            }
+            empty = false;
+        }else{
+            name.setText(defaultValue);
+            mail.setText(defaultValue);
+            phone.setText(defaultValue);
+            description.setText(defaultValue);
         }
-
-        DatabaseReference myRef = database.getReference("deliverers/" + dbKey + "/info/");
-
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                Profile prof = dataSnapshot.getValue(Profile.class);
-                if (prof != null) {
-                    name.setText(prof.getName());
-                    mail.setText(prof.getMail());
-                    phone.setText(prof.getPhone());
-                    description.setText(prof.getDescription());
-                    if (prof.getBitmapProf() != null) {
-                        String encodedBitmap = prof.getBitmapProf();
-                        profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                        if (profileBitmap != null)
-                            profileImage.setImageBitmap(profileBitmap);
-                    }
-                    empty = false;
-                }else{
-                    name.setText(defaultValue);
-                    mail.setText(defaultValue);
-                    phone.setText(defaultValue);
-                    description.setText(defaultValue);
-                    //address.setText(defaultValue);
-                }
-
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference ref;
-        DatabaseReference ordini;
-
-        ref = database.getReference("deliverers/" + dbKey + "/info/");
-
+        ref = database.getReference("deliverers/" + Welcome.getDbKey() + "/info");
         ref.runTransaction(new Transaction.Handler(){
             @NonNull
             @Override
@@ -201,12 +170,7 @@ public class ProfileFragment extends Fragment{
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 if(committed) {
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-                    //editor.putString("dbkey", myRef.getKey());
-                    editor.putString("deliverername", profile.getName());
-                    editor.putString("delivererphone", profile.getPhone());
-                    editor.putString("deliverermail", profile.getMail());
-                    editor.apply();
+                    loadData(profile);
                 }
             }
         });
@@ -226,6 +190,8 @@ public class ProfileFragment extends Fragment{
                 editProfile();
                 return true;
             case R.id.item_disconnect:
+                database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(false);
+                database.getReference("/deliverers_liberi/" + Welcome.getDbKey()).removeValue();
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
             default:

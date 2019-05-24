@@ -5,16 +5,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,10 +29,23 @@ import com.damn.polito.damneatrestaurant.dialogs.CategoryDialog;
 import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.damn.polito.damneatrestaurant.dialogs.OpeningDialog;
 
-import static com.damn.polito.commonresources.Utility.*;
-
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
+
+import static com.damn.polito.commonresources.Utility.BitMapToString;
+import static com.damn.polito.commonresources.Utility.CROP_REQUEST;
+import static com.damn.polito.commonresources.Utility.IMAGE_GALLERY_REQUEST;
+import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_CAMERA;
+import static com.damn.polito.commonresources.Utility.PERMISSION_CODE_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.REQUEST_IMAGE_CAPTURE;
+import static com.damn.polito.commonresources.Utility.REQUEST_PERM_CAMERA;
+import static com.damn.polito.commonresources.Utility.REQUEST_PERM_WRITE_EXTERNAL;
+import static com.damn.polito.commonresources.Utility.StringToBitMap;
+import static com.damn.polito.commonresources.Utility.cameraIntent;
+import static com.damn.polito.commonresources.Utility.galleryIntent;
+import static com.damn.polito.commonresources.Utility.getImageUrlWithAuthority;
+import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class EditProfile extends AppCompatActivity implements HandleDismissDialog {
 
@@ -46,6 +60,8 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
     private String sName, sMail, sDesc, sAddress, sPhone, sOpening, sCategories, sShipPrice;
     private Bitmap profImgPrec;
+    private boolean addressFound = true;
+    private long latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +127,14 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         //Imposta la funzione del bottone "SALVA"
         save.setOnClickListener(v->{
             if(checkField()){
-                setActivityResult();
+                try {
+                    setActivityResult();
+                    Toast.makeText(this, "Location found", Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Impossible to find the location", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 finish();
             }
         });
@@ -175,11 +198,11 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         startActivityForResult(intent, IMAGE_GALLERY_REQUEST);
     }
 
-    private void setActivityResult() {
+    private void setActivityResult() throws IOException {
         setResult(RESULT_OK, getActivityResult());
     }
 
-    private Intent getActivityResult() {
+    private Intent getActivityResult() throws IOException {
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
@@ -198,7 +221,26 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
         }
 
+        FindLocationFromAddress();
+        i.putExtra("latitude", latitude);
+        i.putExtra("longitude", longitude);
+
         return i;
+    }
+
+    private void FindLocationFromAddress() throws IOException {
+
+        Geocoder geocoder = new Geocoder(this);
+        List<Address> addresses;
+        addresses = geocoder.getFromLocationName(address.getText().toString().trim(), 1);
+        if(addresses.size() > 0) {
+            latitude = (long) addresses.get(0).getLatitude();
+            longitude = (long) addresses.get(0).getLongitude();
+            addressFound = true;
+        }else{
+            addressFound = false;
+            throw new IOException("Location not found");
+        }
     }
 
 
@@ -330,6 +372,9 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     }
 
     private boolean checkChanges() {
+        if(!addressFound)
+            return false;
+
         String name = this.name.getText().toString();
         if(!name.equals(sName))
             return true;
@@ -406,7 +451,13 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     public void onBackPressed() {
         if(checkChanges())
             // Facciamo comparire il messagio solo se sono stati cambiati dei campi
-            showWarning(this, checkField(), getActivityResult());
+        {
+            try {
+                showWarning(this, checkField(), getActivityResult());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         else {
             setResult(RESULT_CANCELED);
             this.finish();
@@ -417,8 +468,13 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(checkChanges())
-                    showWarning(this, checkField(), getActivityResult());
+                if(checkChanges()) {
+                    try {
+                        showWarning(this, checkField(), getActivityResult());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 else {
                     setResult(RESULT_CANCELED);
                     this.finish();
@@ -449,9 +505,8 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         }
     }
 
-
     @Override
-    public void handleOnDismiss(DialogType type, String text) {
+    public void handleOnDismiss(com.damn.polito.damneatrestaurant.dialogs.DialogType type, String text) {
         switch (type){
             case Opening:
                 opening.setText(text);

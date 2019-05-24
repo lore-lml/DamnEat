@@ -94,7 +94,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 break;
         }
         if(selected != null)
-            fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commit();
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, selected).commitAllowingStateLoss();
         return true;
     };
     
@@ -104,19 +104,24 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         FirebaseLogin.init();
-        FirebaseLogin.shownSignInOptions(this);
+
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
-        //navigation.setSelectedItemId(R.id.nav_restaurant);
         database = FirebaseDatabase.getInstance();
-        
-        /*if(Utility.firstON) {
-            database.setPersistenceEnabled(true);
-        }*/
 
+        if (getKey() == null)
+            FirebaseLogin.shownSignInOptions(this);
+        else
+            loadProfileData();
         addNotificationBadge();
+    }
+
+    private String getKey() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        dbKey = pref.getString("dbkey", null);
+        return dbKey;
     }
 
     @Override
@@ -128,12 +133,13 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
-                if(user !=  null && user.getEmail() != null)
-                    Toast.makeText(this, ""+user.getEmail(), Toast.LENGTH_LONG).show();
-                //set button signout
-                //b.setEnabled(true);
-                FirebaseLogin.storeData(user, this);
-                loadProfileData();
+                if(user !=  null) {
+                    Toast.makeText(this, "" + user.getEmail(), Toast.LENGTH_LONG).show();
+                    //set button signout
+                    //b.setEnabled(true);
+                    FirebaseLogin.storeData(user, this);
+                    loadProfileData();
+                }
             }
             else{
                 String error = null;
@@ -191,12 +197,15 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         //setOrderListener();
     }
 
-    private void storeProfile(Profile profile){
+    private void storeProfile(Profile profile) {
         accountExist = true;
-        if(selectedId == null)
+        if (selectedId == null)
             navigation.setSelectedItemId(R.id.nav_restaurant);
-        setRestaurantListener();
-        setOrderListener();
+        if (Utility.firstON){
+            setRestaurantListener();
+            setOrderListener();
+            Utility.firstON = false;
+        }
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         editor.putString("address", profile.getAddress());
@@ -267,34 +276,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     private void setOrderListener() {
         if(dbKey == null) return;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        //orderRef = database.getReference("clienti/" + dbKey + "/lista_ordini");
         DatabaseReference orderRef = database.getReference("ordini/");
-
-        /*orderListenerNotifier = orderRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() != null) {
-                    for(DataSnapshot child : dataSnapshot.getChildren())
-                        ordersKey.add(child.getValue(String.class));
-                }
-                else {
-                    pref.edit().putInt("nOrder", 0).apply();
-                    return;
-                }
-
-                int old = pref.getInt("nOrder", -1);
-                if(old != ordersKey.size()){
-                    pref.edit().putInt("nOrder", ordersKey.size()).apply();
-                    if(old != -1)
-                        refreshNotificationBadge(true);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });*/
 
         orderQuery = orderRef.orderByChild("customer/customerID").equalTo(dbKey);
         orderListenerNotifier = orderQuery.addValueEventListener(new ValueEventListener() {
@@ -302,7 +284,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(dataSnapshot.getValue() == null) {
-                    pref.edit().putInt("nOrder", 0).apply();
+                    pref.edit().putLong("nOrder", 0).apply();
                     return;
                 }
 
@@ -373,10 +355,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        if(Utility.firstON) {
-            Utility.firstON = false;
-        }
     }
 
     public List<Order> getOrders(){return orders;}

@@ -24,6 +24,9 @@ public class Restaurant {
 
     private String fbKey;
 
+    private long latitude;
+    private long longitude;
+
     public Restaurant(){}
 
     public Restaurant(String name, String address, String opening, String phone, String description, String mail) {
@@ -101,6 +104,22 @@ public class Restaurant {
     public String getMail() { return mail; }
 
     public void setMail(String mail) { this.mail = mail; }
+
+    public void setLatitude(long latitude) {
+        this.latitude = latitude;
+    }
+
+    public long getLatitude() {
+        return latitude;
+    }
+
+    public void setLongitude(long longitude) {
+        this.longitude = longitude;
+    }
+
+    public long getLongitude() {
+        return longitude;
+    }
 
     public int rate(){
         double rate = 100*(double)totalRate/reviews;

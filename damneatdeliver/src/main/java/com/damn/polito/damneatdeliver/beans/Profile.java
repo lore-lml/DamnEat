@@ -6,8 +6,9 @@ public class Profile {
     private String mail;
     private String phone;
     private String description;
-    private String address;
     private String bitmapProf;
+    private Boolean state;
+    private Double latitude, longitude;
 
     public Profile(String name, String mail, String phone, String description, String bitmapProf) {
         this.name = name;
@@ -60,7 +61,38 @@ public class Profile {
         return bitmapProf;
     }
 
+    public Boolean getState() {
+        if(state==null)
+            return false;
+        return state;
+    }
+
+    public void setState(Boolean state) {
+        this.state = state;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     public void setBitmapProf(String bitmapProf) {
         this.bitmapProf = bitmapProf;
+    }
+
+    public void setPosition(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }
