@@ -354,8 +354,8 @@ public class Welcome extends AppCompatActivity {
                     //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
                 // @TODO: todo test
-                String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
-                Toast.makeText(Welcome.this, msg, Toast.LENGTH_LONG).show();
+//                String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
+//                Toast.makeText(Welcome.this, msg, Toast.LENGTH_LONG).show();
                 DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
                 RefLat.setValue(location.getLatitude());
                 DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");

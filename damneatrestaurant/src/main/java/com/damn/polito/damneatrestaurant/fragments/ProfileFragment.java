@@ -25,6 +25,7 @@ import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.StatisticsActivity;
 import com.damn.polito.damneatrestaurant.Welcome;
 import com.damn.polito.damneatrestaurant.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
@@ -344,6 +345,8 @@ public class ProfileFragment extends Fragment{
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
                 return true;
+            case R.id.item_statistics:
+                ctx.startActivity(new Intent(ctx, StatisticsActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }

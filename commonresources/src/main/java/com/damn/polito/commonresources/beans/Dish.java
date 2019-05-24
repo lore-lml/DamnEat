@@ -20,6 +20,7 @@ public class Dish implements Serializable {
     private boolean edit_mode = false;
     private static final String NO_PHOTO = "NO_PHOTO";
     private int quantity;
+    private int nOrders;
     public Dish(){}
 
     public Dish(String name, String description, float price, int availability, String photo_str){
@@ -140,6 +141,14 @@ public class Dish implements Serializable {
 
     public String getId() {
         return this.id;
+    }
+
+    public int getnOrders() {
+        return nOrders;
+    }
+
+    public void setnOrders(int nOrders) {
+        this.nOrders = nOrders;
     }
 }
 

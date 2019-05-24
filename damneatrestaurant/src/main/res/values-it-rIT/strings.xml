@@ -20,6 +20,8 @@
     <string name="assigned_deliverer">Scegli come deliverer</string>
     <string name="title_activity_maps">Maps</string>
     <string name="deliverer_phone">Cellulare:</string>
+    <string name="most_popular_meals">Piatti più popolari</string>
+    <string name="most_popular_timing_of_order">Orario degli ordini più popolare</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->

@@ -93,6 +93,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }else{
+            //todo: tradurre
             map.setOnClickListener(v-> Toast.makeText(this, "Unable to open maps", Toast.LENGTH_SHORT).show());
         }
         adapter.setOnItemClickListener(position -> {
@@ -110,77 +111,19 @@ public class    FindDelivererActivity extends AppCompatActivity {
     private void loadData(){
         currentOrder = (Order) getIntent().getSerializableExtra("order");
         if(currentOrder == null)
+            //todo: tradurre
             throw new IllegalStateException("You must pass an order in the intent with \"order\" key");
 
         Geocoder coder = new Geocoder(this);
         try {
             restAddress = coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress(), 1).get(0);
         } catch (IOException e) {
+            //todo: tradurre
             Toast.makeText(this, "Network Error! Try again later", Toast.LENGTH_SHORT).show();
         }
         assert restAddress != null;
 
         freeDelRef = FirebaseDatabase.getInstance().getReference("deliverers_liberi/");
-        /*freeDeliverersQuery = freeDelRef.orderByChild("state").equalTo(true).limitToFirst(50);
-        freeDelivererListener = freeDeliverersQuery.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String key = dataSnapshot.getKey();
-                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                assert key != null;
-                assert d != null;
-                d.setKey(key);
-                deliverers.add(d);
-                Collections.sort(deliverers, (d1, d2) -> {
-                    Double distance1 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d1.getLatitude(), d1.getLongitude());
-                    Double distance2 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d2.getLatitude(), d2.getLongitude());
-                    return distance1.compareTo(distance2);
-                });
-                int pos = deliverers.indexOf(d);
-                adapter.notifyItemInserted(pos);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String key = dataSnapshot.getKey();
-                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                assert key != null;
-                assert d != null;
-                d.setKey(key);
-                deliverers.remove(d);
-                deliverers.add(d);
-                Collections.sort(deliverers, (d1, d2) -> {
-                    Double distance1 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d1.getLatitude(), d1.getLongitude());
-                    Double distance2 = Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d2.getLatitude(), d2.getLongitude());
-                    return distance1.compareTo(distance2);
-                });
-                int pos = deliverers.indexOf(d);
-                adapter.notifyItemChanged(pos);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getKey();
-                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                assert key != null;
-                assert d != null;
-                d.setKey(key);
-                int pos = deliverers.indexOf(d);
-                if(pos == -1) return;
-                deliverers.remove(d);
-                adapter.notifyItemRemoved(pos);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(FindDelivererActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
         freeDelKeyListener = freeDelRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -267,6 +210,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(FindDelivererActivity.this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
         } else {
+            //todo: tradurre
             Toast.makeText(this, "Impossible to map request", Toast.LENGTH_LONG).show();
         }
         return false;

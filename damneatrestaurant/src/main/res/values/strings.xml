@@ -26,4 +26,6 @@
     <string name="distance_meter" translatable="false">%d m</string>
     <string name="distance_km" translatable="false">%.1f km</string>
     <string name="deliverer_phone">Phone:</string>
+    <string name="most_popular_meals">Most popular meals</string>
+    <string name="most_popular_timing_of_order">Most popular timing of order</string>
 </resources>

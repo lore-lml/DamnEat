@@ -127,7 +127,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         pickDeliverer(position);
     }
 
-    private static void updateAvailabity(int position) {
+    private static void updateAvailabity() {
 //        Deliverer current = deliverers.get(position);
         //AGGIORNO LE AVAILABILITY
         DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
@@ -161,7 +161,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 if(!b){
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("rejected");
-                    //todo: tradurre
+                    /** @TODO: tradurre **/
                     Toast.makeText(ctx, "Insufficient quantity", Toast.LENGTH_SHORT).show();
                     ((Activity)ctx).finish();
                 }else
@@ -171,20 +171,23 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
     }
 
     private static void updateTotalAvailabity(Order order_d){
+        /** @TODO: fare transizione **/
         DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot child: dataSnapshot.getChildren()){
                     Dish d = child.getValue(Dish.class);
-                    d.setId(child.getKey());
                     if(d!=null) {
+                        d.setId(child.getKey());
                         for (Dish d_ord : order_d.getDishes()) {
                             if(d_ord.getId().equals(d.getId())){
                                 int new_quantity = d.getAvailability() - d_ord.getQuantity();
                                 if (new_quantity >= 0){
                                     DatabaseReference dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/availability/");
                                     dishRef.setValue(new_quantity);
+                                    dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/nOrders/");
+                                    dishRef.setValue(d.getnOrders()+d_ord.getQuantity());
                                 }
                             }
                         }
@@ -239,7 +242,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                     ref.setValue(order.getId());
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("accepted");
-                    updateAvailabity(position);
+                    updateAvailabity();
                 }
                 else{
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
