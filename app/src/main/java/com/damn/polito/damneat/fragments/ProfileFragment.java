@@ -197,14 +197,15 @@ public class ProfileFragment extends Fragment {
     @SuppressWarnings("unchecked")
     private void loadData() {
         if(!Welcome.accountExist) return;
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        /*SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 
         prof.setAddress(pref.getString("address", ""));
         prof.setName(pref.getString("name", ""));
         prof.setMail(pref.getString("mail", ""));
         prof.setPhone(pref.getString("phone", ""));
         prof.setDescription(pref.getString("description", ""));
-        prof.setBitmapProf(pref.getString("profile", ""));
+        prof.setBitmapProf(pref.getString("profile", ""));*/
+        prof = Welcome.getProfile();
     }
 
 

@@ -75,7 +75,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         holder.description.setText(current.getDescription());
 
         double distance = (double)current.distance()/1000;
-        if(distance > 0)
+        if((int)distance > 0)
             holder.distance.setText(ctx.getString(R.string.distance_km, distance));
         else
             holder.distance.setText(ctx.getString(R.string.distance_meter, current.distance()));

@@ -1,4 +1,4 @@
-package com.damn.polito.commonresources.beans;
+package com.damn.polito.commonresources;
 
 public class Haversine {
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM

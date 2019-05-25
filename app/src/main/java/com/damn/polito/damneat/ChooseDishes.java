@@ -24,6 +24,7 @@ import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneat.adapters.DishesAdapter;
+import com.damn.polito.damneat.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -81,7 +82,7 @@ public class ChooseDishes extends AppCompatActivity {
         fab_cart.setOnClickListener(v-> startCart());
         ctx = ChooseDishes.this;
         getIntentData();
-        getSharedData();
+        getCustomerInfo();
         init();
         initReyclerView();
     }
@@ -99,14 +100,14 @@ public class ChooseDishes extends AppCompatActivity {
         //Log.d("restaurant", restaurant.getRestaurantAddress());
     }
 
-    private void getSharedData() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        customer.setCustomerName(pref.getString("clientname", ""));
-        customer.setCustomerAddress(pref.getString("clientaddress", ""));
-        customer.setCustomerMail(pref.getString("clientmail", ""));
-        customer.setCustomerPhone(pref.getString("clientphone", ""));
-        customer.setCustomerID(pref.getString("dbkey", ""));
-        customer.setCustomerPhoto(pref.getString("clientphoto", ""));
+    private void getCustomerInfo() {
+        Profile p = Welcome.getProfile();
+        customer.setCustomerName(p.getName());
+        customer.setCustomerAddress(p.getAddress());
+        customer.setCustomerMail(p.getMail());
+        customer.setCustomerPhone(p.getPhone());
+        customer.setCustomerID(Welcome.getDbKey());
+        customer.setCustomerPhoto(p.getBitmapProf());
     }
 
 

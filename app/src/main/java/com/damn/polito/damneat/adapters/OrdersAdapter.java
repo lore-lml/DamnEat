@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,18 +15,25 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.damneat.R;
+import com.damn.polito.damneat.Welcome;
+import com.damn.polito.damneat.dialogs.DialogType;
+import com.damn.polito.damneat.dialogs.HandleDismissDialog;
+import com.damn.polito.damneat.dialogs.RateDialog;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
-import java.util.Locale;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     private List<Order> orders;
@@ -36,7 +45,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         this.orders= orders;
         this.ctx = context;
         default_image = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.profile_sample);
-
     }
 
     public interface OnItemClickListener { void onItemClick(int position); }
@@ -48,10 +56,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType==0) {
             View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
-            return new OrderViewHolder(view, mListener);
+            return new OrderViewHolder(view);
         }
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout_not_delivered, parent, false);
-        return new OrderViewHolder(view, mListener);
+        return new OrderViewHolder(view);
     }
 
     @Override
@@ -133,6 +141,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.state.setText(ctx.getString(R.string.delivered));
                 holder.confirmButton.setOnClickListener(v->{
                     setConfirmed(selected.Id());
+
+                    FragmentManager fm = ((AppCompatActivity)ctx).getSupportFragmentManager();
+                    RateDialog rateDialog = new RateDialog();
+                    rateDialog.setListener(holder);
+                    rateDialog.show(fm, "Rate Dialog");
                 });
             } else {
                 holder.confirmButton.setVisibility(View.GONE);
@@ -183,13 +196,20 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         return orders.size();
     }
 
-    public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView id,date,price,nDish, deliverer_name, dishes_list, dishes_list_2, restaurant_info, state, note, delivery_time;
+    @Override
+    public int getItemViewType(int position) {
+        if(orders.get(position).getState().toLowerCase().equals("confirmed") || orders.get(position).getState().toLowerCase().equals("rejected"))
+            return 0;
+        return 1;
+    }
+
+    public class OrderViewHolder extends RecyclerView.ViewHolder implements HandleDismissDialog{
+        private TextView id,date,price,nDish, deliverer_name, dishes_list, restaurant_info, state, note, delivery_time;
         private CardView root;
-        private ImageView deliverer_photo, restaurant_photo;
+        private ImageView deliverer_photo;
         private Button confirmButton;
 
-        public OrderViewHolder(View itemView, OnItemClickListener listener) {
+        public OrderViewHolder(View itemView) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order_customer);
@@ -205,14 +225,34 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             delivery_time =itemView.findViewById(R.id.delivery_time_tv);
             note =itemView.findViewById(R.id.note_tv);
             confirmButton =itemView.findViewById(R.id.confirmOrder);
-
         }
-    }
 
-    @Override
-    public int getItemViewType(int position) {
-        if(orders.get(position).getState().toLowerCase().equals("confirmed") || orders.get(position).getState().toLowerCase().equals("rejected"))
-            return 0;
-        return 1;
+        @Override
+        public void handleOnDismiss(DialogType type, String text) {
+            if (type == DialogType.RateDialog) {
+                updateServiceRate(text);
+            }
+        }
+
+        private void updateServiceRate(String text){
+            try {
+                JSONObject result = new JSONObject(text);
+                int rate = result.getInt("value");
+                String note = result.getString("note");
+                Customer customer = new Customer();
+                customer.setCustomerName(Welcome.getProfile().getName());
+                customer.setCustomerID(Welcome.getDbKey());
+                customer.setCustomerPhoto(Welcome.getProfile().getBitmapProf());
+
+                RateObject rateObject = new RateObject(rate, note, RateObject.RateType.Service, customer);
+                //Toast.makeText(ctx, ""+rate, Toast.LENGTH_SHORT).show();
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("reviews/service/");
+                DatabaseReference id = ref.push();
+                id.setValue(rateObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

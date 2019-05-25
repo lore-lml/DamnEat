@@ -19,6 +19,8 @@ import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.adapters.OrdersAdapter;
+import com.damn.polito.damneat.dialogs.DialogType;
+import com.damn.polito.damneat.dialogs.HandleDismissDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

@@ -10,7 +10,6 @@
     <string name="order_succesfull">Order successfully completed</string>
     <string name="ship">Delivery cost</string>
     <string name="cart_empty">Cart empty</string>
-
     <string name="restaurant">Restaurant:\n %s</string>
     <string name="confirmOrder">Confirm delivered</string>
     <string name="confirm_order">Confirm order</string>
@@ -23,4 +22,11 @@
     <string name="sort_mostrated">Sort most rated</string>
     <string name="restaurant_closed">We are closed</string>
     <string name="restaurant_closed_text">The restaurant is closed or it\'s about to!\n\n%s</string>
+    <string name="rate_title">What about our service?</string>
+    <string name="rate_one">Very Bad</string>
+    <string name="rate_two">Not so good</string>
+    <string name="rate_three">Good</string>
+    <string name="rate_four">Very Good</string>
+    <string name="rate_five">Great</string>
+    <string name="rate_note">Tell us your opinion about your experience</string>
 </resources>

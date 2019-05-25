@@ -6,7 +6,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,14 +14,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Deliverer;
-import com.damn.polito.commonresources.beans.Haversine;
+import com.damn.polito.commonresources.Haversine;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatrestaurant.adapters.DelivererAdapter;
-import com.damn.polito.damneatrestaurant.dialogs.DialogType;
-import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,11 +29,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-
-import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class    FindDelivererActivity extends AppCompatActivity {
 

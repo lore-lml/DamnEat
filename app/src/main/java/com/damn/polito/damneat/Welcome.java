@@ -45,6 +45,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     public static boolean accountExist = false;
     private static String dbKey;
+    private static Profile profile;
 
     //Fragments
     private FragmentManager fragmentManager;
@@ -168,22 +169,15 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         profileListener = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Profile prof = dataSnapshot.getValue(Profile.class);
-                if(prof != null) {
-                    storeProfile(prof);
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(Welcome.this).edit();
-
-                    editor.putString("clientaddress", prof.getAddress());
-                    editor.putString("clientname", prof.getName());
-                    editor.putString("clientphone", prof.getPhone());
-                    editor.putString("clientmail", prof.getMail());
-                    editor.putString("clientphoto", prof.getBitmapProf());
-                    editor.apply();
-                }else if(selectedId == null){
-                    navigation.setSelectedItemId(R.id.nav_restaurant);
+                profile = dataSnapshot.getValue(Profile.class);
+                if(profile != null && Utility.firstON) {
+                    setListeners();
+                    Utility.firstON = false;
                 }
 
-                if(selectedId != null && selectedId == R.id.nav_profile)
+                if(selectedId == null){
+                    navigation.setSelectedItemId(R.id.nav_restaurant);
+                }else if(selectedId == R.id.nav_profile)
                     profileFragment.updateProfile();
 
             }
@@ -197,24 +191,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         //setOrderListener();
     }
 
-    private void storeProfile(Profile profile) {
+    private void setListeners() {
         accountExist = true;
-        if (selectedId == null)
-            navigation.setSelectedItemId(R.id.nav_restaurant);
-        if (Utility.firstON){
-            setRestaurantListener();
-            setOrderListener();
-            Utility.firstON = false;
-        }
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-
-        editor.putString("address", profile.getAddress());
-        editor.putString("name", profile.getName());
-        editor.putString("phone", profile.getPhone());
-        editor.putString("mail", profile.getMail());
-        editor.putString("description",profile.getDescription());
-        editor.putString("profile", profile.getBitmapProf());
-        editor.apply();
+        setRestaurantListener();
+        setOrderListener();
     }
     private void setRestaurantListener(){
         if(!accountExist) return;
@@ -389,4 +369,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     }
 
     public static String getDbKey(){return dbKey;}
+
+    public static Profile getProfile() {return profile;}
 }

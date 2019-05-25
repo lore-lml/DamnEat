@@ -98,6 +98,8 @@
     <string name="confirmed">Completato</string>
     <string name="assigned">Assegnato</string>
     <string name="not_registered">Devi compilare il profilo prima di poter effettuare un ordine.</string>
+    <string name="rate_send">Invia</string>
+    <string name="statistics">Statistiche</string>
 
 
 </resources>

@@ -22,4 +22,11 @@
     <string name="sort_pricerangedesc">Ordine fascia di prezzo più alta</string>
     <string name="restaurant_closed">Siamo chiusi</string>
     <string name="restaurant_closed_text">Il ristorante è chiuso o sta per chiudere!\n\n%s</string>
+    <string name="rate_title">Cosa ne pensi del nostro servizio?</string>
+    <string name="rate_one">Tremendo</string>
+    <string name="rate_two">Mediocre</string>
+    <string name="rate_three">Buono</string>
+    <string name="rate_four">Ottimo</string>
+    <string name="rate_five">Fantastico</string>
+    <string name="rate_note">Dicci com\'è stata la tua esperienza</string>
 </resources>
