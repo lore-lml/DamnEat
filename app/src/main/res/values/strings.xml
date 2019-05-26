@@ -29,4 +29,7 @@
     <string name="rate_four">Very Good</string>
     <string name="rate_five">Great</string>
     <string name="rate_note">Tell us your opinion about your experience</string>
+    <string name="rate_restaurant">What do you think about our restaurant?\nYour opinion is important to us</string>
+    <string name="rate_food">Did you enjoy the meal?</string>
+    <string name="rate_activity_title" translatable="false">Feedback</string>
 </resources>

@@ -245,9 +245,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 customer.setCustomerPhoto(Welcome.getProfile().getBitmapProf());
 
                 RateObject rateObject = new RateObject(rate, note, RateObject.RateType.Service, customer);
-                //Toast.makeText(ctx, ""+rate, Toast.LENGTH_SHORT).show();
 
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("reviews/service/");
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("reviews/");
                 DatabaseReference id = ref.push();
                 id.setValue(rateObject);
             } catch (JSONException e) {
