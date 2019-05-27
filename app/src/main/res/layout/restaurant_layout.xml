@@ -98,7 +98,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@+id/restaurant_ratingbar"
+            app:layout_constraintStart_toEndOf="@+id/ratingbar"
             app:layout_constraintTop_toBottomOf="@+id/restaurant_category" />
 
         <ImageView
@@ -110,7 +110,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/restaurant_ship_price"
             app:layout_constraintStart_toEndOf="@+id/divider"
-            app:layout_constraintTop_toBottomOf="@+id/restaurant_ratingbar"
+            app:layout_constraintTop_toBottomOf="@+id/ratingbar"
             app:srcCompat="@drawable/ic_bike" />
 
         <TextView
@@ -124,7 +124,7 @@
             android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/restaurant_ship"
-            app:layout_constraintTop_toBottomOf="@+id/restaurant_ratingbar" />
+            app:layout_constraintTop_toBottomOf="@+id/ratingbar" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

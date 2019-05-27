@@ -1,5 +1,8 @@
 package com.damn.polito.commonresources.beans;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class RateObject {
     public enum RateType{Service, Meal, Restaurant}
 
@@ -8,6 +11,7 @@ public class RateObject {
     private Customer customer;
     private Restaurant restaurant;
     private RateType type;
+    private String date;
 
     public RateObject(){}
 
@@ -16,6 +20,12 @@ public class RateObject {
         this.note = note;
         this.type = type;
         this.customer = customer;
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        this.date = "" + day + "/" + month + "/" + year;
+
     }
 
     public int getRate() {
@@ -56,5 +66,12 @@ public class RateObject {
 
     public void setType(RateType type) {
         this.type = type;
+    }
+
+    public String getDate(){
+        return this.date;
+    }
+    public void setDate(String date){
+        this.date = date;
     }
 }
