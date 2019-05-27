@@ -22,6 +22,9 @@
     <string name="deliverer_phone">Cellulare:</string>
     <string name="most_popular_meals">Piatti più popolari</string>
     <string name="most_popular_timing_of_order">Orario degli ordini più popolare</string>
+    <string name="restaurant_raiting">Valutazioni ristorante</string>
+    <string name="see_reviews_button">Vedi tutte le recensioni</string>
+    <string name="dishes_sold_number">Piatti venduti: %d</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->
