@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -48,11 +49,16 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static android.view.View.GONE;
 
@@ -78,6 +84,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     private MarkerOptions place1,place2;
     private Polyline currentPolyline;
     private FragmentManager fm;
+    private float currentDistance;
     //45.061511, 7.674472
     //45.057780, 7.682858
     private Order currentOrder;
@@ -168,6 +175,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("delivered");
+                DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
+                Map map = new HashMap();
+                map.put(String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),currentDistance);
+                distanceState.updateChildren(map);
             }
         });
 
@@ -199,6 +210,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         rejectButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
+                orderState.setValue("rejected");
                 orderState.setValue("rejected");
                 DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
                 orderRef.setValue("0");
@@ -736,6 +748,23 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             currentPolyline.remove();
         }
         currentPolyline=gmap.addPolyline((PolylineOptions)values[0]);
+
+
+        List<LatLng> latlangs = currentPolyline.getPoints();
+        int size = latlangs.size() - 1;
+        float[] results = new float[1];
+        float sum = 0;
+
+        for(int i = 0; i < size; i++){
+            Location.distanceBetween(
+                    latlangs.get(i).latitude,
+                    latlangs.get(i).longitude,
+                    latlangs.get(i+1).latitude,
+                    latlangs.get(i+1).longitude,
+                    results);
+            sum += results[0];
+        }
+        currentDistance=sum;
     }
 
     @Override
