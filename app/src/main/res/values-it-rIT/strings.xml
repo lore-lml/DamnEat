@@ -29,4 +29,6 @@
     <string name="rate_four">Ottimo</string>
     <string name="rate_five">Fantastico</string>
     <string name="rate_note">Dicci com\'è stata la tua esperienza</string>
+    <string name="rate_restaurant">Cosa pensi del nostro ristorante?\nLa tua opinione è importante per noi</string>
+    <string name="rate_food">Ti è piaciuto il pasto?</string>
 </resources>
