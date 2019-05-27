@@ -141,8 +141,8 @@
             app:layout_constraintStart_toEndOf="@+id/state_tv"
             app:layout_constraintTop_toTopOf="@+id/state_tv" />
 
-        <ImageView
-            android:id="@+id/imageView7"
+        <ImageButton
+            android:id="@+id/btn_rate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

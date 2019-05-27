@@ -8,9 +8,9 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="0dp"
+        app:cardElevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,12 +61,13 @@
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:max="50"
                 android:numStars="5"
                 android:progress="35"
                 android:progressTint="@color/colorPrimaryDark"
+                app:layout_constraintBottom_toTopOf="@+id/note_tv"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_customer" />
@@ -80,6 +81,19 @@
                 app:layout_constraintBottom_toBottomOf="@+id/ratingbar"
                 app:layout_constraintStart_toEndOf="@+id/ratingbar"
                 app:layout_constraintTop_toTopOf="@+id/ratingbar" />
+
+            <ImageView
+                android:id="@+id/review_type"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/date_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/date_tv"
+                app:layout_constraintTop_toTopOf="@+id/date_tv"
+                app:srcCompat="@drawable/ic_cutlery" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>

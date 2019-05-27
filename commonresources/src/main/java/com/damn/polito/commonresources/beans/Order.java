@@ -17,6 +17,7 @@ public class Order implements Serializable {
     private String delivererPhoto = "NO_PHOTO";
     private String note;
     private String deliveryTime;
+    private boolean rated = false;
 
     private Customer customer;
     private Restaurant restaurant;
@@ -220,6 +221,14 @@ public class Order implements Serializable {
 
     public void setDelivererPhoto(String delivererPhoto) {
         this.delivererPhoto = delivererPhoto;
+    }
+
+    public boolean isRated() {
+        return rated;
+    }
+
+    public void setRated(boolean rated) {
+        this.rated = rated;
     }
 
     @Override
