@@ -105,7 +105,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
             }
             if(selected.getState().toLowerCase().equals("rejected")){
-                holder.state.setTextColor(ctx.getColor(R.color.colorAccent));
+                holder.state.setTextColor(ctx.getColor(R.color.colorRed));
                 holder.state.setText(ctx.getString(R.string.rejected));
             }
 

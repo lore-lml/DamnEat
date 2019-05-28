@@ -150,14 +150,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }*/
 //        btnGetDirection=view.findViewById(R.id.start_navigation);
 
-        map.getView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startGoogleMaps((String) address_big_text.getText());
-            }
-        });
-
-
         //BIG TextView
         name_big = view.findViewById(R.id.name_big_tv);
         address_big_text = view.findViewById(R.id.address_big_text);
@@ -203,20 +195,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             }
         });
 
-//        btnGetDirection.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startGoogleMaps((String) address_big_text.getText());
-//            }
-//        });
-
-        map.getView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startGoogleMaps((String) address_big_text.getText());
-            }
-        });
-
         acceptButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 if(Welcome.getProfile()== null){
@@ -247,22 +225,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         });
 
         switch_available.setChecked(Welcome.getCurrentAvaibility());
-        /*switch_available.setOnClickListener(v -> {
-            Boolean available = Welcome.getCurrentAvaibility();
-            DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/state/");
-            orderRef.setValue(!available);
-            //switch_available.setChecked(!available);
-            if(!available){
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
-                freeDeliverersRef.setValue(Welcome.getDbKey());
-                //Welcome.setCurrentAvaibility(true);
-                Log.d("key", Welcome.getDbKey());
-            } else{
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
-                freeDeliverersRef.removeValue();
-                //Welcome.setCurrentAvaibility(false);
-            }
-        });*/
 
         switch_available.setOnCheckedChangeListener((compoundButton, b) -> {
             DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/");
@@ -270,10 +232,12 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(b){
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
                 freeDeliverersRef.setValue(Welcome.getDbKey());
+//                waiting_confirm.setVisibility(View.VISIBLE);
                 Log.d("key", Welcome.getDbKey());
             } else{
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
                 freeDeliverersRef.removeValue();
+//                waiting_confirm.setVisibility(GONE);
             }
             if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
                 Toast.makeText(ctx, R.string.no_position, Toast.LENGTH_LONG).show();
@@ -339,7 +303,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }
 
         if(currentOrder.getState().toLowerCase().equals("accepted")){
-            //map.setOnClickListener(v -> {});
 
             accept_question.setText(R.string.accept_question);
             name_big.setText(currentOrder.getRestaurant().getRestaurantName());
@@ -377,7 +340,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
 
         if(currentOrder.getState().toLowerCase().equals("assigned")){
-            //map.setOnClickListener(v -> startGoogleMaps(currentOrder.getRestaurant().getRestaurantAddress()));
 
             name_big.setText(currentOrder.getRestaurant().getRestaurantName());
             address_big_text.setText(currentOrder.getRestaurant().getRestaurantAddress());
@@ -407,7 +369,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
 
         if(currentOrder.getState().toLowerCase().equals("shipped")){
-            //map.setOnClickListener(v -> startGoogleMaps(currentOrder.getCustomer().getCustomerAddress()));
 
             name_big.setText(currentOrder.getCustomer().getCustomerName());
             address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
@@ -442,7 +403,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
 
         if(currentOrder.getState().toLowerCase().equals("delivered")){
-            //map.setOnClickListener(v -> {});
             name_big.setText(currentOrder.getCustomer().getCustomerName());
             address_big_text.setText(currentOrder.getCustomer().getCustomerAddress());
             phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
@@ -476,7 +436,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
 
         if(currentOrder.getState().equals("confirmed")){
-            //map.setOnClickListener(v -> {});
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
@@ -516,20 +475,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             }
             map.getMapAsync(this);
 
-//            btnGetDirection.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    startGoogleMaps((String) address_big_text.getText());
-//                }
-//            });
-
-            map.getView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startGoogleMaps((String) address_big_text.getText());
-                }
-            });
-
         }else if(currentOrder.getState().toLowerCase().equals("shipped")||
                 currentOrder.getState().toLowerCase().equals("delivered")){
 
@@ -544,24 +489,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 new FetchURL(CurrentFragment.this).execute(url,"driving");
             }
             map.getMapAsync(this);
-
-//            btnGetDirection.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    startGoogleMaps(currentOrder.getCustomer().getCustomerAddress());
-//                }
-//            });
-
-            map.getView().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startGoogleMaps((String) address_big_text.getText());
-                }
-            });
-
-        }
-        else{
-
         }
 
         notRegistered();
@@ -606,7 +533,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         if(state.equals("empty")){
             card_avaible.setVisibility(View.VISIBLE);
-            waiting_confirm.setVisibility(View.VISIBLE);
+            if (switch_available.isChecked()) waiting_confirm.setVisibility(View.VISIBLE);
+            else waiting_confirm.setVisibility(View.GONE);
             card_order.setVisibility(GONE);
             card_small.setVisibility(GONE);
         }
