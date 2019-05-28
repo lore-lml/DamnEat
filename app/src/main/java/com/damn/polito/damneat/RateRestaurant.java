@@ -9,11 +9,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.beans.Customer;
+import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.commonresources.beans.Restaurant;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class RateRestaurant extends AppCompatActivity {
@@ -23,7 +26,7 @@ public class RateRestaurant extends AppCompatActivity {
     private RatingBar restaurantRt, foodRt;
     private Button send;
 
-    private Restaurant restaurant;
+    private Order order;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class RateRestaurant extends AppCompatActivity {
     }
 
     private void init(){
-        restaurant = (Restaurant)getIntent().getSerializableExtra("restaurant");
+        order = (Order) getIntent().getSerializableExtra("order");
         restaurantRt.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> changeValueAction(ratingBar, restaurantText));
         foodRt.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> changeValueAction(ratingBar, foodText));
 
@@ -61,13 +64,13 @@ public class RateRestaurant extends AppCompatActivity {
         customer.setCustomerID(Welcome.getDbKey());
 
         RateObject rateRestaurant = new RateObject(restaurantProgress, restaurantNote, RateObject.RateType.Restaurant, customer);
-        rateRestaurant.setRestaurant(restaurant);
+        rateRestaurant.setRestaurant(order.getRestaurant());
 
         int foodProgress = foodRt.getProgress();
         String foodNote = foodEdit.getText().toString().isEmpty() ? null : foodEdit.getText().toString();
 
         RateObject rateFood = new RateObject(foodProgress, foodNote, RateObject.RateType.Meal, customer);
-        rateFood.setRestaurant(restaurant);
+        rateFood.setRestaurant(order.getRestaurant());
 
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -76,6 +79,11 @@ public class RateRestaurant extends AppCompatActivity {
 
         DatabaseReference foodRef = db.getReference("reviews/").push();
         foodRef.setValue(rateFood);
+
+        DatabaseReference orderRef = db.getReference("ordini/"+order.getId());
+        Map<String, Object> children = new HashMap<>();
+        children.put("rated", true);
+        orderRef.updateChildren(children);
         finish();
     }
 

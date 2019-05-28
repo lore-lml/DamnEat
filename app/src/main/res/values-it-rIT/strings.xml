@@ -31,4 +31,6 @@
     <string name="rate_note">Dicci com\'è stata la tua esperienza</string>
     <string name="rate_restaurant">Cosa pensi del nostro ristorante?\nLa tua opinione è importante per noi</string>
     <string name="rate_food">Ti è piaciuto il pasto?</string>
+    <string name="reviews_title">Le tue recensioni</string>
+    <string name="service_review">Recensione servizio</string>
 </resources>

@@ -1,23 +1,20 @@
 package com.damn.polito.damneatrestaurant;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.WrapperListAdapter;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
-import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
+import com.damn.polito.damneatrestaurant.beans.TimesOfDay;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,26 +22,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
-import static com.damn.polito.commonresources.Utility.showWarning;
-import static com.damn.polito.damneatrestaurant.Welcome.dbKey;
-
 public class StatisticsActivity extends AppCompatActivity {
-    private TreeSet<Dish> dishes = new TreeSet<>((e1, e2) -> e1.getnOrders()-e2.getnOrders());
-    private TreeMap<String, Integer> times = new TreeMap<>();
+    private TreeSet<Dish> dishes = new TreeSet<>((e1, e2) -> e2.getnOrders()-e1.getnOrders());
+    private List<TimesOfDay> times_l = new LinkedList<>();
     private FirebaseDatabase database;
     private TextView[] tv_v = new TextView[3];
+    private TextView[] tv_sold_v = new TextView[3];
     private CardView[] card_v = new CardView[3];
     private TextView tv_time;
     private ImageView[] im_v = new ImageView[3];
+    private Button reviews_button;
 
     public StatisticsActivity() {
     }
@@ -63,13 +57,22 @@ public class StatisticsActivity extends AppCompatActivity {
         tv_v[1] = findViewById(R.id.tv_dish_name2);
         tv_v[2] = findViewById(R.id.tv_dish_name3);
 
+        tv_sold_v[0] = findViewById(R.id.dishes_sold_numer_1);
+        tv_sold_v[1] = findViewById(R.id.dishes_sold_numer_2);
+        tv_sold_v[2] = findViewById(R.id.dishes_sold_numer_3);
+
         tv_time = findViewById(R.id.tv_time);
 
         im_v[0] = findViewById(R.id.dish_image_1);
         im_v[1] = findViewById(R.id.dish_image_2);
         im_v[2] = findViewById(R.id.dish_image_3);
 
+
+
         database = FirebaseDatabase.getInstance();
+
+        reviews_button = findViewById(R.id.button_reviews);
+        reviews_button.setOnClickListener(v -> startActivity(new Intent(this, ReviewsActivity.class)));
 
         for(int i=0; i<3; i++)
             card_v[i].setVisibility(View.GONE);
@@ -103,40 +106,49 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void setTime() {
-        if(times.isEmpty())
+        if(times_l.isEmpty())
             return;
-        tv_time.setText(times.firstKey());
+        Collections.sort(times_l);
+        tv_time.setText(times_l.get(0).toString());
     }
 
+
+
     private void insertTime(Order o) {
+        String tod = calculateKey(o);
+        boolean p = false;
+        for(TimesOfDay t: times_l){
+            if(t.getKey().equals(tod)){
+                t.add();
+                p = true;
+            }
+        }
+        if(!p){
+            TimesOfDay td = new TimesOfDay(tod);
+            times_l.add(td);
+        }
+    }
+
+    private String calculateKey(Order o){
         int hour = o.getDate().getHours();
         int min = o.getDate().getMinutes();
         String min_str;
-        String hour_str = String.valueOf(hour);
+        String hour_str;
         if(min<15)
             min_str = "00";
         else if(min<45)
             min_str = "30";
         else {
-            if(hour==23)
-                hour_str="00";
-            else{
-                hour++;
-                hour_str=String.valueOf(hour);
-            }
+            hour++;
             min_str = "00";
         }
-        String tod = ""+hour_str+":"+min_str;
 
-        Log.d("time: ", tod);
-        if(times.containsKey(tod)){
-            Integer i = times.get(tod);
-            i++;
-            //times.put(tod, i);
-        }
-        else{
-            times.put(tod, 1);
-        }
+        hour = hour%24;
+        if(hour==0)
+            hour_str="00";
+        else
+            hour_str=String.valueOf(hour);
+        return ""+hour_str+":"+min_str;
     }
 
     private void loadPopularDishes() {
@@ -168,6 +180,7 @@ public class StatisticsActivity extends AppCompatActivity {
             tv_v[i].setText(d.getName());
             if(d.getPhoto()!=null && !d.getPhoto().equals("NO_PHOTO")){
                 im_v[i].setImageBitmap(Utility.StringToBitMap(d.getPhoto()));
+                tv_sold_v[i].setText(getString(R.string.dishes_sold_number, d.getnOrders()));
             }
         }
     }

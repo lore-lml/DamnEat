@@ -1,6 +1,7 @@
 package com.damn.polito.damneat.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -13,9 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Customer;
@@ -23,6 +24,7 @@ import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.damneat.R;
+import com.damn.polito.damneat.RateRestaurant;
 import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.dialogs.DialogType;
 import com.damn.polito.damneat.dialogs.HandleDismissDialog;
@@ -75,6 +77,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.restaurant_info.setText(ctx.getString(R.string.restaurant, selected.getRestaurant().getRestaurantName()));
 
+
         if(selected.getState().toLowerCase().equals("confirmed") || selected.getState().toLowerCase().equals("rejected")){
 
             holder.deliverer_name.setVisibility(View.GONE);
@@ -94,6 +97,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             if(selected.getState().toLowerCase().equals("confirmed")) {
                 holder.state.setText(ctx.getString(R.string.confirmed));
                 holder.state.setTextColor(ctx.getColor(R.color.colorGreen));
+                holder.btnRate.setOnClickListener(v->{
+                    Intent intent = new Intent(ctx, RateRestaurant.class);
+                    intent.putExtra("order", selected);
+                    ctx.startActivity(intent);
+                });
 
             }
             if(selected.getState().toLowerCase().equals("rejected")){
@@ -152,6 +160,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             }
         }
              // holder.date.setText(dateFormat.format(ciao.getTime()));
+
+
     }
 
     private void setConfirmed(String id){
@@ -183,11 +193,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.date.setVisibility(View.GONE);
             holder.dishes_list.setVisibility(View.GONE);
             holder.id.setVisibility(View.GONE);
-
+            holder.btnRate.setVisibility(View.GONE);
         }else{
             holder.date.setVisibility(View.VISIBLE);
             holder.id.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
+            if(!orders.get(holder.getAdapterPosition()).isRated())
+                holder.btnRate.setVisibility(View.VISIBLE);
         }
     }
 
@@ -208,6 +220,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private CardView root;
         private ImageView deliverer_photo;
         private Button confirmButton;
+        private ImageButton btnRate;
 
         public OrderViewHolder(View itemView) {
             super(itemView);
@@ -225,6 +238,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             delivery_time =itemView.findViewById(R.id.delivery_time_tv);
             note =itemView.findViewById(R.id.note_tv);
             confirmButton =itemView.findViewById(R.id.confirmOrder);
+            btnRate = itemView.findViewById(R.id.btn_rate);
         }
 
         @Override

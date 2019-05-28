@@ -26,6 +26,7 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneat.EditProfile;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.Welcome;
+import com.damn.polito.damneat.adapters.ReviewsActivity;
 import com.damn.polito.damneat.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -228,6 +229,11 @@ public class ProfileFragment extends Fragment {
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
                 return true;
+
+            case R.id.item_statistics:
+                startActivity(new Intent(ctx, ReviewsActivity.class));
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

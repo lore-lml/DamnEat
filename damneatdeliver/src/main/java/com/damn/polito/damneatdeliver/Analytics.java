@@ -1,40 +1,18 @@
 package com.damn.polito.damneatdeliver;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.damn.polito.commonresources.Utility;
-import com.damn.polito.damneatdeliver.R;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -43,76 +21,83 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-import static com.damn.polito.commonresources.Utility.*;
-
-import java.io.IOException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Analytics extends AppCompatActivity implements OnChartValueSelectedListener, OnChartGestureListener{
+import static com.damn.polito.commonresources.Utility.showWarning;
 
+public class Analytics extends AppCompatActivity {
+    private ListView listView;
     private TextView totalDistance;
     private float totDistance;
-    private LineChart mChart;
+
     private static final String TAG= "Analytics";
     private FirebaseDatabase database;
+    private int fTimestamp=0;
+    private int count=0;
+    private Map<String,Float> travelsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analytics);
-
+        travelsList=new HashMap<>();
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         totalDistance = findViewById(R.id.analytics_total_distance_text);
-        mChart = (LineChart) findViewById(R.id.distance_chart);
-        mChart.setOnChartGestureListener(Analytics.this);
-        mChart.setOnChartValueSelectedListener(Analytics.this);
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(false);
+        listView = findViewById(R.id.analytics_list);
         database = FirebaseDatabase.getInstance();
-        ArrayList<Entry> yValues = new ArrayList<>();
-//        yValues.add(new Entry(0,60f));
-//        yValues.add(new Entry(1,50f));
-//        yValues.add(new Entry(2,80f));
-//        yValues.add(new Entry(3,90f));
-//        yValues.add(new Entry(4,40f));
-//        yValues.add(new Entry(5,30f));
-//        yValues.add(new Entry(6,80f));
-//        yValues.add(new Entry(7,66f));
-//
-        //GET VALUES FROM FIREBASE
-        yValues.clear();
         totalDistance.setText( getApplicationContext().getString(R.string.distance_traveled,0.0));
         DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
-        distanceState.addChildEventListener(new ChildEventListener() {
+        distanceState.orderByKey().addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 //Map<String, Double> map = (Map<String, Double>) dataSnapshot.getValue();
                 String key = dataSnapshot.getKey();
-                int time = Integer.valueOf(dataSnapshot.getKey());
+                long time = Integer.valueOf(dataSnapshot.getKey());
+                count++;
                 float distance = Float.valueOf(dataSnapshot.getValue().toString());
                 totDistance+=distance/1000;
-                yValues.add(new Entry(yValues.size()+1,distance/1000));
+                Date d = new Date((long)time*1000);
+                DateFormat f = new SimpleDateFormat("yyyy-MM-dd\tHH:mm");
+                travelsList.put(f.format(d),distance/1000);
 
-                LineDataSet set1 = new LineDataSet(yValues,"Data Set 1");
-                set1.setFillAlpha(110);
+                if(count>=dataSnapshot.getChildrenCount()){
+                    totalDistance.setText( getApplicationContext().getString(R.string.distance_traveled,totDistance));
+                    List<HashMap<String, String>> listItems = new ArrayList<>();
+                    SimpleAdapter adapter;
+                    adapter = new SimpleAdapter(getApplicationContext(), listItems, R.layout.list_item,
+                            new String[]{"First Line", "Second Line"},
+                            new int[]{R.id.text1, R.id.text2});
 
-                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-                dataSets.add(set1);
-                set1.setColor(Color.RED);
 
-                LineData data = new LineData(dataSets);
+                    Iterator it = travelsList.entrySet().iterator();
+                    while (it.hasNext())
+                    {
+                        HashMap<String, String> resultsMap = new HashMap<>();
+                        Map.Entry pair = (Map.Entry)it.next();
+                        resultsMap.put("First Line", pair.getKey().toString());
+                        DecimalFormat df = new DecimalFormat("#.#");
 
-                mChart.setData(data);
-                mChart.setDrawGridBackground(false);
+                        resultsMap.put("Second Line", df.format(pair.getValue())+" Km");
+                        listItems.add(resultsMap);
+                    }
 
-                totalDistance.setText( getApplicationContext().getString(R.string.distance_traveled,totDistance));
+                    listView.setAdapter(adapter);
+                }
+
+
+
+
             }
 
             @Override
@@ -143,60 +128,20 @@ public class Analytics extends AppCompatActivity implements OnChartValueSelected
         //init();
     }
 
-    private void init() {
-
-    }
-
-
 
 
     @Override
-    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-        Log.i(TAG,"onChartGestureStart: X: "+ me.getX()+"Y: "+me.getY());
+    public void onBackPressed() {
+
+        finish();
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+            this.finish();
+            return true;
     }
 
-    @Override
-    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-        Log.i(TAG,"onChartGestureEnd: "+ lastPerformedGesture);
-    }
 
-    @Override
-    public void onChartLongPressed(MotionEvent me) {
-        Log.i(TAG,"onChartLongPressed: ");
-    }
-
-    @Override
-    public void onChartDoubleTapped(MotionEvent me) {
-        Log.i(TAG,"onChartDoubleTapped: ");
-    }
-
-    @Override
-    public void onChartSingleTapped(MotionEvent me) {
-        Log.i(TAG,"onChartSingleTapped");
-    }
-
-    @Override
-    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-        Log.i(TAG,"onChartFling: veloX: "+velocityX+" veloY: "+ velocityY);
-    }
-
-    @Override
-    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-        Log.i(TAG,"onChartScale: scaleX: "+ scaleX + "scaleY: " +scaleY);
-    }
-
-    @Override
-    public void onChartTranslate(MotionEvent me, float dX, float dY) {
-        Log.i(TAG,"onChartTranslate: dX: "+dX +"dY: "+dY);
-    }
-
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-        Log.i(TAG,"onValueSelected: " + e.toString());
-    }
-
-    @Override
-    public void onNothingSelected() {
-        Log.i(TAG,"onNothingSelected");
-    }
 }

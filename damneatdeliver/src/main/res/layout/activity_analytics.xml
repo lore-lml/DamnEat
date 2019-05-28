@@ -16,6 +16,21 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/analytics_travels_list_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/travels_list"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/cardView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/analytics_total_distance_text" />
+
+    <TextView
         android:id="@+id/analytics_total_distance_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,31 +38,31 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="@string/distance_traveled"
+        android:textColor="@color/colorPrimaryText"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.CardView
+        android:id="@+id/cardView4"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/analytics_total_distance_text" >
+        app:layout_constraintTop_toBottomOf="@+id/analytics_travels_list_text">
 
-        <com.github.mikephil.charting.charts.LineChart
+
+        <ListView
+            android:id="@+id/analytics_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/distance_chart">
-        </com.github.mikephil.charting.charts.LineChart>
-
+            android:layout_height="wrap_content" />
     </android.support.v7.widget.CardView>
 
 

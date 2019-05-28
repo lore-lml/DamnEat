@@ -81,7 +81,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.deliverer_name.setText(selected.getDelivererName());
         holder.customer_info.setText(ctx.getString(R.string.order_customer_info)+"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress());
         holder.time.setText(ctx.getString(R.string.order_delivery_time, selected.getDeliveryTime()));
-        holder.note.setText(selected.getNote());
+        holder.note.setText(ctx.getString(R.string.note, selected.getNote()));
         if(selected.getDelivererPhoto().equals("NO_PHOTO"))
             holder.deliverer_image.setImageBitmap(default_image);
         else
@@ -92,7 +92,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         List<Dish> dishes = selected.getDishes();
         for (Dish d:dishes) {
             String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
+            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+" \t"+ p + "€\n";
         }
         holder.dishes_list.setText(dish_list_str);
 
@@ -102,6 +102,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.dishes_list.setVisibility(View.GONE);
             holder.customer_info.setVisibility(View.GONE);
             holder.setAsRejected.setVisibility(View.GONE);
+            holder.note.setVisibility(View.GONE);
             if(selected.getState().equals("ordered")){
                 holder.findDeliverer.setVisibility(View.VISIBLE);
             }
@@ -155,6 +156,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
             holder.customer_info.setVisibility(View.VISIBLE);
+
+            if (!selected.getNote().equals(""))
+                holder.note.setVisibility(View.VISIBLE);
+            else
+                holder.note.setVisibility(View.GONE);
         }
 
         if(selected.getState().equals("ordered"))
@@ -187,7 +193,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info,state,time, note;
+        private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info,state,time,note;
         private CardView root;
         private Button findDeliverer, setAsShipped, setAsRejected;
         private CircleImageView deliverer_image;

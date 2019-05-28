@@ -425,7 +425,7 @@
                                 android:textColor="@color/colorEditText"
                                 android:textColorHint="@color/colorEditTextHint"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@+id/imageView"
+                                app:layout_constraintEnd_toStartOf="@+id/review_type"
                                 app:layout_constraintStart_toEndOf="@+id/icon_category"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -458,7 +458,7 @@
                                 android:textColorHint="@color/colorEditTextHint"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@+id/imageView"
+                                app:layout_constraintStart_toEndOf="@+id/review_type"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
                     </android.support.v7.widget.CardView>
