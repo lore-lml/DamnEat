@@ -2,6 +2,7 @@ package com.damn.polito.damneatdeliver;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -27,6 +28,16 @@ import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,7 +49,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
 import java.util.List;
 
-public class Welcome extends AppCompatActivity {
+public class Welcome extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<LocationSettingsResult> {
     //STATIC VARIABLES
     private static boolean logged;
     private static final int ONE_MINUTE = 1000 * 60 ;
@@ -76,6 +87,10 @@ public class Welcome extends AppCompatActivity {
     private LocationListener locationListener;
     private Location bestLocation;
 
+    //CHECK LOCATION SETTINGS VARIABLES
+    protected GoogleApiClient mGoogleApiClient;
+    protected LocationRequest locationRequest;
+    int REQUEST_CHECK_SETTINGS = 100;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -152,6 +167,16 @@ public class Welcome extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
 
+        //initialize the GoogleApiClient and LocationRequest
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
+        mGoogleApiClient.connect();
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
 
     }
 
@@ -217,6 +242,14 @@ public class Welcome extends AppCompatActivity {
                         init();
                 }
                 //if(selectedId == R.id.nav_current)
+            } else if (requestCode == REQUEST_CHECK_SETTINGS) {
+                if (resultCode == RESULT_OK) {
+
+                    Toast.makeText(getApplicationContext(), "GPS enabled", Toast.LENGTH_LONG).show();
+                } else {
+
+                    Toast.makeText(getApplicationContext(), "GPS is not enabled", Toast.LENGTH_LONG).show();
+                }
             } else {
                 String error = null;
                 if(response != null && response.getError() != null)
@@ -385,13 +418,14 @@ public class Welcome extends AppCompatActivity {
         };
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Log.d("LOCATIONciao","gps");
+            //Log.d("LOCATION","gps");
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 800, 10, locationListener);
         }
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            Log.d("LOCATIONciao","net");
+            //Log.d("LOCATION","network");
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 800, 10, locationListener);
         }
+
 
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, locationListener);
     }
@@ -512,4 +546,67 @@ public class Welcome extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(
+                        mGoogleApiClient,
+                        builder.build()
+                );
+        result.setResultCallback(this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+        final Status status = locationSettingsResult.getStatus();
+        switch (status.getStatusCode()) {
+            case LocationSettingsStatusCodes.SUCCESS:
+                // NO need to show the dialog;
+
+                break;
+
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                //  GPS disabled show the user a dialog to turn it on
+                try {
+                    // Show the dialog by calling startResolutionForResult(), and check the result
+                    // in onActivityResult().
+
+                    status.startResolutionForResult(Welcome.this, REQUEST_CHECK_SETTINGS);
+
+                } catch (IntentSender.SendIntentException e) {
+
+                    //failed to show dialog
+                }
+
+
+                break;
+
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                // Location settings are unavailable so not possible to show any dialog now
+                break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
 }
