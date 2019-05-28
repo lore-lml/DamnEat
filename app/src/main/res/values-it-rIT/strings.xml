@@ -33,4 +33,6 @@
     <string name="rate_food">Ti è piaciuto il pasto?</string>
     <string name="reviews_title">Le tue recensioni</string>
     <string name="service_review">Recensione servizio</string>
+    <string name="review">Recensisci</string>
+    <string name="incomplete_review">Devi valutare entrambi i campi</string>
 </resources>

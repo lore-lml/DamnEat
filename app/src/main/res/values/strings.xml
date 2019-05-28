@@ -34,4 +34,6 @@
     <string name="rate_activity_title" translatable="false">Feedback</string>
     <string name="reviews_title">Your reviews</string>
     <string name="service_review">Service review</string>
+    <string name="review">Review</string>
+    <string name="incomplete_review">You need to rate both fields</string>
 </resources>

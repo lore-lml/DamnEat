@@ -2,11 +2,13 @@ package com.damn.polito.damneat;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Order;
@@ -27,6 +29,7 @@ public class RateRestaurant extends AppCompatActivity {
     private Button send;
 
     private Order order;
+    private boolean firstReview = false, secondReview = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +52,23 @@ public class RateRestaurant extends AppCompatActivity {
 
     private void init(){
         order = (Order) getIntent().getSerializableExtra("order");
-        restaurantRt.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> changeValueAction(ratingBar, restaurantText));
-        foodRt.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> changeValueAction(ratingBar, foodText));
+        restaurantRt.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            changeValueAction(ratingBar, restaurantText);
+            firstReview = true;
+        });
+        foodRt.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            changeValueAction(ratingBar, foodText);
+            secondReview = true;
+        });
 
         send.setOnClickListener(v-> sendAction());
     }
 
     private void sendAction() {
+        if(!firstReview || !secondReview){
+            Toast.makeText(this, R.string.incomplete_review, Toast.LENGTH_SHORT).show();
+            return;
+        }
         int restaurantProgress = restaurantRt.getProgress();
         String restaurantNote = restaurantEdit.getText().toString().isEmpty() ? null : restaurantEdit.getText().toString();
         Customer customer = new Customer();
@@ -105,8 +118,17 @@ public class RateRestaurant extends AppCompatActivity {
                 scale_tv.setText(R.string.rate_five);
                 break;
             default:
-                scale_tv.setVisibility(View.GONE);
+                ratingBar.setRating(1);
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

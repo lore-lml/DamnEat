@@ -41,7 +41,7 @@
     <string name="profile_phone">Phone number</string>
     <string name="title_activity_select_menu">Select Menu</string>
     <string name="order_id_s">Order ID: %s</string>
-    <string name="order_num_dishes"># Dishes: %d</string>
+    <string name="order_num_dishes">Dishes: %d</string>
     <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
     <string name="empty_phone">No phone number has been inserted</string>

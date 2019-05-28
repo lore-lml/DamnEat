@@ -41,7 +41,10 @@ public class RateDialog extends DialogFragment {
         note = v.findViewById(R.id.rate_note);
         ratingBar = v.findViewById(R.id.rate_stars);
 
-        ratingBar.setOnRatingBarChangeListener((r, value, bool) -> changeValueAction());
+        ratingBar.setOnRatingBarChangeListener((r, value, bool) -> {
+            changeValueAction();
+            ok = true;
+        });
         send.setOnClickListener(b -> sendAction());
         return v;
     }
@@ -78,11 +81,9 @@ public class RateDialog extends DialogFragment {
                 scale_tv.setText(R.string.rate_five);
                 break;
             default:
-                scale_tv.setVisibility(View.GONE);
+                ratingBar.setRating(1);
                 return;
         }
-
-        ok = true;
     }
 
     public void setListener(HandleDismissDialog listener){this.from = listener;}

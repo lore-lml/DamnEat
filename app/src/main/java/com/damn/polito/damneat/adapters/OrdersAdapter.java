@@ -14,8 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
@@ -75,7 +75,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.id.setText(id);
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
-        holder.restaurant_info.setText(ctx.getString(R.string.restaurant, selected.getRestaurant().getRestaurantName()));
+        holder.restaurant_info.setText(selected.getRestaurant().getRestaurantName());
 
 
         if(selected.getState().toLowerCase().equals("confirmed") || selected.getState().toLowerCase().equals("rejected")){
@@ -102,8 +102,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                     intent.putExtra("order", selected);
                     ctx.startActivity(intent);
                 });
-
             }
+            if(!selected.getState().toLowerCase().equals("confirmed") || selected.isRated())
+                holder.btnRate.setVisibility(View.GONE);
+
             if(selected.getState().toLowerCase().equals("rejected")){
                 holder.state.setTextColor(ctx.getColor(R.color.colorAccent));
                 holder.state.setText(ctx.getString(R.string.rejected));
@@ -190,16 +192,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     private void expandOrContract(OrderViewHolder holder, boolean state){
         if (!state) {
-            holder.date.setVisibility(View.GONE);
-            holder.dishes_list.setVisibility(View.GONE);
+            holder.dishListLayout.setVisibility(View.GONE);
             holder.id.setVisibility(View.GONE);
-            holder.btnRate.setVisibility(View.GONE);
         }else{
-            holder.date.setVisibility(View.VISIBLE);
             holder.id.setVisibility(View.VISIBLE);
-            holder.dishes_list.setVisibility(View.VISIBLE);
-            if(!orders.get(holder.getAdapterPosition()).isRated())
-                holder.btnRate.setVisibility(View.VISIBLE);
+            holder.dishListLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -218,14 +215,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public class OrderViewHolder extends RecyclerView.ViewHolder implements HandleDismissDialog{
         private TextView id,date,price,nDish, deliverer_name, dishes_list, restaurant_info, state, note, delivery_time;
         private CardView root;
+        private LinearLayout dishListLayout;
         private ImageView deliverer_photo;
-        private Button confirmButton;
-        private ImageButton btnRate;
+        private Button confirmButton, btnRate;
 
         public OrderViewHolder(View itemView) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order_customer);
+            dishListLayout = itemView.findViewById(R.id.order_dish_card);
             id= itemView.findViewById(R.id.order_id);
             date = itemView.findViewById(R.id.order_date_value);
             price = itemView.findViewById(R.id.order_price);
