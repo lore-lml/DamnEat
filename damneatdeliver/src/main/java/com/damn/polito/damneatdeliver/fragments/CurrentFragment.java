@@ -115,7 +115,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         ctx = view.getContext();
         database = FirebaseDatabase.getInstance();
 
-        id= view.findViewById(R.id.order_id);
+//        id= view.findViewById(R.id.order_id);
         date = view.findViewById(R.id.order_date_value);
         //map=view.findViewById(R.id.mapView);
         map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
@@ -132,16 +132,21 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
             new FetchURL(CurrentFragment.this).execute(url,"driving");
         }*/
-        btnGetDirection=view.findViewById(R.id.start_navigation);
+//        btnGetDirection=view.findViewById(R.id.start_navigation);
 
-
+        map.getView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGoogleMaps((String) address_big_text.getText());
+            }
+        });
 
 
         //BIG TextView
         name_big = view.findViewById(R.id.name_big_tv);
         address_big_text = view.findViewById(R.id.address_big_text);
         phone_big_text = view.findViewById(R.id.phone_big_text);
-        address_big = view.findViewById(R.id.address_big_tv);
+//        address_big = view.findViewById(R.id.address_big_tv);
         phone_big = view.findViewById(R.id.phone_big_tv);
         id_shipped = view.findViewById(R.id.id_shipped);
 
@@ -182,12 +187,12 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             }
         });
 
-        btnGetDirection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startGoogleMaps((String) address_big_text.getText());
-            }
-        });
+//        btnGetDirection.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startGoogleMaps((String) address_big_text.getText());
+//            }
+//        });
 
         acceptButton.setOnClickListener(v ->{
             if(currentOrder!=null){
@@ -261,7 +266,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     private void notRegistered(){
         if(!registered) {
             date.setVisibility(GONE);
-            id.setVisibility(GONE);
+//            id.setVisibility(GONE);
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
@@ -294,7 +299,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             return;
         }else {
             date.setText(Utility.dateString(currentOrder.getDate()));
-            id.setText(currentOrder.getId());
+//            id.setText(currentOrder.getId());
         }
 
         if(currentOrder.getState().toLowerCase().equals("accepted")){
@@ -306,7 +311,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             phone_big_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
 
             phone_big.setText(ctx.getString(R.string.restaurant_phone));
-            address_big.setText(ctx.getString(R.string.restaurant_address));
+//            address_big.setText(ctx.getString(R.string.restaurant_address));
 
             if(currentOrder.getRestaurant().getPhoto().equals("NO_PHOTO"))
                 photo.setImageBitmap(default_image);
@@ -328,7 +333,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         }else {
             date.setText(Utility.dateString(currentOrder.getDate()));
-            id.setText(currentOrder.getId());
+//            id.setText(currentOrder.getId());
 
         }
 
@@ -343,7 +348,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             phone_big_text.setText(currentOrder.getRestaurant().getRestaurantPhone());
 
             phone_big.setText(ctx.getString(R.string.restaurant_phone));
-            address_big.setText(ctx.getString(R.string.restaurant_address));
+//            address_big.setText(ctx.getString(R.string.restaurant_address));
 
             if(currentOrder.getRestaurant().getPhoto().equals("NO_PHOTO"))
                 photo.setImageBitmap(default_image);
@@ -373,7 +378,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
 
             phone_big.setText(ctx.getString(R.string.customer_phone));
-            address_big.setText(ctx.getString(R.string.customer_address));
+//            address_big.setText(ctx.getString(R.string.customer_address));
 
             if(currentOrder.getCustomer().getCustomerPhoto().equals("NO_PHOTO") || currentOrder.getCustomer().getCustomerPhoto().equals("") )
                 photo.setImageBitmap(default_image);
@@ -407,7 +412,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             phone_big_text.setText(currentOrder.getCustomer().getCustomerPhone());
 
             phone_big.setText(ctx.getString(R.string.customer_phone));
-            address_big.setText(ctx.getString(R.string.customer_address));
+//            address_big.setText(ctx.getString(R.string.customer_address));
 
             if(currentOrder.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
                 photo.setImageBitmap(default_image);
@@ -475,12 +480,12 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             }
             map.getMapAsync(this);
 
-            btnGetDirection.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startGoogleMaps((String) address_big_text.getText());
-                }
-            });
+//            btnGetDirection.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    startGoogleMaps((String) address_big_text.getText());
+//                }
+//            });
 
         }else if(currentOrder.getState().toLowerCase().equals("shipped")||
                 currentOrder.getState().toLowerCase().equals("delivered")){
@@ -497,12 +502,12 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             }
             map.getMapAsync(this);
 
-            btnGetDirection.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startGoogleMaps(currentOrder.getCustomer().getCustomerAddress());
-                }
-            });
+//            btnGetDirection.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    startGoogleMaps(currentOrder.getCustomer().getCustomerAddress());
+//                }
+//            });
 
         }
         else{
@@ -549,13 +554,18 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             return;
         }
 
-        if(state.equals("empty") || state.equals("ordered")){
+        if(state.equals("empty")){
             card_avaible.setVisibility(View.VISIBLE);
             waiting_confirm.setVisibility(View.VISIBLE);
+            card_order.setVisibility(GONE);
+            card_small.setVisibility(GONE);
+        }
+        if(state.equals("ordered")){
+
         }
         if(state.equals("shipped")) {
             date.setVisibility(View.VISIBLE);
-            id.setVisibility(View.VISIBLE);
+//            id.setVisibility(View.VISIBLE);
 
             confirmButton.setVisibility(View.VISIBLE);
             //map.setVisibility(View.VISIBLE);
@@ -569,9 +579,9 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             note_small_text.setVisibility(View.VISIBLE);
 
             deliveryTime.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             name_big.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             address_big_text.setVisibility(View.VISIBLE);
             phone_big.setVisibility(View.VISIBLE);
             phone_big_text.setVisibility(View.VISIBLE);
@@ -585,7 +595,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             //map.setVisibility(View.VISIBLE);
 
             date.setVisibility(View.VISIBLE);
-            id.setVisibility(View.VISIBLE);
+//            id.setVisibility(View.VISIBLE);
 
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
@@ -598,9 +608,9 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
             deliveryTime.setVisibility(View.VISIBLE);
 
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             name_big.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             address_big_text.setVisibility(View.VISIBLE);
             phone_big.setVisibility(View.VISIBLE);
             phone_big_text.setVisibility(View.VISIBLE);
@@ -609,7 +619,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }
         if(state.equals("assigned")){
             date.setVisibility(View.VISIBLE);
-            id.setVisibility(View.VISIBLE);
+//            id.setVisibility(View.VISIBLE);
             //map.setVisibility(View.VISIBLE);
 
             name_small.setVisibility(View.VISIBLE);
@@ -624,9 +634,9 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             deliveryTime.setVisibility(View.VISIBLE);
             state_tv.setVisibility(View.VISIBLE);
 
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             name_big.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             address_big_text.setVisibility(View.VISIBLE);
             phone_big.setVisibility(View.VISIBLE);
             phone_big_text.setVisibility(View.VISIBLE);
@@ -635,7 +645,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         if(state.equals("delivered")){
             date.setVisibility(View.VISIBLE);
-            id.setVisibility(View.VISIBLE);
+//            id.setVisibility(View.VISIBLE);
 
             name_small.setVisibility(View.VISIBLE);
             name_small_text.setVisibility(View.VISIBLE);
@@ -649,9 +659,9 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             deliveryTime.setVisibility(View.VISIBLE);
             state_tv.setVisibility(View.VISIBLE);
 
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             name_big.setVisibility(View.VISIBLE);
-            address_big.setVisibility(View.VISIBLE);
+//            address_big.setVisibility(View.VISIBLE);
             address_big_text.setVisibility(View.VISIBLE);
             phone_big.setVisibility(View.VISIBLE);
             phone_big_text.setVisibility(View.VISIBLE);
@@ -664,7 +674,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .show(map)
                     .commit();
-            btnGetDirection.setVisibility(View.VISIBLE);
+//            btnGetDirection.setVisibility(View.VISIBLE);
         }
         else{
             fm = getFragmentManager();
@@ -672,7 +682,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .hide(map)
                     .commit();
-            btnGetDirection.setVisibility(View.GONE);
+//            btnGetDirection.setVisibility(View.GONE);
         }
 
         //}
@@ -686,8 +696,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         name_big.setVisibility(GONE);
         //map.setVisibility(GONE);
 
-        btnGetDirection.setVisibility(GONE);
-        address_big.setVisibility(GONE);
+//        btnGetDirection.setVisibility(GONE);
+//        address_big.setVisibility(GONE);
         address_big_text.setVisibility(GONE);
         phone_big.setVisibility(GONE);
         phone_big_text.setVisibility(GONE);
@@ -714,7 +724,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         accept_question.setVisibility(GONE);
 
         date.setVisibility(GONE);
-        id.setVisibility(GONE);
+//        id.setVisibility(GONE);
     }
 
     private void startGoogleMaps(String address){

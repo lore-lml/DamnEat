@@ -7,109 +7,23 @@
     android:background="@color/colorBackground"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_order"
-        app:layout_constraintVertical_bias="1.0">
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/card_button"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--app:cardCornerRadius="20dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/card_order"-->
+        <!--app:layout_constraintVertical_bias="1.0">-->
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/acceptOrder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/buttons"
-                android:text="@string/Accept"
-                android:textColor="#fff"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/rejectOrder"
-                app:layout_constraintTop_toTopOf="@+id/rejectOrder" />
 
-            <Button
-                android:id="@+id/rejectOrder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/buttons"
-                android:text="@string/reject"
-                android:textColor="#fff"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/acceptOrder"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/accept_question" />
-
-            <TextView
-                android:id="@+id/state_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="State: delivered"
-                android:textAppearance="@style/PrimaryText"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/confirmOrder"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/confirmOrder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/buttons"
-                android:paddingStart="70dp"
-                android:paddingEnd="70dp"
-                android:text="@string/confirmOrder"
-                android:textColor="#fff"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/state_tv" />
-
-            <TextView
-                android:id="@+id/accept_question"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="16dp"
-                android:text="Do you want accept new delivery?"
-                app:layout_constraintBottom_toTopOf="@id/rejectOrder"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-
-    </android.support.v7.widget.CardView>
+    <!--</android.support.v7.widget.CardView>-->
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_available"
@@ -170,6 +84,21 @@
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
+    <TextView
+        android:id="@+id/waiting_confirm_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:textAppearance="@style/PrimaryText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.v7.widget.CardView
         android:id="@+id/card_order"
         android:layout_width="match_parent"
@@ -182,10 +111,11 @@
         android:visibility="visible"
         app:cardCornerRadius="20dp"
         app:cardElevation="5dp"
-        app:layout_constraintBottom_toTopOf="@id/card_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_available">
+        <!--app:layout_constraintBottom_toTopOf="@id/card_button"-->
+
 
         <ScrollView
             android:id="@+id/order_sv"
@@ -195,113 +125,79 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/id_shipped"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="16dp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/circleImageView"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
                         android:scaleX="1.3"
                         android:scaleY="1.3"
                         android:src="@drawable/profile_sample"
-                        app:layout_constraintBottom_toTopOf="@+id/address_big_tv"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/name_big_tv" />
+                        app:layout_constraintTop_toTopOf="@+id/name_big_tv" />
 
                     <TextView
                         android:id="@+id/name_big_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="62dp"
-                        android:layout_marginEnd="62dp"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
                         android:gravity="center_horizontal"
                         android:text="Ristorante: Ste Gelato e Pizza"
                         android:textAppearance="@style/PrimaryText"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@+id/circleImageView"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/circleImageView"
                         app:layout_constraintTop_toBottomOf="@+id/delivery_time" />
-
-                    <TextView
-                        android:id="@+id/address_big_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:text="Indirizzo ristorante:"
-                        android:textAppearance="@style/PrimaryText"
-                        app:layout_constraintBottom_toTopOf="@+id/address_big_text"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
                     <TextView
                         android:id="@+id/address_big_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:text="Via qua o là ¹/2"
                         android:textAppearance="@style/PrimaryText"
-                        app:layout_constraintBottom_toTopOf="@+id/phone_big_tv"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/address_big_tv" />
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/name_big_tv"
+                        app:layout_constraintTop_toBottomOf="@+id/name_big_tv" />
 
                     <TextView
                         android:id="@+id/phone_big_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:text="3312345678"
                         android:textAppearance="@style/PrimaryText"
                         app:layout_constraintBottom_toBottomOf="@id/phone_big_tv"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.81"
-                        app:layout_constraintStart_toEndOf="@id/phone_big_tv"
-                        app:layout_constraintTop_toTopOf="@+id/phone_big_tv" />
+                        app:layout_constraintHorizontal_bias="0.038"
+                        app:layout_constraintStart_toEndOf="@+id/phone_big_tv"
+                        app:layout_constraintTop_toTopOf="@+id/phone_big_tv"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <TextView
                         android:id="@+id/phone_big_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="Telefono:"
-                        android:textAppearance="@style/PrimaryText"
-                        app:layout_constraintBottom_toTopOf="@id/mapView"
-                        app:layout_constraintEnd_toStartOf="@id/phone_big_text"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/address_big_text" />
-
-                    <TextView
-                        android:id="@+id/order_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="@string/order_id_s"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@+id/delivery_time"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
+                        android:text="Telefono:"
+                        android:textAppearance="@style/SecondaryText"
+                        app:layout_constraintStart_toStartOf="@+id/address_big_text"
+                        app:layout_constraintTop_toBottomOf="@+id/address_big_text" />
 
                     <TextView
                         android:id="@+id/order_date_value"
@@ -312,24 +208,39 @@
                         android:text="@string/nullText"
                         android:textAppearance="@style/SecondaryText"
                         android:textStyle="italic"
-                        app:layout_constraintBottom_toTopOf="@+id/order_id"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.47000003" />
+
+                    <TextView
+                        android:id="@+id/state_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="3dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="State: delivered"
+                        android:textAppearance="@style/PrimaryText"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/order_date_value"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/card_small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
                         app:cardCornerRadius="20dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/mapView">
+                        app:layout_constraintTop_toBottomOf="@+id/accept_question"
+                        app:layout_constraintVertical_bias="1.0">
 
                         <android.support.constraint.ConstraintLayout
                             android:layout_width="match_parent"
@@ -428,53 +339,121 @@
                                 app:layout_constraintStart_toEndOf="@+id/note_small"
                                 app:layout_constraintTop_toTopOf="@+id/note_small" />
 
-                            <TextView
-                                android:id="@+id/waiting_confirm_tv"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="8dp"
-                                android:layout_marginBottom="8dp"
-                                android:gravity="center|center_horizontal|center_vertical"
-                                android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
                     </android.support.v7.widget.CardView>
+
+                    <Button
+                        android:id="@+id/acceptOrder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/buttons"
+                        android:text="@string/Accept"
+                        android:textColor="#fff"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toTopOf="@id/card_small"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/rejectOrder"
+                        app:layout_constraintTop_toTopOf="@+id/rejectOrder"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <Button
+                        android:id="@+id/rejectOrder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/buttons"
+                        android:text="@string/reject"
+                        android:textColor="#fff"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toTopOf="@id/card_small"
+                        app:layout_constraintEnd_toStartOf="@+id/acceptOrder"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/accept_question" />
+
+                    <TextView
+                        android:id="@+id/state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:text="State: delivered"
+                        android:textAppearance="@style/PrimaryText"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@id/confirmOrder"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/confirmOrder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/buttons"
+                        android:paddingStart="70dp"
+                        android:paddingEnd="70dp"
+                        android:text="@string/confirmOrder"
+                        android:textColor="#fff"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@id/card_small"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.502"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/mapView" />
+
+                    <TextView
+                        android:id="@+id/accept_question"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="Do you want accept new delivery?"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/mapView" />
 
                     <TextView
                         android:id="@+id/delivery_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="109dp"
-                        android:layout_marginEnd="110dp"
-                        android:text="Delivery time: 19:30"
-                        android:textAppearance="@style/PrimaryText"
-                        app:layout_constraintBottom_toTopOf="@+id/name_big_tv"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/order_id" />
-
-                    <Button
-                        android:id="@+id/start_navigation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@drawable/buttons"
-                        android:text="@string/start_navigation"
-                        android:textColor="#fff"
-                        android:paddingEnd="15dp"
-                        android:paddingStart="15dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_small"
-                        app:layout_constraintEnd_toEndOf="@+id/mapView"
-                        app:layout_constraintStart_toStartOf="@+id/mapView"
-                        app:layout_constraintTop_toBottomOf="@+id/mapView"
-                        tools:visibility="visible" />
+                        android:layout_marginEnd="108dp"
+                        android:text="Delivery time: 19:30"
+                        android:textAppearance="@style/PrimaryText"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/order_date_value"
+                        app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
+
+                    <!--<Button-->
+                    <!--android:id="@+id/start_navigation"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginStart="8dp"-->
+                    <!--android:layout_marginTop="8dp"-->
+                    <!--android:layout_marginBottom="8dp"-->
+                    <!--android:background="@drawable/buttons"-->
+                    <!--android:paddingStart="15dp"-->
+                    <!--android:paddingEnd="15dp"-->
+                    <!--android:text="@string/start_navigation"-->
+                    <!--android:textColor="#fff"-->
+                    <!--app:layout_constraintBottom_toTopOf="@+id/card_small"-->
+                    <!--app:layout_constraintEnd_toEndOf="@+id/mapView"-->
+                    <!--app:layout_constraintStart_toStartOf="@+id/mapView"-->
+                    <!--app:layout_constraintTop_toBottomOf="@+id/mapView"-->
+                    <!--tools:visibility="gone" />-->
 
                     <fragment
                         android:id="@+id/mapView"
@@ -482,12 +461,15 @@
                         android:layout_width="0dp"
                         android:layout_height="260dp"
                         android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="16dp"
                         app:layout_constraintBottom_toTopOf="@id/card_small"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.498"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/phone_big_tv" />
+                        app:layout_constraintTop_toBottomOf="@+id/phone_big_tv"
+                        app:layout_constraintVertical_bias="0.0" />
                 </android.support.constraint.ConstraintLayout>
             </LinearLayout>
         </ScrollView>
