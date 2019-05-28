@@ -32,4 +32,6 @@
     <string name="rate_restaurant">What do you think about our restaurant?\nYour opinion is important to us</string>
     <string name="rate_food">Did you enjoy the meal?</string>
     <string name="rate_activity_title" translatable="false">Feedback</string>
+    <string name="reviews_title">Your reviews</string>
+    <string name="service_review">Service review</string>
 </resources>

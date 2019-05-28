@@ -176,7 +176,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             categories = itemView.findViewById(R.id.restaurant_category);
             priceShip = itemView.findViewById(R.id.restaurant_ship_price);
             reviews = itemView.findViewById(R.id.restaurant_reviews);
-            ratingBar = itemView.findViewById(R.id.ratingbar);
+            ratingBar = itemView.findViewById(R.id.restaurant_ratingbar);
             root = itemView.findViewById(R.id.restaurant_root);
             itemView.findViewById(R.id.divider).setVisibility(View.INVISIBLE);
         }

@@ -1,4 +1,4 @@
-package com.damn.polito.damneatrestaurant.adapters;
+package com.damn.polito.damneat.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.RateObject;
-import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneat.R;
 
 import java.util.List;
 
@@ -42,22 +42,24 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.OrderVie
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         RateObject selected = reviews.get(position);
 
-        if(selected.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
+        if(selected.getRestaurant().getPhoto().equals("NO_PHOTO"))
             holder.image.setImageBitmap(default_image);
         else
-            holder.image.setImageBitmap(Utility.StringToBitMap(selected.getCustomer().getCustomerPhoto()));
+            holder.image.setImageBitmap(Utility.StringToBitMap(selected.getRestaurant().getPhoto()));
 
-        holder.name.setText(selected.getCustomer().getCustomerName());
+        holder.name.setText(selected.getRestaurant().getRestaurantName());
         holder.date.setText(selected.getDate());
         holder.note.setText(selected.getNote());
         holder.ratingBar.setRating(selected.getRate());
 
-        if (selected.getType() == RateObject.RateType.Service)
+        if (selected.getType() == RateObject.RateType.Service) {
+            holder.name.setText(R.string.service_review);
             holder.reviewType.setImageResource(R.drawable.ic_star);
-        else
+        } else {
+            holder.name.setText(selected.getRestaurant().getRestaurantName());
             holder.reviewType.setImageResource(selected.getType() == RateObject.RateType.Meal ?
                     R.drawable.ic_restaurant : R.drawable.ic_cutlery);
-
+        }
     }
 
     @Override
