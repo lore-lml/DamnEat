@@ -325,7 +325,7 @@
                         android:background="@color/colorBackground"
                         android:elevation="5dp"
                         app:cardCornerRadius="10dp"
-                        app:cardElevation="05dp"
+                        app:cardElevation="0dp"
                         app:layout_constraintBottom_toTopOf="@+id/cardView3"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
