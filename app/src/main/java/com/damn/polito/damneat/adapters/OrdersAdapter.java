@@ -190,17 +190,17 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     private void expandOrContract(OrderViewHolder holder, boolean state){
         if (!state) {
-            holder.date.setVisibility(View.VISIBLE);
+//            holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.GONE);
 //            holder.id.setVisibility(View.GONE);
-            holder.btnRate.setVisibility(View.VISIBLE);
+//            holder.btnRate.setVisibility(View.VISIBLE);
         }else{
-            holder.date.setVisibility(View.VISIBLE);
+//            holder.date.setVisibility(View.VISIBLE);
 //            holder.id.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
-            if(!orders.get(holder.getAdapterPosition()).isRated())
-                holder.btnRate.setVisibility(View.GONE);
         }
+        if(!orders.get(holder.getAdapterPosition()).isRated())
+            holder.btnRate.setVisibility(View.GONE);
     }
 
     @Override

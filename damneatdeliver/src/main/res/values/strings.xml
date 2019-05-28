@@ -49,7 +49,7 @@
     <string name="note">Note:</string>
     <string name="restaurant_phone">Restaurant phone:</string>
     <string name="restaurant_address">Restaurant address:</string>
-    <string name="state">State: %s</string>
+    <string name="state">%s</string>
     <string name="customer_phone">Customer phone:</string>
     <string name="restaurant_name">Restaurant name:</string>
     <string name="confirm_delivery">Confirm delivery</string>

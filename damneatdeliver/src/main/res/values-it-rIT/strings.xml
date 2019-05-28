@@ -56,7 +56,7 @@
     <string name="restaurant_address">Indirizzo ristorante:</string>
     <string name="restaurant_name">Nome ristorante:</string>
     <string name="restaurant_phone">Telefono ristorante:</string>
-    <string name="state">Stato: %s</string>
+    <string name="state">%s</string>
     <string name="waiting_customer_confirm">In attesa della conferma del cliente</string>
     <string name="waiting_order">In attesa di un ordine</string>
     <string name="state_empty">vuoto</string>

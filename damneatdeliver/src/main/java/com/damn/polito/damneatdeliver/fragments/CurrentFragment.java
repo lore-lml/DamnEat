@@ -210,6 +210,13 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 //            }
 //        });
 
+        map.getView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGoogleMaps((String) address_big_text.getText());
+            }
+        });
+
         acceptButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 if(Welcome.getProfile()== null){
@@ -516,6 +523,13 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 //                }
 //            });
 
+            map.getView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startGoogleMaps((String) address_big_text.getText());
+                }
+            });
+
         }else if(currentOrder.getState().toLowerCase().equals("shipped")||
                 currentOrder.getState().toLowerCase().equals("delivered")){
 
@@ -537,6 +551,13 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 //                    startGoogleMaps(currentOrder.getCustomer().getCustomerAddress());
 //                }
 //            });
+
+            map.getView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startGoogleMaps((String) address_big_text.getText());
+                }
+            });
 
         }
         else{
