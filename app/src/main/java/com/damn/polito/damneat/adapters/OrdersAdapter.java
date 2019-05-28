@@ -71,8 +71,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         String dish_list_str = getDishesList(selected);
         holder.dishes_list.setText(dish_list_str);
         holder.date.setText(Utility.dateString(selected.getDate()));
-        String id = ctx.getString(R.string.order_id_s, selected.Id());
-        holder.id.setText(id);
+//        String id = ctx.getString(R.string.order_id_s, selected.Id());
+//        holder.id.setText(id);
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.restaurant_info.setText(ctx.getString(R.string.restaurant, selected.getRestaurant().getRestaurantName()));
@@ -190,16 +190,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     private void expandOrContract(OrderViewHolder holder, boolean state){
         if (!state) {
-            holder.date.setVisibility(View.GONE);
+            holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.GONE);
-            holder.id.setVisibility(View.GONE);
-            holder.btnRate.setVisibility(View.GONE);
+//            holder.id.setVisibility(View.GONE);
+            holder.btnRate.setVisibility(View.VISIBLE);
         }else{
             holder.date.setVisibility(View.VISIBLE);
-            holder.id.setVisibility(View.VISIBLE);
+//            holder.id.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
             if(!orders.get(holder.getAdapterPosition()).isRated())
-                holder.btnRate.setVisibility(View.VISIBLE);
+                holder.btnRate.setVisibility(View.GONE);
         }
     }
 
@@ -226,7 +226,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order_customer);
-            id= itemView.findViewById(R.id.order_id);
+//            id= itemView.findViewById(R.id.order_id);
             date = itemView.findViewById(R.id.order_date_value);
             price = itemView.findViewById(R.id.order_price);
             nDish = itemView.findViewById(R.id.order_num_dishes);
