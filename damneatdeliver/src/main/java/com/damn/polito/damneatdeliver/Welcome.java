@@ -53,6 +53,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     //STATIC VARIABLES
     private static boolean logged;
     private static final int ONE_MINUTE = 1000 * 60 ;
+    private static final int TEN_MINUTES = 1000 * 60 * 10  ;
     private static Profile profile;
     private static Order currentOrder;
     private static String dbKey;
@@ -177,6 +178,30 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
+        //initialize position DB, remove old position
+        DatabaseReference refTime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+        refTime.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Long time=dataSnapshot.getValue(Long.class);
+                Long ctime=System.currentTimeMillis();
+                if(time!=null){
+                    if((ctime-time)>=TEN_MINUTES){
+                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
+                        RefLat.setValue(null);
+                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
+                        RefLong.setValue(null);
+                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+                        Reftime.setValue(null);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -242,15 +267,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                         init();
                 }
                 //if(selectedId == R.id.nav_current)
-            } else if (requestCode == REQUEST_CHECK_SETTINGS) {
-                if (resultCode == RESULT_OK) {
-
-                    Toast.makeText(getApplicationContext(), "GPS enabled", Toast.LENGTH_LONG).show();
-                } else {
-
-                    Toast.makeText(getApplicationContext(), "GPS is not enabled", Toast.LENGTH_LONG).show();
-                }
-            } else {
+            }  else {
                 String error = null;
                 if(response != null && response.getError() != null)
                     error = response.getError().getMessage();
@@ -259,6 +276,14 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     error = getString(R.string.login_error);
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
                 finish();
+            }
+        }else if (requestCode == REQUEST_CHECK_SETTINGS) {
+            if (resultCode == RESULT_OK) {
+                StartLocationManager();
+                Toast.makeText(getApplicationContext(), "GPS enabled", Toast.LENGTH_LONG).show();
+            } else {
+
+                Toast.makeText(getApplicationContext(), "GPS is not enabled", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -397,6 +422,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     RefLat.setValue(location.getLatitude());
                     DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
                     RefLong.setValue(location.getLongitude());
+                    DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+                    Reftime.setValue(location.getTime());
                     bestLocation=location;
                 }
 
