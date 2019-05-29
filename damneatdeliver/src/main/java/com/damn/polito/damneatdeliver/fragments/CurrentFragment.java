@@ -217,10 +217,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("rejected");
-                orderState.setValue("rejected");
                 DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
                 orderRef.setValue("0");
                 setVisibility("empty");
+                switch_available.setChecked(false);
             }
         });
 
@@ -280,11 +280,11 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         registered = Welcome.registered();
 
         currentOrder = Welcome.getCurrentOrder();
-        if (Welcome.isSwitchEnabled()) {
-            switch_available.setChecked(Welcome.getCurrentAvaibility());
-        } else {
-            switch_available.setChecked(Welcome.isSwitchEnabled());
-        }
+//        if (Welcome.isSwitchEnabled()) {
+//            switch_available.setChecked(Welcome.getCurrentAvaibility());
+//        } else {
+//            switch_available.setChecked(Welcome.isSwitchEnabled());
+//        }
         switch_available.setEnabled(Welcome.isSwitchEnabled());
 
         if(currentOrder==null){
@@ -396,7 +396,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             note_small.setText(ctx.getText(R.string.note));
             note_small_text.setText(currentOrder.getNote());
 
-            deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, currentOrder.getDeliveryTime()));
+//            deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, currentOrder.getDeliveryTime()));
+            String delivery_t = currentOrder.getDeliveryTime();
+            if (delivery_t.equals("ASAP")) deliveryTime.setText(R.string.time_asap);
+            else deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
 
             state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
             confirmButton.setText(ctx.getString(R.string.confirm_delivery));
@@ -442,7 +445,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
             setVisibility("empty");
-
         }
 
         if(currentOrder.getState().equals("rejected")){
