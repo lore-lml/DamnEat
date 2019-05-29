@@ -169,7 +169,8 @@
             android:text="@string/order_id_s"
             app:layout_constraintBottom_toTopOf="@+id/state_tv"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
+            app:layout_constraintTop_toBottomOf="@+id/order_date_value"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/state_tv_edit"

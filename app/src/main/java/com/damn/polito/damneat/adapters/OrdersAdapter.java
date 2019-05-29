@@ -126,7 +126,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.deliverer_photo.setImageBitmap(Utility.StringToBitMap(selected.getDelivererPhoto()));
 
             holder.note.setText(ctx.getString(R.string.note, selected.getNote()));
-            holder.delivery_time.setText(ctx.getString(R.string.delivery_time, selected.getDeliveryTime()));
+//            holder.delivery_time.setText(ctx.getString(R.string.delivery_time, selected.getDeliveryTime()));
+
+            String delivery_time = selected.getDeliveryTime();
+            if (delivery_time.equals("ASAP")) holder.delivery_time.setText(R.string.time_asap);
+            else holder.delivery_time.setText(ctx.getString(R.string.delivery_time, delivery_time));
 
             if(selected.getState().toLowerCase().equals("ordered") || selected.getState().toLowerCase().equals("accepted")) {
                 holder.deliverer_photo.setVisibility(View.INVISIBLE);
@@ -193,14 +197,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 //            holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.GONE);
 //            holder.id.setVisibility(View.GONE);
-//            holder.btnRate.setVisibility(View.VISIBLE);
+            holder.btnRate.setVisibility(View.GONE);
         }else{
 //            holder.date.setVisibility(View.VISIBLE);
 //            holder.id.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
         }
         if(!orders.get(holder.getAdapterPosition()).isRated())
-            holder.btnRate.setVisibility(View.GONE);
+            holder.btnRate.setVisibility(View.VISIBLE);
     }
 
     @Override
