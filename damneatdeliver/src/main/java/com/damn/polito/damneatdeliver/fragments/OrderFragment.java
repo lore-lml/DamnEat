@@ -109,12 +109,12 @@ public class OrderFragment extends Fragment {
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
                     //todo: non so se serve
-//                    order.setId(key);
-//                    for(int i=0; i<orderList.size(); i++)
-//                        if(orderList.get(i).Id().equals(order.Id())){
-//                            orderList.remove(i);
-//                            break;
-//                        }
+                    order.setId(key);
+                    for(int i=0; i<orderList.size(); i++)
+                        if(orderList.get(i) != null && orderList.get(i).Id().equals(order.Id())){
+                            orderList.remove(i);
+                            break;
+                        }
                 }
                 orderList.addFirst(order);
                 List<Dish> tmp = new ArrayList<>();
