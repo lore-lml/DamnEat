@@ -19,8 +19,8 @@
 
         <TextView
             android:id="@+id/order_customer"
-            android:layout_width="72dp"
-            android:layout_height="18dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
             android:layout_marginEnd="48dp"
             android:text="@string/order_customer"
@@ -131,7 +131,7 @@
             android:textColor="@color/colorCorners"
             app:layout_constraintBottom_toTopOf="@+id/order_set_shipped"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_note_nsme" />
+            app:layout_constraintTop_toBottomOf="@+id/order_note" />
 
         <Button
             android:id="@+id/order_set_shipped"
@@ -193,21 +193,11 @@
             android:id="@+id/order_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="-4dp"
-            android:text="Not notes"
-            android:textAppearance="@style/PrimaryText"
-            android:textSize="20sp"
-            app:layout_constraintStart_toEndOf="@+id/order_note_nsme"
-            app:layout_constraintTop_toTopOf="@+id/order_note_nsme" />
-
-        <TextView
-            android:id="@+id/order_note_nsme"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
-            android:text="Notes :"
+            android:text="Note :"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/order_find_deliverer_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/delivery_time_tv" />

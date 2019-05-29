@@ -73,14 +73,18 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order selected = orders.get(position);
-        //Calendar ciao= Calendar.getInstance();
         holder.id.setText(ctx.getString(R.string.order_id_s, selected.getId()));
         holder.date.setText(Utility.dateString(selected.getDate()));
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(selected.getDelivererName());
-        holder.customer_info.setText(ctx.getString(R.string.order_customer_info)+"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress());
-        holder.time.setText(ctx.getString(R.string.order_delivery_time, selected.getDeliveryTime()));
+//      holder.customer_info.setText(ctx.getString(R.string.order_customer_info)+"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress());
+        holder.customer_info.setText("Customer:\n\n" + selected.getCustomerName() + "\n" + selected.getCustomerAddress());
+
+        String delivery_time = ctx.getString(R.string.order_delivery_time, selected.getDeliveryTime());
+        if (delivery_time.equals("ASAP")) holder.time.setText(R.string.time_asap);
+        else holder.time.setText(ctx.getString(R.string.order_delivery_time, selected.getDeliveryTime()));
+
         holder.note.setText(ctx.getString(R.string.note, selected.getNote()));
         if(selected.getDelivererPhoto().equals("NO_PHOTO"))
             holder.deliverer_image.setImageBitmap(default_image);
