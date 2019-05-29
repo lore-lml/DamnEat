@@ -21,21 +21,22 @@
             android:id="@+id/order_customer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/order_customer"
             android:textAlignment="center"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/order_button_reject"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_price"
-            app:layout_constraintVertical_bias="0.51" />
+            app:layout_constraintTop_toTopOf="@+id/circleImageView"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/order_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="40dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/order_price"
             android:textAlignment="textStart"
             android:textAppearance="@style/PrimaryText"
@@ -101,12 +102,12 @@
             android:id="@+id/circleImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/profile_sample"
             app:layout_constraintBottom_toTopOf="@+id/order_deliverer_name_textview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dishes_list" />
 
@@ -130,10 +131,12 @@
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/colorPrimary"
             android:text="@string/assign_deliverer"
-            android:textColor="@color/colorCorners"
+            android:textColor="#000"
             app:layout_constraintBottom_toTopOf="@+id/order_set_shipped"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_note" />
+            app:layout_constraintTop_toBottomOf="@+id/order_note"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="5dp"/>
 
         <Button
             android:id="@+id/order_set_shipped"
@@ -143,17 +146,19 @@
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/colorPrimary"
             android:text="@string/set_as_shipped"
-            android:textColor="@color/colorCorners"
+            android:textColor="#000"
             app:layout_constraintBottom_toTopOf="@+id/order_num_dishes"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_find_deliverer_button" />
+            app:layout_constraintTop_toBottomOf="@+id/order_find_deliverer_button"
+            android:drawableStart="@drawable/ic_send"
+            android:drawablePadding="5dp"/>
 
         <TextView
             android:id="@+id/state_tv_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:text="Completed"
             android:textAppearance="@style/PrimaryText"
             android:textStyle="bold"

@@ -36,34 +36,19 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/order_id_s"
-            app:layout_constraintBottom_toTopOf="@+id/state_tv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_date_value" />
-
-        <TextView
-            android:id="@+id/state_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/state"
-            android:textAppearance="@style/PrimaryText"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/state_tv_edit"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_id" />
 
         <TextView
             android:id="@+id/state_tv_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="Completed"
-            android:textStyle="bold"
             android:textAppearance="@style/PrimaryText"
-            app:layout_constraintStart_toEndOf="@+id/state_tv"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_id" />
 
         <LinearLayout
@@ -71,14 +56,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/btn_rate"
             app:layout_constraintEnd_toStartOf="@+id/circleImageView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/state_tv"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintTop_toBottomOf="@+id/state_tv_edit">
 
             <TextView
                 android:id="@+id/order_num_dishes"
