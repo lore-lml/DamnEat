@@ -104,4 +104,5 @@ public class Profile {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 }

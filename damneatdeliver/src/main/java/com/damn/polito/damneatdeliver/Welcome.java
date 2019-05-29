@@ -299,7 +299,6 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         v = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 profile = dataSnapshot.getValue(Profile.class);
                 if (profile == null)
                     logged = false;
@@ -312,6 +311,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                         database.getReference("/deliverers/" + dbKey + "/info/state/").setValue(false);
                         profile.setState(false);
                     }
+                    changeGPSstate();
                 }
                 setDeliverFreeList();
                 if (currentFragment != null)
@@ -426,6 +426,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     Reftime.setValue(location.getTime());
                     bestLocation=location;
                 }
+                changeGPSstate();
 
             }
 
@@ -625,6 +626,28 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
             case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                 // Location settings are unavailable so not possible to show any dialog now
                 break;
+        }
+    }
+
+    private boolean isActive(){
+        if(profile==null || profile.getState()==null)
+            return false;
+        return profile.getState() || !currentOrder.getState().equals("empty");
+    }
+
+    private void changeGPSstate(){
+        Log.d("GPS State", String.valueOf(isActive()));
+        if(isActive()){
+            if(locationListener==null){
+                Log.d("GPS State", "Abilito il gps");
+                StartLocationManager();
+            }
+        } else{
+            if(locationManager==null || locationListener == null)
+                return;
+            Log.d("GPS State", "Disabilito il gps");
+            locationManager.removeUpdates(locationListener);
+            locationListener = null;
         }
     }
 

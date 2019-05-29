@@ -237,6 +237,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         switch_available.setOnCheckedChangeListener((compoundButton, b) -> {
             DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/");
             orderRef.setValue(b);
+
             if(b){
                 DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
                 freeDeliverersRef.setValue(Welcome.getDbKey());
@@ -249,7 +250,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             }
             if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
                 Toast.makeText(ctx, R.string.no_position, Toast.LENGTH_LONG).show();
-                ShowGPSDialog();
+            ShowGPSDialog();
 
         });
         map.getMapAsync(this);
