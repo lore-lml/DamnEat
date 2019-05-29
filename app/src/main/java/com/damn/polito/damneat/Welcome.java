@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -69,6 +70,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     //Collections
     private List<Restaurant> restaurants = new ArrayList<>();
     private List<Order> orders = new LinkedList<>();
+
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
@@ -180,6 +182,19 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 }else if(selectedId == R.id.nav_profile)
                     profileFragment.updateProfile();
 
+                if(profile != null){
+                    for(String key : profile.favouriteRestaurantsSet()){
+                        Restaurant r = new Restaurant();
+                        r.setFbKey(key);
+                        int pos = restaurants.indexOf(r);
+                        if(pos == -1)
+                            continue;
+                        r = restaurants.get(pos);
+                        r.sFavorite(true);
+                        if(selectedId == R.id.nav_restaurant)
+                            restaurantFragment.onChildChanged(r);
+                    }
+                }
             }
 
             @Override
@@ -196,6 +211,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         setRestaurantListener();
         setOrderListener();
     }
+
     private void setRestaurantListener(){
         if(!accountExist) return;
         restaurantsRef = database.getReference("ristoratori/");
@@ -208,6 +224,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert r != null;
                 r.setFbKey(key);
+
+                if(profile.favouriteRestaurantsSet().contains(key))
+                    r.sFavorite(true);
+
                 restaurants.add(r);
                 if(selectedId == R.id.nav_restaurant)
                     restaurantFragment.onChildAdded(r);
@@ -220,6 +240,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert r != null;
                 r.setFbKey(key);
+
+                if(profile.favouriteRestaurantsSet().contains(key))
+                    r.sFavorite(true);
+
                 int pos = restaurants.indexOf(r);
                 restaurants.remove(r);
                 restaurants.add(pos, r);
@@ -234,6 +258,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert r != null;
                 r.setFbKey(key);
+
+                if(profile.favouriteRestaurantsSet().contains(key))
+                    r.sFavorite(true);
+
                 restaurants.remove(r);
                 if(selectedId == R.id.nav_restaurant)
                     restaurantFragment.onChildRemoved(r);

@@ -116,5 +116,6 @@
     <string name="google_key_API" translatable="false">AIzaSyD0uoGBEYALjB8GR-1Mpcks5UXylwrITtU</string>
     <string name="statistics">Statistics</string>
     <string name="rate_send">Send</string>
+    <string name="edit_profile">Edit your profile</string>
 
 </resources>

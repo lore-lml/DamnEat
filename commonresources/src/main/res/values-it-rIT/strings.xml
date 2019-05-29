@@ -100,6 +100,7 @@
     <string name="not_registered">Devi compilare il profilo prima di poter effettuare un ordine.</string>
     <string name="rate_send">Invia</string>
     <string name="statistics">Statistiche</string>
+    <string name="edit_profile">Modifica il profilo</string>
 
 
 </resources>

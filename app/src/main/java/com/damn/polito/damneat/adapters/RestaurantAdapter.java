@@ -14,19 +14,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneat.ChooseDishes;
 import com.damn.polito.damneat.R;
+import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.beans.Restaurant;
 import com.damn.polito.damneat.fragments.RestaurantFragment;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import static com.damn.polito.damneat.adapters.RestaurantAdapter.RestaurantViewHolder.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -90,6 +97,29 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
 
             PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString("rest_opening", current.getOpening()).apply();
             ((Activity)ctx).startActivityForResult(intent, RestaurantFragment.REQUEST_CODE + pos);
+        });
+
+
+        holder.favorite.setImageResource(current.favorite() ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+
+        holder.favorite.setOnClickListener(v->{
+            Set<String> favoriteRestaurants = Welcome.getProfile().favouriteRestaurantsSet();
+            assert favoriteRestaurants != null;
+            if(current.favorite()){
+                favoriteRestaurants.remove(current.getFbKey());
+
+                ((ImageView)v).setImageResource(R.drawable.ic_not_favorite);
+                current.sFavorite(false);
+            }else{
+                favoriteRestaurants.add(current.getFbKey());
+                ((ImageView)v).setImageResource(R.drawable.ic_favorite);
+                current.sFavorite(true);
+            }
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("clienti/" + Welcome.getDbKey());
+            Map<String, Object> map = new HashMap<>();
+            map.put("favoriteRestaurants", Welcome.getProfile().getFavoriteRestaurants());
+            ref.updateChildren(map);
         });
     }
 
@@ -164,6 +194,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
         public static final int MAX_PROGRESS = 500;
 
         private CircleImageView restaurantImage;
+        private ImageView favorite;
         private TextView name, categories, priceShip, reviews;
         private RatingBar ratingBar;
         private CardView root;
@@ -179,6 +210,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             ratingBar = itemView.findViewById(R.id.restaurant_ratingbar);
             root = itemView.findViewById(R.id.restaurant_root);
             itemView.findViewById(R.id.divider).setVisibility(View.INVISIBLE);
+            favorite = itemView.findViewById(R.id.restaurant_favourite);
         }
     }
 }

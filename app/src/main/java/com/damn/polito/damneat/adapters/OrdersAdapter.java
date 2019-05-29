@@ -247,6 +247,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         public void handleOnDismiss(DialogType type, String text) {
             if (type == DialogType.RateDialog) {
                 updateServiceRate(text);
+                notifyDataSetChanged();
             }
         }
 

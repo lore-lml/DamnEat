@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Restaurant {
+public class Restaurant implements Comparable<Restaurant>{
 
     public enum PriceRange{Cheap, Medium, Expensive}
 
@@ -21,7 +21,7 @@ public class Restaurant {
     private String image;
     private int reviews;
     private int totalRate;
-
+    private boolean favorite = false;
     private String fbKey;
 
     private long latitude;
@@ -121,6 +121,14 @@ public class Restaurant {
         return longitude;
     }
 
+    public boolean favorite() {
+        return favorite;
+    }
+
+    public void sFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
     public int rate(){
         double rate = 100*(double)totalRate/reviews;
         return (int)rate;
@@ -160,4 +168,17 @@ public class Restaurant {
 
     @Override
     public int hashCode() { return fbKey.hashCode(); }
+
+    @Override
+    public int compareTo(Restaurant other) {
+        if(this == other || this.equals(other))
+            return 0;
+
+        if(favorite && !other.favorite)
+            return -1;
+        else if(!favorite && other.favorite)
+            return 1;
+
+        return other.rate() - rate();
+    }
 }
