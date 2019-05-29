@@ -59,22 +59,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/order_price"
             android:textAlignment="center"
             android:textAppearance="@style/PrimaryText"
             android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.51"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_customer_info" />
+            app:layout_constraintTop_toBottomOf="@+id/order_customer_info"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/order_Customer_name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="24dp"
 
             android:text="@string/order_customer"
             android:textAlignment="center"
@@ -108,15 +110,16 @@
             android:id="@+id/order_customer_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
             android:gravity="end"
             android:text="@string/string"
             android:textAppearance="@style/PrimaryText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_Customer_name_textview"
-            app:layout_constraintVertical_bias="0.12" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/phone_big_text"

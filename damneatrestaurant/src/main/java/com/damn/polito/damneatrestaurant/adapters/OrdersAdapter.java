@@ -171,14 +171,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.state.setText(ctx.getString(R.string.ordered));
         if(selected.getState().equals("delivered"))
             holder.state.setText(ctx.getString(R.string.delivered));
-        if(selected.getState().equals("rejected")){
-            holder.state.setText(ctx.getString(R.string.rejected));
-            holder.state.setTextColor(ctx.getColor(R.color.colorRed));
-        }
         if(selected.getState().equals("confirmed")){
             holder.state.setText(ctx.getString(R.string.confirmed));
             holder.state.setTextColor(ctx.getColor(R.color.colorGreen));
-        }else {
+        }else if(selected.getState().equals("rejected")){
+            holder.state.setText(ctx.getString(R.string.rejected));
+            holder.state.setTextColor(ctx.getColor(R.color.colorRed));
+        } else {
             holder.state.setTextColor(Color.BLACK);
         }
 
