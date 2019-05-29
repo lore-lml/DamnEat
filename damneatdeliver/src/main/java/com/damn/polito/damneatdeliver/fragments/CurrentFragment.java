@@ -28,8 +28,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -105,10 +107,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     //45.057780, 7.682858
     private Order currentOrder;
 
-    //MAPVIEW2 YOU ARE HERE
-    private FragmentManager fm2;
-    private GoogleMap gmap2;
-    private SupportMapFragment map2;
 
     private boolean registered = false, switch_enabled;
     protected static boolean isVisible = false;
@@ -144,7 +142,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         date = view.findViewById(R.id.order_date_value);
         //map=view.findViewById(R.id.mapView);
         map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
-        map2 = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView2);
         currentOrder = Welcome.getCurrentOrder();
         /*map.getMapAsync(this);
         currentOrder = Welcome.getCurrentOrder();
@@ -254,7 +251,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 ShowGPSDialog();
 
         });
-
+        map.getMapAsync(this);
         update();
         removeAllVisibility();
         setVisibility(currentOrder.getState());
@@ -503,9 +500,13 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 new FetchURL(CurrentFragment.this).execute(url,"driving");
             }
             map.getMapAsync(this);
-        }else{
-            map2.getMapAsync(this);
         }
+        if(currentOrder.getState().toLowerCase().equals("empty")||currentOrder==null||currentOrder.getState().equals("rejected")||currentOrder.getState().equals("confirmed")){
+
+            map.getMapAsync(this);
+        }
+
+
 
         notRegistered();
     }
@@ -551,7 +552,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             card_avaible.setVisibility(View.VISIBLE);
             if (switch_available.isChecked()) waiting_confirm.setVisibility(View.VISIBLE);
             else waiting_confirm.setVisibility(View.GONE);
-            card_order.setVisibility(GONE);
+            //card_order.setVisibility(GONE);
             card_small.setVisibility(GONE);
         } else {
             card_order.setVisibility(View.VISIBLE);
@@ -670,30 +671,33 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .show(map)
                     .commit();
-            fm2 = getFragmentManager();
-            fm2.beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .hide(map2)
-                    .commit();
+            //resizeFragment(map, LayoutParams.MATCH_PARENT, 260);
 //            btnGetDirection.setVisibility(View.VISIBLE);
         }
         else{
             fm = getFragmentManager();
             fm.beginTransaction()
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .hide(map)
+                    .show(map)
                     .commit();
-            fm2 = getFragmentManager();
-            fm2.beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .show(map2)
-                    .commit();
+            //resizeFragment(map, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 //            btnGetDirection.setVisibility(View.GONE);
         }
 
         //}
 
 
+    }
+
+    private void resizeFragment(Fragment f, int newWidth, int newHeight) {
+        if (f != null) {
+            View view = f.getView();
+            RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(newWidth, newHeight);
+            view.setLayoutParams(p);
+            view.requestLayout();
+
+
+        }
     }
 
     private void removeAllVisibility(){
@@ -787,19 +791,26 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     public void onMapReady(GoogleMap googleMap) {
 
 
-        if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
-            if(gmap2!=null)
-                gmap2.clear();
-            gmap2 = googleMap;
-            LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-            gmap2.addMarker(markerOptions);
+        if(currentOrder.getState().toLowerCase().equals("empty")||
+                currentOrder.getState().equals("rejected")||
+                currentOrder.getState().equals("confirmed")){
+            if(gmap!=null)
+                gmap.clear();
+            gmap = googleMap;
+            if(Welcome.getProfile().getLatitude()!=null){
+                LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Current Position");
+                Drawable person = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_48dp, null);
+                BitmapDescriptor markerIcon = getMarkerIconFromDrawable(person);
+                markerOptions.icon(markerIcon);
+                gmap.addMarker(markerOptions);
 
-            //move map camera
-            gmap2.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,12));
+                //move map camera
+                gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+            }
+
 
 
         }else{
