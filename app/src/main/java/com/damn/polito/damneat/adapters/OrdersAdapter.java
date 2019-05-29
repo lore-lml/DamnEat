@@ -182,7 +182,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         Double price = 0.;
         for (Dish d:dishes) {
             String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
+            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+" "+ p + "€\n";
             price += d.getQuantity()*d.getPrice();
         }
         if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
@@ -199,7 +199,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.dishListLayout.setVisibility(View.GONE);
             holder.id.setVisibility(View.GONE);
         }else{
-            holder.id.setVisibility(View.VISIBLE);
+            holder.id.setVisibility(View.GONE);
             holder.dishListLayout.setVisibility(View.VISIBLE);
         }
     }

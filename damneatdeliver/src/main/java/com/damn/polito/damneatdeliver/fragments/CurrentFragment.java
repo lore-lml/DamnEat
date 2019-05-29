@@ -453,6 +453,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
             setVisibility("empty");
+            database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(true);
         }
 
         if(currentOrder.getState().equals("rejected")){
