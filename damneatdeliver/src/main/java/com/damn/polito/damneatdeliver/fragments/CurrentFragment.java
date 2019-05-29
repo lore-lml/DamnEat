@@ -800,7 +800,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title(getString(R.string.current_position));
-                Drawable person = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_48dp, null);
+                Drawable person = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp, null);
                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(person);
                 markerOptions.icon(markerIcon);
                 gmap.addMarker(markerOptions);
