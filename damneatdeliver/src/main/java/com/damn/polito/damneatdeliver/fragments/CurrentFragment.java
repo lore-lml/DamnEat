@@ -302,10 +302,46 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }
         setVisibility(currentOrder.getState());
 
+        //RETRIVE MAP ROUTES
+        if(currentOrder.getState().toLowerCase().equals("accepted")||
+                currentOrder.getState().toLowerCase().equals("assigned")){
+
+            addresses = getAddressesToRestaurant();
+            if(addresses.size() == 2){
+                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                        .title(currentOrder.getDelivererName());
+                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                        .title(currentOrder.getRestaurant().getRestaurantName());
+                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                new FetchURL(CurrentFragment.this).execute(url,"driving");
+            }
+            map.getMapAsync(this);
+
+        }else if(currentOrder.getState().toLowerCase().equals("shipped")||
+                currentOrder.getState().toLowerCase().equals("delivered")){
+
+            addresses = getAddressesToCustomer();
+            if(addresses.size() == 2){
+                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                        .title(currentOrder.getDelivererName());
+                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                        .title(currentOrder.getCustomer().getCustomerName());
+                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                new FetchURL(CurrentFragment.this).execute(url,"driving");
+            }
+            map.getMapAsync(this);
+        }
+        if(currentOrder.getState().toLowerCase().equals("empty")||currentOrder==null||currentOrder.getState().equals("rejected")||currentOrder.getState().equals("confirmed")){
+
+            map.getMapAsync(this);
+        }
+
         if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
             waiting_confirm.setText(ctx.getString(R.string.waiting_order));
             notRegistered();
-            return;
+            return; //BE CAREFUL TO THIS!!!!!!!!
         }else {
             date.setText(Utility.dateString(currentOrder.getDate()));
 //            id.setText(currentOrder.getId());
@@ -473,41 +509,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 //            freeDeliverersRef.setValue(Welcome.getDbKey());
 //        }
 
-        //RETRIVE MAP ROUTES
-        if(currentOrder.getState().toLowerCase().equals("accepted")||
-           currentOrder.getState().toLowerCase().equals("assigned")){
 
-            addresses = getAddressesToRestaurant();
-            if(addresses.size() == 2){
-                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
-                        .title(currentOrder.getDelivererName());
-                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
-                        .title(currentOrder.getRestaurant().getRestaurantName());
-                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
-
-                new FetchURL(CurrentFragment.this).execute(url,"driving");
-            }
-            map.getMapAsync(this);
-
-        }else if(currentOrder.getState().toLowerCase().equals("shipped")||
-                currentOrder.getState().toLowerCase().equals("delivered")){
-
-            addresses = getAddressesToCustomer();
-            if(addresses.size() == 2){
-                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
-                        .title(currentOrder.getDelivererName());
-                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
-                        .title(currentOrder.getCustomer().getCustomerName());
-                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
-
-                new FetchURL(CurrentFragment.this).execute(url,"driving");
-            }
-            map.getMapAsync(this);
-        }
-        if(currentOrder.getState().toLowerCase().equals("empty")||currentOrder==null||currentOrder.getState().equals("rejected")||currentOrder.getState().equals("confirmed")){
-
-            map.getMapAsync(this);
-        }
 
 
 
@@ -792,7 +794,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         if(currentOrder.getState().toLowerCase().equals("empty")||
                 currentOrder.getState().equals("rejected")||
-                currentOrder.getState().equals("confirmed")){
+                currentOrder.getState().equals("confirmed")||
+                currentOrder==null){
             if(gmap!=null)
                 gmap.clear();
             gmap = googleMap;
@@ -800,8 +803,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
-                markerOptions.title("Current Position");
-                Drawable person = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_48dp, null);
+                markerOptions.title(getString(R.string.current_position));
+                Drawable person = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp, null);
                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(person);
                 markerOptions.icon(markerIcon);
                 gmap.addMarker(markerOptions);

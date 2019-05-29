@@ -73,4 +73,5 @@
     <string name="no_position">No GPS position available</string>
     <string name="distance_traveled">Distance traveled: %.1f Km</string>
     <string name="travels_list">All yours travels</string>
+    <string name="current_position">Current_position</string>
 </resources>
