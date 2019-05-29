@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -671,8 +672,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .show(map)
                     .commit();
-            //resizeFragment(map, LayoutParams.MATCH_PARENT, 260);
-//            btnGetDirection.setVisibility(View.VISIBLE);
         }
         else{
             fm = getFragmentManager();
@@ -680,8 +679,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .show(map)
                     .commit();
-            //resizeFragment(map, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-//            btnGetDirection.setVisibility(View.GONE);
         }
 
         //}
