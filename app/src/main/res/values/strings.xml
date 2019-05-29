@@ -14,7 +14,7 @@
     <string name="confirmOrder">Confirm delivered</string>
     <string name="confirm_order">Confirm order</string>
     <string name="delivery_time">Delivery time: %s</string>
-    <string name="state">State:</string>
+    <string name="state">State</string>
     <string name="dialog_time">Delivery time</string>
     <string name="sort_alpha">Sort alphabetically</string>
     <string name="sort_pricerangeasc">Sort by price range ascendent</string>
