@@ -1,8 +1,10 @@
 package com.damn.polito.damneatdeliver.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,12 +14,14 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -101,6 +105,11 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     //45.057780, 7.682858
     private Order currentOrder;
 
+    //MAPVIEW2 YOU ARE HERE
+    private FragmentManager fm2;
+    private GoogleMap gmap2;
+    private SupportMapFragment map2;
+
     private boolean registered = false, switch_enabled;
     protected static boolean isVisible = false;
 
@@ -135,6 +144,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         date = view.findViewById(R.id.order_date_value);
         //map=view.findViewById(R.id.mapView);
         map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
+        map2 = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView2);
         currentOrder = Welcome.getCurrentOrder();
         /*map.getMapAsync(this);
         currentOrder = Welcome.getCurrentOrder();
@@ -491,6 +501,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 new FetchURL(CurrentFragment.this).execute(url,"driving");
             }
             map.getMapAsync(this);
+        }else{
+            map2.getMapAsync(this);
         }
 
         notRegistered();
@@ -647,12 +659,17 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             phone_big_text.setVisibility(View.VISIBLE);
             photo.setVisibility(View.VISIBLE);
         }
-        //SHOW OR HIDE MAP
+        //SHOW OR HIDE MAPS
         if(state.equals("accepted")|| state.equals("assigned")||state.equals("shipped")|| state.equals("delivered")){
             fm = getFragmentManager();
             fm.beginTransaction()
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .show(map)
+                    .commit();
+            fm2 = getFragmentManager();
+            fm2.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .hide(map2)
                     .commit();
 //            btnGetDirection.setVisibility(View.VISIBLE);
         }
@@ -661,6 +678,11 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             fm.beginTransaction()
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .hide(map)
+                    .commit();
+            fm2 = getFragmentManager();
+            fm2.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .show(map2)
                     .commit();
 //            btnGetDirection.setVisibility(View.GONE);
         }
@@ -759,28 +781,53 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLngBounds BOUNDS;
-        if(gmap!=null)
-            gmap.clear();
-        gmap = googleMap;
-        Drawable bike = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp, null);
-        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(bike);
 
-        place1.icon(markerIcon);
 
-        gmap.addMarker(place1);
-        gmap.addMarker(place2);
-        gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(midPoint(place1,place2), 13));
-        //if(place1.getPosition().latitude<=place2.getPosition().latitude) {
-        //    BOUNDS = new LatLngBounds(place1.getPosition(), place2.getPosition());
-        //}
-        //else{
-        //   BOUNDS = new LatLngBounds(place2.getPosition(), place1.getPosition());
-        //}
-        // Set the camera to the greatest possible zoom level that includes the
-        // bounds
-        //gmap.moveCamera(CameraUpdateFactory.newLatLngBounds(BOUNDS, 15));
+        if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
+            if(gmap2!=null)
+                gmap2.clear();
+            gmap2 = googleMap;
+            LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            gmap2.addMarker(markerOptions);
 
+            //move map camera
+            gmap2.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,12));
+
+
+        }else{
+            LatLngBounds BOUNDS;
+            if(gmap!=null)
+                gmap.clear();
+            gmap = googleMap;
+            Drawable bike = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp, null);
+            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(bike);
+
+            place1.icon(markerIcon);
+
+            gmap.addMarker(place1);
+            gmap.addMarker(place2);
+            gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(midPoint(place1,place2), 13));
+            //if(place1.getPosition().latitude<=place2.getPosition().latitude) {
+            //    BOUNDS = new LatLngBounds(place1.getPosition(), place2.getPosition());
+            //}
+            //else{
+            //   BOUNDS = new LatLngBounds(place2.getPosition(), place1.getPosition());
+            //}
+            // Set the camera to the greatest possible zoom level that includes the
+            // bounds
+            //gmap.moveCamera(CameraUpdateFactory.newLatLngBounds(BOUNDS, 15));
+        }
+
+    }
+
+    private void checkLocationPermission() {
+    }
+
+    private void buildGoogleApiClient() {
     }
 
     public LatLng midPoint(MarkerOptions m1,MarkerOptions m2){
