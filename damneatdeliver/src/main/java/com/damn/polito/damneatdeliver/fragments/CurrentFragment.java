@@ -220,7 +220,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
                 orderRef.setValue("0");
                 setVisibility("empty");
-                switch_available.setChecked(false);
+//                switch_available.setChecked(false);
             }
         });
 
@@ -280,11 +280,11 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         registered = Welcome.registered();
 
         currentOrder = Welcome.getCurrentOrder();
-//        if (Welcome.isSwitchEnabled()) {
-//            switch_available.setChecked(Welcome.getCurrentAvaibility());
-//        } else {
-//            switch_available.setChecked(Welcome.isSwitchEnabled());
-//        }
+        if (Welcome.isSwitchEnabled()) {
+            switch_available.setChecked(Welcome.getCurrentAvaibility());
+        } else {
+            switch_available.setChecked(Welcome.isSwitchEnabled());
+        }
         switch_available.setEnabled(Welcome.isSwitchEnabled());
 
         if(currentOrder==null){
@@ -541,9 +541,11 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             else waiting_confirm.setVisibility(View.GONE);
             card_order.setVisibility(GONE);
             card_small.setVisibility(GONE);
+        } else {
+            card_order.setVisibility(View.VISIBLE);
+            card_small.setVisibility(View.VISIBLE);
         }
         if(state.equals("ordered")){
-
         }
         if(state.equals("shipped")) {
             date.setVisibility(View.VISIBLE);
