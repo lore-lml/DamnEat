@@ -301,10 +301,46 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }
         setVisibility(currentOrder.getState());
 
+        //RETRIVE MAP ROUTES
+        if(currentOrder.getState().toLowerCase().equals("accepted")||
+                currentOrder.getState().toLowerCase().equals("assigned")){
+
+            addresses = getAddressesToRestaurant();
+            if(addresses.size() == 2){
+                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                        .title(currentOrder.getDelivererName());
+                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                        .title(currentOrder.getRestaurant().getRestaurantName());
+                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                new FetchURL(CurrentFragment.this).execute(url,"driving");
+            }
+            map.getMapAsync(this);
+
+        }else if(currentOrder.getState().toLowerCase().equals("shipped")||
+                currentOrder.getState().toLowerCase().equals("delivered")){
+
+            addresses = getAddressesToCustomer();
+            if(addresses.size() == 2){
+                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                        .title(currentOrder.getDelivererName());
+                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                        .title(currentOrder.getCustomer().getCustomerName());
+                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                new FetchURL(CurrentFragment.this).execute(url,"driving");
+            }
+            map.getMapAsync(this);
+        }
+        if(currentOrder.getState().toLowerCase().equals("empty")||currentOrder==null||currentOrder.getState().equals("rejected")||currentOrder.getState().equals("confirmed")){
+
+            map.getMapAsync(this);
+        }
+
         if(currentOrder.getState().toLowerCase().equals("empty") || currentOrder.getState().toLowerCase().equals("ordered")){
             waiting_confirm.setText(ctx.getString(R.string.waiting_order));
             notRegistered();
-            return;
+            return; //BE CAREFUL TO THIS!!!!!!!!
         }else {
             date.setText(Utility.dateString(currentOrder.getDate()));
 //            id.setText(currentOrder.getId());
@@ -472,41 +508,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 //            freeDeliverersRef.setValue(Welcome.getDbKey());
 //        }
 
-        //RETRIVE MAP ROUTES
-        if(currentOrder.getState().toLowerCase().equals("accepted")||
-           currentOrder.getState().toLowerCase().equals("assigned")){
 
-            addresses = getAddressesToRestaurant();
-            if(addresses.size() == 2){
-                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
-                        .title(currentOrder.getDelivererName());
-                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
-                        .title(currentOrder.getRestaurant().getRestaurantName());
-                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
-
-                new FetchURL(CurrentFragment.this).execute(url,"driving");
-            }
-            map.getMapAsync(this);
-
-        }else if(currentOrder.getState().toLowerCase().equals("shipped")||
-                currentOrder.getState().toLowerCase().equals("delivered")){
-
-            addresses = getAddressesToCustomer();
-            if(addresses.size() == 2){
-                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
-                        .title(currentOrder.getDelivererName());
-                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
-                        .title(currentOrder.getCustomer().getCustomerName());
-                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
-
-                new FetchURL(CurrentFragment.this).execute(url,"driving");
-            }
-            map.getMapAsync(this);
-        }
-        if(currentOrder.getState().toLowerCase().equals("empty")||currentOrder==null||currentOrder.getState().equals("rejected")||currentOrder.getState().equals("confirmed")){
-
-            map.getMapAsync(this);
-        }
 
 
 
