@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 
 import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.damneat.R;
@@ -60,21 +61,7 @@ public class ReviewsActivity extends AppCompatActivity {
                 RateObject review = dataSnapshot.getValue(RateObject.class);
                 reviews.add(review);
 
-                Collections.sort(reviews, (a, b) -> {
-                    //Se sono di tipo Service allora ordinali in base al rate
-                    if(a.getType() == RateObject.RateType.Service && a.getType() == b.getType())
-                        return b.getRate() - a.getRate();
-                    //Se solo uno è di tipo service metti sempre dopo, il tipo service
-                    if(a.getType() == RateObject.RateType.Service)
-                        return 1;
-                    if(b.getType() == RateObject.RateType.Service)
-                        return -1;
-
-                    //Altrimenti ordina in base al nome del ristorante
-                    if(a.getRestaurant().getRestaurantName().equals(b.getRestaurant().getRestaurantName()))
-                        return b.getRate() - a.getRate();
-                    return a.getRestaurant().getRestaurantName().compareTo(b.getRestaurant().getRestaurantName());
-                });
+                Collections.sort(reviews);
 
                 adapter.notifyDataSetChanged();
             }
@@ -97,5 +84,14 @@ public class ReviewsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ref.removeEventListener(listener);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

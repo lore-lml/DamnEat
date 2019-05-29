@@ -42,12 +42,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.OrderVie
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         RateObject selected = reviews.get(position);
 
-        if(selected.getRestaurant().getPhoto().equals("NO_PHOTO"))
+        if(selected.getRestaurant() == null || selected.getRestaurant().getPhoto().equals("NO_PHOTO"))
             holder.image.setImageBitmap(default_image);
         else
             holder.image.setImageBitmap(Utility.StringToBitMap(selected.getRestaurant().getPhoto()));
 
-        holder.name.setText(selected.getRestaurant().getRestaurantName());
         holder.date.setText(selected.getDate());
         holder.note.setText(selected.getNote());
         holder.ratingBar.setRating(selected.getRate());
