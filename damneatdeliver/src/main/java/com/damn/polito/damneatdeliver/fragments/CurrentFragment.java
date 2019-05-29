@@ -327,8 +327,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
                 note_small.setText(ctx.getText(R.string.note));
                 note_small_text.setText(currentOrder.getNote());
+
                 String delivery_t = currentOrder.getDeliveryTime();
-                deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
+                if (delivery_t.equals("ASAP")) deliveryTime.setText(R.string.time_asap);
+                else deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
 
         }else {
             date.setText(Utility.dateString(currentOrder.getDate()));

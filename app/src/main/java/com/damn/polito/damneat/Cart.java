@@ -107,7 +107,7 @@ public class Cart extends AppCompatActivity implements HandleDismissDialog {
         i.putExtra("note", note_et.getText().toString());
         String time = time_et.getText().toString().trim();
         i.putExtra("time", time.isEmpty() ?
-                getString(R.string.time_asap) : time);
+                "ASAP" : time);
         setResult(RESULT_OK, i);
     }
 
