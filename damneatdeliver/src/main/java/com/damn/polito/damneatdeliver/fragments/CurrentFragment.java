@@ -790,7 +790,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         if(currentOrder.getState().toLowerCase().equals("empty")||
                 currentOrder.getState().equals("rejected")||
-                currentOrder.getState().equals("confirmed")){
+                currentOrder.getState().equals("confirmed")||
+                currentOrder==null){
             if(gmap!=null)
                 gmap.clear();
             gmap = googleMap;
@@ -798,7 +799,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
-                markerOptions.title("Current Position");
+                markerOptions.title(getString(R.string.current_position));
                 Drawable person = getResources().getDrawable(R.drawable.ic_person_pin_circle_black_48dp, null);
                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(person);
                 markerOptions.icon(markerIcon);
