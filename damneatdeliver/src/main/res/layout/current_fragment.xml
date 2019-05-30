@@ -232,7 +232,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="24dp"
+                        android:layout_marginBottom="16dp"
                         app:cardCornerRadius="20dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -489,31 +489,37 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="16dp"
+                        android:layout_marginTop="8dp"
                         android:text="@string/distance_format"
                         android:textColor="@color/colorPrimaryText"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toTopOf="@+id/accept_question"
-                        app:layout_constraintEnd_toEndOf="@+id/mapView"
+                        app:layout_constraintEnd_toEndOf="@+id/card_map"
                         app:layout_constraintHorizontal_bias="0.58"
-                        app:layout_constraintStart_toStartOf="@+id/mapView"
-                        app:layout_constraintTop_toBottomOf="@+id/mapView" />
+                        app:layout_constraintStart_toStartOf="@+id/card_map"
+                        app:layout_constraintTop_toBottomOf="@+id/card_map" />
 
-                    <fragment
-                        android:id="@+id/mapView"
-                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/card_map"
                         android:layout_width="0dp"
                         android:layout_height="260dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
+                        app:cardCornerRadius="20dp"
                         app:layout_constraintBottom_toTopOf="@id/distance"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/phone_big_text"
-                        app:layout_constraintVertical_bias="0.0" />
+                        app:layout_constraintTop_toBottomOf="@+id/phone_big_text">
+
+                        <fragment
+                            android:id="@+id/mapView"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </android.support.v7.widget.CardView>
 
                     <ImageView
                         android:id="@+id/bikerIcon"
