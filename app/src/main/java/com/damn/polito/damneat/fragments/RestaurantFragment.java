@@ -67,7 +67,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     private List<Restaurant> restaurants;
     private List<Restaurant> filteredRestaurants;
 
-    private SortType sortType;
+    private SortType sortType = SortType.MostRated;
     private String categories;
 
     @Nullable
@@ -145,6 +145,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
         restaurants = parent.getRestaurants();
         filteredRestaurants = new ArrayList<>(parent.getRestaurants());
         adapter = new RestaurantAdapter(getActivity(), filteredRestaurants, restaurants);
+        orderMostRated();
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
@@ -236,8 +237,7 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     }
 
     private void orderMostRated() {
-        Collections.sort(filteredRestaurants,
-                (a,b)->b.rate() - a.rate());
+        Collections.sort(filteredRestaurants);
 
         adapter.notifyDataSetChanged();
         sortType = SortType.MostRated;
@@ -246,6 +246,14 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     private void orderPriceDesc() {
         Collections.sort(filteredRestaurants,
                 (a,b)->{
+                    if(a == b || a.equals(b))
+                        return 0;
+
+                    if(a.favorite() && !b.favorite())
+                        return -1;
+                    else if(!a.favorite() && b.favorite())
+                        return 1;
+
                     Restaurant.PriceRange a1 = a.priceRange();
                     Restaurant.PriceRange b1 = b.priceRange();
                     int rate1 = a.rate();
@@ -261,6 +269,14 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
     private void orderPriceAsc() {
         Collections.sort(filteredRestaurants,
                 (a,b)->{
+            if(a == b || a.equals(b))
+                return 0;
+
+            if(a.favorite() && !b.favorite())
+                return -1;
+            else if(!a.favorite() && b.favorite())
+                return 1;
+
             Restaurant.PriceRange a1 = a.priceRange();
             Restaurant.PriceRange b1 = b.priceRange();
             int rate1 = a.rate();
@@ -275,7 +291,17 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
 
     private void orderAlpha() {
         Collections.sort(filteredRestaurants,
-                (a,b)->a.getName().compareTo(b.getName()));
+                (a,b)->{
+                    if(a == b || a.equals(b))
+                        return 0;
+
+                    if(a.favorite() && !b.favorite())
+                        return -1;
+                    else if(!a.favorite() && b.favorite())
+                        return 1;
+
+                    return a.getName().compareTo(b.getName());
+                });
 
         adapter.notifyDataSetChanged();
         sortType = SortType.Alpha;
@@ -283,7 +309,8 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
 
     public void onChildAdded(Restaurant r){
         filteredRestaurants.add(r);
-        adapter.notifyItemInserted(filteredRestaurants.size()-1);
+        Collections.sort(filteredRestaurants);
+        adapter.notifyDataSetChanged();
     }
 
     public void onChildChanged(Restaurant r){
@@ -292,7 +319,8 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
 
         filteredRestaurants.remove(r);
         filteredRestaurants.add(pos, r);
-        adapter.notifyItemChanged(pos);
+        Collections.sort(filteredRestaurants);
+        adapter.notifyDataSetChanged();
     }
 
     public void onChildRemoved(Restaurant r) {

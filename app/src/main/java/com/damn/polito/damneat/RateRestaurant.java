@@ -1,5 +1,7 @@
 package com.damn.polito.damneat;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -14,8 +16,12 @@ import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.commonresources.beans.Restaurant;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,7 +103,37 @@ public class RateRestaurant extends AppCompatActivity {
         Map<String, Object> children = new HashMap<>();
         children.put("rated", true);
         orderRef.updateChildren(children);
-        finish();
+
+        DatabaseReference updateRate = db.getReference("ristoratori/" + order.getRestaurant().getRestaurantID());
+        updateRate.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                if(mutableData.getValue() == null) return Transaction.abort();
+                MutableData reviewChild = mutableData.child("reviews");
+                MutableData rateChild = mutableData.child("totalRate");
+                Integer reviews = reviewChild.getValue(Integer.class);
+                Integer totalRate = rateChild.getValue(Integer.class);
+
+                if(reviews == null || reviews <= 0)
+                    reviews = 0;
+
+                if(totalRate == null || totalRate <= 0)
+                    totalRate = 0;
+
+                reviews += 2;
+                totalRate += restaurantProgress + foodProgress;
+                reviewChild.setValue(reviews);
+                rateChild.setValue(totalRate);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                RateRestaurant.this.finish();
+            }
+        });
     }
 
     private void changeValueAction(RatingBar ratingBar, TextView scale_tv) {

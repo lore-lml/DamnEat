@@ -34,6 +34,7 @@ public class ReviewsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.review_title);
 
         setContentView(R.layout.activity_reviews);
         reviews.clear();

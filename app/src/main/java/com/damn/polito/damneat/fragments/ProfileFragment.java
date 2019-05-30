@@ -123,7 +123,6 @@ public class ProfileFragment extends Fragment {
         if(!hasChanged) return;
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        //boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
         String phone = data.getStringExtra("phone");
@@ -132,21 +131,12 @@ public class ProfileFragment extends Fragment {
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
-            //hasProfile = true;
             pref.edit().remove("profile").apply();
         }
-        //
+
         //CARICO I DATI SU FIREBASE
         prof = new Profile(name,mail,phone,description,address,bitmapProf);
         storeProfileOnFirebase(prof);
-
-        /*this.name.setText(name);
-        this.mail.setText(mail);
-        this.phone.setText(phone);
-        this.description.setText(description);
-        this.address.setText(address);
-        if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
-        Welcome.accountExist = true;*/
     }
 
     private void storeProfileOnFirebase(Profile profile){
@@ -198,14 +188,6 @@ public class ProfileFragment extends Fragment {
     @SuppressWarnings("unchecked")
     private void loadData() {
         if(!Welcome.accountExist) return;
-        /*SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        prof.setAddress(pref.getString("address", ""));
-        prof.setName(pref.getString("name", ""));
-        prof.setMail(pref.getString("mail", ""));
-        prof.setPhone(pref.getString("phone", ""));
-        prof.setDescription(pref.getString("description", ""));
-        prof.setBitmapProf(pref.getString("profile", ""));*/
         prof = Welcome.getProfile();
     }
 

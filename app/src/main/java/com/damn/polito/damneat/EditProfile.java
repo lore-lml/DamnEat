@@ -48,6 +48,7 @@ public class EditProfile extends AppCompatActivity{
         setContentView(R.layout.activity_edit_profile);
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.edit_profile);
 
         profile = findViewById(R.id.profile_image);
         camera = findViewById(R.id.btn_camera);

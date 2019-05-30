@@ -47,6 +47,7 @@ public class StatisticsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.statistics);
 
         setContentView(R.layout.activity_statistics);
         card_v[0] = findViewById(R.id.dish_root);

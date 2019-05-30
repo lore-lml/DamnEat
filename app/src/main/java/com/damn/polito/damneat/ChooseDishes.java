@@ -73,6 +73,7 @@ public class ChooseDishes extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.nav_dishes);
 
         setContentView(R.layout.activity_choose_dishes);
         no_dishes_img = findViewById(R.id.no_dishes_img);

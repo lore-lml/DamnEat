@@ -69,25 +69,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="90dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_mail"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
                         <android.support.constraint.ConstraintLayout
+                            android:id="@+id/card_edit_name"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="90dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/card_edit_mail"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
                             <ImageView
                                 android:id="@+id/icon_name"
@@ -116,27 +109,19 @@
                                 app:layout_constraintStart_toEndOf="@+id/icon_name"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_mail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_phone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_edit_name">
 
                         <android.support.constraint.ConstraintLayout
+                            android:id="@+id/card_edit_mail"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/card_edit_phone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/card_edit_name">
 
                             <ImageView
                                 android:id="@+id/icon_email"
@@ -165,27 +150,19 @@
                                 app:layout_constraintStart_toEndOf="@+id/icon_email"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_phone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_desc"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_edit_mail">
 
                         <android.support.constraint.ConstraintLayout
+                            android:id="@+id/card_edit_phone"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/card_edit_desc"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/card_edit_mail">
 
                             <ImageView
                                 android:id="@+id/icon_phone"
@@ -230,27 +207,19 @@
                                 app:layout_constraintStart_toEndOf="@+id/edit_prefix"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_desc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_address"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_edit_phone">
 
                         <android.support.constraint.ConstraintLayout
+                            android:id="@+id/card_edit_desc"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/card_edit_address"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/card_edit_phone">
 
                             <ImageView
                                 android:id="@+id/icon_desc"
@@ -279,26 +248,19 @@
                                 app:layout_constraintStart_toEndOf="@+id/icon_desc"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_opening"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_edit_desc">
 
                         <android.support.constraint.ConstraintLayout
+                            android:id="@+id/card_edit_address"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/card_edit_opening"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/card_edit_desc">
 
                             <ImageView
                                 android:id="@+id/imageView6"
@@ -327,26 +289,19 @@
                                 app:layout_constraintStart_toEndOf="@+id/imageView6"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_opening"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/card_edit_category"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_edit_address">
 
                         <android.support.constraint.ConstraintLayout
+                            android:id="@+id/card_edit_opening"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/card_edit_category"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/card_edit_address">
 
                             <ImageView
                                 android:id="@+id/icon_opening"
@@ -378,26 +333,18 @@
                                 app:layout_constraintStart_toEndOf="@+id/icon_opening"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
-
-                    <android.support.v7.widget.CardView
-                        android:id="@+id/card_edit_category"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:elevation="5dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="5dp"
-                        app:layout_constraintBottom_toTopOf="@+id/edit_save"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/card_edit_opening">
 
                         <android.support.constraint.ConstraintLayout
+                            android:id="@+id/card_edit_category"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/edit_save"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/card_edit_opening">
 
                             <ImageView
                                 android:id="@+id/icon_category"
@@ -425,7 +372,7 @@
                                 android:textColor="@color/colorEditText"
                                 android:textColorHint="@color/colorEditTextHint"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@+id/review_type"
+                                app:layout_constraintEnd_toStartOf="@+id/imageView"
                                 app:layout_constraintStart_toEndOf="@+id/icon_category"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -461,7 +408,6 @@
                                 app:layout_constraintStart_toEndOf="@+id/review_type"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>
-                    </android.support.v7.widget.CardView>
 
                     <Button
                         android:id="@+id/edit_save"

@@ -35,6 +35,7 @@ public class Cart extends AppCompatActivity implements HandleDismissDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.order_summary);
 
         setContentView(R.layout.activity_cart);
         Intent i = getIntent();
