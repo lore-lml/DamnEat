@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
@@ -654,6 +655,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Utility.firstON = true;
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
