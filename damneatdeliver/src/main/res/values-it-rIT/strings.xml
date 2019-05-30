@@ -71,4 +71,5 @@
     <string name="title_activity_maps">Mappa</string>
     <string name="travels_list">Le tue corse</string>
     <string name="current_position">Posizione attuale</string>
+    <string name="money_earned">Hai guadagnato %.2f €</string>
 </resources>
