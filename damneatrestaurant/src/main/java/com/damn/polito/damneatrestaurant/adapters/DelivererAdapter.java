@@ -143,10 +143,12 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                         for (Dish d_ord : order.getDishes()) {
                             if(d_ord.getId().equals(d.getId())){
                                 int new_quantity = d.getAvailability() - d_ord.getQuantity();
+                                int new_nOrders = d.getnOrders() + d_ord.getQuantity();
                                 if (new_quantity < 0)
                                     return Transaction.abort();
                                 else {
                                     d.setAvailability(new_quantity);
+                                    d.setnOrders(new_nOrders);
                                     child.setValue(d);
                                 }
                             }
