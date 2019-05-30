@@ -109,6 +109,7 @@ public class OrderFragment extends Fragment {
                 Order order = dataSnapshot.getValue(Order.class);
                 if(order!=null){
                     //todo: non so se serve
+                    //direi di si perche provando a togliero facasini con le spaziature dellarecyclerview
                     order.setId(key);
                     for(int i=0; i<orderList.size(); i++)
                         if(orderList.get(i) != null && orderList.get(i).Id().equals(order.Id())){

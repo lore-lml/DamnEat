@@ -325,7 +325,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 if(!b){
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("rejected");
-                    /** @TODO: tradurre **/
                     Toast.makeText(ctx, R.string.availabity_too_low, Toast.LENGTH_SHORT).show();
                 }else{
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");

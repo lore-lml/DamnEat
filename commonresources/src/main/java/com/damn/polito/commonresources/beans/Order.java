@@ -15,6 +15,7 @@ public class Order implements Serializable {
     private double price;
     private String delivererName = "NOT_ASSIGNED_YET";
     private String delivererPhoto = "NO_PHOTO";
+    private String delivererID = "NOT_ASSIGNED_YET";
     private String note;
     private String deliveryTime;
     private boolean rated = false;
@@ -231,6 +232,14 @@ public class Order implements Serializable {
         this.rated = rated;
     }
 
+    public String getDelivererID() {
+        return delivererID;
+    }
+
+    public void setDelivererID(String delivererID) {
+        this.delivererID = delivererID;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -243,4 +252,5 @@ public class Order implements Serializable {
     public int hashCode() {
         return id.hashCode();
     }
+
 }

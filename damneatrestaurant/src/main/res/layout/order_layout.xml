@@ -21,7 +21,6 @@
             android:id="@+id/order_customer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/order_customer"
@@ -29,7 +28,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/order_button_reject"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_num_dishes"
+            app:layout_constraintTop_toTopOf="@+id/circleImageView"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -38,15 +37,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="16dp"
             android:text="@string/order_price"
             android:textAlignment="textStart"
             android:textAppearance="@style/PrimaryText"
             android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_note"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/order_note" />
 
         <TextView
             android:id="@+id/order_id"
@@ -76,18 +72,18 @@
 
         <TextView
             android:id="@+id/order_num_dishes"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/order_num_dishes"
             android:textAppearance="@style/SecondaryText"
             android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_set_shipped"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.0"/>
+            app:layout_constraintTop_toBottomOf="@+id/order_set_shipped" />
 
         <TextView
             android:id="@+id/order_deliverer_name_textview"
@@ -119,13 +115,16 @@
 
         <TextView
             android:id="@+id/dishes_list"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
             android:text="--"
             android:textAppearance="@style/PrimaryText"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/order_num_dishes" />
 
@@ -187,7 +186,7 @@
             android:layout_height="48dp"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/buttons"
