@@ -1,35 +1,29 @@
 package com.damn.polito.damneatdeliver.fragments;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -47,7 +41,6 @@ import com.damn.polito.damneatdeliver.fragments.maphelpers.TaskLoadedCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
@@ -68,10 +61,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,13 +77,13 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     private Context ctx;
 
-    private TextView id,date, state_tv ,price,nDish, deliveryTime, name_big, address_big_text, phone_big_text, address_big, phone_big, waiting_confirm, accept_question;
+    private TextView id,date, state_tv ,price,nDish, deliveryTime, name_big, address_big_text, phone_big_text, address_big, phone_big, waiting_confirm, accept_question,distance;
     private TextView name_small, address_small, phone_small, note_small;
     private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
     private ConstraintLayout id_shipped;
 
     private CardView root, card_order, card_avaible, card_small;
-    private ImageView photo;
+    private ImageView photo,bikerIcon;
     private Button confirmButton, acceptButton, rejectButton, btnGetDirection;
     private Switch switch_available;
     private Bitmap bitmap, default_image;
@@ -144,6 +135,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         //map=view.findViewById(R.id.mapView);
         map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
         currentOrder = Welcome.getCurrentOrder();
+        distance = view.findViewById(R.id.distance);
+        bikerIcon=view.findViewById(R.id.bikerIcon);
         /*map.getMapAsync(this);
         currentOrder = Welcome.getCurrentOrder();
         List<Address> addresses = getAddresses();
@@ -197,7 +190,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("delivered");
                 DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
-                Map map = new HashMap();
+                Map<String, Object> map = new HashMap<>();
                 map.put(String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),currentDistance);
                 distanceState.updateChildren(map);
             }
@@ -279,6 +272,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
+            card_small.setVisibility(GONE);
         }
     }
 
@@ -302,7 +296,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }
         setVisibility(currentOrder.getState());
 
-        //RETRIVE MAP ROUTES
+        //RETRIVE MAP ROUTES AND DISTANCE
         if(currentOrder.getState().toLowerCase().equals("accepted")||
                 currentOrder.getState().toLowerCase().equals("assigned")){
 
@@ -317,6 +311,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 new FetchURL(CurrentFragment.this).execute(url,"driving");
             }
             map.getMapAsync(this);
+
 
         }else if(currentOrder.getState().toLowerCase().equals("shipped")||
                 currentOrder.getState().toLowerCase().equals("delivered")){
@@ -550,6 +545,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         if(!registered) {
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
+            card_avaible.setVisibility(GONE);
             return;
         }
 
@@ -736,7 +732,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         acceptButton.setVisibility(GONE);
         rejectButton.setVisibility(GONE);
         accept_question.setVisibility(GONE);
-
+        distance.setVisibility(GONE);
+        bikerIcon.setVisibility(GONE);
         date.setVisibility(GONE);
 //        id.setVisibility(GONE);
     }
@@ -789,6 +786,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             sum += results[0];
         }
         currentDistance=sum;
+        //SET DISTANCE TEXT AND VISIBILITY
+        distance.setText(ctx.getString(R.string.distance_format,currentDistance/1000));
+        distance.setVisibility(View.VISIBLE);
+        bikerIcon.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -802,7 +803,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(gmap!=null)
                 gmap.clear();
             gmap = googleMap;
-            if(Welcome.getProfile().getLatitude()!=null){
+            if(Welcome.getProfile()!= null && Welcome.getProfile().getLatitude()!=null){
                 LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
@@ -905,7 +906,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest);
         builder.setAlwaysShow(true);
-        PendingResult result =
+        PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(
                         mGoogleApiClient,
                         builder.build()

@@ -18,6 +18,7 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
+import com.damn.polito.damneatrestaurant.beans.Profile;
 import com.damn.polito.damneatrestaurant.beans.TimesOfDay;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -92,14 +93,10 @@ public class StatisticsActivity extends AppCompatActivity {
 
     private void loadStars() {
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        int reviews = pref.getInt("reviews", 0);
-        int totalRate = pref.getInt("totalRate", 0);
-        if(reviews==0)
-            ratingBar.setRating(0);
-        else
-            ratingBar.setRating((float)totalRate/(float)reviews);
-        //ratingNumber.setText("(" + reviews + ")");
+        int reviews = Welcome.getProfile().getReviews();
+        int totalRate = Welcome.getProfile().getTotalRate();
+
+        ratingBar.setRating(reviews == 0 ? 0 : (float)totalRate/reviews);
         ratingNumber.setVisibility(View.GONE);
         reviews_button.setText(getString(R.string.see_reviews_button, reviews));
 

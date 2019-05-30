@@ -43,6 +43,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     //SYSTEM VARIABLES
     public static boolean accountExist = false;
     public static String dbKey;
+    private static Profile profile;
 
     //FRAGMENTS VARIABLES
     private FragmentManager fragmentManager;
@@ -58,7 +59,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     private Query orderQuery;
 
     //COLLECTIONS
-    private Profile profile;
     private List<Order> orders = new LinkedList<>();
 
     //UI WIDGET
@@ -148,33 +148,47 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             }
         }
     }
-    private void storeProfile(Profile profile){
-        accountExist = true;
-        if(selectedId == null)
-            navigation.setSelectedItemId(R.id.nav_dishes);
-        if(Utility.firstON) {
-            setOrderListener();
-            Utility.firstON = false;
+
+    public void loadDataProfile() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+            if (dbKey == null) return;
         }
 
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("address", profile.getAddress());
-        editor.putString("name", profile.getName());
-        editor.putString("phone", profile.getPhone());
-        editor.putString("mail", profile.getMail());
-        editor.putString("description",profile.getDescription());
-        editor.putString("opening", profile.getOpening());
-        editor.putString("categories", profile.getCategories());
-        editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
-        editor.putString("profile", profile.getImage());
-        editor.putInt("reviews", profile.getReviews());
-        editor.putInt("totalRate", profile.getTotalRate());
-        editor.apply();
+        myRef = database.getReference("ristoratori/" + dbKey);
+
+        listener = myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                profile = dataSnapshot.getValue(Profile.class);
+                if(profile != null && Utility.firstON) {
+                    setListeners();
+                    Utility.firstON = false;
+                }
+
+                if(selectedId == null){
+                    navigation.setSelectedItemId(R.id.nav_dishes);
+                }else if(selectedId == R.id.nav_profile)
+                    profileFragment.updateProfile();
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    @SuppressWarnings("unchecked")
+    private void setListeners(){
+        accountExist = true;
+        setOrderListener();
+    }
+
     private void setOrderListener() {
-        if(dbKey == null) return;
+        if(!accountExist) return;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         DatabaseReference orderRef = database.getReference("ordini/");
 
@@ -260,36 +274,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     }
 
-    public void loadDataProfile() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
-        }
-
-        myRef = database.getReference("ristoratori/" + dbKey);
-
-        listener = myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                Profile prof = dataSnapshot.getValue(Profile.class);
-                if (prof != null)
-                    storeProfile(prof);
-                if (selectedId != null) {
-                    if (selectedId == R.id.nav_profile)
-                        profileFragment.updateProfile();
-
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -323,5 +307,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     }
 
     public static String getDbKey() { return dbKey; }
+
+    public static Profile getProfile(){ return profile; }
 }
 

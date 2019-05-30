@@ -142,12 +142,8 @@ public class ProfileFragment extends Fragment {
     private void storeProfileOnFirebase(Profile profile){
         if(getDbKey() == null) return;
         DatabaseReference myRef;
-        DatabaseReference ordini;
 
         myRef = database.getReference("clienti/" + getDbKey());
-        //ordini = database.getReference("clienti/" + getDbKey() + "/lista_ordini");
-
-
         myRef.runTransaction(new Transaction.Handler(){
             @NonNull
             @Override
@@ -185,13 +181,10 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void loadData() {
         if(!Welcome.accountExist) return;
         prof = Welcome.getProfile();
     }
-
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

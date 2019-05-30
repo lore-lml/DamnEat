@@ -215,6 +215,7 @@ public class ProfileFragment extends Fragment{
                 database.getReference("/deliverers_liberi/" + Welcome.getDbKey()).removeValue();
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
+                return true;
             case R.id.item_statistics:
                 showAnalytics();
                 return true;
