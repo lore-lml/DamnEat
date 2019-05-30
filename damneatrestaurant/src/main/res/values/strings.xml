@@ -34,4 +34,9 @@
     <string name="edit_dishes">Edit your dishes</string>
     <string name="reassign_mex">An order was rejected by the deliverer</string>
     <string name="reassign">Reassignment</string>
+    <string name="insufficient_quantity">Insufficient quantity</string>
+    <string name="unable_open_map">Unable to open maps</string>
+    <string name="order_intent_with_key">You must pass an order in the intent with \"order\" key</string>
+    <string name="network_error">Network Error! Try again later</string>
+    <string name="impossible_map_request">Impossible to map request</string>
 </resources>

@@ -163,8 +163,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 if(!b){
                     DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
                     dbOrder.setValue("rejected");
-                    /** @TODO: tradurre **/
-                    Toast.makeText(ctx, "Insufficient quantity", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, R.string.insufficient_quantity, Toast.LENGTH_SHORT).show();
                     ((Activity)ctx).finish();
                 }else
                     updateTotalAvailabity(order);
