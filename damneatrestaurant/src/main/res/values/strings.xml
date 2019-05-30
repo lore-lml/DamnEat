@@ -30,6 +30,6 @@
     <string name="most_popular_timing_of_order">Most popular timing of order</string>
     <string name="see_reviews_button">See %d reviews</string>
     <string name="restaurant_raiting">Restaurant rating</string>
-    <string name="dishes_sold_number">Dishes sold: %d</string>
+    <string name="dishes_sold_number">Sold: %d</string>
     <string name="edit_dishes">Edit your dishes</string>
 </resources>
