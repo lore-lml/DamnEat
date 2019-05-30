@@ -203,7 +203,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             }
         });
 
-        //setOrderListener();
     }
 
     private void setListeners() {
