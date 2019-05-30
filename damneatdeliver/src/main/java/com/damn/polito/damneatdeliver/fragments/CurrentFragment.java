@@ -272,6 +272,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
+            card_small.setVisibility(GONE);
         }
     }
 
@@ -544,6 +545,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         if(!registered) {
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
+            card_avaible.setVisibility(GONE);
             return;
         }
 
@@ -801,7 +803,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(gmap!=null)
                 gmap.clear();
             gmap = googleMap;
-            if(Welcome.getProfile().getLatitude()!=null){
+            if(Welcome.getProfile()!= null && Welcome.getProfile().getLatitude()!=null){
                 LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);

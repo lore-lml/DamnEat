@@ -265,6 +265,7 @@ public class ProfileFragment extends Fragment{
                 return true;
             case R.id.item_statistics:
                 ctx.startActivity(new Intent(ctx, StatisticsActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

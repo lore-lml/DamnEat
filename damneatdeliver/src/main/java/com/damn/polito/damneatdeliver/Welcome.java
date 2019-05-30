@@ -140,7 +140,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     }
 
     public static boolean registered() {
-        if (profile != null)
+        if (profile != null && profile.getName()!=null && profile.getMail()!=null)
             logged = true;
         else
             logged = false;
@@ -279,7 +279,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
             }
         }else if (requestCode == REQUEST_CHECK_SETTINGS) {
             if (resultCode == RESULT_OK) {
-                StartLocationManager();
+                //StartLocationManager();
                 Toast.makeText(getApplicationContext(), "GPS enabled", Toast.LENGTH_LONG).show();
             } else {
 
@@ -328,7 +328,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     }
 
     private void setDeliverFreeList(){
-        if (profile.getState()) {
+        if (profile!=null && profile.getState()) {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
             freeDeliverersRef.setValue(dbKey);
         } else {
