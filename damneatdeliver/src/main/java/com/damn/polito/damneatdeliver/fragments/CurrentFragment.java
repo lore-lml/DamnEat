@@ -207,8 +207,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     orderPhoto.setValue(prof.getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
                     orderName.setValue(prof.getName());
-                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/" + currentOrder.getId() );
-                    orderRef.setValue(currentOrder.getId());
+                    DatabaseReference orderID = database.getReference("ordini/" + currentOrder.getId() + "/delivererID/");
+                    orderID.setValue(Welcome.getDbKey());
+//                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/" + currentOrder.getId() );
+//                    orderRef.setValue(currentOrder.getId());
                 }
             }
         });
