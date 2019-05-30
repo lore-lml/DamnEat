@@ -37,9 +37,8 @@ import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class Analytics extends AppCompatActivity {
     private ListView listView;
-    private TextView totalDistance;
-    private float totDistance;
-
+    private TextView totalDistance,money;
+    private float totDistance, totMoney;
     private static final String TAG= "Analytics";
     private FirebaseDatabase database;
     private int fTimestamp=0;
@@ -57,6 +56,8 @@ public class Analytics extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         totalDistance.setText( getApplicationContext().getString(R.string.distance_traveled,0.0));
         DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
+        money=findViewById(R.id.you_earned_tot_money);
+        money.setText( getApplicationContext().getString(R.string.money_earned,0.0));
         distanceState.orderByKey().addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -70,14 +71,16 @@ public class Analytics extends AppCompatActivity {
                 Date d = new Date((long)time*1000);
                 DateFormat f = new SimpleDateFormat("yyyy-MM-dd\tHH:mm");
                 travelsList.put(f.format(d),distance/1000);
-
+                Float priceTMP =  distance/1000;
+                priceTMP/=2;
+                priceTMP+=2;
                 if(count>=dataSnapshot.getChildrenCount()){
                     totalDistance.setText( getApplicationContext().getString(R.string.distance_traveled,totDistance));
                     List<HashMap<String, String>> listItems = new ArrayList<>();
                     SimpleAdapter adapter;
                     adapter = new SimpleAdapter(getApplicationContext(), listItems, R.layout.list_item,
-                            new String[]{"First Line", "Second Line"},
-                            new int[]{R.id.text1, R.id.text2});
+                            new String[]{"First Line", "Second Line","Third Line"},
+                            new int[]{R.id.text1, R.id.text2, R.id.text3});
 
 
                     Iterator it = travelsList.entrySet().iterator();
@@ -87,10 +90,17 @@ public class Analytics extends AppCompatActivity {
                         Map.Entry pair = (Map.Entry)it.next();
                         resultsMap.put("First Line", pair.getKey().toString());
                         DecimalFormat df = new DecimalFormat("#.#");
-
+                        DecimalFormat dfPrice = new DecimalFormat("#.##");
                         resultsMap.put("Second Line", df.format(pair.getValue())+" Km");
+                        Float price = (Float) pair.getValue();
+                        price/=2;
+                        price+=2;
+                        resultsMap.put("Third Line", dfPrice.format(price)+" €");
                         listItems.add(resultsMap);
+
                     }
+                    totMoney+=priceTMP;
+                    money.setText( getApplicationContext().getString(R.string.money_earned,totMoney));
 
                     listView.setAdapter(adapter);
                 }

@@ -37,6 +37,7 @@ import com.google.firebase.database.Transaction;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
+import static java.lang.Thread.sleep;
 
 public class ProfileFragment extends Fragment{
 
@@ -211,10 +212,16 @@ public class ProfileFragment extends Fragment{
                 editProfile();
                 return true;
             case R.id.item_disconnect:
-                database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(false);
-                database.getReference("/deliverers_liberi/" + Welcome.getDbKey()).removeValue();
-                FirebaseLogin.logout((Activity) ctx);
-                ((Activity) ctx).finish();
+
+                DatabaseReference dbRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
+                dbRef.removeValue();
+
+                dbRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/");
+                dbRef.setValue(false).addOnCompleteListener(t -> {
+                    FirebaseLogin.logout((Activity) ctx);
+                    ((Activity) ctx).finish();
+                });
+
                 return true;
             case R.id.item_statistics:
                 showAnalytics();

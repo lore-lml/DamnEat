@@ -41,13 +41,16 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Welcome extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<LocationSettingsResult> {
@@ -67,9 +70,10 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private DatabaseReference orderRef;
-    private ValueEventListener orderListener;
-    private ValueEventListener v;
+    private ValueEventListener orderListener, profileListener;
+    private ChildEventListener ordersChildListener;
     private DatabaseReference profileRef;
+    private Query orderQuery;
 
     //FRAGMENT VARIABLES
     private FragmentManager fragmentManager;
@@ -93,6 +97,9 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     protected GoogleApiClient mGoogleApiClient;
     protected LocationRequest locationRequest;
     int REQUEST_CHECK_SETTINGS = 100;
+
+    //COLLECTIONS
+    private List<Order> orders = new LinkedList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -162,6 +169,35 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
             init();
         else
             shownSignInOptions();
+
+        //initialize position DB, remove old position
+//        DatabaseReference refTime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+//        refTime.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Long time=dataSnapshot.getValue(Long.class);
+//                Long ctime=System.currentTimeMillis();
+//                if(time!=null){
+//                    if((ctime-time)>=TEN_MINUTES){
+////                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
+////                        RefLat.setValue(null);
+////                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
+////                        RefLong.setValue(null);
+////                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+////                        Reftime.setValue(null);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+    }
+
+    private void init() {
         currentOrder = new Order();
         currentOrder.setState("empty");
         navigation = findViewById(R.id.navigation);
@@ -179,34 +215,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
-        //initialize position DB, remove old position
-        DatabaseReference refTime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
-        refTime.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Long time=dataSnapshot.getValue(Long.class);
-                Long ctime=System.currentTimeMillis();
-                if(time!=null){
-                    if((ctime-time)>=TEN_MINUTES){
-//                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
-//                        RefLat.setValue(null);
-//                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
-//                        RefLong.setValue(null);
-//                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
-//                        Reftime.setValue(null);
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void init() {
         profile = new Profile();
         profile.setState(false);
         loadProfile();
@@ -262,8 +271,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     storeData(user);
                     profile = null;
 
-                    if (profileRef != null && v != null)
-                        profileRef.removeEventListener(v);
+                    if (profileRef != null && profileListener != null)
+                        profileRef.removeEventListener(profileListener);
                     if (getKey() != null)
                         init();
                 }
@@ -297,7 +306,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
     private void loadProfile() {
         profileRef = database.getReference("/deliverers/" + dbKey + "/info");
-        v = profileRef.addValueEventListener(new ValueEventListener() {
+        profileListener = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 profile = dataSnapshot.getValue(Profile.class);
@@ -305,6 +314,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     logged = false;
                 else{
                     logged = true;
+                    if(Utility.firstON)
+                        setListeners();
 //                    if(profile.getLatitude()==null || profile.getLongitude()==null) {
 //                        profile.setState(false);
 //                    }
@@ -322,11 +333,57 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
+
+    private void setListeners() {
+        Utility.firstON = false;
+        setOrderListener();
+    }
+
+    private void setOrderListener() {
+        if(dbKey == null) return;
+        DatabaseReference orderRef = database.getReference("ordini/");
+        orderQuery = orderRef.orderByChild("delivererID").equalTo(dbKey);
+        ordersChildListener = orderQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue() == null) return;
+                String key = dataSnapshot.getKey();
+                if(currentOrder.getId() != null && currentOrder.getId().equals(key)) return;
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected"))
+                    return;
+
+                o.setId(key);
+                ((LinkedList<Order>)orders).addFirst(o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildAdded();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    public List<Order> getOrders(){ return orders; }
 
     private void setDeliverFreeList(){
         if (profile!=null && profile.getState()) {
@@ -377,14 +434,16 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        //todo: ho commentato per non dare l'errore alla chiusura
+                        //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -480,21 +539,18 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         mLocGranted = false;
         switchEnabled = false;
 
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUESt_CODE: {
-
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            mLocGranted = false;
-                            switchEnabled = false;
-                            return;
-                        }
+        if (requestCode == LOCATION_PERMISSION_REQUESt_CODE) {
+            if (grantResults.length > 0) {
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        mLocGranted = false;
+                        switchEnabled = false;
+                        return;
                     }
-                    mLocGranted = true;
-                    switchEnabled = true;
-                    //StartLocationManager();
                 }
+                mLocGranted = true;
+                switchEnabled = true;
+                //StartLocationManager();
             }
         }
     }
@@ -656,9 +712,11 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     protected void onDestroy() {
         super.onDestroy();
         Utility.firstON = true;
-        if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        orderQuery.removeEventListener(ordersChildListener);
+        orderRef.removeEventListener(orderListener);
     }
 
 }

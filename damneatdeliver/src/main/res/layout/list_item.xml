@@ -36,5 +36,18 @@
 
     </android.support.v7.widget.AppCompatTextView>
 
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="holaoa"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/text2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text2">
+
+    </android.support.v7.widget.AppCompatTextView>
 
 </android.support.constraint.ConstraintLayout>

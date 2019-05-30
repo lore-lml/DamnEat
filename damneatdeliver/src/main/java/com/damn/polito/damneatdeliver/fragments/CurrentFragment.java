@@ -207,8 +207,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     orderPhoto.setValue(prof.getBitmapProf());
                     DatabaseReference orderName = database.getReference("ordini/" + currentOrder.getId() + "/delivererName/");
                     orderName.setValue(prof.getName());
-                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/" + currentOrder.getId() );
-                    orderRef.setValue(currentOrder.getId());
+                    DatabaseReference orderID = database.getReference("ordini/" + currentOrder.getId() + "/delivererID/");
+                    orderID.setValue(Welcome.getDbKey());
+//                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/" + currentOrder.getId() );
+//                    orderRef.setValue(currentOrder.getId());
                 }
             }
         });
@@ -271,6 +273,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
             card_small.setVisibility(GONE);
+            card_order.setVisibility(GONE);
         }
     }
 
@@ -544,9 +547,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
+            card_order.setVisibility(GONE);
             return;
         }
-
+        card_order.setVisibility(View.VISIBLE);
         if(state.equals("empty")){
             card_avaible.setVisibility(View.VISIBLE);
             if (switch_available.isChecked()) waiting_confirm.setVisibility(View.VISIBLE);

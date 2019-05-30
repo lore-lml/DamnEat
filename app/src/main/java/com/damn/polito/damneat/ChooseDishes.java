@@ -292,10 +292,6 @@ public class ChooseDishes extends AppCompatActivity {
             orderID_key = orderID.getKey();
             order.setId(orderID_key);
             orderID.setValue(order);
-            //AGGIUNGO LA CHIAVE AGLI ORDINI PENDENTI DEL RISTORANTE
-            DatabaseReference dbRefRestaurant = database.getReference("ristoranti/" + restaurant.getRestaurantID() + "/ordini_pendenti/");
-            DatabaseReference id_restaurant = dbRefRestaurant.push();
-            id_restaurant.setValue(orderID.getKey());
             Toast.makeText(ctx, R.string.order_succesfull, Toast.LENGTH_LONG).show();
             setResult(RESULT_OK);
             finish();
