@@ -35,4 +35,5 @@
     <string name="service_review">Recensione servizio</string>
     <string name="review">Recensisci</string>
     <string name="incomplete_review">Devi valutare entrambi i campi</string>
+    <string name="deliverer">Corriere:\n %s</string>
 </resources>

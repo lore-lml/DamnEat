@@ -75,7 +75,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.id.setText(id);
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
-        holder.restaurant_info.setText(selected.getRestaurant().getRestaurantName());
+        holder.restaurant_info.setText(ctx.getString(R.string.restaurant, selected.getRestaurant().getRestaurantName()));
 
 
         if(selected.getState().toLowerCase().equals("confirmed") || selected.getState().toLowerCase().equals("rejected")){
@@ -119,7 +119,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             String deliverer_name = selected.getDelivererName();
             if(deliverer_name.equals("NOT_ASSIGNED_YET"))
                 deliverer_name = "--";
-            holder.deliverer_name.setText(deliverer_name);
+            holder.deliverer_name.setText(ctx.getString(R.string.deliverer, deliverer_name));
             if (selected.getDelivererPhoto() == null)
                 holder.deliverer_photo.setImageBitmap(default_image);
             else if(selected.getDelivererPhoto().equals("NO_PHOTO"))
