@@ -1,7 +1,9 @@
 package com.damn.polito.damneatrestaurant;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -9,11 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.damneatrestaurant.beans.TimesOfDay;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +42,8 @@ public class StatisticsActivity extends AppCompatActivity {
     private CardView[] card_v = new CardView[3];
     private TextView tv_time;
     private ImageView[] im_v = new ImageView[3];
+    private RatingBar ratingBar;
+    private TextView ratingNumber;
     private Button reviews_button;
 
     public StatisticsActivity() {
@@ -68,7 +74,8 @@ public class StatisticsActivity extends AppCompatActivity {
         im_v[1] = findViewById(R.id.dish_image_2);
         im_v[2] = findViewById(R.id.dish_image_3);
 
-
+        ratingBar = findViewById(R.id.rate_stars);
+        ratingNumber = findViewById(R.id.rate_number);
 
         database = FirebaseDatabase.getInstance();
 
@@ -80,6 +87,22 @@ public class StatisticsActivity extends AppCompatActivity {
 
         loadPopularDishes();
         loadPopularTime();
+        loadStars();
+    }
+
+    private void loadStars() {
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        int reviews = pref.getInt("reviews", 0);
+        int totalRate = pref.getInt("totalRate", 0);
+        if(reviews==0)
+            ratingBar.setRating(0);
+        else
+            ratingBar.setRating((float)totalRate/(float)reviews);
+        //ratingNumber.setText("(" + reviews + ")");
+        ratingNumber.setVisibility(View.GONE);
+        reviews_button.setText(getString(R.string.see_reviews_button, reviews));
+
     }
 
     private void loadPopularTime() {

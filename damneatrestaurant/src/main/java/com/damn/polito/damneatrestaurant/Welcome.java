@@ -167,6 +167,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         editor.putString("categories", profile.getCategories());
         editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
         editor.putString("profile", profile.getImage());
+        editor.putInt("reviews", profile.getReviews());
+        editor.putInt("totalRate", profile.getTotalRate());
         editor.apply();
     }
 
