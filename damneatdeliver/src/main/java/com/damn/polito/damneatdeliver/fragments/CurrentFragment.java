@@ -248,8 +248,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 freeDeliverersRef.removeValue();
 //                waiting_confirm.setVisibility(GONE);
             }
-            if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
-                Toast.makeText(ctx, R.string.no_position, Toast.LENGTH_LONG).show();
+//            if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
+//                Toast.makeText(ctx, R.string.no_position, Toast.LENGTH_LONG).show();
             ShowGPSDialog();
 
         });
