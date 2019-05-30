@@ -678,11 +678,14 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     .commit();
         }
         else{
-            fm = getFragmentManager();
-            fm.beginTransaction()
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .show(map)
-                    .commit();
+            if(map!=null){
+                fm = getFragmentManager();
+                fm.beginTransaction()
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .show(map)
+                        .commit();
+            }
+
         }
 
         //}
