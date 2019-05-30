@@ -291,6 +291,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Utility.firstON = true;
         if(myRef!=null)
             myRef.removeEventListener(listener);
         if(orderQuery != null) {

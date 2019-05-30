@@ -292,8 +292,8 @@
                                 android:layout_marginEnd="16dp"
                                 android:text="@string/profile_address"
                                 android:textAppearance="@style/PrimaryText"
-                                app:layout_constraintBottom_toTopOf="@+id/editText_price"
                                 app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintBottom_toTopOf="@id/editText_address"
                                 app:layout_constraintHorizontal_bias="0.0"
                                 app:layout_constraintStart_toEndOf="@+id/icon_address"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -506,6 +506,7 @@
                                 android:layout_width="1dp"
                                 android:layout_height="0dp"
                                 android:layout_marginStart="4dp"
+                                android:layout_marginEnd="4dp"
                                 android:background="?android:attr/listDivider"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toStartOf="@+id/icon_shipprice"
