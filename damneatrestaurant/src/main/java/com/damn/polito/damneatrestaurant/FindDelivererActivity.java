@@ -45,8 +45,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
     private Button map;
 
     private DatabaseReference freeDelRef;
-    private Query freeDeliverersQuery;
-    private ValueEventListener freeDelKeyListener, freeDelivererListener;
+    private ValueEventListener freeDelKeyListener;
     public static List<Deliverer> deliverers = new ArrayList<>();
 
     private SortType sortType;
@@ -120,6 +119,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() == null){
                     deliverers.clear();
+                    adapter.notifyDataSetChanged();
                     return;
                 }
                 List<String> keys = new ArrayList<>();
@@ -180,8 +180,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        if(freeDeliverersQuery != null)
-            freeDeliverersQuery.removeEventListener(freeDelivererListener);
+        freeDelRef.removeEventListener(freeDelKeyListener);
     }
 
     @Override
