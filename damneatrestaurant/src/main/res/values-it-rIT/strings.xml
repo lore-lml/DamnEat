@@ -24,7 +24,7 @@
     <string name="most_popular_timing_of_order">Orario degli ordini più popolare</string>
     <string name="restaurant_raiting">Valutazioni ristorante</string>
     <string name="see_reviews_button">Vedi le %d recensioni</string>
-    <string name="dishes_sold_number">Piatti venduti: %d</string>
+    <string name="dishes_sold_number">Venduti: %d</string>
     <string name="edit_dishes">Modifica i tuoi piatti</string>
     <string name="reassign_mex">Un ordine è stato rifiutato dal corriere</string>
     <string name="reassign">Riassegnazione</string>

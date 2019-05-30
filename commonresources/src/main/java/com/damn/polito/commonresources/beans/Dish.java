@@ -2,13 +2,16 @@ package com.damn.polito.commonresources.beans;
 
 import android.graphics.Bitmap;
 
+import com.damn.polito.commonresources.R;
 import com.damn.polito.commonresources.Utility;
 
 import java.io.Serializable;
 
 import static com.damn.polito.commonresources.Utility.StringToBitMap;
 
-public class Dish implements Serializable {
+public class Dish implements Serializable, Comparable<Dish>{
+
+    public static int[] tier = new int[]{R.drawable.tier1, R.drawable.tier2, R.drawable.tier3};
 
     private String name;
     private String id;
@@ -149,6 +152,12 @@ public class Dish implements Serializable {
 
     public void setnOrders(int nOrders) {
         this.nOrders = nOrders;
+    }
+
+
+    @Override
+    public int compareTo(Dish other) {
+        return other.nOrders - this.nOrders;
     }
 }
 
