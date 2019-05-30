@@ -134,7 +134,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             if (delivery_time.equals("ASAP")) holder.delivery_time.setText(R.string.time_asap);
             else holder.delivery_time.setText(ctx.getString(R.string.delivery_time, delivery_time));
 
-            if(selected.getState().toLowerCase().equals("ordered") || selected.getState().toLowerCase().equals("accepted")) {
+            if(selected.getState().toLowerCase().equals("ordered") || selected.getState().toLowerCase().equals("accepted")|| selected.getState().toLowerCase().equals("reassign")) {
                 holder.deliverer_photo.setVisibility(View.INVISIBLE);
                 holder.deliverer_name.setVisibility(View.INVISIBLE);
                 holder.state.setText(ctx.getString(R.string.ordered));

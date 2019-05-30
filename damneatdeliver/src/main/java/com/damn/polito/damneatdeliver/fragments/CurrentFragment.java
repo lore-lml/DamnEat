@@ -217,7 +217,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         rejectButton.setOnClickListener(v ->{
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
-                orderState.setValue("rejected");
+                orderState.setValue("reassign");
                 DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
                 orderRef.setValue("0");
                 setVisibility("empty");
@@ -328,7 +328,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             }
             map.getMapAsync(this);
         }
-        if(currentOrder.getState().toLowerCase().equals("empty")||currentOrder==null||currentOrder.getState().equals("rejected")||currentOrder.getState().equals("confirmed")){
+        if(currentOrder.getState().toLowerCase().equals("empty")||currentOrder==null||currentOrder.getState().equals("rejected")||currentOrder.getState().equals("confirmed")||currentOrder.getState().equals("reassign")){
 
             map.getMapAsync(this);
         }
@@ -488,7 +488,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(true);
         }
 
-        if(currentOrder.getState().equals("rejected")){
+        if(currentOrder.getState().equals("rejected")|| currentOrder.getState().equals("reassign")){
             Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
@@ -799,6 +799,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         if(currentOrder.getState().toLowerCase().equals("empty")||
                 currentOrder.getState().equals("rejected")||
                 currentOrder.getState().equals("confirmed")||
+                currentOrder.getState().equals("reassign")||
                 currentOrder==null){
             if(gmap!=null)
                 gmap.clear();

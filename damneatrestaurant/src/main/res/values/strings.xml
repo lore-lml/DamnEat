@@ -32,4 +32,6 @@
     <string name="restaurant_raiting">Restaurant rating</string>
     <string name="dishes_sold_number">Dishes sold: %d</string>
     <string name="edit_dishes">Edit your dishes</string>
+    <string name="reassign_mex">An order was rejected by the deliverer</string>
+    <string name="reassign">Reassignment</string>
 </resources>

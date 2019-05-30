@@ -1,5 +1,7 @@
 package com.damn.polito.damneatrestaurant;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.notifications.NotificationListener;
 import com.damn.polito.damneatrestaurant.beans.Profile;
@@ -32,7 +35,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedList;
@@ -44,6 +49,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     public static boolean accountExist = false;
     public static String dbKey;
     private static Profile profile;
+    private Context ctx;
 
     //FRAGMENTS VARIABLES
     private FragmentManager fragmentManager;
@@ -103,6 +109,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         database = FirebaseDatabase.getInstance();
+        ctx = getApplicationContext();
 
         if (getKey() == null)
             FirebaseLogin.shownSignInOptions(this);
@@ -240,6 +247,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 o.setId(key);
                 orders.remove(o);
                 orders.add(0, o);
+                if(o.getState()!=null && o.getState().equals("reassign"))
+                    reassignOrder(o);
 
                 if(selectedId == R.id.nav_reservations)
                     orderFragment.onChildChanged();
@@ -273,6 +282,94 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
 
     }
+
+    private void reassignOrder(Order order) {
+        updateAvailabity(order);
+        Toast.makeText(ctx, R.string.reassign_mex, Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateAvailabity(Order order) {
+//        Deliverer current = deliverers.get(position);
+        //AGGIORNO LE AVAILABILITY
+        // database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
+
+        ref.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                for(MutableData child: mutableData.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    if(d!=null) {
+                        for (Dish d_ord : order.getDishes()) {
+                            if(d_ord.getId().equals(d.getId())){
+                                int new_quantity = d.getAvailability() + d_ord.getQuantity();
+                                int new_nOrders = d.getnOrders() - d_ord.getQuantity();
+                                if (new_nOrders < 0)
+                                    return Transaction.abort();
+                                else {
+                                    d.setAvailability(new_quantity);
+                                    d.setnOrders(new_nOrders);
+                                    child.setValue(d);
+                                }
+                            }
+                        }
+                    }
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                if(!b){
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
+                    dbOrder.setValue("rejected");
+                    /** @TODO: tradurre **/
+                    Toast.makeText(ctx, R.string.availabity_too_low, Toast.LENGTH_SHORT).show();
+                }else{
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
+                    dbOrder.setValue("ordered");
+                    updateTotalAvailabity(order);
+                }
+            }
+        });
+    }
+
+    private void updateTotalAvailabity(Order order){
+        /** @TODO: fare transazione **/
+        DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child: dataSnapshot.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    if(d!=null) {
+                        d.setId(child.getKey());
+                        for (Dish d_ord : order.getDishes()) {
+                            if(d_ord.getId().equals(d.getId())){
+                                int new_quantity = d.getAvailability() + d_ord.getQuantity();
+                                int new_nOrders = d.getnOrders() - d_ord.getQuantity();
+                                if (new_nOrders >= 0){
+                                    DatabaseReference dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/availability/");
+                                    dishRef.setValue(new_quantity);
+                                    dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/nOrders/");
+                                    dishRef.setValue(new_nOrders);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
     @Override
     protected void onDestroy() {

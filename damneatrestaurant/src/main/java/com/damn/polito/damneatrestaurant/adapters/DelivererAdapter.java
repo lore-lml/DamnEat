@@ -172,8 +172,8 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         });
     }
 
-    private static void updateTotalAvailabity(Order order_d){
-        /** @TODO: fare transizione **/
+    private static void updateTotalAvailabity(Order order){
+        /** @TODO: fare transazione **/
         DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -182,14 +182,15 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                     Dish d = child.getValue(Dish.class);
                     if(d!=null) {
                         d.setId(child.getKey());
-                        for (Dish d_ord : order_d.getDishes()) {
+                        for (Dish d_ord : order.getDishes()) {
                             if(d_ord.getId().equals(d.getId())){
                                 int new_quantity = d.getAvailability() - d_ord.getQuantity();
+                                int new_nOrders = d.getnOrders() + d_ord.getQuantity();
                                 if (new_quantity >= 0){
                                     DatabaseReference dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/availability/");
                                     dishRef.setValue(new_quantity);
                                     dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/nOrders/");
-                                    dishRef.setValue(d.getnOrders()+d_ord.getQuantity());
+                                    dishRef.setValue(new_nOrders);
                                 }
                             }
                         }
