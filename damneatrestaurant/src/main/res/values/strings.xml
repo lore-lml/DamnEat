@@ -39,4 +39,5 @@
     <string name="order_intent_with_key">You must pass an order in the intent with \"order\" key</string>
     <string name="network_error">Network Error! Try again later</string>
     <string name="impossible_map_request">Impossible to map request</string>
+    <string name="order_deliverer_info">Deliverer:\n\n%s</string>
 </resources>
