@@ -40,4 +40,6 @@
     <string name="network_error">Network Error! Try again later</string>
     <string name="impossible_map_request">Impossible to map request</string>
     <string name="order_deliverer_info">Deliverer:\n\n%s</string>
+    <string name="location_found">Location found</string>
+    <string name="impossible_find_location">Impossible to find the location</string>
 </resources>

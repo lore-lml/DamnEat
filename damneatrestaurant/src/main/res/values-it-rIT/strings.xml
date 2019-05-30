@@ -34,6 +34,8 @@
     <string name="network_error">Errore di rete! Riprova più tardi</string>
     <string name="impossible_map_request">Impossibile scaricare mappa</string>
     <string name="order_deliverer_info">Deliverer:\\n\\n%s</string>
+    <string name="impossible_find_location">Impossibile trovare la posizione</string>
+    <string name="location_found">Posizione trovata</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->

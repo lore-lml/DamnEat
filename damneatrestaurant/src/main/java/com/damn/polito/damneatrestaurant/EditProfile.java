@@ -130,10 +130,10 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             if(checkField()){
                 try {
                     setActivityResult();
-                    Toast.makeText(this, "Location found", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.location_found, Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(this, "Impossible to find the location", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.impossible_find_location, Toast.LENGTH_LONG).show();
                     return;
                 }
                 finish();
