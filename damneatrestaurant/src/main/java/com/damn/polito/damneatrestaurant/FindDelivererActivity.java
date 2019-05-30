@@ -38,6 +38,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
     public static final int REQUEST_CODE = 9000;
+    private static final int TEN_MINUTES = 1000 * 60 * 10  ;
 
     private RecyclerView recyclerView;
     private DelivererAdapter adapter;
@@ -156,8 +157,11 @@ public class    FindDelivererActivity extends AppCompatActivity {
                         assert d != null;
                         d.setKey(child.getKey());
                         if(d.getName()!=null && d.getLatitude()!=null && d.getLongitude()!=null && restAddress!=null){
-                            d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
-                            deliverers.add(d);
+                            Long ctime=System.currentTimeMillis();
+                            if((ctime-d.getPositionTime())<TEN_MINUTES){
+                                d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
+                                deliverers.add(d);
+                            }
                         }
                     }
                 }

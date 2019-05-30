@@ -220,7 +220,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
             logged = false;
         }
         getLocationPermissions();
-        StartLocationManager();
+        //StartLocationManager();
     }
 
     @Override
@@ -304,9 +304,9 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     logged = false;
                 else{
                     logged = true;
-                    if(profile.getLatitude()==null || profile.getLongitude()==null) {
-                        profile.setState(false);
-                    }
+//                    if(profile.getLatitude()==null || profile.getLongitude()==null) {
+//                        profile.setState(false);
+//                    }
                     if (profile.getState() == null) {
                         database.getReference("/deliverers/" + dbKey + "/info/state/").setValue(false);
                         profile.setState(false);
@@ -465,7 +465,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
             if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocGranted = true;
                 switchEnabled = true;
-                StartLocationManager();
+                //StartLocationManager();
             } else {
                 ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUESt_CODE);
             }
@@ -492,7 +492,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     }
                     mLocGranted = true;
                     switchEnabled = true;
-                    StartLocationManager();
+                    //StartLocationManager();
                 }
             }
         }
