@@ -187,12 +187,12 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                 Long ctime=System.currentTimeMillis();
                 if(time!=null){
                     if((ctime-time)>=TEN_MINUTES){
-                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
-                        RefLat.setValue(null);
-                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
-                        RefLong.setValue(null);
-                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
-                        Reftime.setValue(null);
+//                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
+//                        RefLat.setValue(null);
+//                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
+//                        RefLong.setValue(null);
+//                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+//                        Reftime.setValue(null);
                     }
                 }
             }

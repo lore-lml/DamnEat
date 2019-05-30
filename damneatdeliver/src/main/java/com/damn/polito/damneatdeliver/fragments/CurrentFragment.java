@@ -86,13 +86,13 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     private Context ctx;
 
-    private TextView id,date, state_tv ,price,nDish, deliveryTime, name_big, address_big_text, phone_big_text, address_big, phone_big, waiting_confirm, accept_question;
+    private TextView id,date, state_tv ,price,nDish, deliveryTime, name_big, address_big_text, phone_big_text, address_big, phone_big, waiting_confirm, accept_question,distance;
     private TextView name_small, address_small, phone_small, note_small;
     private TextView name_small_text, address_small_text, phone_small_text, note_small_text;
     private ConstraintLayout id_shipped;
 
     private CardView root, card_order, card_avaible, card_small;
-    private ImageView photo;
+    private ImageView photo,bikerIcon;
     private Button confirmButton, acceptButton, rejectButton, btnGetDirection;
     private Switch switch_available;
     private Bitmap bitmap, default_image;
@@ -144,6 +144,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         //map=view.findViewById(R.id.mapView);
         map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
         currentOrder = Welcome.getCurrentOrder();
+        distance = view.findViewById(R.id.distance);
+        bikerIcon=view.findViewById(R.id.bikerIcon);
         /*map.getMapAsync(this);
         currentOrder = Welcome.getCurrentOrder();
         List<Address> addresses = getAddresses();
@@ -302,7 +304,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }
         setVisibility(currentOrder.getState());
 
-        //RETRIVE MAP ROUTES
+        //RETRIVE MAP ROUTES AND DISTANCE
         if(currentOrder.getState().toLowerCase().equals("accepted")||
                 currentOrder.getState().toLowerCase().equals("assigned")){
 
@@ -317,6 +319,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 new FetchURL(CurrentFragment.this).execute(url,"driving");
             }
             map.getMapAsync(this);
+
 
         }else if(currentOrder.getState().toLowerCase().equals("shipped")||
                 currentOrder.getState().toLowerCase().equals("delivered")){
@@ -736,7 +739,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         acceptButton.setVisibility(GONE);
         rejectButton.setVisibility(GONE);
         accept_question.setVisibility(GONE);
-
+        distance.setVisibility(GONE);
+        bikerIcon.setVisibility(GONE);
         date.setVisibility(GONE);
 //        id.setVisibility(GONE);
     }
@@ -789,6 +793,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             sum += results[0];
         }
         currentDistance=sum;
+        //SET DISTANCE TEXT AND VISIBILITY
+        distance.setText(ctx.getString(R.string.distance_format,currentDistance/1000));
+        distance.setVisibility(View.VISIBLE);
+        bikerIcon.setVisibility(View.VISIBLE);
     }
 
     @Override
