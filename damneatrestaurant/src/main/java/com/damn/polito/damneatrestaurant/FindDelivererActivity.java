@@ -87,8 +87,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }else{
-            //todo: tradurre
-            map.setOnClickListener(v-> Toast.makeText(this, "Unable to open maps", Toast.LENGTH_SHORT).show());
+            map.setOnClickListener(v-> Toast.makeText(this, R.string.unable_open_map, Toast.LENGTH_SHORT).show());
         }
         adapter.setOnItemClickListener(position -> {
             if (oldPosition >= 0) {
@@ -105,15 +104,13 @@ public class    FindDelivererActivity extends AppCompatActivity {
     private void loadData(){
         currentOrder = (Order) getIntent().getSerializableExtra("order");
         if(currentOrder == null)
-            //todo: tradurre
-            throw new IllegalStateException("You must pass an order in the intent with \"order\" key");
+            throw new IllegalStateException(""+R.string.order_intent_with_key);
 
         Geocoder coder = new Geocoder(this);
         try {
             restAddress = coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress(), 1).get(0);
         } catch (IOException e) {
-            //todo: tradurre
-            Toast.makeText(this, "Network Error! Try again later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
         }
         assert restAddress != null;
 
@@ -207,8 +204,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(FindDelivererActivity.this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
         } else {
-            //todo: tradurre
-            Toast.makeText(this, "Impossible to map request", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.impossible_map_request, Toast.LENGTH_LONG).show();
         }
         return false;
     }
