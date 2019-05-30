@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
@@ -36,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -195,6 +197,7 @@ public class ChooseDishes extends AppCompatActivity {
                     dishesList.add(dish);
                     dishesList.get(dishesList.size() - 1).setId(key);
                 }
+                Collections.sort(dishesList);
                 adapter.notifyDataSetChanged();
                 //Log.d("Load", dishesList.get(0).getName());
                 if (dishesList.size() == 0) {
@@ -208,7 +211,6 @@ public class ChooseDishes extends AppCompatActivity {
                     no_dishes_img.setVisibility(View.GONE);
                     no_dishes_tv.setVisibility(View.GONE);
                 }
-
             }
 
             @Override

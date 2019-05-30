@@ -113,7 +113,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             else{
                 holder.findDeliverer.setVisibility(View.GONE);
             }
-            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected")){
+            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected") || selected.getState().equals("reassign")){
                 holder.deliverer_name.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.GONE);
             }
@@ -135,7 +135,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             else{
                 holder.findDeliverer.setVisibility(View.GONE);
             }
-            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected")){
+            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected") || selected.getState().equals("reassign")){
                 holder.deliverer_name.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.GONE);
             }
@@ -177,7 +177,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         }else if(selected.getState().equals("rejected")){
             holder.state.setText(ctx.getString(R.string.rejected));
             holder.state.setTextColor(ctx.getColor(R.color.colorRed));
-        } else {
+        } else if(selected.getState().equals("reassign")){
+            holder.state.setTextColor(Color.BLACK);
+            holder.state.setText(ctx.getString(R.string.reassign));
+        }
+        else {
             holder.state.setTextColor(Color.BLACK);
         }
 
