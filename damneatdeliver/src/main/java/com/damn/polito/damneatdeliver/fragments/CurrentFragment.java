@@ -805,6 +805,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 markerOptions.title(getString(R.string.current_position));
                 Drawable person = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp, null);
                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(person);
+                Bitmap biker = BitmapFactory.decodeResource(getResources(), R.drawable.bikerfinal);
+                markerIcon = BitmapDescriptorFactory.fromBitmap(biker);
                 markerOptions.icon(markerIcon);
                 gmap.addMarker(markerOptions);
 
@@ -819,7 +821,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(gmap!=null)
                 gmap.clear();
             gmap = googleMap;
-            Drawable bike = getResources().getDrawable(R.drawable.ic_directions_bike_black_32dp, null);
+            Drawable bike = getResources().getDrawable(R.drawable.bikerfinal, null);
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(bike);
 
             place1.icon(markerIcon);
