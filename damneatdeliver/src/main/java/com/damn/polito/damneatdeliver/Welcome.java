@@ -169,6 +169,35 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
             init();
         else
             shownSignInOptions();
+
+        //initialize position DB, remove old position
+//        DatabaseReference refTime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+//        refTime.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Long time=dataSnapshot.getValue(Long.class);
+//                Long ctime=System.currentTimeMillis();
+//                if(time!=null){
+//                    if((ctime-time)>=TEN_MINUTES){
+////                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
+////                        RefLat.setValue(null);
+////                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
+////                        RefLong.setValue(null);
+////                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+////                        Reftime.setValue(null);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+    }
+
+    private void init() {
         currentOrder = new Order();
         currentOrder.setState("empty");
         navigation = findViewById(R.id.navigation);
@@ -186,34 +215,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
-        //initialize position DB, remove old position
-        DatabaseReference refTime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
-        refTime.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Long time=dataSnapshot.getValue(Long.class);
-                Long ctime=System.currentTimeMillis();
-                if(time!=null){
-                    if((ctime-time)>=TEN_MINUTES){
-//                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
-//                        RefLat.setValue(null);
-//                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
-//                        RefLong.setValue(null);
-//                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
-//                        Reftime.setValue(null);
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void init() {
         profile = new Profile();
         profile.setState(false);
         loadProfile();
