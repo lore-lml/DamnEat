@@ -74,8 +74,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
-            Fragment selected = null;
-            selectedId = item.getItemId();
+        Fragment selected = null;
+        selectedId = item.getItemId();
                 switch (selectedId) {
                     case R.id.nav_dishes:
                         if(dishesFragment == null)
@@ -141,6 +141,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                     //b.setEnabled(true);
                     dbKey = user.getUid();
                     FirebaseLogin.storeData(user, this);
+                    if(selectedId!=null && selectedId == R.id.nav_dishes && dishesFragment!=null)
+                        dishesFragment.update();
                 }
                 loadDataProfile();
             }
@@ -184,7 +186,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -220,7 +223,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -275,7 +279,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -336,7 +341,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     }
 
     private void updateTotalAvailabity(Order order){
-        /** @TODO: fare transazione **/
         DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -273,6 +273,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
             card_small.setVisibility(GONE);
+            card_order.setVisibility(GONE);
         }
     }
 
@@ -546,9 +547,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             waiting_confirm.setText(getString(R.string.not_registered));
             waiting_confirm.setVisibility(View.VISIBLE);
             card_avaible.setVisibility(GONE);
+            card_order.setVisibility(GONE);
             return;
         }
-
+        card_order.setVisibility(View.VISIBLE);
         if(state.equals("empty")){
             card_avaible.setVisibility(View.VISIBLE);
             if (switch_available.isChecked()) waiting_confirm.setVisibility(View.VISIBLE);

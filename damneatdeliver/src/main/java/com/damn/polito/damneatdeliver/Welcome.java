@@ -333,7 +333,9 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -432,14 +434,16 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        //todo: ho commentato per non dare l'errore alla chiusura
+                        //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -708,7 +712,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     protected void onDestroy() {
         super.onDestroy();
         Utility.firstON = true;
-        if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
         orderQuery.removeEventListener(ordersChildListener);
