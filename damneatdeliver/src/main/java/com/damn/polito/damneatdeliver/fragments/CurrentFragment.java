@@ -48,6 +48,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -837,6 +838,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             gmap.addMarker(place1);
             gmap.addMarker(place2);
             gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(midPoint(place1,place2), 13));
+
             //if(place1.getPosition().latitude<=place2.getPosition().latitude) {
             //    BOUNDS = new LatLngBounds(place1.getPosition(), place2.getPosition());
             //}
@@ -846,7 +848,17 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             // Set the camera to the greatest possible zoom level that includes the
             // bounds
             //gmap.moveCamera(CameraUpdateFactory.newLatLngBounds(BOUNDS, 15));
+
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(place1.getPosition());
+            builder.include(place2.getPosition());
+            LatLngBounds bounds = builder.build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+            gmap.animateCamera(cameraUpdate);
+
         }
+
+        gmap.getUiSettings().setMapToolbarEnabled(true);
 
     }
 
@@ -878,7 +890,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             addresses.addAll(coder.getFromLocation(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude(),1));
             addresses.addAll(coder.getFromLocationName(currentOrder.getCustomer().getCustomerAddress() +", Torino", 1));
         } catch (IOException e) {
-            Toast.makeText(ctx, "Address Error!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, R.string.address_error, Toast.LENGTH_SHORT).show();
         }
         return addresses;
     }

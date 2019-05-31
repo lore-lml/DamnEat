@@ -76,4 +76,5 @@
     <string name="current_position">Current_position</string>
     <string name="distance_format" translatable="false">%.1f Km</string>
     <string name="money_earned">You earned %.2f €</string>
+    <string name="address_error">Address Error!</string>
 </resources>
