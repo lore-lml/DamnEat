@@ -94,6 +94,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
             intent.putExtra("rest_image", current.getImage());
             intent.putExtra("rest_description", current.getDescription());
             intent.putExtra("rest_priceship", current.getPriceShip());
+            intent.putExtra("rest_reviews_number", current.getReviews());
+            intent.putExtra("rest_total_rate", current.getTotalRate());
 
             PreferenceManager.getDefaultSharedPreferences(ctx).edit().putString("rest_opening", current.getOpening()).apply();
             ((Activity)ctx).startActivityForResult(intent, RestaurantFragment.REQUEST_CODE + pos);

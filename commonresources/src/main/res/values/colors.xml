@@ -28,7 +28,7 @@
     <color name="colorPrimaryText">#212121</color>
     <color name="colorSecondaryText">#757575</color>
     <color name="hint">#88878b8d</color>
-    <color name="colorBackground">#f4f1f1</color>
+    <color name="colorBackground">#F4F1F1</color>
     <color name="colorEditText">#0e171b</color>
     <color name="colorEditTextHint">#8e8585</color>
     <color name="colorCorners">#4f5d73</color>

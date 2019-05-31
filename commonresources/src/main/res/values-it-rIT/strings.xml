@@ -103,6 +103,7 @@
     <string name="edit_profile">Modifica il profilo</string>
     <string name="order_summary">Riepilogo ordine</string>
     <string name="review_title">Le tue recensioni</string>
+    <string name="no_internet">Nessuna connessione ad internet.</string>
 
 
 </resources>

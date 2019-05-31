@@ -181,7 +181,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 if(selectedId == null){
                     navigation.setSelectedItemId(R.id.nav_dishes);
                 }else if(selectedId == R.id.nav_profile)
-                    profileFragment.updateProfile();
+                    if(profile!=null)
+                        profileFragment.updateProfile();
 
             }
             @Override

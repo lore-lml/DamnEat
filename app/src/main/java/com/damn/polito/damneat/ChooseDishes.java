@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +62,8 @@ public class ChooseDishes extends AppCompatActivity {
     private ImageView no_dishes_img;
     private CardView card;
     private CircleImageView restaurantCircleView;
-    private TextView no_dishes_tv, restaurantName, restaurantDesc;
+    private TextView no_dishes_tv, restaurantName, restaurantDesc, restaurantShipPrice, restaurantReviews;
+    private RatingBar ratingBar;
     private ValueEventListener listener;
 
     // Dettagli ristorante
@@ -93,9 +95,12 @@ public class ChooseDishes extends AppCompatActivity {
         no_dishes_img = findViewById(R.id.no_dishes_img);
         no_dishes_tv = findViewById(R.id.no_dishes_tv);
         card = findViewById(R.id.view);
-        restaurantCircleView = findViewById(R.id.restaurant_image);
-        restaurantDesc = findViewById(R.id.restaurant_address);
+        restaurantCircleView = findViewById(R.id.restaurant_img);
+        restaurantDesc = findViewById(R.id.restaurant_category);
         restaurantName = findViewById(R.id.restaurant_name);
+        restaurantShipPrice = findViewById(R.id.restaurant_ship_price);
+        restaurantReviews = findViewById(R.id.restaurant_reviews);
+        ratingBar = findViewById(R.id.restaurant_ratingbar);
         fab_cart = findViewById(R.id.fab_cart);
         fab_cart.setOnClickListener(v-> startCart());
         ctx = ChooseDishes.this;
@@ -114,10 +119,21 @@ public class ChooseDishes extends AppCompatActivity {
         restaurant.setPhoto(i.getStringExtra("rest_image"));
         restaurant_description = i.getStringExtra("rest_description");
         restaurant.setRestaurant_price_ship(i.getDoubleExtra("rest_priceship", 0));
-        //Log.d("restaurant", restaurant.getRestaurantName());
-        //Log.d("restaurant", restaurant.getRestaurantAddress());
+        int reviews_number = i.getIntExtra("rest_reviews_number", 0);
+        int total_rate = i.getIntExtra("rest_total_rate", 0);
 
+                //Log.d("restaurant", restaurant.getRestaurantName());
+        //Log.d("restaurant", restaurant.getRestaurantAddress());
+        if(reviews_number==0){
+            total_rate = 0;
+            reviews_number = 1;
+        }
+        ratingBar.setRating((float)total_rate/(float)reviews_number);
         restaurantName.setText(restaurant.getRestaurantName());
+        restaurantDesc.setText(restaurant_description);
+        restaurantReviews.setText(Integer.toString(reviews_number));
+        restaurantShipPrice.setText(restaurant.getRestaurant_price_ship() == 0 ?
+                ctx.getString(R.string.price_free) : ctx.getString(R.string.order_price, restaurant.getRestaurant_price_ship()));
         restaurantDesc.setText(restaurant_description);
         Bitmap bitmap = Utility.StringToBitMap(restaurant.getPhoto());
         if(bitmap != null)
@@ -215,8 +231,10 @@ public class ChooseDishes extends AppCompatActivity {
                     //DataPacket value = dataSnapshot.getValue(DataPacket.class);
                     key = chidSnap.getKey();
                     dish = chidSnap.getValue(Dish.class);
-                    dishesList.add(dish);
-                    dishesList.get(dishesList.size() - 1).setId(key);
+                    if(dish!=null && dish.getAvailability()>0) {
+                        dishesList.add(dish);
+                        dishesList.get(dishesList.size() - 1).setId(key);
+                    }
                 }
                 Collections.sort(dishesList);
                 adapter.notifyDataSetChanged();

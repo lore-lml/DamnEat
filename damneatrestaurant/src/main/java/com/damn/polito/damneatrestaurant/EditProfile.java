@@ -222,9 +222,11 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
         }
 
-        FindLocationFromAddress();
-        i.putExtra("latitude", latitude);
-        i.putExtra("longitude", longitude);
+        if(!address.getText().toString().trim().equals("")) {
+            FindLocationFromAddress();
+            i.putExtra("latitude", latitude);
+            i.putExtra("longitude", longitude);
+        }
 
         return i;
     }
