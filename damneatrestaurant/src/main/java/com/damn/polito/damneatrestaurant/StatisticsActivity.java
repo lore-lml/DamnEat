@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.WrapperListAdapter;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Dish;
@@ -92,11 +94,15 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void loadStars() {
-
+        if(Welcome.getProfile()==null) {
+            Toast.makeText(this, R.string.not_registered_statistics, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         int reviews = Welcome.getProfile().getReviews();
         int totalRate = Welcome.getProfile().getTotalRate();
 
-        ratingBar.setRating(reviews == 0 ? 0 : (float)totalRate/reviews);
+        ratingBar.setRating((reviews == 0) ? 0 : ((float) totalRate / reviews));
         ratingNumber.setVisibility(View.GONE);
         reviews_button.setText(getString(R.string.see_reviews_button, reviews));
 
