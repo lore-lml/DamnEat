@@ -552,7 +552,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             return;
         }
         card_order.setVisibility(View.VISIBLE);
-        if(state.equals("empty")){
+        if(state.equals("empty") || state.equals("ordered")|| state.equals("reassign")){
             card_avaible.setVisibility(View.VISIBLE);
             if (switch_available.isChecked()) waiting_confirm.setVisibility(View.VISIBLE);
             else waiting_confirm.setVisibility(View.GONE);
@@ -562,8 +562,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             card_order.setVisibility(View.VISIBLE);
             card_small.setVisibility(View.VISIBLE);
         }
-        if(state.equals("ordered")){
-        }
+
         if(state.equals("shipped")) {
             date.setVisibility(View.VISIBLE);
 //            id.setVisibility(View.VISIBLE);

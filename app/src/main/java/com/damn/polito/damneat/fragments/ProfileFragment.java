@@ -23,10 +23,11 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.QueryType;
 import com.damn.polito.damneat.EditProfile;
 import com.damn.polito.damneat.R;
-import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.ReviewsActivity;
+import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,7 +39,7 @@ import com.google.firebase.database.Transaction;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
-import static com.damn.polito.damneat.Welcome.*;
+import static com.damn.polito.damneat.Welcome.getDbKey;
 
 public class ProfileFragment extends Fragment {
 
@@ -206,7 +207,9 @@ public class ProfileFragment extends Fragment {
                 return true;
 
             case R.id.item_statistics:
-                startActivity(new Intent(ctx, ReviewsActivity.class));
+                Intent i = new Intent(ctx, ReviewsActivity.class);
+                i.putExtra("query_type", QueryType.SelfReview.toString());
+                startActivity(i);
                 return true;
 
             default:

@@ -36,6 +36,7 @@
     <string name="order_deliverer_info">Corriere:\n\n%s</string>
     <string name="impossible_find_location">Impossibile trovare la posizione</string>
     <string name="location_found">Posizione trovata</string>
+    <string name="not_registered_statistics">Devi compilare il profilo per guardare le statistiche.</string>
     <!--<string name="app_name">DamnEat - Ristoranti</string>-->
     <!--<string name="profile_name">Nome ristorante</string>-->
     <!--<string name="profile_address">Indirizzo ristorante</string>-->
