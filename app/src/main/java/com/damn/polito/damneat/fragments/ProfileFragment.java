@@ -26,7 +26,7 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneat.EditProfile;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.Welcome;
-import com.damn.polito.damneat.adapters.ReviewsActivity;
+import com.damn.polito.damneat.ReviewsActivity;
 import com.damn.polito.damneat.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

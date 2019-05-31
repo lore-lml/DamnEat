@@ -370,7 +370,22 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue() == null) return;
+                String key = dataSnapshot.getKey();
+
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected"))
+                    return;
+
+                o.setId(key);
+                ((LinkedList<Order>)orders).addFirst(o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildAdded();
+            }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}

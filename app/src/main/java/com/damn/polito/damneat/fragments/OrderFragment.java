@@ -76,8 +76,13 @@ public class OrderFragment extends Fragment {
         adapter.notifyItemInserted(0);
     }
 
-    public void onChildChanged(){
-        adapter.notifyItemChanged(0);
+    public void onChildChanged(int pos, boolean rateChanged){
+        if(rateChanged) {
+            adapter.notifyItemChanged(pos);
+            return;
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     public void onChildRemoved(int pos) {

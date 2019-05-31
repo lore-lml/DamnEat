@@ -333,11 +333,17 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert o != null;
                 o.setId(key);
-                orders.remove(o);
-                orders.add(0, o);
+                int pos = orders.indexOf(o);
+                Order old = orders.remove(pos);
+                boolean rateChanged = true;
+                if(old.isRated() == o.isRated()) {
+                    pos = 0;
+                    rateChanged = false;
+                }
+                orders.add(pos, o);
 
                 if(selectedId == R.id.nav_reservations)
-                    orderFragment.onChildChanged();
+                    orderFragment.onChildChanged(pos, rateChanged);
                 else
                     refreshNotificationBadge(true);
             }

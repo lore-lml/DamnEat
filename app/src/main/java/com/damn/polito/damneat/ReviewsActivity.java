@@ -1,4 +1,4 @@
-package com.damn.polito.damneat.adapters;
+package com.damn.polito.damneat;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,30 +7,34 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.Welcome;
+import com.damn.polito.damneat.adapters.ReviewsAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ReviewsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ReviewsAdapter adapter;
     private List<RateObject> reviews;
-
     private Query ref;
-    private ChildEventListener listener;
+    private ValueEventListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,29 +58,23 @@ public class ReviewsActivity extends AppCompatActivity {
 
     private void setListener() {
         ref = FirebaseDatabase.getInstance().getReference("reviews/").orderByChild("customer/customerID").equalTo(Welcome.getDbKey());
-        listener = ref.addChildEventListener(new ChildEventListener() {
+        listener = ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() == null) return;
-                RateObject review = dataSnapshot.getValue(RateObject.class);
-                reviews.add(review);
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    RateObject review = child.getValue(RateObject.class);
+                    reviews.add(review);
+                }
 
                 Collections.sort(reviews);
-
                 adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ReviewsActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
