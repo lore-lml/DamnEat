@@ -45,7 +45,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.OrderVie
         if(selected.getRestaurant() == null || selected.getRestaurant().getPhoto().equals("NO_PHOTO"))
             holder.image.setImageBitmap(default_image);
         else
-            holder.image.setImageBitmap(Utility.StringToBitMap(selected.getRestaurant().getPhoto()));
+            holder.image.setImageBitmap(Utility.StringToBitMap(getProperPhoto(selected)));
 
         holder.date.setText(selected.getDate());
         holder.note.setText(selected.getNote());
@@ -55,10 +55,30 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.OrderVie
             holder.name.setText(R.string.service_review);
             holder.reviewType.setImageResource(R.drawable.ic_star);
         } else {
-            holder.name.setText(selected.getRestaurant().getRestaurantName());
+            holder.name.setText(getProperName(selected));
             holder.reviewType.setImageResource(selected.getType() == RateObject.RateType.Meal ?
                     R.drawable.ic_restaurant : R.drawable.ic_cutlery);
         }
+    }
+
+    private String getProperName(RateObject selected){
+        switch (selected.queryType()){
+            case SelfReview:
+                return selected.getRestaurant().getRestaurantName();
+            case RestaurantReview:
+                return selected.getCustomer().getCustomerName();
+        }
+        return null;
+    }
+
+    private String getProperPhoto(RateObject selected){
+        switch (selected.queryType()){
+            case SelfReview:
+                return selected.getRestaurant().getPhoto();
+            case RestaurantReview:
+                return selected.getCustomer().getCustomerPhoto();
+        }
+        return null;
     }
 
     @Override

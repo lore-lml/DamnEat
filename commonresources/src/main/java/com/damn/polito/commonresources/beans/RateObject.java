@@ -16,6 +16,7 @@ public class RateObject implements Comparable<RateObject>{
     private Restaurant restaurant;
     private RateType type;
     private String date;
+    private QueryType qtype;
 
     public RateObject(){}
 
@@ -77,6 +78,14 @@ public class RateObject implements Comparable<RateObject>{
 
     public void setDate(String date){
         this.date = date;
+    }
+
+    public QueryType queryType() {
+        return qtype;
+    }
+
+    public void sQueryType(QueryType qtype) {
+        this.qtype = qtype;
     }
 
     @Override

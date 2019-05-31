@@ -1,27 +1,35 @@
 package com.damn.polito.damneat;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.FirebaseLogin;
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.beans.QueryType;
 import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneat.adapters.DishesAdapter;
 import com.damn.polito.damneat.beans.Profile;
@@ -43,13 +51,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ChooseDishes extends AppCompatActivity {
     private List<Dish> dishesList = new ArrayList<>();
     private RecyclerView recyclerView;
     private DishesAdapter adapter;
     private FloatingActionButton fab_cart;
     private ImageView no_dishes_img;
-    private TextView no_dishes_tv;
+    private CardView card;
+    private CircleImageView restaurantCircleView;
+    private TextView no_dishes_tv, restaurantName, restaurantDesc;
     private ValueEventListener listener;
 
     // Dettagli ristorante
@@ -80,7 +92,10 @@ public class ChooseDishes extends AppCompatActivity {
         setContentView(R.layout.activity_choose_dishes);
         no_dishes_img = findViewById(R.id.no_dishes_img);
         no_dishes_tv = findViewById(R.id.no_dishes_tv);
-
+        card = findViewById(R.id.view);
+        restaurantCircleView = findViewById(R.id.restaurant_image);
+        restaurantDesc = findViewById(R.id.restaurant_address);
+        restaurantName = findViewById(R.id.restaurant_name);
         fab_cart = findViewById(R.id.fab_cart);
         fab_cart.setOnClickListener(v-> startCart());
         ctx = ChooseDishes.this;
@@ -101,6 +116,12 @@ public class ChooseDishes extends AppCompatActivity {
         restaurant.setRestaurant_price_ship(i.getDoubleExtra("rest_priceship", 0));
         //Log.d("restaurant", restaurant.getRestaurantName());
         //Log.d("restaurant", restaurant.getRestaurantAddress());
+
+        restaurantName.setText(restaurant.getRestaurantName());
+        restaurantDesc.setText(restaurant_description);
+        Bitmap bitmap = Utility.StringToBitMap(restaurant.getPhoto());
+        if(bitmap != null)
+            restaurantCircleView.setImageBitmap(bitmap);
     }
 
     private void getCustomerInfo() {
@@ -306,6 +327,13 @@ public class ChooseDishes extends AppCompatActivity {
                 setResult(RESULT_CANCELED);
                 this.finish();
                 return true;
+
+            case R.id.item_review:
+                Intent i = new Intent(this, ReviewsActivity.class);
+                i.putExtra("query_type", QueryType.RestaurantReview.toString());
+                i.putExtra("restaurant_id", restaurant.getRestaurantID());
+                startActivity(i);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -316,4 +344,12 @@ public class ChooseDishes extends AppCompatActivity {
         super.onDestroy();
         dbRef.removeEventListener(listener);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.review_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
 }
