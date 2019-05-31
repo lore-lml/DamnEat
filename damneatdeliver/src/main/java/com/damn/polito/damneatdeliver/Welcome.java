@@ -236,7 +236,9 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("fragment_id", selectedId);
+        //todo: fa crashare al primo avvio
+        if(selectedId!=null)
+            outState.putInt("fragment_id", selectedId);
     }
 
     @Override

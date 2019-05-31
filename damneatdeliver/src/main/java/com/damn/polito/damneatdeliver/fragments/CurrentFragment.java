@@ -832,6 +832,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             Drawable bike = getResources().getDrawable(R.drawable.bikerfinal, null);
             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(bike);
 
+            if(place1==null || place2==null)
+                return;
             place1.icon(markerIcon);
 
             gmap.addMarker(place1);
