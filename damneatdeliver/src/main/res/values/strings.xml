@@ -56,7 +56,7 @@
     <string name="delivery_time_tv">Delivery time: %s</string>
     <string name="order_completed">Order completed</string>
     <string name="waiting_customer_confirm">Waiting customer confirm</string>
-    <string name="waiting_order">Waiting a order</string>
+    <string name="waiting_order">Waiting an order</string>
     <string name="reject">Reject</string>
     <string name="Accept">Accept</string>
     <string name="accept_question">Do you want accept delivery?</string>
