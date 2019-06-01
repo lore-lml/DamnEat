@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.damneatrestaurant.adapters.ReviewsAdapter;
@@ -16,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,19 +31,22 @@ public class ReviewsActivity extends AppCompatActivity {
     private List<RateObject> reviews = new LinkedList<>();
     private RecyclerView recyclerView;
     private ReviewsAdapter adapter;
+    private ProgressBar buffer;
+
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
     private Query reviewQuery;
-    private ChildEventListener eventListener;
+    private ValueEventListener eventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reviews);
+
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.review_title);
 
-        setContentView(R.layout.activity_reviews);
-        reviews.clear();
+        buffer = findViewById(R.id.review_buffer);
         initReyclerView();
         loadData();
     }
@@ -49,35 +56,27 @@ public class ReviewsActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         dbRef = database.getReference("/reviews/");
         reviewQuery = dbRef.orderByChild("restaurant/restaurantID").equalTo(dbKey);
-        eventListener = reviewQuery.addChildEventListener(new ChildEventListener() {
+        eventListener = reviewQuery.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                RateObject rate = dataSnapshot.getValue(RateObject.class);
-                if(rate!=null) {
-                    reviews.add(rate);
-                    adapter.notifyItemChanged(reviews.size()-1);
-                    Collections.sort(reviews);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null) return;
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if(child.getValue() == null)
+                        continue;
+                    RateObject review = child.getValue(RateObject.class);
+                    if(!reviews.contains(review))
+                        reviews.add(review);
                 }
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                Collections.sort(reviews);
+                adapter.notifyDataSetChanged();
+                recyclerView.setVisibility(View.VISIBLE);
+                buffer.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Toast.makeText(ReviewsActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -85,6 +84,7 @@ public class ReviewsActivity extends AppCompatActivity {
 
     private void initReyclerView(){
         recyclerView = findViewById(R.id.recyclerview_reviews);
+        recyclerView.setVisibility(View.GONE);
         adapter = new ReviewsAdapter(reviews, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
