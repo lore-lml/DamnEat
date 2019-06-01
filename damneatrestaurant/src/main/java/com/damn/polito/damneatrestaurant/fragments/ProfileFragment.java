@@ -122,21 +122,6 @@ public class ProfileFragment extends Fragment{
     }
 
     private void loadData(){
-        /*SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        prof.setAddress(pref.getString("address", ""));
-        prof.setName(pref.getString("name", ""));
-        prof.setMail(pref.getString("mail", ""));
-        prof.setPhone(pref.getString("phone", ""));
-        prof.setOpening(pref.getString("opening", ""));
-        prof.setCategories(pref.getString("categories", ""));
-        prof.setDescription(pref.getString("description", ""));
-        prof.setImage(pref.getString("profile", ""));
-        String ship = pref.getString("shipprice", "");
-        assert ship != null;
-        if(!ship.isEmpty())
-            prof.setPriceShip(Double.valueOf(ship));
-        else
-            prof.setPriceShip(0.0);*/
         if(!Welcome.accountExist) return;
         prof = Welcome.getProfile();
     }
@@ -171,6 +156,9 @@ public class ProfileFragment extends Fragment{
 
 
     private void storeData(Intent data) {
+        boolean hasChanged = data.getBooleanExtra("hasChanged", false);
+        if(!hasChanged) return;
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
@@ -189,23 +177,11 @@ public class ProfileFragment extends Fragment{
 
         //CARICO I DATI SU FIREBASE
         prof = new Profile(name,mail,phone,description,address, opening, categories, priceship, bitmapProf);
-        prof.setReviews(Welcome.getProfile().getReviews());
-        prof.setTotalRate(Welcome.getProfile().getTotalRate());
+        if(Welcome.getProfile() != null) {
+            prof.setReviews(Welcome.getProfile().getReviews());
+            prof.setTotalRate(Welcome.getProfile().getTotalRate());
+        }
         storeProfileOnFirebase(prof);
-
-        /*this.name.setText(name);
-        this.mail.setText(mail);
-        this.phone.setText(phone);
-        this.description.setText(description);
-        this.address.setText(address);
-        this.opening.setText(opening);
-        this.categories.setText(categories);
-        if(!shipprice.equals(getString(R.string.price_free)))
-            this.shipPrice.setText(getString(R.string.order_price, Double.valueOf(shipprice.replace(",","."))));
-        else
-            this.shipPrice.setText(shipprice);
-        if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
-        Welcome.accountExist = true;*/
     }
 
     private void storeProfileOnFirebase(Profile profile){
@@ -225,20 +201,6 @@ public class ProfileFragment extends Fragment{
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 //this method will be called once with the result of the transaction
                 if(!committed) {
-                    /*if(orders != null && orders.size() != 0)
-                        ordini.updateChildren(orders);*/
-                    /*SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-                    //editor.putString("dbkey", myRef.getKey());
-                    editor.putString("address", profile.getAddress());
-                    editor.putString("name", profile.getName());
-                    editor.putString("phone", profile.getPhone());
-                    editor.putString("mail", profile.getMail());
-                    editor.putString("description",profile.getDescription());
-                    editor.putString("opening", profile.getOpening());
-                    editor.putString("categories", profile.getCategories());
-                    editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
-                    editor.putString("profile", profile.getImage());
-                    editor.apply();*/
                     Toast.makeText(ctx, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }

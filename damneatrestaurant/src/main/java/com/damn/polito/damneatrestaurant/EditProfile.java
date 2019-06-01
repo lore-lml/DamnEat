@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Address;
+import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,7 +30,7 @@ import com.damn.polito.damneatrestaurant.dialogs.HandleDismissDialog;
 import com.damn.polito.damneatrestaurant.dialogs.OpeningDialog;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static com.damn.polito.commonresources.Utility.BitMapToString;
@@ -49,8 +49,6 @@ import static com.damn.polito.commonresources.Utility.showWarning;
 
 public class EditProfile extends AppCompatActivity implements HandleDismissDialog {
 
-    public enum DialogType{Opening, Categories}
-
     private ImageView profile;
     private ImageButton camera;
     private EditText name, mail, description, address, phone, opening, categories, shipPrice;
@@ -61,7 +59,6 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     private String sName, sMail, sDesc, sAddress, sPhone, sOpening, sCategories, sShipPrice;
     private Bitmap profImgPrec;
     private boolean addressFound = true;
-    private long latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,15 +124,10 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
 
         //Imposta la funzione del bottone "SALVA"
         save.setOnClickListener(v->{
+            if(address.hasFocus())
+                addressFound = checkAddress();
             if(checkField()){
-                try {
-                    setActivityResult();
-                    Toast.makeText(this, R.string.location_found, Toast.LENGTH_LONG).show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, R.string.impossible_find_location, Toast.LENGTH_LONG).show();
-                    return;
-                }
+                setActivityResult();
                 finish();
             }
         });
@@ -171,6 +163,35 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             category.setCategories(this.categories.getText().toString());
             category.show(fm, "Category Dialog");
         });
+
+        address.setOnFocusChangeListener((view, isFocused) -> {
+            if(!isFocused)
+                addressFound = checkAddress();
+        });
+    }
+
+    private boolean checkAddress() {
+        boolean outcome = false;
+        Geocoder geocoder = new Geocoder(this, Locale.ITALY);
+        String address = this.address.getText().toString();
+
+        try {
+            if(geocoder.getFromLocationName(address, 1).size() > 0)
+                outcome = true;
+
+        } catch (IOException ignored) {}
+
+        this.address.setCompoundDrawables( null, null, getProperAddressDrawable(outcome), null );
+        return outcome;
+    }
+
+    private Drawable getProperAddressDrawable(boolean outcome){
+        Drawable image = outcome ? getDrawable(R.drawable.ic_check_green) : getDrawable(R.drawable.ic_close);
+        assert image != null;
+        int h = image.getIntrinsicHeight();
+        int w = image.getIntrinsicWidth();
+        image.setBounds( 0, 0, w, h );
+        return image;
     }
 
     private void itemCamera() {
@@ -199,11 +220,11 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         startActivityForResult(intent, IMAGE_GALLERY_REQUEST);
     }
 
-    private void setActivityResult() throws IOException {
+    private void setActivityResult(){
         setResult(RESULT_OK, getActivityResult());
     }
 
-    private Intent getActivityResult() throws IOException {
+    private Intent getActivityResult(){
         Intent i = new Intent();
         i.putExtra("name", name.getText().toString().trim());
         i.putExtra("mail", mail.getText().toString().trim());
@@ -217,35 +238,15 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
         if(price.isEmpty())
             price = getString(R.string.price_free);
         i.putExtra("shipprice", price);
+        if(checkChanges())
+            i.putExtra("hasChanged", true);
         if(profImg != null){
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             pref.edit().putString("profile", BitMapToString(profImg)).apply();
         }
 
-        if(!address.getText().toString().trim().equals("")) {
-            FindLocationFromAddress();
-            i.putExtra("latitude", latitude);
-            i.putExtra("longitude", longitude);
-        }
-
         return i;
     }
-
-    private void FindLocationFromAddress() throws IOException {
-
-        Geocoder geocoder = new Geocoder(this);
-        List<Address> addresses;
-        addresses = geocoder.getFromLocationName(address.getText().toString().trim(), 1);
-        if(addresses.size() > 0) {
-            latitude = (long) addresses.get(0).getLatitude();
-            longitude = (long) addresses.get(0).getLongitude();
-            addressFound = true;
-        }else{
-            addressFound = false;
-            throw new IOException("Location not found");
-        }
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -355,6 +356,9 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             this.address.requestFocus();
             Toast.makeText(this, getString(R.string.empty_address), Toast.LENGTH_SHORT).show();
             return false;
+        }else if(!addressFound){
+            this.address.requestFocus();
+            return false;
         }
 
         String opening = this.opening.getText().toString();
@@ -411,7 +415,6 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
             return true;
 
         if(profImg == null) return false;
-
         return (!(profImg.equals(profImgPrec)));
 
     }
@@ -452,14 +455,11 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
 
     @Override
     public void onBackPressed() {
-        if(checkChanges())
+        if(checkChanges()) {
             // Facciamo comparire il messagio solo se sono stati cambiati dei campi
-        {
-            try {
-                showWarning(this, checkField(), getActivityResult());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (address.hasFocus())
+                addressFound = checkAddress();
+            showWarning(this, checkField(), getActivityResult());
         }
         else {
             setResult(RESULT_CANCELED);
@@ -471,17 +471,7 @@ public class EditProfile extends AppCompatActivity implements HandleDismissDialo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(checkChanges()) {
-                    try {
-                        showWarning(this, checkField(), getActivityResult());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    setResult(RESULT_CANCELED);
-                    this.finish();
-                }
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
