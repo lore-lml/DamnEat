@@ -171,7 +171,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         listener = myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 profile = dataSnapshot.getValue(Profile.class);
                 if(profile != null && Utility.firstON) {
                     setListeners();

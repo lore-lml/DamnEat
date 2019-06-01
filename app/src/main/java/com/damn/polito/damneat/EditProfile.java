@@ -396,21 +396,11 @@ public class EditProfile extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                if(checkChanges()) {
-                    if(address.hasFocus())
-                        addressFound = checkAddress();
-                    showWarning(this, checkField(), getActivityResult());
-                }
-                else {
-                    setResult(RESULT_CANCELED);
-                    this.finish();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
