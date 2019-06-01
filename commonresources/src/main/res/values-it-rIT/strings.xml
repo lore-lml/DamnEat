@@ -104,6 +104,7 @@
     <string name="order_summary">Riepilogo ordine</string>
     <string name="review_title">Le tue recensioni</string>
     <string name="no_internet">Nessuna connessione ad internet</string>
+    <string name="info_service_review">Cosa pensano i clienti del nostro servizio</string>
 
 
 </resources>

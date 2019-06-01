@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.InternetConnection;
+import com.damn.polito.damneat.InfoActivity;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.adapters.RestaurantAdapter;
@@ -174,8 +175,8 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
+        inflater.inflate(R.menu.restaurant_fragment_menu, menu);
+        MenuItem item = menu.findItem(R.id.item_search);
         SearchView searchView = (SearchView)item.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -191,6 +192,19 @@ public class RestaurantFragment extends Fragment implements HandleDismissDialog 
                 return false;
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.item_info:
+                startActivity(new Intent(getContext(), InfoActivity.class));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override

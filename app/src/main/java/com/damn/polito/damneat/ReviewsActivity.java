@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.QueryType;
@@ -27,6 +29,8 @@ public class ReviewsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ReviewsAdapter adapter;
+    private ProgressBar buffer;
+
     private List<RateObject> reviews;
     private Query ref;
     private ValueEventListener listener;
@@ -43,6 +47,7 @@ public class ReviewsActivity extends AppCompatActivity {
                 getString(R.string.reviews_title) : getString(R.string.specific_restaurant_review_title, restaurantName));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        buffer = findViewById(R.id.review_buffer);
         initRecycler();
         setListener();
     }
@@ -50,6 +55,7 @@ public class ReviewsActivity extends AppCompatActivity {
     private void initRecycler(){
         reviews = new LinkedList<>();
         recyclerView = findViewById(R.id.reviews_recycler);
+        recyclerView.setVisibility(View.GONE);
         adapter = new ReviewsAdapter(reviews, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -69,11 +75,14 @@ public class ReviewsActivity extends AppCompatActivity {
                     if(review == null)
                         continue;
                     review.sQueryType(qtype);
-                    reviews.add(review);
+                    if(!reviews.contains(review))
+                        reviews.add(review);
                 }
 
                 Collections.sort(reviews);
                 adapter.notifyDataSetChanged();
+                recyclerView.setVisibility(View.VISIBLE);
+                buffer.setVisibility(View.GONE);
             }
 
             @Override

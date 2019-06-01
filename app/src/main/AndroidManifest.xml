@@ -9,11 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReviewsActivity"
-            android:parentActivityName=".Welcome"/>
+        <activity android:name=".InfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ReviewsActivity"
+            android:parentActivityName=".Welcome"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".RateRestaurant"
-            android:parentActivityName=".Welcome" />
+            android:parentActivityName=".Welcome"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Cart"
             android:screenOrientation="portrait" />

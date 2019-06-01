@@ -120,5 +120,8 @@
     <string name="order_summary">Order summary</string>
     <string name="review_title">Your reviews</string>
     <string name="no_internet">No internet connection</string>
+    <string name="info_service_review">What our clients think about our service</string>
+    <string name="info_service_review_title" translatable="false">Info</string>
+    <string name="copyright" translatable="false">© DamnEat - 2019</string>
 
 </resources>
