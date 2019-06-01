@@ -238,6 +238,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert o != null;
                 o.setId(key);
                 orders.add(0, o);
+                if(o.getState()!=null && o.getState().equals("reassign"))
+                    reassignOrder(o);
 
                 if(selectedId == R.id.nav_reservations)
                     orderFragment.onChildAdded();
