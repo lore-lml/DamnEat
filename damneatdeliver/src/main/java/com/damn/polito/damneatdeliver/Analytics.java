@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 import static com.damn.polito.commonresources.Utility.showWarning;
 
@@ -49,7 +50,7 @@ public class Analytics extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analytics);
-        travelsList=new HashMap<>();
+        travelsList=new TreeMap<>((String e1, String e2) -> -(e1.compareTo(e2)));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         totalDistance = findViewById(R.id.analytics_total_distance_text);
         listView = findViewById(R.id.analytics_list);

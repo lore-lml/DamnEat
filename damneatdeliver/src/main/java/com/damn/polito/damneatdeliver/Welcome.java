@@ -236,7 +236,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //todo: fa crashare al primo avvio
+        //todo: fa crashare al primo avvio ho messo il controllo che sia diverso da null, ma non so cosa faccia questa funzione
         if(selectedId!=null)
             outState.putInt("fragment_id", selectedId);
     }
@@ -491,7 +491,6 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     profile.setPosition(latitude, longitude);
                     //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
-                // @TODO: todo test
 //                String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
 //                Toast.makeText(Welcome.this, msg, Toast.LENGTH_LONG).show();
                 if(isBetterLocation(location,bestLocation)){

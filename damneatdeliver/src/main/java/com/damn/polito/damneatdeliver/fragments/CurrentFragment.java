@@ -188,10 +188,13 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("delivered");
+                DatabaseReference orderDistance = database.getReference("ordini/" + currentOrder.getId() + "/distance/");
+                orderState.setValue("delivered");
                 DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
                 Map<String, Object> map = new HashMap<>();
                 map.put(String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),currentDistance);
                 distanceState.updateChildren(map);
+
             }
         });
 

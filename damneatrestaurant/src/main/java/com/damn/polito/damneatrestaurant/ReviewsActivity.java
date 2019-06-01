@@ -17,6 +17,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +56,7 @@ public class ReviewsActivity extends AppCompatActivity {
                 if(rate!=null) {
                     reviews.add(rate);
                     adapter.notifyItemChanged(reviews.size()-1);
+                    Collections.sort(reviews);
                 }
             }
 

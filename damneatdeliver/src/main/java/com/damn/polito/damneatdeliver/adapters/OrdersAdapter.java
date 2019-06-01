@@ -145,7 +145,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.dishes_list.setVisibility(View.GONE);
             holder.nDish.setVisibility(View.GONE);
         }else{
-            holder.id.setVisibility(View.VISIBLE);
+            holder.id.setVisibility(View.GONE);
             holder.price.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
             holder.nDish.setVisibility(View.VISIBLE);

@@ -19,6 +19,7 @@ public class Order implements Serializable {
     private String note;
     private String deliveryTime;
     private boolean rated = false;
+    private Double deliveryCost = .0;
 
     private Customer customer;
     private Restaurant restaurant;
@@ -238,6 +239,14 @@ public class Order implements Serializable {
 
     public void setDelivererID(String delivererID) {
         this.delivererID = delivererID;
+    }
+
+    public Double getDeliveryCost() {
+        return deliveryCost;
+    }
+
+    public void setDeliveryCost(Double deliveryCost) {
+        this.deliveryCost = deliveryCost;
     }
 
     @Override
