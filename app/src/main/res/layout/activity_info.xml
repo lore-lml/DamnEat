@@ -7,6 +7,16 @@
     android:background="@color/colorBackground"
     tools:context=".InfoActivity">
 
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/info_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/info_title"
+        app:srcCompat="@drawable/ic_damneat_logo" />
+
     <TextView
         android:id="@+id/info_title"
         android:layout_width="0dp"
@@ -15,11 +25,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/info_service_review"
-        android:textAlignment="center"
+        android:textAlignment="textStart"
         android:textAppearance="@style/PrimaryText"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView7"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
