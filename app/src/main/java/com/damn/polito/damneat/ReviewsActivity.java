@@ -18,8 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +36,11 @@ public class ReviewsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reviews);
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.reviews_title);
+        String restaurantName = getIntent().getStringExtra("restaurant_name");
+        if(restaurantName == null) restaurantName = "";
+
+        Objects.requireNonNull(getSupportActionBar()).setTitle(getQueryType() == QueryType.SelfReview ?
+                getString(R.string.reviews_title) : getString(R.string.specific_restaurant_review_title, restaurantName));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         initRecycler();
@@ -44,7 +48,7 @@ public class ReviewsActivity extends AppCompatActivity {
     }
 
     private void initRecycler(){
-        reviews = new ArrayList<>();
+        reviews = new LinkedList<>();
         recyclerView = findViewById(R.id.reviews_recycler);
         adapter = new ReviewsAdapter(reviews, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -62,6 +66,8 @@ public class ReviewsActivity extends AppCompatActivity {
                 if(dataSnapshot.getValue() == null) return;
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     RateObject review = child.getValue(RateObject.class);
+                    if(review == null)
+                        continue;
                     review.sQueryType(qtype);
                     reviews.add(review);
                 }

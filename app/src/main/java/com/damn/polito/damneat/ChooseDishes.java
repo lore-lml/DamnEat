@@ -350,6 +350,7 @@ public class ChooseDishes extends AppCompatActivity {
                 Intent i = new Intent(this, ReviewsActivity.class);
                 i.putExtra("query_type", QueryType.RestaurantReview.toString());
                 i.putExtra("restaurant_id", restaurant.getRestaurantID());
+                i.putExtra("restaurant_name", restaurant.getRestaurantName());
                 startActivity(i);
                 return true;
             default:

@@ -119,5 +119,6 @@
     <string name="edit_profile">Edit your profile</string>
     <string name="order_summary">Order summary</string>
     <string name="review_title">Your reviews</string>
+    <string name="no_internet">No internet connection</string>
 
 </resources>

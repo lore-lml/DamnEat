@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -15,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,6 +31,7 @@ import com.damn.polito.commonresources.Utility;
 import static com.damn.polito.commonresources.Utility.*;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 public class EditProfile extends AppCompatActivity{
@@ -41,6 +45,7 @@ public class EditProfile extends AppCompatActivity{
     // VARIABILI PER VERIFICARE SE SONO STATE EFFETTUATE MODIFICHE
     private String sName, sMail, sDesc, sAddress, sPhone;
     private Bitmap profImgPrec;
+    private boolean addressFound = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +100,8 @@ public class EditProfile extends AppCompatActivity{
 
         //Imposta la funzione del bottone "SALVA"
         save.setOnClickListener(v->{
+            if(address.hasFocus())
+                addressFound = checkAddress();
             if(checkField()){
                 setActivityResult();
                 finish();
@@ -118,6 +125,35 @@ public class EditProfile extends AppCompatActivity{
             });
             pop.show();
         });
+
+        address.setOnFocusChangeListener((view, isFocused) -> {
+            if(!isFocused)
+                addressFound = checkAddress();
+        });
+    }
+
+    private boolean checkAddress() {
+        boolean outcome = false;
+        Geocoder geocoder = new Geocoder(this, Locale.ITALY);
+        String address = this.address.getText().toString();
+
+        try {
+            if(geocoder.getFromLocationName(address, 1).size() > 0)
+                outcome = true;
+
+        } catch (IOException ignored) {}
+
+        this.address.setCompoundDrawables( null, null, getProperAddressDrawable(outcome), null );
+        return outcome;
+    }
+
+    private Drawable getProperAddressDrawable(boolean outcome){
+        Drawable image = outcome ? getDrawable(R.drawable.ic_check_green) : getDrawable(R.drawable.ic_close);
+        assert image != null;
+        int h = image.getIntrinsicHeight();
+        int w = image.getIntrinsicWidth();
+        image.setBounds( 0, 0, w, h );
+        return image;
     }
 
     private void itemCamera() {
@@ -276,6 +312,9 @@ public class EditProfile extends AppCompatActivity{
             this.address.requestFocus();
             Toast.makeText(this, getString(R.string.empty_address), Toast.LENGTH_SHORT).show();
             return false;
+        }else if(!addressFound){
+            this.address.requestFocus();
+            return false;
         }
 
         return true;
@@ -343,9 +382,12 @@ public class EditProfile extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        if(checkChanges())
+        if(checkChanges()) {
             // Facciamo comparire il messagio solo se sono stati cambiati dei campi
+            if (address.hasFocus())
+                addressFound = checkAddress();
             showWarning(this, checkField(), getActivityResult());
+        }
         else {
             setResult(RESULT_CANCELED);
             this.finish();
@@ -356,8 +398,11 @@ public class EditProfile extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                if(checkChanges())
+                if(checkChanges()) {
+                    if(address.hasFocus())
+                        addressFound = checkAddress();
                     showWarning(this, checkField(), getActivityResult());
+                }
                 else {
                     setResult(RESULT_CANCELED);
                     this.finish();
@@ -387,5 +432,4 @@ public class EditProfile extends AppCompatActivity{
             pref.edit().remove("profile").apply();
         }
     }
-
 }

@@ -47,10 +47,10 @@
                     android:layout_height="0dp"
                     android:layout_marginStart="8dp"
                     android:background="?android:attr/listDivider"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/restaurant_img"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="invisible" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/restaurant_name"
