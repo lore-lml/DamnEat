@@ -20,6 +20,7 @@ public class Order implements Serializable {
     private String deliveryTime;
     private boolean rated = false;
     private Double deliveryCost = .0;
+    private Double latitude, longitude;
 
     private Customer customer;
     private Restaurant restaurant;
@@ -247,6 +248,22 @@ public class Order implements Serializable {
 
     public void setDeliveryCost(Double deliveryCost) {
         this.deliveryCost = deliveryCost;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     @Override

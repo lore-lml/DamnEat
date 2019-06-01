@@ -213,6 +213,11 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     orderName.setValue(prof.getName());
                     DatabaseReference orderID = database.getReference("ordini/" + currentOrder.getId() + "/delivererID/");
                     orderID.setValue(Welcome.getDbKey());
+
+                    DatabaseReference RefLat = database.getReference("ordini/" + currentOrder.getId() + "/latitude");
+                    RefLat.setValue(prof.getLatitude());
+                    DatabaseReference RefLong = database.getReference("ordini/" + currentOrder.getId() + "/longitude");
+                    RefLong.setValue(prof.getLongitude());
 //                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/" + currentOrder.getId() );
 //                    orderRef.setValue(currentOrder.getId());
                 }
@@ -485,7 +490,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
 
 
-        if(currentOrder.getState().equals("confirmed")){
+        if(currentOrder.getState().equals("confirmed") || currentOrder.getState().equals("rejected")){
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
@@ -493,7 +498,14 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(true);
         }
 
-        if(currentOrder.getState().equals("rejected")|| currentOrder.getState().equals("reassign")){
+        if(currentOrder.getState().equals("rejected")){
+            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
+            orderRef.setValue("0");
+            setVisibility("empty");
+            database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(true);
+        }
+
+        if(currentOrder.getState().equals("reassign")){
             Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");

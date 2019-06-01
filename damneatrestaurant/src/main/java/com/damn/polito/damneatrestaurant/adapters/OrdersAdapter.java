@@ -91,7 +91,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         else
             holder.deliverer_image.setImageBitmap(Utility.StringToBitMap(selected.getDelivererPhoto()));
 
-        if(selected.getDelivererPhoto().equals("NO_PHOTO"))
+        if(selected.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
             holder.customer_image.setImageBitmap(default_image);
         else
             holder.customer_image.setImageBitmap(Utility.StringToBitMap(selected.getCustomer().getCustomerPhoto()));

@@ -361,7 +361,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                 Order o = dataSnapshot.getValue(Order.class);
                 assert key != null;
                 assert o != null;
-                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected"))
+                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected") && !o.getState().equals("reassign"))
                     return;
 
                 o.setId(key);
@@ -379,7 +379,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                 Order o = dataSnapshot.getValue(Order.class);
                 assert key != null;
                 assert o != null;
-                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected"))
+                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected") && !o.getState().equals("reassign"))
                     return;
 
                 o.setId(key);
@@ -501,6 +501,14 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
                     Reftime.setValue(location.getTime());
                     bestLocation=location;
+
+                    if(currentOrder!=null && !currentOrder.getState().equals("empty")){
+                        RefLat = database.getReference("ordini/" + currentOrder.getId() + "/latitude");
+                        RefLat.setValue(location.getLatitude());
+                        RefLong = database.getReference("ordini/" + currentOrder.getId() + "/longitude");
+                        RefLong.setValue(location.getLongitude());
+                    }
+
                 }
                 changeGPSstate();
 
