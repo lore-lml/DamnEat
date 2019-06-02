@@ -31,13 +31,8 @@ import java.util.Objects;
 public class OrderFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private LinkedList<Order> orderList = new LinkedList<>();
-
-    private List<String> orderKeyList = new LinkedList<>();
+    private List<Order> orders;
     private OrdersAdapter adapter;
-    private List<ValueEventListener> listeners = new ArrayList<>();
-    private List<DatabaseReference> listeners_ref = new ArrayList<>();
-
     private FirebaseDatabase database;
 
 
@@ -63,79 +58,22 @@ public class OrderFragment extends Fragment {
        // initExample();
         init();
         recyclerView.setVisibility(View.VISIBLE);
-        adapter = new OrdersAdapter(orderList, ctx);
+        adapter = new OrdersAdapter(orders, ctx);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
         adapter.setOnItemClickListener(position -> {
-                orderList.get(position).changeExpanded();
+                orders.get(position).changeExpanded();
             adapter.notifyItemChanged(position);
         });
     }
 
     private void init(){
-        DatabaseReference dbRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/");
-        List<String> keyList = new LinkedList<>();
-        ValueEventListener listener = dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                orderKeyList.clear();
-                String orderKey;
-                for (DataSnapshot chidSnap : dataSnapshot.getChildren()) {
-                           //DataPacket value = dataSnapshot.getValue(DataPacket.class);
-                    orderKey = chidSnap.getValue(String.class);
-                    if(orderKey != null){
-                        getOrderFirebase(orderKey);
-                        orderKeyList.add(orderKey);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        listeners_ref.add(dbRef);
-        listeners.add(listener);
+        assert getActivity() != null;
+        orders = ((Welcome)getActivity()).getOrders();
     }
 
-    private void getOrderFirebase(String key){
-        database = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = database.getReference("ordini/"+ key);
-        ValueEventListener listener = dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Order order = dataSnapshot.getValue(Order.class);
-                if(order!=null){
-                    //todo: non so se serve
-                    order.setId(key);
-                    for(int i=0; i<orderList.size(); i++)
-                        if(orderList.get(i).Id().equals(order.Id())){
-                            orderList.remove(i);
-                            break;
-                        }
-                }
-                orderList.addFirst(order);
-                List<Dish> tmp = new ArrayList<>();
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        listeners_ref.add(dbRef);
-        listeners.add(listener);
-    }
-
-
-    @Override
-    public void onDestroy() {
-        for (int i=0; i<listeners.size(); i++){
-            listeners_ref.get(i).removeEventListener(listeners.get(i));
-        }
-        super.onDestroy();
+    public void onChildAdded() {
+        adapter.notifyItemInserted(0);
     }
 }

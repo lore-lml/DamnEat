@@ -1,9 +1,12 @@
 package com.damn.polito.damneat.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,19 +15,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.beans.RateObject;
 import com.damn.polito.damneat.R;
+import com.damn.polito.damneat.RateRestaurant;
+import com.damn.polito.damneat.Welcome;
+import com.damn.polito.damneat.dialogs.DialogType;
+import com.damn.polito.damneat.dialogs.HandleDismissDialog;
+import com.damn.polito.damneat.dialogs.RateDialog;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
-import java.util.Locale;
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewHolder> {
     private List<Order> orders;
@@ -36,7 +47,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         this.orders= orders;
         this.ctx = context;
         default_image = BitmapFactory.decodeResource(ctx.getResources(),R.drawable.profile_sample);
-
     }
 
     public interface OnItemClickListener { void onItemClick(int position); }
@@ -48,10 +58,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType==0) {
             View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout, parent, false);
-            return new OrderViewHolder(view, mListener);
+            return new OrderViewHolder(view);
         }
         View view = LayoutInflater.from(ctx).inflate(R.layout.order_layout_not_delivered, parent, false);
-        return new OrderViewHolder(view, mListener);
+        return new OrderViewHolder(view);
     }
 
     @Override
@@ -66,6 +76,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.restaurant_info.setText(ctx.getString(R.string.restaurant, selected.getRestaurant().getRestaurantName()));
+
+        if(holder.btnDeliverer != null) {
+            holder.btnDeliverer.setVisibility(View.GONE);
+            holder.btnDeliverer.setOnClickListener(v->{
+                Intent i = new Intent(/*ctx, Activity.class*/);
+                //Eventuali putExtra
+                //ctx.startActivity(i);
+            });
+        }
+
 
         if(selected.getState().toLowerCase().equals("confirmed") || selected.getState().toLowerCase().equals("rejected")){
 
@@ -86,10 +106,17 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             if(selected.getState().toLowerCase().equals("confirmed")) {
                 holder.state.setText(ctx.getString(R.string.confirmed));
                 holder.state.setTextColor(ctx.getColor(R.color.colorGreen));
-
+                holder.btnRate.setOnClickListener(v->{
+                    Intent intent = new Intent(ctx, RateRestaurant.class);
+                    intent.putExtra("order", selected);
+                    ctx.startActivity(intent);
+                });
             }
+            if(!selected.getState().toLowerCase().equals("confirmed") || selected.isRated())
+                holder.btnRate.setVisibility(View.GONE);
+
             if(selected.getState().toLowerCase().equals("rejected")){
-                holder.state.setTextColor(ctx.getColor(R.color.colorAccent));
+                holder.state.setTextColor(ctx.getColor(R.color.colorRed));
                 holder.state.setText(ctx.getString(R.string.rejected));
             }
 
@@ -101,7 +128,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             String deliverer_name = selected.getDelivererName();
             if(deliverer_name.equals("NOT_ASSIGNED_YET"))
                 deliverer_name = "--";
-            holder.deliverer_name.setText(deliverer_name);
+            holder.deliverer_name.setText(ctx.getString(R.string.deliverer, deliverer_name));
             if (selected.getDelivererPhoto() == null)
                 holder.deliverer_photo.setImageBitmap(default_image);
             else if(selected.getDelivererPhoto().equals("NO_PHOTO"))
@@ -110,9 +137,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.deliverer_photo.setImageBitmap(Utility.StringToBitMap(selected.getDelivererPhoto()));
 
             holder.note.setText(ctx.getString(R.string.note, selected.getNote()));
-            holder.delivery_time.setText(ctx.getString(R.string.delivery_time, selected.getDeliveryTime()));
+//            holder.delivery_time.setText(ctx.getString(R.string.delivery_time, selected.getDeliveryTime()));
 
-            if(selected.getState().toLowerCase().equals("ordered") || selected.getState().toLowerCase().equals("accepted")) {
+            String delivery_time = selected.getDeliveryTime();
+            if (delivery_time.equals("ASAP")) holder.delivery_time.setText(R.string.time_asap);
+            else holder.delivery_time.setText(ctx.getString(R.string.delivery_time, delivery_time));
+
+            if(selected.getState().toLowerCase().equals("ordered") || selected.getState().toLowerCase().equals("accepted")|| selected.getState().toLowerCase().equals("reassign")) {
                 holder.deliverer_photo.setVisibility(View.INVISIBLE);
                 holder.deliverer_name.setVisibility(View.INVISIBLE);
                 holder.state.setText(ctx.getString(R.string.ordered));
@@ -125,20 +156,29 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.state.setText(ctx.getString(R.string.accepted));
 
 
-            if(selected.getState().toLowerCase().equals("shipped"))
+            if(selected.getState().toLowerCase().equals("shipped")) {
+                holder.btnDeliverer.setVisibility(View.VISIBLE);
                 holder.state.setText(ctx.getString(R.string.shipped));
+            }
 
             if(selected.getState().toLowerCase().equals("delivered")){
                 holder.confirmButton.setVisibility(View.VISIBLE);
                 holder.state.setText(ctx.getString(R.string.delivered));
                 holder.confirmButton.setOnClickListener(v->{
                     setConfirmed(selected.Id());
+
+                    FragmentManager fm = ((AppCompatActivity)ctx).getSupportFragmentManager();
+                    RateDialog rateDialog = new RateDialog();
+                    rateDialog.setListener(holder);
+                    rateDialog.show(fm, "Rate Dialog");
                 });
             } else {
                 holder.confirmButton.setVisibility(View.GONE);
             }
         }
              // holder.date.setText(dateFormat.format(ciao.getTime()));
+
+
     }
 
     private void setConfirmed(String id){
@@ -153,7 +193,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         Double price = 0.;
         for (Dish d:dishes) {
             String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
+            dish_list_str += d.getQuantity() +"x "+ d.getName()+" "+ p + "€\n";
             price += d.getQuantity()*d.getPrice();
         }
         if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
@@ -167,14 +207,11 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
 
     private void expandOrContract(OrderViewHolder holder, boolean state){
         if (!state) {
-            holder.date.setVisibility(View.GONE);
-            holder.dishes_list.setVisibility(View.GONE);
+            holder.dishListLayout.setVisibility(View.GONE);
             holder.id.setVisibility(View.GONE);
-
         }else{
-            holder.date.setVisibility(View.VISIBLE);
-            holder.id.setVisibility(View.VISIBLE);
-            holder.dishes_list.setVisibility(View.VISIBLE);
+            holder.id.setVisibility(View.GONE);
+            holder.dishListLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -183,16 +220,25 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         return orders.size();
     }
 
-    public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView id,date,price,nDish, deliverer_name, dishes_list, dishes_list_2, restaurant_info, state, note, delivery_time;
-        private CardView root;
-        private ImageView deliverer_photo, restaurant_photo;
-        private Button confirmButton;
+    @Override
+    public int getItemViewType(int position) {
+        if(orders.get(position).getState().toLowerCase().equals("confirmed") || orders.get(position).getState().toLowerCase().equals("rejected"))
+            return 0;
+        return 1;
+    }
 
-        public OrderViewHolder(View itemView, OnItemClickListener listener) {
+    public class OrderViewHolder extends RecyclerView.ViewHolder implements HandleDismissDialog{
+        private TextView id,date,price,nDish, deliverer_name, dishes_list, restaurant_info, state, note, delivery_time;
+        private CardView root;
+        private LinearLayout dishListLayout;
+        private ImageView deliverer_photo;
+        private Button confirmButton, btnRate, btnDeliverer;
+
+        public OrderViewHolder(View itemView) {
             super(itemView);
 
             root =itemView.findViewById(R.id.card_order_customer);
+            dishListLayout = itemView.findViewById(R.id.order_dish_card);
             id= itemView.findViewById(R.id.order_id);
             date = itemView.findViewById(R.id.order_date_value);
             price = itemView.findViewById(R.id.order_price);
@@ -205,14 +251,36 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             delivery_time =itemView.findViewById(R.id.delivery_time_tv);
             note =itemView.findViewById(R.id.note_tv);
             confirmButton =itemView.findViewById(R.id.confirmOrder);
-
+            btnRate = itemView.findViewById(R.id.btn_rate);
+            btnDeliverer = itemView.findViewById(R.id.btn_find_deliverer);
         }
-    }
 
-    @Override
-    public int getItemViewType(int position) {
-        if(orders.get(position).getState().toLowerCase().equals("confirmed") || orders.get(position).getState().toLowerCase().equals("rejected"))
-            return 0;
-        return 1;
+        @Override
+        public void handleOnDismiss(DialogType type, String text) {
+            if (type == DialogType.RateDialog) {
+                updateServiceRate(text);
+                notifyDataSetChanged();
+            }
+        }
+
+        private void updateServiceRate(String text){
+            try {
+                JSONObject result = new JSONObject(text);
+                int rate = result.getInt("value");
+                String note = result.getString("note");
+                Customer customer = new Customer();
+                customer.setCustomerName(Welcome.getProfile().getName());
+                customer.setCustomerID(Welcome.getDbKey());
+                customer.setCustomerPhoto(Welcome.getProfile().getBitmapProf());
+
+                RateObject rateObject = new RateObject(rate, note, RateObject.RateType.Service, customer);
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("reviews/");
+                DatabaseReference id = ref.push();
+                id.setValue(rateObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

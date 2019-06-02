@@ -33,6 +33,7 @@
             android:name=".EditProfile"
             android:parentActivityName=".Welcome"
             android:screenOrientation="portrait" />
+        <activity android:name=".Analytics" />
     </application>
 
 </manifest>

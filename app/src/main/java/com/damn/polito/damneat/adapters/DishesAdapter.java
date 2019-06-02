@@ -46,6 +46,8 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int index) {
         Dish selected = dishesList.get(index);
         //viewHolder.image.setImageBitmap(selected.getImage());
+        setTier(viewHolder, index);
+
         viewHolder.name.setText(selected.getName());
         viewHolder.description.setText(selected.getDescription());
         viewHolder.price.setText(String.format(Locale.UK,"%.2f",selected.getPrice()));
@@ -86,6 +88,16 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
         });
     }
 
+    private void setTier(ViewHolder holder, int pos){
+        if(pos >= 3){
+            holder.tier.setVisibility(View.GONE);
+            return;
+        }
+
+        holder.tier.setVisibility(View.VISIBLE);
+        holder.tier.setImageResource(Dish.tier[pos]);
+    }
+
     @Override
     public int getItemCount() {
         return dishesList.size();
@@ -93,7 +105,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView image;
+        ImageView image, tier;
         TextView price;
         TextView availabity;
         TextView name;
@@ -109,6 +121,7 @@ public class DishesAdapter extends RecyclerView.Adapter<DishesAdapter.ViewHolder
             availabity = itemView.findViewById(R.id.dish_availabity);
             description = itemView.findViewById(R.id.dish_description);
             image = itemView.findViewById(R.id.dish_image);
+            tier = itemView.findViewById(R.id.dish_tier);
             parentLayout = itemView.findViewById(R.id.dish_root);
             quantity = itemView.findViewById(R.id.dish_quantity);
             button = itemView.findViewById(R.id.add_button);

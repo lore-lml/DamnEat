@@ -41,7 +41,7 @@
     <string name="profile_phone">Phone number</string>
     <string name="title_activity_select_menu">Select Menu</string>
     <string name="order_id_s">Order ID: %s</string>
-    <string name="order_num_dishes"># Dishes: %d</string>
+    <string name="order_num_dishes">Dishes: %d</string>
     <string name="date_format">yyyy/MM/dd - hh:mm</string>
     <string name="order_price" translatable="false">%.2f €</string>
     <string name="empty_phone">No phone number has been inserted</string>
@@ -58,7 +58,7 @@
     <string name="second_text">2nd</string>
     <string name="first_text">1st</string>
     <string name="slot_text" translatable="false">Slot</string>
-    <string name="order_customer">Customer:</string>
+    <string name="order_customer">Customer:\n\n%s</string>
     <string name="string" translatable="false">%s</string>
     <string name="order_restaurant_name" translatable="false">%s</string>
     <string name="order_restaurant_address" translatable="false">%s</string>
@@ -114,5 +114,16 @@
     <string name="rejected">Rejected</string>
     <string name="not_registered">You have to fill the profile to place an order.</string>
     <string name="google_key_API" translatable="false">AIzaSyD0uoGBEYALjB8GR-1Mpcks5UXylwrITtU</string>
+    <string name="statistics">Statistics</string>
+    <string name="rate_send">Send</string>
+    <string name="edit_profile">Edit your profile</string>
+    <string name="order_summary">Order summary</string>
+    <string name="review_title">Your reviews</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="info_service_review">What our clients think about our service</string>
+    <string name="info_service_review_title" translatable="false">Info</string>
+    <string name="copyright" translatable="false">© DamnEat - 2019</string>
+    <string name="no_reviews">There are no reviews</string>
+    <string name="find_deliverer">Track your order</string>
 
 </resources>

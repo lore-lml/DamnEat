@@ -35,6 +35,7 @@ public class Cart extends AppCompatActivity implements HandleDismissDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.order_summary);
 
         setContentView(R.layout.activity_cart);
         Intent i = getIntent();
@@ -107,7 +108,7 @@ public class Cart extends AppCompatActivity implements HandleDismissDialog {
         i.putExtra("note", note_et.getText().toString());
         String time = time_et.getText().toString().trim();
         i.putExtra("time", time.isEmpty() ?
-                getString(R.string.time_asap) : time);
+                "ASAP" : time);
         setResult(RESULT_OK, i);
     }
 

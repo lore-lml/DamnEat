@@ -10,9 +10,7 @@ public class Restaurant implements Serializable {
     private Double restaurant_price_ship;
     private String photo;
 
-    public Restaurant() {
-        // @todo: todo test
-    }
+    public Restaurant() {}
 
     public Restaurant(String restaurantName, String restaurantPhone, String restaurantID, String restaurantAddress, Double restaurant_price_ship, String photo) {
         this.restaurantName = restaurantName;

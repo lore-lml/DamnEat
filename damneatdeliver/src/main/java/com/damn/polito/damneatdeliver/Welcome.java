@@ -2,8 +2,10 @@ package com.damn.polito.damneatdeliver;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.beans.Profile;
 import com.damn.polito.damneatdeliver.fragments.CurrentFragment;
@@ -26,20 +29,35 @@ import com.damn.polito.damneatdeliver.fragments.OrderFragment;
 import com.damn.polito.damneatdeliver.fragments.ProfileFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
-public class Welcome extends AppCompatActivity {
+public class Welcome extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<LocationSettingsResult> {
     //STATIC VARIABLES
     private static boolean logged;
+    private static final int ONE_MINUTE = 1000 * 60 ;
+    private static final int TEN_MINUTES = 1000 * 60 * 10  ;
     private static Profile profile;
     private static Order currentOrder;
     private static String dbKey;
@@ -52,9 +70,10 @@ public class Welcome extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference myRef;
     private DatabaseReference orderRef;
-    private ValueEventListener orderListener;
-    private ValueEventListener v;
+    private ValueEventListener orderListener, profileListener;
+    private ChildEventListener ordersChildListener;
     private DatabaseReference profileRef;
+    private Query orderQuery;
 
     //FRAGMENT VARIABLES
     private FragmentManager fragmentManager;
@@ -72,7 +91,15 @@ public class Welcome extends AppCompatActivity {
     private boolean mLocGranted;
     private LocationManager locationManager;
     private LocationListener locationListener;
+    private Location bestLocation;
 
+    //CHECK LOCATION SETTINGS VARIABLES
+    protected GoogleApiClient mGoogleApiClient;
+    protected LocationRequest locationRequest;
+    int REQUEST_CHECK_SETTINGS = 100;
+
+    //COLLECTIONS
+    private static List<Order> orders = new LinkedList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -121,7 +148,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     public static boolean registered() {
-        if (profile != null)
+        if (profile != null && profile.getName()!=null && profile.getMail()!=null)
             logged = true;
         else
             logged = false;
@@ -142,6 +169,35 @@ public class Welcome extends AppCompatActivity {
             init();
         else
             shownSignInOptions();
+
+        //initialize position DB, remove old position
+//        DatabaseReference refTime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+//        refTime.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Long time=dataSnapshot.getValue(Long.class);
+//                Long ctime=System.currentTimeMillis();
+//                if(time!=null){
+//                    if((ctime-time)>=TEN_MINUTES){
+////                        DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
+////                        RefLat.setValue(null);
+////                        DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
+////                        RefLong.setValue(null);
+////                        DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+////                        Reftime.setValue(null);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+    }
+
+    private void init() {
         currentOrder = new Order();
         currentOrder.setState("empty");
         navigation = findViewById(R.id.navigation);
@@ -149,10 +205,17 @@ public class Welcome extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
 
+        //initialize the GoogleApiClient and LocationRequest
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
+        mGoogleApiClient.connect();
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
 
-    }
-
-    private void init() {
         profile = new Profile();
         profile.setState(false);
         loadProfile();
@@ -167,13 +230,15 @@ public class Welcome extends AppCompatActivity {
             logged = false;
         }
         getLocationPermissions();
-        StartLocationManager();
+        //StartLocationManager();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("fragment_id", selectedId);
+        //todo: fa crashare al primo avvio ho messo il controllo che sia diverso da null, ma non so cosa faccia questa funzione
+        if(selectedId!=null)
+            outState.putInt("fragment_id", selectedId);
     }
 
     @Override
@@ -208,13 +273,13 @@ public class Welcome extends AppCompatActivity {
                     storeData(user);
                     profile = null;
 
-                    if (profileRef != null && v != null)
-                        profileRef.removeEventListener(v);
+                    if (profileRef != null && profileListener != null)
+                        profileRef.removeEventListener(profileListener);
                     if (getKey() != null)
                         init();
                 }
                 //if(selectedId == R.id.nav_current)
-            } else {
+            }  else {
                 String error = null;
                 if(response != null && response.getError() != null)
                     error = response.getError().getMessage();
@@ -223,6 +288,14 @@ public class Welcome extends AppCompatActivity {
                     error = getString(R.string.login_error);
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
                 finish();
+            }
+        }else if (requestCode == REQUEST_CHECK_SETTINGS) {
+            if (resultCode == RESULT_OK) {
+                //StartLocationManager();
+                Toast.makeText(getApplicationContext(), "GPS enabled", Toast.LENGTH_LONG).show();
+            } else {
+
+                Toast.makeText(getApplicationContext(), "GPS is not enabled", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -235,22 +308,24 @@ public class Welcome extends AppCompatActivity {
 
     private void loadProfile() {
         profileRef = database.getReference("/deliverers/" + dbKey + "/info");
-        v = profileRef.addValueEventListener(new ValueEventListener() {
+        profileListener = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 profile = dataSnapshot.getValue(Profile.class);
                 if (profile == null)
                     logged = false;
                 else{
                     logged = true;
-                    if(profile.getLatitude()==null || profile.getLongitude()==null) {
-                        profile.setState(false);
-                    }
+                    if(Utility.firstON)
+                        setListeners();
+//                    if(profile.getLatitude()==null || profile.getLongitude()==null) {
+//                        profile.setState(false);
+//                    }
                     if (profile.getState() == null) {
                         database.getReference("/deliverers/" + dbKey + "/info/state/").setValue(false);
                         profile.setState(false);
                     }
+                    changeGPSstate();
                 }
                 setDeliverFreeList();
                 if (currentFragment != null)
@@ -260,14 +335,75 @@ public class Welcome extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
+    private void setListeners() {
+        Utility.firstON = false;
+        setOrderListener();
+    }
+
+    private void setOrderListener() {
+        if(dbKey == null) return;
+        DatabaseReference orderRef = database.getReference("ordini/");
+        orderQuery = orderRef.orderByChild("delivererID").equalTo(dbKey);
+        ordersChildListener = orderQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue() == null) return;
+                String key = dataSnapshot.getKey();
+                if(currentOrder.getId() != null && currentOrder.getId().equals(key)) return;
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected") && !o.getState().equals("reassign"))
+                    return;
+
+                o.setId(key);
+                ((LinkedList<Order>)orders).addFirst(o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildAdded();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.getValue() == null) return;
+                String key = dataSnapshot.getKey();
+
+                Order o = dataSnapshot.getValue(Order.class);
+                assert key != null;
+                assert o != null;
+                if(!o.getState().equals("confirmed") && !o.getState().equals("rejected") && !o.getState().equals("reassign"))
+                    return;
+
+                o.setId(key);
+                ((LinkedList<Order>)orders).addFirst(o);
+
+                if(selectedId == R.id.nav_reservations)
+                    orderFragment.onChildAdded();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    public static List<Order> getOrders(){ return orders; }
+
     private void setDeliverFreeList(){
-        if (profile.getState()) {
+        if (profile!=null && profile.getState()) {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
             freeDeliverersRef.setValue(dbKey);
         } else {
@@ -315,14 +451,16 @@ public class Welcome extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        //todo: ho commentato per non dare l'errore alla chiusura
+                        //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -353,13 +491,27 @@ public class Welcome extends AppCompatActivity {
                     profile.setPosition(latitude, longitude);
                     //Toast.makeText(ctx,  "" + location.getLatitude() + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
-                // @TODO: todo test
-                String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
-                Toast.makeText(Welcome.this, msg, Toast.LENGTH_LONG).show();
-                DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
-                RefLat.setValue(location.getLatitude());
-                DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
-                RefLong.setValue(location.getLongitude());
+//                String msg = "New Latitude: " + latitude + "New Longitude: " + longitude;
+//                Toast.makeText(Welcome.this, msg, Toast.LENGTH_LONG).show();
+                if(isBetterLocation(location,bestLocation)){
+                    DatabaseReference RefLat = database.getReference("deliverers/" + dbKey + "/info/latitude");
+                    RefLat.setValue(location.getLatitude());
+                    DatabaseReference RefLong = database.getReference("deliverers/" + dbKey + "/info/longitude");
+                    RefLong.setValue(location.getLongitude());
+                    DatabaseReference Reftime = database.getReference("deliverers/" + dbKey + "/info/positionTime");
+                    Reftime.setValue(location.getTime());
+                    bestLocation=location;
+
+                    if(currentOrder!=null && !currentOrder.getState().equals("empty")){
+                        RefLat = database.getReference("ordini/" + currentOrder.getId() + "/latitude");
+                        RefLat.setValue(location.getLatitude());
+                        RefLong = database.getReference("ordini/" + currentOrder.getId() + "/longitude");
+                        RefLong.setValue(location.getLongitude());
+                    }
+
+                }
+                changeGPSstate();
+
             }
 
             @Override
@@ -377,7 +529,17 @@ public class Welcome extends AppCompatActivity {
             }
         };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, locationListener);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            //Log.d("LOCATION","gps");
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 800, 10, locationListener);
+        }
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            //Log.d("LOCATION","network");
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 800, 10, locationListener);
+        }
+
+
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, locationListener);
     }
 
     private void getLocationPermissions() {
@@ -387,7 +549,7 @@ public class Welcome extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocGranted = true;
                 switchEnabled = true;
-                StartLocationManager();
+                //StartLocationManager();
             } else {
                 ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUESt_CODE);
             }
@@ -401,21 +563,18 @@ public class Welcome extends AppCompatActivity {
         mLocGranted = false;
         switchEnabled = false;
 
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUESt_CODE: {
-
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            mLocGranted = false;
-                            switchEnabled = false;
-                            return;
-                        }
+        if (requestCode == LOCATION_PERMISSION_REQUESt_CODE) {
+            if (grantResults.length > 0) {
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        mLocGranted = false;
+                        switchEnabled = false;
+                        return;
                     }
-                    mLocGranted = true;
-                    switchEnabled = true;
-                    StartLocationManager();
                 }
+                mLocGranted = true;
+                switchEnabled = true;
+                //StartLocationManager();
             }
         }
     }
@@ -426,8 +585,8 @@ public class Welcome extends AppCompatActivity {
         if(profile!=null) {
             //profile.setState(false);
             if (profile.getState()) {
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
-                freeDeliverersRef.setValue(dbKey);
+//                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+//                freeDeliverersRef.setValue(dbKey);
                 if (currentFragment != null)
                     if (selectedId == R.id.nav_current)
                     currentFragment.update();
@@ -438,4 +597,150 @@ public class Welcome extends AppCompatActivity {
     public static String getDbKey() {
         return dbKey;
     }
+
+
+
+    /** Determines whether one Location reading is better than the current Location fix
+     * @param location  The new Location that you want to evaluate
+     * @param currentBestLocation  The current Location fix, to which you want to compare the new one
+     */
+    protected boolean isBetterLocation(Location location, Location currentBestLocation) {
+        if (currentBestLocation == null) {
+            // A new location is always better than no location
+            return true;
+        }
+
+        // Check whether the new location fix is newer or older
+        long timeDelta = location.getTime() - currentBestLocation.getTime();
+        boolean isSignificantlyNewer = timeDelta > ONE_MINUTE;
+        boolean isSignificantlyOlder = timeDelta < -ONE_MINUTE;
+        boolean isNewer = timeDelta > 0;
+
+        // If it's been more than two minutes since the current location, use the new location
+        // because the user has likely moved
+        if (isSignificantlyNewer) {
+            return true;
+            // If the new location is more than two minutes older, it must be worse
+        } else if (isSignificantlyOlder) {
+            return false;
+        }
+
+        // Check whether the new location fix is more or less accurate
+        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
+        boolean isLessAccurate = accuracyDelta > 0;
+        boolean isMoreAccurate = accuracyDelta < 0;
+        boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+
+        // Check if the old and new location are from the same provider
+        boolean isFromSameProvider = isSameProvider(location.getProvider(),
+                currentBestLocation.getProvider());
+
+        // Determine location quality using a combination of timeliness and accuracy
+        if (isMoreAccurate) {
+            return true;
+        } else if (isNewer && !isLessAccurate) {
+            return true;
+        } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
+            return true;
+        }
+        return false;
+    }
+
+    /** Checks whether two providers are the same */
+    private boolean isSameProvider(String provider1, String provider2) {
+        if (provider1 == null) {
+            return provider2 == null;
+        }
+        return provider1.equals(provider2);
+
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(
+                        mGoogleApiClient,
+                        builder.build()
+                );
+        result.setResultCallback(this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+        final Status status = locationSettingsResult.getStatus();
+        switch (status.getStatusCode()) {
+            case LocationSettingsStatusCodes.SUCCESS:
+                // NO need to show the dialog;
+
+                break;
+
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                //  GPS disabled show the user a dialog to turn it on
+                try {
+                    // Show the dialog by calling startResolutionForResult(), and check the result
+                    // in onActivityResult().
+
+                    status.startResolutionForResult(Welcome.this, REQUEST_CHECK_SETTINGS);
+
+                } catch (IntentSender.SendIntentException e) {
+
+                    //failed to show dialog
+                }
+
+
+                break;
+
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                // Location settings are unavailable so not possible to show any dialog now
+                break;
+        }
+    }
+
+    private boolean isActive(){
+        if(profile==null || profile.getState()==null)
+            return false;
+        return profile.getState() || !currentOrder.getState().equals("empty");
+    }
+
+    private void changeGPSstate(){
+        Log.d("GPS State", String.valueOf(isActive()));
+        if(isActive()){
+            if(locationListener==null){
+                Log.d("GPS State", "Abilito il gps");
+                StartLocationManager();
+            }
+        } else{
+            if(locationManager==null || locationListener == null)
+                return;
+            Log.d("GPS State", "Disabilito il gps");
+            locationManager.removeUpdates(locationListener);
+            locationListener = null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utility.firstON = true;
+        if (mGoogleApiClient!=null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        orderQuery.removeEventListener(ordersChildListener);
+        orderRef.removeEventListener(orderListener);
+    }
+
 }

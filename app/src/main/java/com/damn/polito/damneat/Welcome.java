@@ -2,6 +2,7 @@ package com.damn.polito.damneat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +12,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -45,6 +45,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     public static boolean accountExist = false;
     private static String dbKey;
+    private static Profile profile;
 
     //Fragments
     private FragmentManager fragmentManager;
@@ -68,6 +69,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     //Collections
     private List<Restaurant> restaurants = new ArrayList<>();
     private List<Order> orders = new LinkedList<>();
+
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
@@ -168,54 +170,47 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         profileListener = profileRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Profile prof = dataSnapshot.getValue(Profile.class);
-                if(prof != null) {
-                    storeProfile(prof);
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(Welcome.this).edit();
-
-                    editor.putString("clientaddress", prof.getAddress());
-                    editor.putString("clientname", prof.getName());
-                    editor.putString("clientphone", prof.getPhone());
-                    editor.putString("clientmail", prof.getMail());
-                    editor.putString("clientphoto", prof.getBitmapProf());
-                    editor.apply();
-                }else if(selectedId == null){
-                    navigation.setSelectedItemId(R.id.nav_restaurant);
+                profile = dataSnapshot.getValue(Profile.class);
+                if(profile != null && Utility.firstON) {
+                    setListeners();
+                    Utility.firstON = false;
                 }
 
-                if(selectedId != null && selectedId == R.id.nav_profile)
+                if(selectedId == null){
+                    navigation.setSelectedItemId(R.id.nav_restaurant);
+                }else if(selectedId == R.id.nav_profile)
                     profileFragment.updateProfile();
 
+                if(profile != null){
+                    for(String key : profile.favouriteRestaurantsSet()){
+                        Restaurant r = new Restaurant();
+                        r.setFbKey(key);
+                        int pos = restaurants.indexOf(r);
+                        if(pos == -1)
+                            continue;
+                        r = restaurants.get(pos);
+                        r.sFavorite(true);
+                        if(selectedId == R.id.nav_restaurant)
+                            restaurantFragment.onChildChanged(r);
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
 
-        //setOrderListener();
     }
 
-    private void storeProfile(Profile profile) {
+    private void setListeners() {
         accountExist = true;
-        if (selectedId == null)
-            navigation.setSelectedItemId(R.id.nav_restaurant);
-        if (Utility.firstON){
-            setRestaurantListener();
-            setOrderListener();
-            Utility.firstON = false;
-        }
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-
-        editor.putString("address", profile.getAddress());
-        editor.putString("name", profile.getName());
-        editor.putString("phone", profile.getPhone());
-        editor.putString("mail", profile.getMail());
-        editor.putString("description",profile.getDescription());
-        editor.putString("profile", profile.getBitmapProf());
-        editor.apply();
+        setRestaurantListener();
+        setOrderListener();
     }
+
     private void setRestaurantListener(){
         if(!accountExist) return;
         restaurantsRef = database.getReference("ristoratori/");
@@ -228,6 +223,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert r != null;
                 r.setFbKey(key);
+
+                if(profile.favouriteRestaurantsSet().contains(key))
+                    r.sFavorite(true);
+
                 restaurants.add(r);
                 if(selectedId == R.id.nav_restaurant)
                     restaurantFragment.onChildAdded(r);
@@ -240,6 +239,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert r != null;
                 r.setFbKey(key);
+
+                if(profile.favouriteRestaurantsSet().contains(key))
+                    r.sFavorite(true);
+
                 int pos = restaurants.indexOf(r);
                 restaurants.remove(r);
                 restaurants.add(pos, r);
@@ -254,6 +257,10 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert r != null;
                 r.setFbKey(key);
+
+                if(profile.favouriteRestaurantsSet().contains(key))
+                    r.sFavorite(true);
+
                 restaurants.remove(r);
                 if(selectedId == R.id.nav_restaurant)
                     restaurantFragment.onChildRemoved(r);
@@ -264,7 +271,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -299,7 +307,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -324,11 +333,17 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert key != null;
                 assert o != null;
                 o.setId(key);
-                orders.remove(o);
-                orders.add(0, o);
+                int pos = orders.indexOf(o);
+                Order old = orders.remove(pos);
+                boolean rateChanged = true;
+                if(old.isRated() == o.isRated()) {
+                    pos = 0;
+                    rateChanged = false;
+                }
+                orders.add(pos, o);
 
                 if(selectedId == R.id.nav_reservations)
-                    orderFragment.onChildChanged();
+                    orderFragment.onChildChanged(pos, rateChanged);
                 else
                     refreshNotificationBadge(true);
             }
@@ -352,7 +367,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -362,6 +378,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Utility.firstON = true;
         if (profileRef != null)
             profileRef.removeEventListener(profileListener);
         if(orderQuery != null) {
@@ -389,4 +406,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     }
 
     public static String getDbKey(){return dbKey;}
+
+    public static Profile getProfile() {return profile;}
 }

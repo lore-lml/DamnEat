@@ -25,6 +25,7 @@ import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.EditProfile;
 import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneatrestaurant.StatisticsActivity;
 import com.damn.polito.damneatrestaurant.Welcome;
 import com.damn.polito.damneatrestaurant.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
@@ -33,7 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
@@ -121,26 +121,13 @@ public class ProfileFragment extends Fragment{
         }
     }
 
-    private void loadDataShared(){
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        prof.setAddress(pref.getString("address", ""));
-        prof.setName(pref.getString("name", ""));
-        prof.setMail(pref.getString("mail", ""));
-        prof.setPhone(pref.getString("phone", ""));
-        prof.setOpening(pref.getString("opening", ""));
-        prof.setCategories(pref.getString("categories", ""));
-        prof.setDescription(pref.getString("description", ""));
-        prof.setImage(pref.getString("profile", ""));
-        String ship = pref.getString("shipprice", "");
-        assert ship != null;
-        if(!ship.isEmpty())
-            prof.setPriceShip(Double.valueOf(ship));
-        else
-            prof.setPriceShip(0.0);
+    private void loadData(){
+        if(!Welcome.accountExist) return;
+        prof = Welcome.getProfile();
     }
 
     public void updateProfile(){
-        loadDataShared();
+        loadData();
         if(name != null)
             name.setText(stringOrDefault(prof.getName()));
         if(mail != null)
@@ -169,8 +156,10 @@ public class ProfileFragment extends Fragment{
 
 
     private void storeData(Intent data) {
+        boolean hasChanged = data.getBooleanExtra("hasChanged", false);
+        if(!hasChanged) return;
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        //boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
         String phone = data.getStringExtra("phone");
@@ -182,74 +171,23 @@ public class ProfileFragment extends Fragment{
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
-            //hasProfile = true;
             pref.edit().remove("profile").apply();
         }
         double priceship = shipprice.equals(getString(R.string.price_free)) ? 0.0 : Double.valueOf(shipprice.replace(",","."));
-        //
+
         //CARICO I DATI SU FIREBASE
-        storeProfileOnFirebase(new Profile(name,mail,phone,description,address, opening, categories, priceship, bitmapProf));
-        //code
-        //
-
-        this.name.setText(name);
-        this.mail.setText(mail);
-        this.phone.setText(phone);
-        this.description.setText(description);
-        this.address.setText(address);
-        this.opening.setText(opening);
-        this.categories.setText(categories);
-        if(!shipprice.equals(getString(R.string.price_free)))
-            this.shipPrice.setText(getString(R.string.order_price, Double.valueOf(shipprice.replace(",","."))));
-        else
-            this.shipPrice.setText(shipprice);
-        if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
-        Welcome.accountExist = true;
-
-        /*
-        JSONObject values = new JSONObject();
-        try {
-
-            values.put("name", name);
-            values.put("mail", mail);
-            values.put("phone", phone);
-            values.put("description", description);
-            values.put("address", address);
-            values.put("opening", opening);
-            values.put("categories", categories);
-            values.put("shipprice", shipprice);
-            if (profileBitmap != null) {
-                String bts = Utility.BitMapToString(profileBitmap);
-                values.put("profile", bts);
-                hasProfile = true;
-            }
-            values.put("hasProfile", hasProfile);
-
-
-            pref.edit().putString("info", values.toString()).apply();
-
-            this.name.setText(name);
-            this.mail.setText(mail);
-            this.phone.setText(phone);
-            this.description.setText(description);
-            this.address.setText(address);
-            this.opening.setText(opening);
-            this.shipPrice.setText(shipprice);
-            this.categories.setText(categories);
-            if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
-
-            empty = false;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
+        prof = new Profile(name,mail,phone,description,address, opening, categories, priceship, bitmapProf);
+        if(Welcome.getProfile() != null) {
+            prof.setReviews(Welcome.getProfile().getReviews());
+            prof.setTotalRate(Welcome.getProfile().getTotalRate());
+        }
+        storeProfileOnFirebase(prof);
     }
 
     private void storeProfileOnFirebase(Profile profile){
         DatabaseReference myRef;
-        //DatabaseReference ordini;
 
         myRef = database.getReference("ristoratori/" + dbKey);
-            //ordini = database.getReference("ristoratori/" + dbKey + "/lista_ordini");
 
         myRef.runTransaction(new Transaction.Handler(){
             @NonNull
@@ -262,69 +200,12 @@ public class ProfileFragment extends Fragment{
             @Override
             public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot currentData){
                 //this method will be called once with the result of the transaction
-                if(committed) {
-                    /*if(orders != null && orders.size() != 0)
-                        ordini.updateChildren(orders);*/
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-                    //editor.putString("dbkey", myRef.getKey());
-                    editor.putString("address", profile.getAddress());
-                    editor.putString("name", profile.getName());
-                    editor.putString("phone", profile.getPhone());
-                    editor.putString("mail", profile.getMail());
-                    editor.putString("description",profile.getDescription());
-                    editor.putString("opening", profile.getOpening());
-                    editor.putString("categories", profile.getCategories());
-                    editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
-                    editor.putString("profile", profile.getImage());
-                    editor.apply();
+                if(!committed) {
+                    Toast.makeText(ctx, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
-
-
-            /*DatabaseReference ordini = database.getReference("ristoratori/"+ dbKey +"/lista_ordini");
-            ordini.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    orders = (Map)dataSnapshot.getValue();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(ctx, "Database Error", Toast.LENGTH_SHORT).show();
-                }
-            });*/
-
-
-
-
-
-            /* PARTE CHE CARICA DALLE SHARED
-            name.setText(stringOrDefault(values.getString("name")));
-            mail.setText(stringOrDefault(values.getString("mail")));
-            phone.setText(stringOrDefault(values.getString("phone")));
-            description.setText(stringOrDefault(values.getString("description")));
-            address.setText(stringOrDefault(values.getString("address")));
-            opening.setText(stringOrDefault(values.getString("opening")));
-            if (values.getBoolean("hasProfile")) {
-                String encodedBitmap = values.getString("profile");
-                profileBitmap = Utility.StringToBitMap(encodedBitmap);
-                if (profileBitmap != null)
-                    profileImage.setImageBitmap(profileBitmap);
-            }
-            empty = false;
-            */
-
-
-
-//
-//    }
-
-
-
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -343,6 +224,9 @@ public class ProfileFragment extends Fragment{
             case R.id.item_disconnect:
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
+                return true;
+            case R.id.item_statistics:
+                ctx.startActivity(new Intent(ctx, StatisticsActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

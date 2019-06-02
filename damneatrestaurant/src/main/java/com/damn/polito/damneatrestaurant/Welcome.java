@@ -1,5 +1,6 @@
 package com.damn.polito.damneatrestaurant;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.notifications.NotificationListener;
 import com.damn.polito.damneatrestaurant.beans.Profile;
@@ -32,7 +34,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedList;
@@ -43,6 +47,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     //SYSTEM VARIABLES
     public static boolean accountExist = false;
     public static String dbKey;
+    private static Profile profile;
+    private Context ctx;
 
     //FRAGMENTS VARIABLES
     private FragmentManager fragmentManager;
@@ -58,7 +64,6 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     private Query orderQuery;
 
     //COLLECTIONS
-    private Profile profile;
     private List<Order> orders = new LinkedList<>();
 
     //UI WIDGET
@@ -68,8 +73,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
-            Fragment selected = null;
-            selectedId = item.getItemId();
+        Fragment selected = null;
+        selectedId = item.getItemId();
                 switch (selectedId) {
                     case R.id.nav_dishes:
                         if(dishesFragment == null)
@@ -103,6 +108,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         database = FirebaseDatabase.getInstance();
+        ctx = getApplicationContext();
 
         if (getKey() == null)
             FirebaseLogin.shownSignInOptions(this);
@@ -134,6 +140,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                     //b.setEnabled(true);
                     dbKey = user.getUid();
                     FirebaseLogin.storeData(user, this);
+                    if(selectedId!=null && selectedId == R.id.nav_dishes && dishesFragment!=null)
+                        dishesFragment.update();
                 }
                 loadDataProfile();
             }
@@ -148,31 +156,48 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             }
         }
     }
-    private void storeProfile(Profile profile){
-        accountExist = true;
-        if(selectedId == null)
-            navigation.setSelectedItemId(R.id.nav_dishes);
-        if(Utility.firstON) {
-            setOrderListener();
-            Utility.firstON = false;
+
+    public void loadDataProfile() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(dbKey == null) {
+            dbKey = pref.getString("dbkey", null);
+            if (dbKey == null) return;
         }
 
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("address", profile.getAddress());
-        editor.putString("name", profile.getName());
-        editor.putString("phone", profile.getPhone());
-        editor.putString("mail", profile.getMail());
-        editor.putString("description",profile.getDescription());
-        editor.putString("opening", profile.getOpening());
-        editor.putString("categories", profile.getCategories());
-        editor.putString("shipprice", String.valueOf(profile.getPriceShip()));
-        editor.putString("profile", profile.getImage());
-        editor.apply();
+        myRef = database.getReference("ristoratori/" + dbKey);
+
+        listener = myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                profile = dataSnapshot.getValue(Profile.class);
+                if(profile != null && Utility.firstON) {
+                    setListeners();
+                    Utility.firstON = false;
+                }
+
+                if(selectedId == null){
+                    navigation.setSelectedItemId(R.id.nav_dishes);
+                }else if(selectedId == R.id.nav_profile)
+                    if(profile!=null)
+                        profileFragment.updateProfile();
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    @SuppressWarnings("unchecked")
+    private void setListeners(){
+        accountExist = true;
+        setOrderListener();
+    }
+
     private void setOrderListener() {
-        if(dbKey == null) return;
+        if(!accountExist) return;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         DatabaseReference orderRef = database.getReference("ordini/");
 
@@ -197,7 +222,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -210,6 +236,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 assert o != null;
                 o.setId(key);
                 orders.add(0, o);
+                if(o.getState()!=null && o.getState().equals("reassign"))
+                    reassignOrder(o);
 
                 if(selectedId == R.id.nav_reservations)
                     orderFragment.onChildAdded();
@@ -224,6 +252,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 o.setId(key);
                 orders.remove(o);
                 orders.add(0, o);
+                if(o.getState()!=null && o.getState().equals("reassign"))
+                    reassignOrder(o);
 
                 if(selectedId == R.id.nav_reservations)
                     orderFragment.onChildChanged();
@@ -250,7 +280,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                //todo: ho commentato per non dare l'errore alla chiusura
+                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -258,39 +289,96 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     }
 
-    public void loadDataProfile() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+    private void reassignOrder(Order order) {
+        updateAvailabity(order);
+        Toast.makeText(ctx, R.string.reassign_mex, Toast.LENGTH_SHORT).show();
+    }
 
-        if(dbKey == null) {
-            dbKey = pref.getString("dbkey", null);
-            if (dbKey == null) return;
-        }
+    private void updateAvailabity(Order order) {
+//        Deliverer current = deliverers.get(position);
+        //AGGIORNO LE AVAILABILITY
+        // database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_del_giorno/");
 
-        myRef = database.getReference("ristoratori/" + dbKey);
-
-        listener = myRef.addValueEventListener(new ValueEventListener() {
+        ref.runTransaction(new Transaction.Handler() {
+            @NonNull
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
 
-                Profile prof = dataSnapshot.getValue(Profile.class);
-                if (prof != null)
-                    storeProfile(prof);
-                if (selectedId != null) {
-                    if (selectedId == R.id.nav_profile)
-                        profileFragment.updateProfile();
+                for(MutableData child: mutableData.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    if(d!=null) {
+                        for (Dish d_ord : order.getDishes()) {
+                            if(d_ord.getId().equals(d.getId())){
+                                int new_quantity = d.getAvailability() + d_ord.getQuantity();
+                                int new_nOrders = d.getnOrders() - d_ord.getQuantity();
+                                if (new_nOrders < 0)
+                                    return Transaction.abort();
+                                else {
+                                    d.setAvailability(new_quantity);
+                                    d.setnOrders(new_nOrders);
+                                    child.setValue(d);
+                                }
+                            }
+                        }
+                    }
+                }
+                return Transaction.success(mutableData);
+            }
 
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                if(!b){
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
+                    dbOrder.setValue("rejected");
+                    Toast.makeText(ctx, R.string.availabity_too_low, Toast.LENGTH_SHORT).show();
+                }else{
+                    DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
+                    dbOrder.setValue("ordered");
+                    updateTotalAvailabity(order);
                 }
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
-            }
         });
     }
+
+    private void updateTotalAvailabity(Order order){
+        DatabaseReference ref = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child: dataSnapshot.getChildren()){
+                    Dish d = child.getValue(Dish.class);
+                    if(d!=null) {
+                        d.setId(child.getKey());
+                        for (Dish d_ord : order.getDishes()) {
+                            if(d_ord.getId().equals(d.getId())){
+                                int new_quantity = d.getAvailability() + d_ord.getQuantity();
+                                int new_nOrders = d.getnOrders() - d_ord.getQuantity();
+                                if (new_nOrders >= 0){
+                                    DatabaseReference dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/availability/");
+                                    dishRef.setValue(new_quantity);
+                                    dishRef = database.getReference("/ristoranti/" + order.getRestaurant().getRestaurantID() + "/piatti_totali/" + d.getId() + "/nOrders/");
+                                    dishRef.setValue(new_nOrders);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Utility.firstON = true;
         if(myRef!=null)
             myRef.removeEventListener(listener);
         if(orderQuery != null) {
@@ -320,5 +408,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     }
 
     public static String getDbKey() { return dbKey; }
+
+    public static Profile getProfile(){ return profile; }
 }
 

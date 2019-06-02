@@ -11,6 +11,8 @@ public class Profile {
     private String image = "NO_PHOTO";
     private String categories = "";
     private double priceShip = .0;
+    private int totalRate = 0;
+    private int reviews = 0;
 
     public Profile(String name, String mail, String phone, String description, String address, String opening,
                    String categories, double priceShip, String image) {
@@ -100,6 +102,22 @@ public class Profile {
 
     public void setPriceShip(Double priceShip) {
         this.priceShip = priceShip;
+    }
+
+    public int getTotalRate() {
+        return totalRate;
+    }
+
+    public void setTotalRate(int totalRate) {
+        this.totalRate = totalRate;
+    }
+
+    public int getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(int reviews) {
+        this.reviews = reviews;
     }
 }
 

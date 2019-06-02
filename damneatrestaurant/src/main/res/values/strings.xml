@@ -10,7 +10,7 @@
     <string name="not_registered">You have to fill the profile to add dishes.</string>
     <string name="order_state">State:</string>
     <string name="order_delivery_time">Delivery time: %s</string>
-    <string name="order_customer_info">Customer:</string>
+    <string name="order_customer_info">Customer:\n\n%s</string>
     <string name="set_as_shipped">Set as shipped</string>
     <string name="set_as_rejected">Reject order</string>
     <string name="no_free_deliverers">No free deliverers</string>
@@ -26,4 +26,21 @@
     <string name="distance_meter" translatable="false">%d m</string>
     <string name="distance_km" translatable="false">%.1f km</string>
     <string name="deliverer_phone">Phone:</string>
+    <string name="most_popular_meals">Most popular meals</string>
+    <string name="most_popular_timing_of_order">Most popular timing of order</string>
+    <string name="see_reviews_button">See %d reviews</string>
+    <string name="restaurant_raiting">Restaurant rating</string>
+    <string name="dishes_sold_number">Sold: %d</string>
+    <string name="edit_dishes">Edit your dishes</string>
+    <string name="reassign_mex">An order was rejected by the deliverer</string>
+    <string name="reassign">Reassignment</string>
+    <string name="insufficient_quantity">Insufficient quantity</string>
+    <string name="unable_open_map">Unable to open maps</string>
+    <string name="order_intent_with_key">You must pass an order in the intent with \"order\" key</string>
+    <string name="network_error">Network Error! Try again later</string>
+    <string name="impossible_map_request">Impossible to map request</string>
+    <string name="order_deliverer_info">Deliverer:\n\n%s</string>
+    <string name="location_found">Location found</string>
+    <string name="impossible_find_location">Impossible to find the location</string>
+    <string name="not_registered_statistics" >You have to fill the profile to watch statistics.</string>
 </resources>

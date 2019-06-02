@@ -54,6 +54,8 @@ public class SelectDishes extends AppCompatActivity {
         setContentView(R.layout.activity_select_dishes);
         //initDishes();
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.edit_dishes);
+
         fab_add = findViewById(R.id.fab_add);
         fab_add.setOnClickListener(v-> {
             Intent i = new Intent(this, AddDish.class);

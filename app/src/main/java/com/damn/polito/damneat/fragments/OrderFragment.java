@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,6 +20,8 @@ import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.adapters.OrdersAdapter;
+import com.damn.polito.damneat.dialogs.DialogType;
+import com.damn.polito.damneat.dialogs.HandleDismissDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class OrderFragment extends Fragment {
 
@@ -49,6 +53,11 @@ public class OrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        AppCompatActivity activity = ((AppCompatActivity)getActivity());
+        assert activity != null;
+        Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.nav_reservations);
+
         ctx = getContext();
         assert ctx != null;
         orderList = parent.getOrders();
@@ -67,8 +76,13 @@ public class OrderFragment extends Fragment {
         adapter.notifyItemInserted(0);
     }
 
-    public void onChildChanged(){
-        adapter.notifyItemChanged(0);
+    public void onChildChanged(int pos, boolean rateChanged){
+        if(rateChanged) {
+            adapter.notifyItemChanged(pos);
+            return;
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     public void onChildRemoved(int pos) {

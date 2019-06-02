@@ -56,7 +56,7 @@
     <string name="restaurant_address">Indirizzo ristorante:</string>
     <string name="restaurant_name">Nome ristorante:</string>
     <string name="restaurant_phone">Telefono ristorante:</string>
-    <string name="state">Stato: %s</string>
+    <string name="state">%s</string>
     <string name="waiting_customer_confirm">In attesa della conferma del cliente</string>
     <string name="waiting_order">In attesa di un ordine</string>
     <string name="state_empty">vuoto</string>
@@ -66,4 +66,10 @@
     <string name="state_accepted">accettato</string>
     <string name="start_navigation">Avvia Navigazione</string>
     <string name="no_position">Nessuna posizione GPS disponibile</string>
+    <string name="distance_traveled">Distanza percorsa: %.1f Km</string>
+    <string name="state_shipped">spedito</string>
+    <string name="title_activity_maps">Mappa</string>
+    <string name="travels_list">Le tue corse</string>
+    <string name="current_position">Posizione attuale</string>
+    <string name="money_earned">Hai guadagnato %.2f €</string>
 </resources>

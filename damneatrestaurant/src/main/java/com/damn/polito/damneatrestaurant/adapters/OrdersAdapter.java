@@ -73,47 +73,62 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order selected = orders.get(position);
-        //Calendar ciao= Calendar.getInstance();
         holder.id.setText(ctx.getString(R.string.order_id_s, selected.getId()));
         holder.date.setText(Utility.dateString(selected.getDate()));
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
-        holder.deliverer_name.setText(selected.getDelivererName());
-        holder.customer_info.setText(ctx.getString(R.string.order_customer_info)+"\n"+selected.getCustomerName()+"\n"+selected.getCustomerAddress());
-        holder.time.setText(ctx.getString(R.string.order_delivery_time, selected.getDeliveryTime()));
+        holder.deliverer_name.setText(ctx.getString(R.string.order_deliverer_info, selected.getDelivererName()));
+        holder.customer_info.setText(ctx.getString(R.string.order_customer_info, selected.getCustomer().getCustomerName()+"\n"+selected.getCustomer().getCustomerAddress()));
+        //holder.customer_info.setText("Customer:\n\n" + selected.getCustomerName() + "\n" + selected.getCustomerAddress());
+
+        String delivery_time = selected.getDeliveryTime();
+        if (delivery_time.equals("ASAP")) holder.time.setText(R.string.time_asap);
+        else holder.time.setText(ctx.getString(R.string.order_delivery_time, delivery_time));
+
+        holder.note.setText(ctx.getString(R.string.note, selected.getNote()));
         if(selected.getDelivererPhoto().equals("NO_PHOTO"))
             holder.deliverer_image.setImageBitmap(default_image);
         else
             holder.deliverer_image.setImageBitmap(Utility.StringToBitMap(selected.getDelivererPhoto()));
+
+        if(selected.getCustomer().getCustomerPhoto().equals("NO_PHOTO"))
+            holder.customer_image.setImageBitmap(default_image);
+        else
+            holder.customer_image.setImageBitmap(Utility.StringToBitMap(selected.getCustomer().getCustomerPhoto()));
 
         // holder.date.setText(dateFormat.format(ciao.getTime()));
         String dish_list_str = "";
         List<Dish> dishes = selected.getDishes();
         for (Dish d:dishes) {
             String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+"\t"+ p + "€\n";
+            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+" \t"+ p + "€\n";
         }
         holder.dishes_list.setText(dish_list_str);
 
         if (!orders.get(position).Expanded()) {
             holder.deliverer_name.setVisibility(View.GONE);
-            holder.date.setVisibility(View.GONE);
+            holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.GONE);
             holder.customer_info.setVisibility(View.GONE);
             holder.setAsRejected.setVisibility(View.GONE);
+            holder.note.setVisibility(View.GONE);
             if(selected.getState().equals("ordered")){
                 holder.findDeliverer.setVisibility(View.VISIBLE);
             }
             else{
                 holder.findDeliverer.setVisibility(View.GONE);
             }
-            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected")){
+            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected") || selected.getState().equals("reassign")){
                 holder.deliverer_name.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.GONE);
+                holder.customer_image.setVisibility(View.GONE);
+
             }
             else{
-                holder.deliverer_name.setVisibility(View.VISIBLE);
-                holder.deliverer_image.setVisibility(View.VISIBLE);
+                holder.deliverer_name.setVisibility(View.GONE);
+                holder.deliverer_image.setVisibility(View.GONE);
+                holder.customer_image.setVisibility(View.GONE);
+
             }
 
             if(selected.getState().equals("assigned")){
@@ -129,13 +144,16 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             else{
                 holder.findDeliverer.setVisibility(View.GONE);
             }
-            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected")){
+            if(selected.getState().equals("accepted") || selected.getState().equals("ordered") || selected.getState().equals("rejected") || selected.getState().equals("reassign")){
                 holder.deliverer_name.setVisibility(View.GONE);
                 holder.deliverer_image.setVisibility(View.GONE);
+                holder.customer_image.setVisibility(View.VISIBLE);
+
             }
             else{
                 holder.deliverer_name.setVisibility(View.VISIBLE);
                 holder.deliverer_image.setVisibility(View.VISIBLE);
+                holder.customer_image.setVisibility(View.VISIBLE);
                 holder.setAsRejected.setVisibility(View.GONE);
             }
             if(selected.getState().equals("ordered")) {
@@ -154,20 +172,28 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.date.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
             holder.customer_info.setVisibility(View.VISIBLE);
+
+            if (!selected.getNote().equals(""))
+                holder.note.setVisibility(View.VISIBLE);
+            else
+                holder.note.setVisibility(View.GONE);
         }
 
         if(selected.getState().equals("ordered"))
             holder.state.setText(ctx.getString(R.string.ordered));
         if(selected.getState().equals("delivered"))
             holder.state.setText(ctx.getString(R.string.delivered));
-        if(selected.getState().equals("rejected")){
-            holder.state.setText(ctx.getString(R.string.rejected));
-            holder.state.setTextColor(ctx.getColor(R.color.colorAccent));
-        }
         if(selected.getState().equals("confirmed")){
             holder.state.setText(ctx.getString(R.string.confirmed));
             holder.state.setTextColor(ctx.getColor(R.color.colorGreen));
-        }else {
+        }else if(selected.getState().equals("rejected")){
+            holder.state.setText(ctx.getString(R.string.rejected));
+            holder.state.setTextColor(ctx.getColor(R.color.colorRed));
+        } else if(selected.getState().equals("reassign")){
+            holder.state.setTextColor(Color.BLACK);
+            holder.state.setText(ctx.getString(R.string.reassign));
+        }
+        else {
             holder.state.setTextColor(Color.BLACK);
         }
 
@@ -186,10 +212,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info,state,time;
+        private TextView id,date,price,nDish, deliverer_name, dishes_list, customer_info,state,time,note;
         private CardView root;
         private Button findDeliverer, setAsShipped, setAsRejected;
-        private CircleImageView deliverer_image;
+        private CircleImageView deliverer_image, customer_image;
 
         public OrderViewHolder(View itemView, OnItemClickListener listener,OnButtonClickListener buttonListener, OnButtonShippedClickListener bShipListener, OnButtonRejectedClickListener bRejectedListener) {
             super(itemView);
@@ -206,8 +232,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             state=itemView.findViewById(R.id.state_tv_edit);
             time=itemView.findViewById(R.id.delivery_time_tv);
             deliverer_image=itemView.findViewById(R.id.circleImageView);
+            customer_image=itemView.findViewById(R.id.circleImageView_customer);
             setAsShipped=itemView.findViewById(R.id.order_set_shipped);
             setAsRejected=itemView.findViewById(R.id.order_button_reject);
+            note=itemView.findViewById(R.id.order_note);
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
                     int position = getAdapterPosition();

@@ -12,6 +12,7 @@ public class Deliverer implements Serializable {
     private String bitmapProf;
     private boolean state, expanded = false;
     private int distance;
+    private Long positionTime;
 
     private String key;
 
@@ -137,6 +138,14 @@ public class Deliverer implements Serializable {
     @Override
     public int hashCode() {
         return key.hashCode();
+    }
+
+    public Long getPositionTime() {
+        return positionTime;
+    }
+
+    public void setPositionTime(Long positionTime) {
+        this.positionTime = positionTime;
     }
 }
 

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/item_statistics"
+        app:showAsAction="ifRoom"
+        android:title="@string/statistics"
+        android:icon="@drawable/ic_statistics"/>
     <item android:id="@+id/item_edit"
         app:showAsAction="ifRoom"
         android:title="@string/action_edit"
@@ -9,4 +13,5 @@
         app:showAsAction="ifRoom"
         android:title="@string/disconnect"
         android:icon="@drawable/ic_disconnect"/>
+
 </menu>

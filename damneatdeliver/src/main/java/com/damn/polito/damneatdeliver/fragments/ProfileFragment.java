@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.damneatdeliver.Analytics;
 import com.damn.polito.damneatdeliver.EditProfile;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
@@ -36,6 +37,7 @@ import com.google.firebase.database.Transaction;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
+import static java.lang.Thread.sleep;
 
 public class ProfileFragment extends Fragment{
 
@@ -96,6 +98,26 @@ public class ProfileFragment extends Fragment{
 
         }
         startActivityForResult(intent, 1);
+    }
+
+    private void showAnalytics(){
+        Intent intent = new Intent(ctx, Analytics.class);
+
+        //Se il profilo esisteva, passa le informazioni a EditProfile
+        if (!empty && !name.getText().toString().trim().equals(defaultValue)) {
+            intent.putExtra("name", name.getText().toString().trim());
+            intent.putExtra("mail", mail.getText().toString().trim());
+            intent.putExtra("phone", phone.getText().toString().trim());
+            intent.putExtra("description", description.getText().toString().trim());
+            intent.putExtra("image", profileImage.getDrawable().toString());
+            if (profileBitmap != null){
+                PreferenceManager.getDefaultSharedPreferences(ctx)
+                        .edit().putString("profile", Utility.BitMapToString(profileBitmap)).apply();
+            }
+
+        }
+        startActivityForResult(intent, 1);
+
     }
 
     private String stringOrDefault(String s) {
@@ -190,10 +212,20 @@ public class ProfileFragment extends Fragment{
                 editProfile();
                 return true;
             case R.id.item_disconnect:
-                database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/").setValue(false);
-                database.getReference("/deliverers_liberi/" + Welcome.getDbKey()).removeValue();
-                FirebaseLogin.logout((Activity) ctx);
-                ((Activity) ctx).finish();
+
+                DatabaseReference dbRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
+                dbRef.removeValue();
+
+                dbRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/");
+                dbRef.setValue(false).addOnCompleteListener(t -> {
+                    FirebaseLogin.logout((Activity) ctx);
+                    ((Activity) ctx).finish();
+                });
+
+                return true;
+            case R.id.item_statistics:
+                showAnalytics();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

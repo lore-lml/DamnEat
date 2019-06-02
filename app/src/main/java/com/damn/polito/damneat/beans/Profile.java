@@ -1,5 +1,9 @@
 package com.damn.polito.damneat.beans;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class Profile {
 
     private String name;
@@ -8,8 +12,10 @@ public class Profile {
     private String description;
     private String address;
     private String bitmapProf;
+    private Set<String> favoriteRestaurants;
 
     public Profile(String name, String mail, String phone, String description, String address, String bitmapProf) {
+        this();
         this.name = name;
         this.mail = mail;
         this.phone = phone;
@@ -21,7 +27,9 @@ public class Profile {
     public Profile(Profile p) {
         this(p.name, p.mail, p.phone, p.description, p.address, p.bitmapProf);
     }
-    public Profile() {}
+    public Profile() {
+        favoriteRestaurants = new HashSet<>();
+    }
 
     public String getName() {
         return name;
@@ -69,5 +77,40 @@ public class Profile {
 
     public void setBitmapProf(String bitmapProf) {
         this.bitmapProf = bitmapProf;
+    }
+
+    public Set<String> favouriteRestaurantsSet() {
+        return favoriteRestaurants;
+    }
+
+    public void sFavoriteRestaurantsSet(Set<String> favoriteRestaurants) {
+        this.favoriteRestaurants = favoriteRestaurants;
+    }
+
+    public String getFavoriteRestaurants() {
+        if(favoriteRestaurants.isEmpty()) return null;
+        StringBuilder sb = new StringBuilder();
+
+        for(String key : favoriteRestaurants)
+            sb.append(key).append(",");
+
+        sb.deleteCharAt(sb.length()-1);
+
+        return sb.toString();
+    }
+
+    public void setFavoriteRestaurants(String favoriteRestaurants) {
+        String[] s = favoriteRestaurants.split(",");
+        this.favoriteRestaurants.addAll(Arrays.asList(s));
+    }
+
+    public void addFavoriteRestaurant(String restaurantKey){
+        if(restaurantKey == null || restaurantKey.isEmpty()) return;
+        this.favoriteRestaurants.add(restaurantKey);
+    }
+
+    public void removeFavoriteRestaurant(String restaurantKey) {
+        if(restaurantKey == null || restaurantKey.isEmpty()) return;
+        this.favoriteRestaurants.remove(restaurantKey);
     }
 }

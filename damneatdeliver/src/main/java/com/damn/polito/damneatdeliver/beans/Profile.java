@@ -9,6 +9,7 @@ public class Profile {
     private String bitmapProf;
     private Boolean state;
     private Double latitude, longitude;
+    private Long positionTime;
 
     public Profile(String name, String mail, String phone, String description, String bitmapProf) {
         this.name = name;
@@ -22,6 +23,14 @@ public class Profile {
         this(p.name, p.mail, p.phone, p.description, p.bitmapProf);
     }
     public Profile() {}
+
+    public Long getPositionTime() {
+        return positionTime;
+    }
+
+    public void setPositionTime(Long positionTime) {
+        this.positionTime = positionTime;
+    }
 
     public String getName() {
         return name;
@@ -95,4 +104,5 @@ public class Profile {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 }

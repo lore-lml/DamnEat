@@ -26,8 +26,10 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Restaurant;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.SelectDishes;
+import com.damn.polito.damneatrestaurant.Welcome;
 import com.damn.polito.damneatrestaurant.adapters.DishesAdapter;
 import com.damn.polito.commonresources.beans.Dish;
+import com.damn.polito.damneatrestaurant.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -125,7 +127,10 @@ public class DishesFragment extends Fragment {
                 });
                 pop.show();
         });*/
+    update();
+    }
 
+    public void update(){
         if(!userRegistered()){
             registered_tv.setVisibility(View.VISIBLE);
             registered_im.setVisibility(View.VISIBLE);
@@ -139,19 +144,8 @@ public class DishesFragment extends Fragment {
     }
 
     private boolean userRegistered() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        Log.d("shared addr", pref.getString("address", ""));
-        if(pref.getString("address", "").equals(""))
-            return false;
-
-        if(pref.getString("name", "").equals(""))
-            return false;
-
-        if(pref.getString("phone", "").equals(""))
-            return false;
-        Log.d("shared clientphone", pref.getString("clientphone", ""));
-
-        return !pref.getString("mail", "").equals("");
+        Profile profile = Welcome.getProfile();
+        return profile != null && profile.getName() != null && profile.getAddress() != null;
     }
 
     private void itemDelete() {

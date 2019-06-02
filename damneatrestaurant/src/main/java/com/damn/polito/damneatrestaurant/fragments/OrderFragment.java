@@ -64,7 +64,7 @@ public class OrderFragment extends Fragment {
 
         AppCompatActivity activity = ((AppCompatActivity)getActivity());
         assert activity != null;
-        Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.app_name);
+        Objects.requireNonNull(activity.getSupportActionBar()).setTitle(R.string.nav_reservations);
 
         recyclerView = view.findViewById(R.id.orders_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
@@ -91,7 +91,7 @@ public class OrderFragment extends Fragment {
         adapter.setOnButtonClickListener(position -> {
 
             //Controlla che il cliente abbia dei dati
-            if(orders.get(position).getCustomerName().equals("") || orders.get(position).getCustomerAddress().equals("")){
+            if(orders.get(position).getCustomer().getCustomerName().equals("") || orders.get(position).getCustomer().getCustomerAddress().equals("")){
                 DatabaseReference dbOrder = database.getReference("/ordini/" + orders.get(position).getId() + "/state");
                 dbOrder.setValue("rejected");
                 Toast.makeText(ctx, R.string.no_customer_info, Toast.LENGTH_LONG).show();

@@ -23,8 +23,10 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.beans.QueryType;
 import com.damn.polito.damneat.EditProfile;
 import com.damn.polito.damneat.R;
+import com.damn.polito.damneat.ReviewsActivity;
 import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +39,7 @@ import com.google.firebase.database.Transaction;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
-import static com.damn.polito.damneat.Welcome.*;
+import static com.damn.polito.damneat.Welcome.getDbKey;
 
 public class ProfileFragment extends Fragment {
 
@@ -122,7 +124,6 @@ public class ProfileFragment extends Fragment {
         if(!hasChanged) return;
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        //boolean hasProfile = false;
         String name = data.getStringExtra("name");
         String mail = data.getStringExtra("mail");
         String phone = data.getStringExtra("phone");
@@ -131,32 +132,21 @@ public class ProfileFragment extends Fragment {
         String bitmapProf = pref.getString("profile", null);
         if(bitmapProf!= null) {
             profileBitmap = Utility.StringToBitMap(bitmapProf);
-            //hasProfile = true;
             pref.edit().remove("profile").apply();
         }
-        //
+
         //CARICO I DATI SU FIREBASE
         prof = new Profile(name,mail,phone,description,address,bitmapProf);
+        if(Welcome.getProfile() != null)
+            prof.sFavoriteRestaurantsSet(Welcome.getProfile().favouriteRestaurantsSet());
         storeProfileOnFirebase(prof);
-
-        /*this.name.setText(name);
-        this.mail.setText(mail);
-        this.phone.setText(phone);
-        this.description.setText(description);
-        this.address.setText(address);
-        if (profileBitmap != null) profileImage.setImageBitmap(profileBitmap);
-        Welcome.accountExist = true;*/
     }
 
     private void storeProfileOnFirebase(Profile profile){
         if(getDbKey() == null) return;
         DatabaseReference myRef;
-        DatabaseReference ordini;
 
         myRef = database.getReference("clienti/" + getDbKey());
-        //ordini = database.getReference("clienti/" + getDbKey() + "/lista_ordini");
-
-
         myRef.runTransaction(new Transaction.Handler(){
             @NonNull
             @Override
@@ -194,20 +184,10 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void loadData() {
         if(!Welcome.accountExist) return;
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-
-        prof.setAddress(pref.getString("address", ""));
-        prof.setName(pref.getString("name", ""));
-        prof.setMail(pref.getString("mail", ""));
-        prof.setPhone(pref.getString("phone", ""));
-        prof.setDescription(pref.getString("description", ""));
-        prof.setBitmapProf(pref.getString("profile", ""));
+        prof = Welcome.getProfile();
     }
-
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -227,6 +207,13 @@ public class ProfileFragment extends Fragment {
                 FirebaseLogin.logout((Activity) ctx);
                 ((Activity) ctx).finish();
                 return true;
+
+            case R.id.item_statistics:
+                Intent i = new Intent(ctx, ReviewsActivity.class);
+                i.putExtra("query_type", QueryType.SelfReview.toString());
+                startActivity(i);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

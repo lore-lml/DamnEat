@@ -52,14 +52,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order selected = orders.get(position);
         Bitmap img = null;
-        if(selected == null){
+        if (selected == null) {
             holder.root.setVisibility(View.GONE);
             return;
         }
         holder.root.setVisibility(View.VISIBLE);
 
-        if(selected.getRestaurant().getPhoto()!=null)
-            if(!selected.getRestaurant().getPhoto().equals("NO_PHOTO")){
+        if (selected.getRestaurant().getPhoto() != null)
+            if (!selected.getRestaurant().getPhoto().equals("NO_PHOTO")) {
                 img = Utility.StringToBitMap(selected.getRestaurant().getPhoto());
                 holder.image.setImageBitmap(img);
             }
@@ -70,12 +70,12 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
 
-        holder.customer_info.setText(ctx.getString(R.string.string, selected.getCustomerName()+"\n"+selected.getCustomerAddress()));
-        holder.restaurant_i.setText(ctx.getString(R.string.string, selected.getRestaurant().getRestaurantName()+"\n"+selected.getRestaurant().getRestaurantAddress()));
+        holder.customer_info.setText(ctx.getString(R.string.string, selected.getCustomer().getCustomerName() + "\n" + selected.getCustomer().getCustomerAddress()));
+        holder.restaurant_i.setText(ctx.getString(R.string.string, selected.getRestaurant().getRestaurantName() + "\n" + selected.getRestaurant().getRestaurantAddress()));
 //        holder.delivery_time.setText(ctx.getString(R.string.delivery_time, selected.getDeliveryTime()));
 //        holder.note.setText(ctx.getString(R.string.string, ""+selected.getNote()));
 
-        if(img != null)
+        if (img != null)
             holder.image.setImageBitmap(img);
         else
             holder.image.setImageResource(R.drawable.dish_preview);
@@ -84,13 +84,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         List<Dish> dishes = selected.getDishes();
         Double price = 0.;
         StringBuilder dish_list_strBuilder = new StringBuilder();
-        for (Dish d:dishes) {
+        for (Dish d : dishes) {
             @SuppressLint("DefaultLocale") String p = String.format("%.2f", d.getPrice());
             dish_list_strBuilder.append(d.getQuantity()).append("\tx\t").append(d.getName()).append("\t").append(p).append("€\n");
-            price += d.getQuantity()*d.getPrice();
+            price += d.getQuantity() * d.getPrice();
         }
         dish_list_str = dish_list_strBuilder.toString();
-        if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
+        if (selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
             @SuppressLint("DefaultLocale") String p = String.format("\n%.2f", selected.getRestaurant().getRestaurant_price_ship());
             dish_list_str += ctx.getString(R.string.ship) + " " + p + "€";
             Log.d("test", selected.getRestaurant().getRestaurant_price_ship().toString());
@@ -98,14 +98,18 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         }
 
         holder.dishes_list.setText(dish_list_str);
-        if(selected.getState().equals("ordered"))
+        if (selected.getState().equals("ordered"))
             holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.ordered)));
-        if(selected.getState().equals("delivered"))
+        if (selected.getState().equals("delivered"))
             holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.delivered)));
-        if(selected.getState().equals("confirmed"))
+        if (selected.getState().equals("confirmed")) {
             holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.confirmed)));
-        if(selected.getState().equals("rejected"))
+            holder.state_tv.setTextColor(ctx.getColor(R.color.colorGreen));
+        }
+        if (selected.getState().equals("rejected")) {
             holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.reject)));
+            holder.state_tv.setTextColor(ctx.getColor(R.color.colorRed));
+        }
         if(selected.getState().equals("accepted"))
             holder.state_tv.setText(ctx.getString(R.string.state, ctx.getString(R.string.accepted)));
         if(selected.getState().equals("shipped"))
@@ -141,7 +145,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.dishes_list.setVisibility(View.GONE);
             holder.nDish.setVisibility(View.GONE);
         }else{
-            holder.id.setVisibility(View.VISIBLE);
+            holder.id.setVisibility(View.GONE);
             holder.price.setVisibility(View.VISIBLE);
             holder.dishes_list.setVisibility(View.VISIBLE);
             holder.nDish.setVisibility(View.VISIBLE);

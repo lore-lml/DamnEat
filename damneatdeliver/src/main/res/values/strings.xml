@@ -49,14 +49,14 @@
     <string name="note">Note:</string>
     <string name="restaurant_phone">Restaurant phone:</string>
     <string name="restaurant_address">Restaurant address:</string>
-    <string name="state">State: %s</string>
+    <string name="state">%s</string>
     <string name="customer_phone">Customer phone:</string>
     <string name="restaurant_name">Restaurant name:</string>
     <string name="confirm_delivery">Confirm delivery</string>
     <string name="delivery_time_tv">Delivery time: %s</string>
     <string name="order_completed">Order completed</string>
     <string name="waiting_customer_confirm">Waiting customer confirm</string>
-    <string name="waiting_order">Waiting a order</string>
+    <string name="waiting_order">Waiting an order</string>
     <string name="reject">Reject</string>
     <string name="Accept">Accept</string>
     <string name="accept_question">Do you want accept delivery?</string>
@@ -71,4 +71,10 @@
     <string name="title_activity_maps">Map</string>
     <string name="start_navigation">Start navigation</string>
     <string name="no_position">No GPS position available</string>
+    <string name="distance_traveled">Distance traveled: %.1f Km</string>
+    <string name="travels_list">All yours travels</string>
+    <string name="current_position">Current_position</string>
+    <string name="distance_format" translatable="false">%.1f Km</string>
+    <string name="money_earned">You earned %.2f €</string>
+    <string name="address_error">Address Error!</string>
 </resources>

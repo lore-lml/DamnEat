@@ -10,12 +10,11 @@
     <string name="order_succesfull">Order successfully completed</string>
     <string name="ship">Delivery cost</string>
     <string name="cart_empty">Cart empty</string>
-
     <string name="restaurant">Restaurant:\n %s</string>
     <string name="confirmOrder">Confirm delivered</string>
     <string name="confirm_order">Confirm order</string>
     <string name="delivery_time">Delivery time: %s</string>
-    <string name="state">State:</string>
+    <string name="state">State</string>
     <string name="dialog_time">Delivery time</string>
     <string name="sort_alpha">Sort alphabetically</string>
     <string name="sort_pricerangeasc">Sort by price range ascendent</string>
@@ -23,4 +22,20 @@
     <string name="sort_mostrated">Sort most rated</string>
     <string name="restaurant_closed">We are closed</string>
     <string name="restaurant_closed_text">The restaurant is closed or it\'s about to!\n\n%s</string>
+    <string name="rate_title">What about our service?</string>
+    <string name="rate_one">Very Bad</string>
+    <string name="rate_two">Not so good</string>
+    <string name="rate_three">Good</string>
+    <string name="rate_four">Very Good</string>
+    <string name="rate_five">Great</string>
+    <string name="rate_note">Tell us your opinion about your experience</string>
+    <string name="rate_restaurant">What do you think about our restaurant?\nYour opinion is important to us</string>
+    <string name="rate_food">Did you enjoy the meal?</string>
+    <string name="rate_activity_title" translatable="false">Feedback</string>
+    <string name="reviews_title">Your reviews</string>
+    <string name="service_review">Service review</string>
+    <string name="review">Review</string>
+    <string name="incomplete_review">You need to rate both fields</string>
+    <string name="deliverer">Deliverer:\n %s</string>
+    <string name="specific_restaurant_review_title">%s - Reviews</string>
 </resources>
