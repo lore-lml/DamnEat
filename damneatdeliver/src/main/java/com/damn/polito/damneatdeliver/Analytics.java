@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,11 +65,47 @@ public class Analytics extends AppCompatActivity {
         DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
         money=findViewById(R.id.you_earned_tot_money);
         money.setText( getApplicationContext().getString(R.string.money_earned,0.0));
+        Collections.sort(orders,(Order e1, Order e2) -> -(e1.getDate().compareTo(e2.getDate())));
+
+        DecimalFormat df = new DecimalFormat("#.#");
+        DecimalFormat dfPrice = new DecimalFormat("#.##");
+        List<HashMap<String, String>> listItems = new ArrayList<>();
+        SimpleAdapter adapter;
+        adapter = new SimpleAdapter(getApplicationContext(), listItems, R.layout.list_item,
+                new String[]{"First Line", "Second Line","Third Line"},
+                new int[]{R.id.text1, R.id.text2, R.id.text3});
 
         for(Order o: orders){
-            travelsList.put("AAA", (float) o.getDistance());
-        }
+            //travelsList.put("AAA", (float) o.getDistance());
+            Date time;
+            double price;
+            double km;
 
+            time=o.getDate();
+
+            km = o.getDistance()/1000;
+            totDistance+=km;
+
+            price=km*0.5+2;
+            totMoney+=price;
+
+
+            HashMap<String, String> resultsMap = new HashMap<>();
+            resultsMap.put("First Line", time.toString());
+            resultsMap.put("Second Line", df.format(km)+" Km");
+            resultsMap.put("Third Line", dfPrice.format(price)+" €");
+            listItems.add(resultsMap);
+
+        }
+        money.setText( getApplicationContext().getString(R.string.money_earned,totMoney));
+        totalDistance.setText( getApplicationContext().getString(R.string.distance_traveled,totDistance));
+        listView.setAdapter(adapter);
+
+
+
+
+//                    Iterator it = travelsList.entrySet().iterator();
+//                    while (it.hasNext())
 //        distanceState.orderByKey().addChildEventListener(new ChildEventListener() {
 //            @Override
 //            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -90,10 +128,6 @@ public class Analytics extends AppCompatActivity {
 //                    adapter = new SimpleAdapter(getApplicationContext(), listItems, R.layout.list_item,
 //                            new String[]{"First Line", "Second Line","Third Line"},
 //                            new int[]{R.id.text1, R.id.text2, R.id.text3});
-//
-//
-//                    Iterator it = travelsList.entrySet().iterator();
-//                    while (it.hasNext())
 //                    {
 //                        HashMap<String, String> resultsMap = new HashMap<>();
 //                        Map.Entry pair = (Map.Entry)it.next();
@@ -142,9 +176,9 @@ public class Analytics extends AppCompatActivity {
 //        });
 //
 //
-
-
-        //init();
+//
+//
+//        init();
     }
 
 
