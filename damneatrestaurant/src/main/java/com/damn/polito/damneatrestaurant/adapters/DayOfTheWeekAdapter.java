@@ -19,7 +19,7 @@ import android.widget.TimePicker;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.damneatrestaurant.R;
-import com.damn.polito.damneatrestaurant.beans.DayOfTheWeek;
+import com.damn.polito.commonresources.beans.DayOfTheWeek;
 import com.damn.polito.damneatrestaurant.dialogs.TimePickerFragment;
 
 import java.util.ArrayList;
