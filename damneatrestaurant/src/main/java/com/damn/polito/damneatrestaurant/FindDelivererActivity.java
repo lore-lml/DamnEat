@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class    FindDelivererActivity extends AppCompatActivity {
@@ -105,11 +106,11 @@ public class    FindDelivererActivity extends AppCompatActivity {
         if(currentOrder == null)
             throw new IllegalStateException(""+R.string.order_intent_with_key);
 
-        Geocoder coder = new Geocoder(this);
+        Geocoder coder = new Geocoder(this, Locale.ITALY);
         try {
             restAddress = coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress(), 1).get(0);
         } catch (IOException e) {
-            Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         assert restAddress != null;
 

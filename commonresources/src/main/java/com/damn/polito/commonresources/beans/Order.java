@@ -1,9 +1,6 @@
 package com.damn.polito.commonresources.beans;
 
-import com.damn.polito.commonresources.beans.Dish;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

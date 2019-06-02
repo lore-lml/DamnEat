@@ -15,15 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.damn.polito.commonresources.Utility;
-import com.damn.polito.damneatrestaurant.EditProfile;
+import com.damn.polito.commonresources.beans.DayOfTheWeek;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.adapters.DayOfTheWeekAdapter;
-import com.damn.polito.damneatrestaurant.beans.DayOfTheWeek;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,14 +95,14 @@ public class OpeningDialog extends DialogFragment {
         }
     }
 
-    private void store() {
+    /*private void store() {
         JSONArray array = new JSONArray();
         for(DayOfTheWeek d : days)
             array.put(d.toJson());
 
         PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
                 .putString("days", array.toString()).apply();
-    }
+    }*/
 
     private List<DayOfTheWeek> load(){
 

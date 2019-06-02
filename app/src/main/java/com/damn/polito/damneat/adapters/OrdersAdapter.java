@@ -77,6 +77,15 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.restaurant_info.setText(ctx.getString(R.string.restaurant, selected.getRestaurant().getRestaurantName()));
 
+        if(holder.btnDeliverer != null) {
+            holder.btnDeliverer.setVisibility(View.GONE);
+            holder.btnDeliverer.setOnClickListener(v->{
+                Intent i = new Intent(/*ctx, Activity.class*/);
+                //Eventuali putExtra
+                //ctx.startActivity(i);
+            });
+        }
+
 
         if(selected.getState().toLowerCase().equals("confirmed") || selected.getState().toLowerCase().equals("rejected")){
 
@@ -147,8 +156,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.state.setText(ctx.getString(R.string.accepted));
 
 
-            if(selected.getState().toLowerCase().equals("shipped"))
+            if(selected.getState().toLowerCase().equals("shipped")) {
+                holder.btnDeliverer.setVisibility(View.VISIBLE);
                 holder.state.setText(ctx.getString(R.string.shipped));
+            }
 
             if(selected.getState().toLowerCase().equals("delivered")){
                 holder.confirmButton.setVisibility(View.VISIBLE);
@@ -182,7 +193,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         Double price = 0.;
         for (Dish d:dishes) {
             String p = String.format("%.2f", d.getPrice());
-            dish_list_str += d.getQuantity() +"\tx\t"+ d.getName()+" "+ p + "€\n";
+            dish_list_str += d.getQuantity() +"x "+ d.getName()+" "+ p + "€\n";
             price += d.getQuantity()*d.getPrice();
         }
         if(selected.getRestaurant().getRestaurant_price_ship() != null && selected.getRestaurant().getRestaurant_price_ship() != 0.) {
@@ -221,7 +232,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         private CardView root;
         private LinearLayout dishListLayout;
         private ImageView deliverer_photo;
-        private Button confirmButton, btnRate;
+        private Button confirmButton, btnRate, btnDeliverer;
 
         public OrderViewHolder(View itemView) {
             super(itemView);
@@ -241,6 +252,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             note =itemView.findViewById(R.id.note_tv);
             confirmButton =itemView.findViewById(R.id.confirmOrder);
             btnRate = itemView.findViewById(R.id.btn_rate);
+            btnDeliverer = itemView.findViewById(R.id.btn_find_deliverer);
         }
 
         @Override
