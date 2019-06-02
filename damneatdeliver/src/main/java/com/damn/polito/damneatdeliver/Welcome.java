@@ -99,7 +99,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     int REQUEST_CHECK_SETTINGS = 100;
 
     //COLLECTIONS
-    private List<Order> orders = new LinkedList<>();
+    private static List<Order> orders = new LinkedList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = item -> {
@@ -400,7 +400,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         });
     }
 
-    public List<Order> getOrders(){ return orders; }
+    public static List<Order> getOrders(){ return orders; }
 
     private void setDeliverFreeList(){
         if (profile!=null && profile.getState()) {

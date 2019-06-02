@@ -95,7 +95,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     private MarkerOptions place1,place2;
     private Polyline currentPolyline;
     private FragmentManager fm;
-    private float currentDistance;
+    private float currentDistance, traveledDistance;
     //45.061511, 7.674472
     //45.057780, 7.682858
     private Order currentOrder;
@@ -188,13 +188,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(currentOrder!=null){
                 DatabaseReference orderState = database.getReference("ordini/" + currentOrder.getId() + "/state/");
                 orderState.setValue("delivered");
-                DatabaseReference orderDistance = database.getReference("ordini/" + currentOrder.getId() + "/distance/");
-                orderState.setValue("delivered");
-                DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
-                Map<String, Object> map = new HashMap<>();
-                map.put(String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),currentDistance);
-                distanceState.updateChildren(map);
-
             }
         });
 
@@ -262,6 +255,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         setVisibility(currentOrder.getState());
     }
 
+
     private void ShowGPSDialog() {
         mGoogleApiClient = new GoogleApiClient.Builder(ctx.getApplicationContext())
                 .addApi(LocationServices.API)
@@ -324,8 +318,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             map.getMapAsync(this);
 
 
-        }else if(currentOrder.getState().toLowerCase().equals("shipped")||
-                currentOrder.getState().toLowerCase().equals("delivered")){
+        }else if(currentOrder.getState().toLowerCase().equals("shipped")){
 
             addresses = getAddressesToCustomer();
             if(addresses.size() == 2){
@@ -336,6 +329,24 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
 
                 new FetchURL(CurrentFragment.this).execute(url,"driving");
+            }
+
+            map.getMapAsync(this);
+        }
+        else if(currentOrder.getState().toLowerCase().equals("delivered")){
+            //mostro la mappa del tragitto percorso
+            addresses = new ArrayList<>();
+            addresses.add(0, getAddressesToCustomer().get(1));
+            addresses.add(1, getAddressesToRestaurant().get(1));
+
+            if(addresses.size() == 2) {
+                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                        .title(currentOrder.getDelivererName());
+                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                        .title(currentOrder.getCustomer().getCustomerName());
+                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                new FetchURL(CurrentFragment.this).execute(url, "driving");
             }
             map.getMapAsync(this);
         }
@@ -491,8 +502,16 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         state_tv.setText(ctx.getString(R.string.state, currentOrder.getState().toLowerCase()));
 
 
-        if(currentOrder.getState().equals("confirmed") || currentOrder.getState().equals("rejected")){
+        if(currentOrder.getState().equals("confirmed")){
             Toast.makeText(ctx, R.string.order_completed, Toast.LENGTH_LONG).show();
+            DatabaseReference orderDistance = database.getReference("ordini/" + currentOrder.getId() + "/distance/");
+            orderDistance.setValue(traveledDistance);
+
+            DatabaseReference distanceState = database.getReference("deliverers/" + Welcome.getDbKey() + "/analytics/");
+            Map<String, Object> map = new HashMap<>();
+            map.put(String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),traveledDistance);
+            distanceState.updateChildren(map);
+
             DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
             orderRef.setValue("0");
             setVisibility("empty");
@@ -513,48 +532,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             setVisibility("empty");
 
         }
-
-//        if(currentOrder.getState().equals("ordered")){
-//            Toast.makeText(ctx, R.string.order_rejected, Toast.LENGTH_LONG).show();
-//            DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/current_order/");
-//            orderRef.removeValue();
-//            DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
-//            freeDeliverersRef.setValue(Welcome.getDbKey());
-//        }
-
-
-
-
-
         notRegistered();
     }
-
-//    public void checkRegistered(){
-//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-//
-//        String dbKey = pref.getString("dbkey", null);
-//
-//        FirebaseDatabase database= FirebaseDatabase.getInstance();
-//        DatabaseReference profileRef = database.getReference("/deliverers/" + dbKey );
-//        profileRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                Deliverer del = dataSnapshot.getValue(Deliverer.class);
-//                if(del==null){
-//                    registered = false;
-//                }
-//                else registered = true;
-//                update();
-//                Log.d("registered", String.valueOf(registered));
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
 
 
     private void setVisibility(String state){
@@ -788,7 +767,6 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         }
         currentPolyline=gmap.addPolyline((PolylineOptions)values[0]);
 
-
         List<LatLng> latlangs = currentPolyline.getPoints();
         int size = latlangs.size() - 1;
         float[] results = new float[1];
@@ -804,6 +782,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             sum += results[0];
         }
         currentDistance=sum;
+        if(currentOrder.getState().toLowerCase().equals("delivered"))
+            traveledDistance = currentDistance;
         //SET DISTANCE TEXT AND VISIBILITY
         distance.setText(ctx.getString(R.string.distance_format,currentDistance/1000));
         distance.setVisibility(View.VISIBLE);

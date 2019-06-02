@@ -12,7 +12,6 @@ public class Order implements Serializable {
     private String id;
     private List<Dish> dishes;
     private Date date;
-    private double price;
     private String delivererName = "NOT_ASSIGNED_YET";
     private String delivererPhoto = "NO_PHOTO";
     private String delivererID = "NOT_ASSIGNED_YET";
@@ -21,6 +20,8 @@ public class Order implements Serializable {
     private boolean rated = false;
     private Double deliveryCost = .0;
     private Double latitude, longitude;
+    private double distance = 0;
+    private double price = 0;
 
     private Customer customer;
     private Restaurant restaurant;
@@ -210,6 +211,14 @@ public class Order implements Serializable {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     @Override
