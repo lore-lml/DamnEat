@@ -105,6 +105,8 @@
     <string name="review_title">Le tue recensioni</string>
     <string name="no_internet">Nessuna connessione ad internet</string>
     <string name="info_service_review">Cosa pensano i clienti del nostro servizio</string>
+    <string name="no_reviews">Non sono presenti recensioni</string>
+    <string name="find_deliverer">Traccia il tuo ordine</string>
 
 
 </resources>

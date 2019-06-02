@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.QueryType;
@@ -30,6 +31,7 @@ public class InfoActivity extends AppCompatActivity {
     private ReviewsAdapter adapter;
     private ProgressBar buffer;
     private List<RateObject> reviews;
+    private TextView noReview;
 
     private Query reviewQuery;
     private ValueEventListener reviewListener;
@@ -50,6 +52,8 @@ public class InfoActivity extends AppCompatActivity {
         recyclerView.setVisibility(View.GONE);
 
         buffer = findViewById(R.id.info_buffer);
+        noReview = findViewById(R.id.review_noreview);
+        noReview.setVisibility(View.GONE);
         reviews = new LinkedList<>();
         adapter = new ReviewsAdapter(reviews, this);
 
@@ -64,7 +68,11 @@ public class InfoActivity extends AppCompatActivity {
         reviewListener = reviewQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null) return;
+                if(dataSnapshot.getValue() == null) {
+                    buffer.setVisibility(View.GONE);
+                    noReview.setVisibility(View.VISIBLE);
+                    return;
+                }
 
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     if(child.getValue() == null)

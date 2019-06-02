@@ -123,5 +123,7 @@
     <string name="info_service_review">What our clients think about our service</string>
     <string name="info_service_review_title" translatable="false">Info</string>
     <string name="copyright" translatable="false">© DamnEat - 2019</string>
+    <string name="no_reviews">There are no reviews</string>
+    <string name="find_deliverer">Track your order</string>
 
 </resources>
