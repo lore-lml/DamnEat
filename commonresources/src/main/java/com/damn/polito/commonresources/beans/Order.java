@@ -24,7 +24,7 @@ public class Order implements Serializable {
 
     private Customer customer;
     private Restaurant restaurant;
-    //private Deliverer deliverer;
+    private Deliverer deliverer;
 
     private String state;
     private boolean expanded;
@@ -69,16 +69,6 @@ public class Order implements Serializable {
         this.state = "ordered";
     }
 
-//    public Order(List<Dish> dishes, Date date, String customerAddress, String customerName, double price){
-//        this.dishes = dishes;
-//        this.date = date;
-//        this.customer = new Customer(customerName, customerAddress);
-//        this.price = price;
-//        this.state = "ordered";
-//    }
-
-
-
     public String getState() {
         return state;
     }
@@ -93,34 +83,6 @@ public class Order implements Serializable {
     public List<Dish> getDishes() { return dishes;
     }
 
-//    /*Visualizzazione compatta*/
-//    public List<Dish> CumulatedDishes(){
-//        List<Dish> out = new ArrayList<>();
-//        Map<String,Integer> outTmp = new HashMap<>();
-//        int i,j,contiene;
-//        for(i=0;i<dishes.size();i++) {
-//            contiene = 0;
-//            for (j = 0; j < out.size() && !out.isEmpty(); j++){
-//                if (dishes.get(i).getName()!=null && out.get(j).getName()!=null) {
-//                    if(dishes.get(i).getName().equalsIgnoreCase(out.get(j).getName()))
-//                        contiene=1;
-//                }
-//            }
-//            if (contiene == 0) {
-//                out.add(dishes.get(i));
-//                outTmp.put(dishes.get(i).getName(), 1);
-//
-//            } else {
-//                outTmp.put(dishes.get(i).getName(), outTmp.get(dishes.get(i).getName()) + 1);
-//            }
-//        }
-//        for(i=0;i<out.size();i++){
-//            out.get(i).setQuantity(outTmp.get(out.get(i).getName()));
-//        }
-//
-//        return out;
-//    }
-
     public int DishesNumber() {
         int number = 0;
         for(Dish d: dishes){
@@ -132,14 +94,6 @@ public class Order implements Serializable {
 
     public Date getDate() {
         return date;
-    }
-
-    public String getCustomerAddress() {
-        return customer.getCustomerAddress();
-    }
-
-    public String getCustomerName() {
-        return customer.getCustomerName();
     }
 
     public String getDelivererName() {
@@ -164,14 +118,6 @@ public class Order implements Serializable {
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public void setCustomerAddress(String customerAddress) {
-        this.customer.setCustomerAddress(customerAddress);
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customer.setCustomerName(customerName);
     }
 
     public String getNote() {

@@ -238,19 +238,20 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
         switch_available.setOnCheckedChangeListener((compoundButton, b) -> {
             DatabaseReference orderRef = database.getReference("/deliverers/" + Welcome.getDbKey() + "/info/state/");
-            orderRef.setValue(b);
+            if(!Welcome.getProfile().getState().equals(b))
+                orderRef.setValue(b);
 
-            if(b){
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
-                freeDeliverersRef.setValue(Welcome.getDbKey());
-//                waiting_confirm.setVisibility(View.VISIBLE);
-                Log.d("key", Welcome.getDbKey());
-            } else{
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
-                freeDeliverersRef.removeValue();
-//                waiting_confirm.setVisibility(GONE);
-            }
-//            if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
+//            if(b){
+//                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
+//                freeDeliverersRef.setValue(Welcome.getDbKey());
+////                waiting_confirm.setVisibility(View.VISIBLE);
+//                Log.d("key", Welcome.getDbKey());
+//            } else{
+//                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + Welcome.getDbKey());
+//                freeDeliverersRef.removeValue();
+////                waiting_confirm.setVisibility(GONE);
+//            }
+////            if(Welcome.getProfile().getLongitude()==null || Welcome.getProfile().getLatitude()==null)
 //                Toast.makeText(ctx, R.string.no_position, Toast.LENGTH_LONG).show();
             ShowGPSDialog();
 

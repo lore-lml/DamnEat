@@ -78,7 +78,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         holder.nDish.setText(ctx.getString(R.string.order_num_dishes, selected.DishesNumber()));
         holder.price.setText(ctx.getString(R.string.order_price, selected.getPrice()));
         holder.deliverer_name.setText(ctx.getString(R.string.order_deliverer_info, selected.getDelivererName()));
-        holder.customer_info.setText(ctx.getString(R.string.order_customer_info, selected.getCustomerName()+"\n"+selected.getCustomerAddress()));
+        holder.customer_info.setText(ctx.getString(R.string.order_customer_info, selected.getCustomer().getCustomerName()+"\n"+selected.getCustomer().getCustomerAddress()));
         //holder.customer_info.setText("Customer:\n\n" + selected.getCustomerName() + "\n" + selected.getCustomerAddress());
 
         String delivery_time = selected.getDeliveryTime();

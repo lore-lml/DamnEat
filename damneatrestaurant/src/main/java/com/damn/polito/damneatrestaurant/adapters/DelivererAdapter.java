@@ -108,7 +108,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
     }
 
     private static boolean checkCustomerInfo() {
-        if (order.getCustomerName().equals("") || order.getCustomerAddress().equals("")) {
+        if (order.getCustomer().getCustomerName().equals("") || order.getCustomer().getCustomerAddress().equals("")) {
             DatabaseReference dbOrder = database.getReference("/ordini/" + order.getId() + "/state");
             dbOrder.setValue("rejected");
             Toast.makeText(ctx, R.string.no_customer_info, Toast.LENGTH_LONG).show();

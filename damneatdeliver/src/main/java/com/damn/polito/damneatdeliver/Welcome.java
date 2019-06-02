@@ -585,8 +585,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         if(profile!=null) {
             //profile.setState(false);
             if (profile.getState()) {
-                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
-                freeDeliverersRef.setValue(dbKey);
+//                DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
+//                freeDeliverersRef.setValue(dbKey);
                 if (currentFragment != null)
                     if (selectedId == R.id.nav_current)
                     currentFragment.update();
