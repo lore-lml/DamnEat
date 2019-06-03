@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Customer;
-import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
@@ -31,6 +30,7 @@ import com.damn.polito.damneat.Welcome;
 import com.damn.polito.damneat.dialogs.DialogType;
 import com.damn.polito.damneat.dialogs.HandleDismissDialog;
 import com.damn.polito.damneat.dialogs.RateDialog;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -44,6 +44,8 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
     private Context ctx;
     private OnItemClickListener mListener;
     private Bitmap default_image;
+    private static LatLng latLng;
+    private FirebaseDatabase mDatabase;
 
     public OrdersAdapter(List<Order> orders, Context context){
         this.orders= orders;
@@ -83,7 +85,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             holder.btnDeliverer.setVisibility(View.GONE);
             holder.btnDeliverer.setOnClickListener(v->{
                 Intent i = new Intent(ctx, FollowDelivererActivity.class);
-                //putextra
+                i.putExtra("name", selected.getDelivererName());
+                i.putExtra("photo", selected.getDelivererPhoto());
+                i.putExtra("key", selected.getDelivererID());
                 ctx.startActivity(i);
             });
         }
@@ -284,13 +288,5 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 e.printStackTrace();
             }
         }
-    }
-
-    //TODO:Implementare funzione per ritornare il deliverer da tracciare,
-    //      funzione chiamata all'interno di FollowDelivererActivity
-    public static Deliverer getDeliverer() {
-        Deliverer deliverer = null;
-
-        return deliverer;
     }
 }

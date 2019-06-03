@@ -12,19 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.adapters.OrdersAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +25,6 @@ public class OrderFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Order> orders;
     private OrdersAdapter adapter;
-    private FirebaseDatabase database;
 
 
     @Nullable
@@ -54,8 +45,6 @@ public class OrderFragment extends Fragment {
         recyclerView = view.findViewById(R.id.orders_recyclerview);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ctx);
         recyclerView.setLayoutManager(layoutManager);
-        database = FirebaseDatabase.getInstance();
-       // initExample();
         init();
         recyclerView.setVisibility(View.VISIBLE);
         adapter = new OrdersAdapter(orders, ctx);

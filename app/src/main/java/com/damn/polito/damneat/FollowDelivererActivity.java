@@ -2,7 +2,6 @@ package com.damn.polito.damneat;
 
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,7 +16,6 @@ import android.view.MenuItem;
 
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneat.adapters.CustomInfoMarkerAdapter;
-import com.damn.polito.damneat.fragments.OrderFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -31,6 +29,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
@@ -45,9 +48,11 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     private boolean mLocGranted;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFLPC;
-    private Deliverer deliverer;
+    private static LatLng latLng;
     private Location currLoc;
     private MarkerOptions place1, place2;
+    private String key, name;
+    private Bitmap photo;
 
 
     @Override
@@ -58,7 +63,10 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        deliverer = OrderFragment.getDeliverer();
+        key = getIntent().getExtras().getString("key");
+            getLatLng(key);
+        name = getIntent().getExtras().getString("name");
+        photo = getIntent().getExtras().getParcelable("photo");
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -82,18 +90,21 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
                     if (task.isSuccessful()) {
                         currLoc = (Location) task.getResult();
 
-//                        MarkerOptions marker = new MarkerOptions().position(new LatLng(deliverer.getLatitude(), deliverer.getLongitude())).title(deliverer.getName())
-//                                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)))
-//                                ;
-//                        mMap.addMarker(marker);
+                        MarkerOptions marker = new MarkerOptions().position(latLng).title(name)
+                                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)))
+                                ;
+                        mMap.addMarker(marker);
 //                        moveCamera(new LatLng(deliverer.getLatitude(), deliverer.getLongitude()), DEFAULT_ZOOM, deliverer);
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
 
                         place1 = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()))
-                                .title(deliverer.getName());
-                        place2 = new MarkerOptions().position(new LatLng(deliverer.getLongitude(), deliverer.getLongitude()))
-                                .title(deliverer.getName());
+                                .title(getString(R.string.my_position));
+                        if (latLng != null) {
+                            place2 = new MarkerOptions().position(latLng)
+                                .title(name);
+                            mMap.addMarker(place2);
+                        }
 
                     } else {
                         makeText(FollowDelivererActivity.this, "Unable to get current Location", LENGTH_LONG).show();
@@ -136,7 +147,7 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             //POSSIBILITY TO ADD SOME FEATURES mMap.getUISettings().......(true);
         }
         mMap.setOnMarkerClickListener(marker -> {
-            mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, deliverer));
+//            mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, deliverer));
             return false;
         });
 
@@ -214,6 +225,26 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    public static void getLatLng(String key) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String Key_del_deliverer = key;
+        DatabaseReference dbRef = database.getReference("/deliverers/" + (Key_del_deliverer) + "/info");
+        ValueEventListener profListener = dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Deliverer d = dataSnapshot.getValue(Deliverer.class);
+                if (d != null) {
+                    latLng = new LatLng(d.getLatitude(), d.getLongitude());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
 
