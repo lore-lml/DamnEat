@@ -361,7 +361,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     if(task.getResult() != null) {
                         String token = task.getResult().getToken();
                         if(!token.equals(profile.getNotificationId())){
-                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("deliverers/"+ Welcome.getDbKey() +"/notificationId");
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("deliverers/"+ Welcome.getDbKey() +"/info/notificationId");
                             ref.setValue(token);
                         }
                     }

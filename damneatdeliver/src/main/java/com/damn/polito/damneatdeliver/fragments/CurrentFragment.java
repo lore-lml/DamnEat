@@ -221,6 +221,10 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     HTTPRequestBuilder request = new HTTPRequestBuilder(ctx, currentOrder.getCustomer().getNotificationId(),
                             notificationTitle, notificationBody);
                     request.sendRequest();
+
+                    notificationBody = getString(R.string.notification_deliverer_accepted, Welcome.getProfile().getName());
+                    request = new HTTPRequestBuilder(ctx, currentOrder.getRestaurant().getNotificationId(), notificationTitle, notificationBody);
+                    request.sendRequest();
                 }
             }
         });
@@ -678,7 +682,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         //SHOW OR HIDE MAPS
         if(state.equals("accepted")|| state.equals("assigned")||state.equals("shipped")|| state.equals("delivered")){
             fm = getFragmentManager();
-            fm.beginTransaction()
+            if(fm != null)
+                fm.beginTransaction()
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .show(map)
                     .commit();

@@ -40,7 +40,11 @@ public class HTTPRequestBuilder {
     }
 
     public void sendRequest(){
-        if(notificationId == null) return;
+        if(notificationId == null) {
+            if(callback != null)
+                callback.onPostFailure();
+            return;
+        }
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("to", notificationId);

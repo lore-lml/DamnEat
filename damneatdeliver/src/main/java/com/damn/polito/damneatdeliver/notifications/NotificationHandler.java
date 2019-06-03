@@ -28,7 +28,7 @@ public class NotificationHandler extends FirebaseMessagingService {
         super.onNewToken(s);
 
         if(Welcome.getDbKey() == null) return;
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("deliverers/"+ Welcome.getDbKey() +"/notificationId");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("deliverers/"+ Welcome.getDbKey() +"/info/notificationId");
         ref.setValue(s);
     }
 

@@ -19,6 +19,8 @@ import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.notifications.HTTPRequestBuilder;
+import com.damn.polito.damneatrestaurant.FindDelivererActivity;
 import com.damn.polito.damneatrestaurant.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -248,7 +250,21 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                     dbOrder.setValue("rejected");
                 }
 
-                ((Activity)ctx).finish();
+                HTTPRequestBuilder.JSONRequestCallback callback = new HTTPRequestBuilder.JSONRequestCallback() {
+                    @Override
+                    public void onPostSuccess() {
+                        ((Activity)ctx).finish();
+                    }
+                    @Override
+                    public void onPostFailure() {
+                        ((Activity)ctx).finish();
+                    }
+                };
+
+                String body = ctx.getString(R.string.notification_pick_deliverer, order.getRestaurant().getRestaurantName());
+                HTTPRequestBuilder request = new HTTPRequestBuilder(ctx, FindDelivererActivity.getNotificationId(deliverers.get(position).getKey()),
+                        "DamnEat", body, callback);
+                request.sendRequest();
             }
         });
     }

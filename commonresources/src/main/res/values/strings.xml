@@ -131,5 +131,7 @@
     <string name="notification_assign_deliverer">You\'ve got a new delivery from %s</string>
     <string name="notification_order_rejected">%s rejected your order</string>
     <string name="notification_order_confirmed">%s received his order</string>
+    <string name="notification_deliverer_accepted">%s accepted your delivery</string>
+    <string name="notification_pick_deliverer">%s has picked you for a delivery</string>
 
 </resources>
