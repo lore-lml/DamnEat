@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.damn.polito.commonresources.Haversine;
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneat.adapters.CustomInfoMarkerAdapter;
@@ -65,6 +66,8 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     private DatabaseReference dbRef;
     private String customerAddress;
     private Marker markerBike;
+    private Address deliveryAddress;
+    private Deliverer chosen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +130,12 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     private LatLng getCustomerPosition() throws IOException {
         Geocoder coder = new Geocoder(this, Locale.ITALY);
         List<Address> pos = coder.getFromLocationName(customerAddress+", Torino",1);
-        double latitude = pos.get(0).getLatitude();
-        double longitude = pos.get(0).getLongitude();
+
+        deliveryAddress = pos.get(0);
+        double latitude = deliveryAddress.getLatitude();
+        double longitude = deliveryAddress.getLongitude();
         return new LatLng(latitude, longitude);
+
     }
 
     private void setDelivererPosition(){
@@ -156,7 +162,7 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 //                .title(title)
 //                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike)))
                 ;
-        mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo));
+        mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo, (Double)null));
 //        mMap.addMarker(options);
     }
 
@@ -179,7 +185,12 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             //POSSIBILITY TO ADD SOME FEATURES mMap.getUISettings().......(true);
         }
         mMap.setOnMarkerClickListener(marker -> {
-            if (markerBike.equals(marker)) mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo));
+            if (markerBike.equals(marker)){
+                double distance = Haversine.distance(chosen.getLatitude(), chosen.getLongitude(), deliveryAddress.getLatitude(), deliveryAddress.getLongitude())*1000;
+                CustomInfoMarkerAdapter adapter = new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo, distance);
+                adapter.setDistance(distance);
+                mMap.setInfoWindowAdapter(adapter);
+            }
             else mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, Welcome.getProfile().getName(), Utility.StringToBitMap(Welcome.getProfile().getBitmapProf()), Welcome.getProfile().getAddress()));
 
             return false;
@@ -268,9 +279,9 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
         profListener = dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Deliverer d = dataSnapshot.getValue(Deliverer.class);
-                if (d != null) {
-                    latLng = new LatLng(d.getLatitude(), d.getLongitude());
+                chosen = dataSnapshot.getValue(Deliverer.class);
+                if (chosen != null) {
+                    latLng = new LatLng(chosen.getLatitude(), chosen.getLongitude());
                     setDelivererPosition();
                 }
             }

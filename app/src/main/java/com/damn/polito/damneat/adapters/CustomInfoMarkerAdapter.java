@@ -17,12 +17,16 @@ public class CustomInfoMarkerAdapter implements GoogleMap.InfoWindowAdapter{
     private final View mWindow;
     private String name, description;
     private Bitmap photo;
+    private Double distance;
+    private Context ctx;
 
-    public CustomInfoMarkerAdapter(Context context, String name, Bitmap photo) {
+    public CustomInfoMarkerAdapter(Context context, String name, Bitmap photo, Double distance) {
         mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_marker, null);
         this.name = name;
         this.photo = photo;
         this.description = "";
+        ctx = context;
+        this.distance = distance;
     }
 
     public CustomInfoMarkerAdapter(Context context, String name, Bitmap photo, String description) {
@@ -36,7 +40,7 @@ public class CustomInfoMarkerAdapter implements GoogleMap.InfoWindowAdapter{
         String title = marker.getTitle();
         TextView tvTitle = (TextView) view.findViewById(R.id.name_marker);
         TextView tvDescriptiom = (TextView) view.findViewById(R.id.description_marker);
-//        TextView tvDistance = (TextView) view.findViewById(R.id.distance_marker);
+        TextView tvDistance = (TextView) view.findViewById(R.id.marker_distance);
         CircleImageView photoCard = view.findViewById(R.id.img_marker);
 
         if(photo != null)
@@ -45,9 +49,23 @@ public class CustomInfoMarkerAdapter implements GoogleMap.InfoWindowAdapter{
         tvTitle.setText(name);
         if (description.equals("")) tvDescriptiom.setText(R.string.del);
         else tvDescriptiom.setText(description);
-//        tvDistance.setText("");
-//        tvDistance.setText(mContext.getString(R.string.distance_km, (double)deliverer.distance()/1000));
 
+
+        if(distance == null)
+            tvDistance.setVisibility(View.GONE);
+        else{
+            double d = distance/1000;
+            if((int)d > 0)
+                tvDistance.setText(ctx.getString(R.string.distance_km, d));
+            else
+                tvDistance.setText(ctx.getString(R.string.distance_meter, (int)((double)this.distance)));
+        }
+
+
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
     }
 
     @Override
