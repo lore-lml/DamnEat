@@ -89,8 +89,9 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     private void initCustomerMarker() {
         customerAddress = getIntent().getStringExtra("customer_address");
         try {
+            BitmapDescriptor icon = getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_home));
             place1 = new MarkerOptions().position(getCustomerPosition())
-                    .title(getString(R.string.my_position));
+                    .title(getString(R.string.my_position)).icon(icon);
         } catch (IOException e) {
             e.printStackTrace();
             place1 = null;
