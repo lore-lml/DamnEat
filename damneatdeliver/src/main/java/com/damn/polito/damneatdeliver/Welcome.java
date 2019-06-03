@@ -335,9 +335,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //todo: ho commentato per non dare l'errore alla chiusura
-
-                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("CustomerAppErrors", databaseError.getMessage());
             }
         });
 
@@ -451,16 +449,14 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        //todo: ho commentato per non dare l'errore alla chiusura
-                        //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d("CustomerAppErrors", databaseError.getMessage());
                     }
                 });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //todo: ho commentato per non dare l'errore alla chiusura
-                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("CustomerAppErrors", databaseError.getMessage());
             }
         });
     }

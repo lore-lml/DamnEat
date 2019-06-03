@@ -13,6 +13,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -185,8 +186,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //todo: ho commentato per non dare l'errore alla chiusura
-                //Toast.makeText(Welcome.this, "Database Error", Toast.LENGTH_SHORT).show();
+                Log.d("CustomerAppErrors", "DataBase Error");
             }
         });
     }
@@ -222,8 +222,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //todo: ho commentato per non dare l'errore alla chiusura
-                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("CustomerAppErrors", databaseError.getMessage());
             }
         });
 
@@ -280,8 +279,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //todo: ho commentato per non dare l'errore alla chiusura
-                //Toast.makeText(Welcome.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("CustomerAppErrors", databaseError.getMessage());
             }
         });
 
