@@ -138,8 +138,8 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             return;
         if (latLng != null) {
             if(place2==null) {
-                place2 = new MarkerOptions().position(latLng).title(name)
-                        .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)));
+                place2 = new MarkerOptions().position(latLng).title(name);
+                   //     .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)));
                 Bitmap biker = BitmapFactory.decodeResource(getResources(), R.drawable.bikerfinal);
                 BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(biker);
                 place2.icon(markerIcon);
