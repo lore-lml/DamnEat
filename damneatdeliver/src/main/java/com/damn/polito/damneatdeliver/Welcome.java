@@ -401,7 +401,6 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                 assert o != null;
                 if(!o.getState().equals("confirmed") && !o.getState().equals("rejected") && !o.getState().equals("reassign"))
                     return;
-
                 o.setId(key);
                 int pos = orders.indexOf(o);
                 if(pos != -1)
@@ -428,7 +427,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     private void setDeliverFreeList(){
         if (profile!=null && profile.getState()) {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
-            freeDeliverersRef.setValue(dbKey);
+            freeDeliverersRef.setValue(profile.getNotificationId());
         } else {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
             freeDeliverersRef.removeValue();
