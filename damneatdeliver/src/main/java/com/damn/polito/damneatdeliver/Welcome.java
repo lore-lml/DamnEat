@@ -427,7 +427,7 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     private void setDeliverFreeList(){
         if (profile!=null && profile.getState()) {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
-            freeDeliverersRef.setValue(profile.getNotificationId());
+            freeDeliverersRef.setValue(dbKey);
         } else {
             DatabaseReference freeDeliverersRef = database.getReference("/deliverers_liberi/" + dbKey);
             freeDeliverersRef.removeValue();
