@@ -38,7 +38,9 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -194,6 +196,24 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
     private void setListeners(){
         accountExist = true;
         setOrderListener();
+        setTokenListener();
+    }
+
+    private void setTokenListener() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        return;
+                    }
+                    // Get new Instance ID token
+                    if(task.getResult() != null) {
+                        String token = task.getResult().getToken();
+                        if(!token.equals(profile.getNotificationId())){
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ristoratori/"+ Welcome.getDbKey() +"/notificationId");
+                            ref.setValue(token);
+                        }
+                    }
+                });
     }
 
     private void setOrderListener() {
@@ -384,6 +404,11 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         if(orderQuery != null) {
             orderQuery.removeEventListener(orderListener);
             orderQuery.removeEventListener(orderListenerNotifier);
+        }
+
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException ignored) {
         }
     }
 

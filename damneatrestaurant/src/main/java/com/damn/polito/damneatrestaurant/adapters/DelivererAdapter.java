@@ -29,9 +29,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -81,15 +79,15 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
             holder.distance.setText(ctx.getString(R.string.distance_meter, current.distance()));
 
 
-        holder.button.setOnClickListener(v -> {
+        holder.btnPickDeliverer.setOnClickListener(v -> {
             if(checkCustomerInfo())
                 pickDeliverer(pos);
         });
 
         if (!current.Expanded()) {
-            holder.button.setVisibility(View.GONE);
+            holder.btnPickDeliverer.setVisibility(View.GONE);
         }else{
-            holder.button.setVisibility(View.VISIBLE);
+            holder.btnPickDeliverer.setVisibility(View.VISIBLE);
         }
 
 //        holder.root.setOnClickListener(v->{
@@ -265,7 +263,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
         private CircleImageView delivererImage;
         private TextView name, phone, description, distance;
         private CardView root;
-        private Button button;
+        private Button btnPickDeliverer;
 
         public DelivererViewHolder(@NonNull View itemView, OnItemClickListener mListener) {
             super(itemView);
@@ -276,7 +274,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
             description = itemView.findViewById(R.id.deliverer_description);
             distance = itemView.findViewById(R.id.deliverer_distance);
             root = itemView.findViewById(R.id.deliverer_root);
-            button = itemView.findViewById(R.id.delivery_button);
+            btnPickDeliverer = itemView.findViewById(R.id.delivery_button);
             itemView.findViewById(R.id.divider).setVisibility(View.INVISIBLE);
 
             itemView.setOnClickListener(view -> {

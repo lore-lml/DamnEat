@@ -34,6 +34,12 @@
             android:parentActivityName=".Welcome"
             android:screenOrientation="portrait" />
         <activity android:name=".Analytics" />
+
+        <service android:name=".notifications.NotificationHandler">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

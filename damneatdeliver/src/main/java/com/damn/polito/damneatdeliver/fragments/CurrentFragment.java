@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.notifications.HTTPRequestBuilder;
 import com.damn.polito.damneatdeliver.R;
 import com.damn.polito.damneatdeliver.Welcome;
 import com.damn.polito.damneatdeliver.beans.Profile;
@@ -220,6 +221,12 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                     RefLong.setValue(prof.getLongitude());
 //                    DatabaseReference orderRef = database.getReference("deliverers/" + Welcome.getDbKey() + "/orders_list/" + currentOrder.getId() );
 //                    orderRef.setValue(currentOrder.getId());
+
+                    String notificationTitle = "DamnEat";
+                    String notificationBody = getString(R.string.notification_order_accepted, currentOrder.getRestaurant().getRestaurantName());
+                    HTTPRequestBuilder request = new HTTPRequestBuilder(ctx, currentOrder.getCustomer().getNotificationId(),
+                            notificationTitle, notificationBody);
+                    request.sendRequest();
                 }
             }
         });

@@ -9,6 +9,7 @@ public class Customer implements Serializable {
     private String customerPhone;
     private String customerAddress;
     private String customerPhoto;
+    private String notificationId;
 
     public Customer(String customerName, String customerAddress){
         this.customerAddress = customerAddress;
@@ -77,5 +78,13 @@ public class Customer implements Serializable {
 
     public void setCustomerPhoto(String customerPhoto) {
         this.customerPhoto = customerPhoto;
+    }
+
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 }

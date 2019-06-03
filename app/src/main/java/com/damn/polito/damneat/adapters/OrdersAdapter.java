@@ -23,6 +23,7 @@ import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
+import com.damn.polito.commonresources.notifications.HTTPRequestBuilder;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.RateRestaurant;
 import com.damn.polito.damneat.Welcome;
@@ -166,6 +167,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 holder.state.setText(ctx.getString(R.string.delivered));
                 holder.confirmButton.setOnClickListener(v->{
                     setConfirmed(selected.Id());
+
+                    String body = ctx.getString(R.string.notification_order_confirmed, Welcome.getProfile().getName());
+                    HTTPRequestBuilder request = new HTTPRequestBuilder(ctx, selected.getRestaurant().getNotificationId(), "DamnEat", body);
+                    request.sendRequest();
 
                     FragmentManager fm = ((AppCompatActivity)ctx).getSupportFragmentManager();
                     RateDialog rateDialog = new RateDialog();
