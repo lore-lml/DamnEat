@@ -64,12 +64,14 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     private DatabaseReference dbRef;
     private String customerAddress;
     private Marker markerBike;
-
+    private Address deliveryAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow_deliverer_map);
+
+        initCustomerMarker();
         getLocationPermissions();
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -77,8 +79,19 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
         key = getIntent().getStringExtra("key");
         startDelivererPosition();
         name = getIntent().getStringExtra("name");
-        customerAddress = getIntent().getStringExtra("customer_address");
+
         photo = Utility.StringToBitMap(getIntent().getStringExtra("photo"));
+    }
+
+    private void initCustomerMarker() {
+        customerAddress = getIntent().getStringExtra("customer_address");
+        try {
+            place1 = new MarkerOptions().position(getCustomerPosition())
+                    .title(getString(R.string.my_position));
+        } catch (IOException e) {
+            e.printStackTrace();
+            place1 = null;
+        }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -102,15 +115,6 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
                         //                        moveCamera(new LatLng(deliverer.getLatitude(), deliverer.getLongitude()), DEFAULT_ZOOM, deliverer);
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
-
-                        try {
-                            place1 = new MarkerOptions().position(getCustomerPosition())
-                                    .title(getString(R.string.my_position));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            place1 = null;
-                        }
-
 
                     } else {
                         makeText(FollowDelivererActivity.this, "Unable to get current Location", LENGTH_LONG).show();
@@ -183,7 +187,6 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 
         if(place2==null)
             return;
-
 
 
         //mMap.addMarker(place2);
