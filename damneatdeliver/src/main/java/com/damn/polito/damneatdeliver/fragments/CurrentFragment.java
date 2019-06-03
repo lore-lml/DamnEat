@@ -68,6 +68,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -343,17 +344,22 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         else if(currentOrder.getState().toLowerCase().equals("delivered")){
             //mostro la mappa del tragitto percorso
             addresses = new ArrayList<>();
-            addresses.add(0, getAddressesToCustomer().get(1));
-            addresses.add(1, getAddressesToRestaurant().get(1));
+            List<Address> addresses1 = getAddressesToCustomer();
+            List<Address> addresses2 = getAddressesToRestaurant();
 
-            if(addresses.size() == 2) {
-                place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
-                        .title(currentOrder.getDelivererName());
-                place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
-                        .title(currentOrder.getCustomer().getCustomerName());
-                String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+            if(addresses1.size()==2 && addresses2.size()==2) {
+                addresses.add(0, addresses1.get(1));
+                addresses.add(1, addresses2.get(1));
 
-                new FetchURL(CurrentFragment.this).execute(url, "driving");
+                if(addresses.size() == 2) {
+                    place1 = new MarkerOptions().position(new LatLng(addresses.get(0).getLatitude(), addresses.get(0).getLongitude()))
+                            .title(currentOrder.getDelivererName());
+                    place2 = new MarkerOptions().position(new LatLng(addresses.get(1).getLatitude(), addresses.get(1).getLongitude()))
+                            .title(currentOrder.getCustomer().getCustomerName());
+                    String url = getUrl(place1.getPosition(),place2.getPosition(),"driving");
+
+                    new FetchURL(CurrentFragment.this).execute(url, "driving");
+                }
             }
             map.getMapAsync(this);
         }
@@ -385,21 +391,21 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
                 photo.setImageBitmap(default_image);
             else
                 photo.setImageBitmap(Utility.StringToBitMap(currentOrder.getRestaurant().getPhoto()));
-                name_small.setText(ctx.getText(R.string.customer_name));
-                name_small_text.setText(currentOrder.getCustomer().getCustomerName());
+            name_small.setText(ctx.getText(R.string.customer_name));
+            name_small_text.setText(currentOrder.getCustomer().getCustomerName());
 
-                address_small.setText(ctx.getText(R.string.customer_address));
-                address_small_text.setText(currentOrder.getCustomer().getCustomerAddress());
+            address_small.setText(ctx.getText(R.string.customer_address));
+            address_small_text.setText(currentOrder.getCustomer().getCustomerAddress());
 
-                phone_small.setText(ctx.getText(R.string.customer_phone));
-                phone_small_text.setText(currentOrder.getCustomer().getCustomerPhone());
+            phone_small.setText(ctx.getText(R.string.customer_phone));
+            phone_small_text.setText(currentOrder.getCustomer().getCustomerPhone());
 
-                note_small.setText(ctx.getText(R.string.note));
-                note_small_text.setText(currentOrder.getNote());
+            note_small.setText(ctx.getText(R.string.note));
+            note_small_text.setText(currentOrder.getNote());
 
-                String delivery_t = currentOrder.getDeliveryTime();
-                if (delivery_t.equals("ASAP")) deliveryTime.setText(R.string.time_asap);
-                else deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
+            String delivery_t = currentOrder.getDeliveryTime();
+            if (delivery_t.equals("ASAP")) deliveryTime.setText(R.string.time_asap);
+            else deliveryTime.setText(ctx.getString(R.string.delivery_time_tv, delivery_t));
 
         }else {
             date.setText(Utility.dateString(currentOrder.getDate()));
@@ -878,7 +884,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
 
     private List<Address> getAddressesToRestaurant() {
         List<Address> addresses = new ArrayList<>();
-        Geocoder coder = new Geocoder(ctx);
+        Geocoder coder = new Geocoder(ctx, Locale.ITALY);
         try {
             addresses.addAll(coder.getFromLocation(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude(),1));
             addresses.addAll(coder.getFromLocationName(currentOrder.getRestaurant().getRestaurantAddress() +", Torino", 1));
@@ -889,7 +895,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
     }
     private List<Address> getAddressesToCustomer() {
         List<Address> addresses = new ArrayList<>();
-        Geocoder coder = new Geocoder(ctx);
+        Geocoder coder = new Geocoder(ctx, Locale.ITALY);
         try {
             addresses.addAll(coder.getFromLocation(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude(),1));
             addresses.addAll(coder.getFromLocationName(currentOrder.getCustomer().getCustomerAddress() +", Torino", 1));
