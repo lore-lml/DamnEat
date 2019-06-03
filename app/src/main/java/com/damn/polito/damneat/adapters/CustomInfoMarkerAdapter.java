@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.damn.polito.commonresources.Utility;
-import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneat.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
@@ -17,31 +15,38 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CustomInfoMarkerAdapter implements GoogleMap.InfoWindowAdapter{
 
     private final View mWindow;
-    private Context mContext;
-    private Deliverer deliverer;
+    private String name, description;
+    private Bitmap photo;
 
-    public CustomInfoMarkerAdapter(Context context, Deliverer deliverer) {
-        mContext = context;
+    public CustomInfoMarkerAdapter(Context context, String name, Bitmap photo) {
         mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_marker, null);
-        this.deliverer = deliverer;
+        this.name = name;
+        this.photo = photo;
+        this.description = "";
+    }
+
+    public CustomInfoMarkerAdapter(Context context, String name, Bitmap photo, String description) {
+        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_marker, null);
+        this.name = name;
+        this.description = description;
+        this.photo = photo;
     }
 
     private void RenderWindowText (Marker marker, View view) {
         String title = marker.getTitle();
-        TextView tvTitle = (TextView) view.findViewById(R.id.deliverer_name_marker);
-        TextView tvDescriptiom = (TextView) view.findViewById(R.id.deliverer_description_marker);
-        TextView tvPhone = (TextView) view.findViewById(R.id.deliverer_phone_number_marker);
-        TextView tvDistance = (TextView) view.findViewById(R.id.deliverer_distance_marker);
-        CircleImageView delivererImage = view.findViewById(R.id.deliverer_img_marker);
-        Bitmap img = Utility.StringToBitMap(deliverer.getBitmapProf());
+        TextView tvTitle = (TextView) view.findViewById(R.id.name_marker);
+        TextView tvDescriptiom = (TextView) view.findViewById(R.id.description_marker);
+//        TextView tvDistance = (TextView) view.findViewById(R.id.distance_marker);
+        CircleImageView photoCard = view.findViewById(R.id.img_marker);
 
-        if(img != null)
-            delivererImage.setImageBitmap(img);
+        if(photo != null)
+            photoCard.setImageBitmap(this.photo);
 
-        tvTitle.setText(deliverer.getName());
-        tvDescriptiom.setText(deliverer.getDescription());
-        tvPhone.setText(deliverer.getPhone());
-        tvDistance.setText(mContext.getString(R.string.distance_km, (double)deliverer.distance()/1000));
+        tvTitle.setText(name);
+        if (description.equals("")) tvDescriptiom.setText(R.string.del);
+        else tvDescriptiom.setText(description);
+//        tvDistance.setText("");
+//        tvDistance.setText(mContext.getString(R.string.distance_km, (double)deliverer.distance()/1000));
 
     }
 

@@ -112,7 +112,6 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
                 location.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         currLoc = (Location) task.getResult();
-                        //                        moveCamera(new LatLng(deliverer.getLatitude(), deliverer.getLongitude()), DEFAULT_ZOOM, deliverer);
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
 
@@ -157,7 +156,7 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 //                .title(title)
 //                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike)))
                 ;
-        mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, deliverer));
+        mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo));
 //        mMap.addMarker(options);
     }
 
@@ -173,8 +172,6 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.getUiSettings().setZoomGesturesEnabled(true);
             mMap.getUiSettings().setRotateGesturesEnabled(true);
             mMap.getUiSettings().setCompassEnabled(true);
@@ -182,7 +179,9 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             //POSSIBILITY TO ADD SOME FEATURES mMap.getUISettings().......(true);
         }
         mMap.setOnMarkerClickListener(marker -> {
-//            mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, deliverer));
+            if (markerBike.equals(marker)) mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo));
+            else mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, Welcome.getProfile().getName(), Utility.StringToBitMap(Welcome.getProfile().getBitmapProf()), Welcome.getProfile().getAddress()));
+
             return false;
         });
 
@@ -192,8 +191,8 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
         if(place2==null)
             return;
 
-
-        //mMap.addMarker(place2);
+        if (place2 != null)
+            mMap.addMarker(place2);
 
         animateCamera();
 
