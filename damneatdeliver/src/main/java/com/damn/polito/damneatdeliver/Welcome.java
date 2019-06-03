@@ -403,6 +403,9 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                     return;
 
                 o.setId(key);
+                int pos = orders.indexOf(o);
+                if(pos != -1)
+                    orders.remove(pos);
                 ((LinkedList<Order>)orders).addFirst(o);
 
                 if(selectedId == R.id.nav_reservations)
