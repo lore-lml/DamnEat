@@ -64,7 +64,6 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     private DatabaseReference dbRef;
     private String customerAddress;
     private Marker markerBike;
-    private Address deliveryAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +174,7 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             mMap.getUiSettings().setZoomGesturesEnabled(true);
             mMap.getUiSettings().setRotateGesturesEnabled(true);
             mMap.getUiSettings().setCompassEnabled(true);
+            mMap.getUiSettings().setMapToolbarEnabled(false);
             //POSSIBILITY TO ADD SOME FEATURES mMap.getUISettings().......(true);
         }
         mMap.setOnMarkerClickListener(marker -> {
