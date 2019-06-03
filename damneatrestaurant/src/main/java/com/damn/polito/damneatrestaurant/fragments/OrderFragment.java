@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
+import com.damn.polito.commonresources.notifications.HTTPRequestBuilder;
 import com.damn.polito.damneatrestaurant.FindDelivererActivity;
 import com.damn.polito.damneatrestaurant.R;
 import com.damn.polito.damneatrestaurant.Welcome;
@@ -97,7 +98,6 @@ public class OrderFragment extends Fragment {
                 Toast.makeText(ctx, R.string.no_customer_info, Toast.LENGTH_LONG).show();
             }else {
                 Log.d("tmz", "pressed find deliverer");
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
 
                 Intent intent = new Intent(ctx, FindDelivererActivity.class);
                 intent.putExtra("order", orders.get(position));
@@ -107,26 +107,34 @@ public class OrderFragment extends Fragment {
 
         //SET BUTTON AS SHIPPED
         adapter.setOnButtonShippedClickListener(position -> {
-
+            Order selected = orders.get(position);
             Log.d("tmz","pressed set as shipped");
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
+            DatabaseReference dbRef= database.getReference("/ordini/"+selected.getId()+"/state/");
             dbRef.setValue("shipped");
 
             adapter.notifyItemChanged(position);
+
+            String body = getString(R.string.notification_order_shipped);
+            HTTPRequestBuilder request = new HTTPRequestBuilder(getContext(), selected.getCustomer().getNotificationId(), "DamnEat", body);
+            request.sendRequest();
         });
         //END SET BUTTON AS SHIPPED
 
         //SET BUTTON AS REJECTED
 
         adapter.setOnButtonRejectedClickListener(position -> {
-
+            Order selected = orders.get(position);
             Log.d("tmz","pressed set as rejected");
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference dbRef= database.getReference("/ordini/"+orders.get(position).getId()+"/state/");
+            DatabaseReference dbRef= database.getReference("/ordini/"+selected.getId()+"/state/");
             dbRef.setValue("rejected");
 
             adapter.notifyItemChanged(position);
+
+            String body = getString(R.string.notification_order_rejected, selected.getRestaurant().getRestaurantName());
+            HTTPRequestBuilder request = new HTTPRequestBuilder(getContext(), selected.getCustomer().getNotificationId(), "DamnEat", body);
+            request.sendRequest();
         });
         //END SET BUTTON AS REJECTED
     }

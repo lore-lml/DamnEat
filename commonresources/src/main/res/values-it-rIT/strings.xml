@@ -107,6 +107,14 @@
     <string name="info_service_review">Cosa pensano i clienti del nostro servizio</string>
     <string name="no_reviews">Non sono presenti recensioni</string>
     <string name="find_deliverer">Traccia il tuo ordine</string>
+    <string name="notification_order_accepted">%s ha accettato il tuo ordine</string>
+    <string name="notification_new_order">%s ha effettuato un nuovo ordine</string>
+    <string name="notification_order_shipped">Il tuo ordine è stato spedito</string>
+    <string name="notification_assign_deliverer">Hai una nuova consegna da %s</string>
+    <string name="notification_order_rejected">%s ha rifiutato il tuo ordine</string>
+    <string name="notification_order_confirmed">%s ha ricevuto il suo ordine</string>
+    <string name="notification_deliverer_accepted">%s ha accettato la tua consegna</string>
+    <string name="notification_pick_deliverer">%s ti ha scelto per una consegna</string>
 
 
 </resources>

@@ -29,13 +29,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class    FindDelivererActivity extends AppCompatActivity {
-
-    public enum SortType {Alpha, Closer, Rating, TotDeliver}
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
     public static final int REQUEST_CODE = 9000;
@@ -48,8 +48,8 @@ public class    FindDelivererActivity extends AppCompatActivity {
     private DatabaseReference freeDelRef;
     private ValueEventListener freeDelKeyListener;
     public static List<Deliverer> deliverers = new ArrayList<>();
+    private static Map<String, String> notificationIds = new HashMap<>();
 
-    private SortType sortType;
     private int oldPosition = -1;
     private Order currentOrder;
     private Address restAddress;
@@ -159,6 +159,7 @@ public class    FindDelivererActivity extends AppCompatActivity {
                             if((ctime-d.getPositionTime())<TEN_MINUTES){
                                 d.setDistance((int)(Haversine.distance(restAddress.getLatitude(), restAddress.getLongitude(), d.getLatitude(), d.getLongitude())*1000));
                                 deliverers.add(d);
+                                notificationIds.put(d.getKey(), d.getNotificationId());
                             }
                         }
                     }
@@ -217,5 +218,9 @@ public class    FindDelivererActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public static String getNotificationId(String delivererId){
+        return notificationIds.get(delivererId);
     }
 }

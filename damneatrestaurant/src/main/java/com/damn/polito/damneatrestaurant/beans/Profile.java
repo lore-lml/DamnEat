@@ -10,6 +10,7 @@ public class Profile {
     private String opening = "";
     private String image = "NO_PHOTO";
     private String categories = "";
+    private String notificationId;
     private double priceShip = .0;
     private int totalRate = 0;
     private int reviews = 0;
@@ -118,6 +119,14 @@ public class Profile {
 
     public void setReviews(int reviews) {
         this.reviews = reviews;
+    }
+
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 }
 

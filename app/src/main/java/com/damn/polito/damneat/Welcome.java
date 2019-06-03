@@ -27,6 +27,8 @@ import com.damn.polito.damneat.fragments.OrderFragment;
 import com.damn.polito.damneat.fragments.ProfileFragment;
 import com.damn.polito.damneat.fragments.RestaurantFragment;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -36,7 +38,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -209,6 +214,24 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         accountExist = true;
         setRestaurantListener();
         setOrderListener();
+        setTokenListener();
+    }
+
+    private void setTokenListener() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        return;
+                    }
+                    // Get new Instance ID token
+                    if(task.getResult() != null) {
+                        String token = task.getResult().getToken();
+                        if(!token.equals(profile.getNotificationId())){
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("clienti/"+ Welcome.getDbKey() +"/notificationId");
+                            ref.setValue(token);
+                        }
+                    }
+                });
     }
 
     private void setRestaurantListener(){
@@ -384,6 +407,11 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         }
         if(restaurantsRef != null)
             restaurantsRef.removeEventListener(restaurantsListener);
+
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException ignored) {
+        }
     }
 
     @Override

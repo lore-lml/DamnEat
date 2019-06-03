@@ -12,6 +12,7 @@ public class Profile {
     private String description;
     private String address;
     private String bitmapProf;
+    private String notificationId;
     private Set<String> favoriteRestaurants;
 
     public Profile(String name, String mail, String phone, String description, String address, String bitmapProf) {
@@ -112,5 +113,13 @@ public class Profile {
     public void removeFavoriteRestaurant(String restaurantKey) {
         if(restaurantKey == null || restaurantKey.isEmpty()) return;
         this.favoriteRestaurants.remove(restaurantKey);
+    }
+
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 }

@@ -9,6 +9,7 @@ public class Restaurant implements Serializable {
     private String restaurantAddress;
     private Double restaurant_price_ship;
     private String photo;
+    private String notificationId;
 
     public Restaurant() {}
 
@@ -71,5 +72,13 @@ public class Restaurant implements Serializable {
 
     public void setRestaurant_price_ship(Double restaurant_price_ship) {
         this.restaurant_price_ship = restaurant_price_ship;
+    }
+
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 }

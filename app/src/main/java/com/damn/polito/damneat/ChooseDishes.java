@@ -32,6 +32,7 @@ import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.QueryType;
 import com.damn.polito.commonresources.beans.Restaurant;
+import com.damn.polito.commonresources.notifications.HTTPRequestBuilder;
 import com.damn.polito.damneat.adapters.DishesAdapter;
 import com.damn.polito.damneat.beans.Profile;
 import com.google.firebase.database.DataSnapshot;
@@ -54,7 +55,7 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChooseDishes extends AppCompatActivity {
+public class ChooseDishes extends AppCompatActivity implements HTTPRequestBuilder.JSONRequestCallback {
     private List<Dish> dishesList = new ArrayList<>();
     private RecyclerView recyclerView;
     private DishesAdapter adapter;
@@ -117,6 +118,7 @@ public class ChooseDishes extends AppCompatActivity {
         restaurant.setRestaurantAddress(i.getStringExtra("rest_address"));
         restaurant.setRestaurantPhone(i.getStringExtra("rest_phone"));
         restaurant.setPhoto(i.getStringExtra("rest_image"));
+        restaurant.setNotificationId(i.getStringExtra("rest_notificationId"));
         restaurant_description = i.getStringExtra("rest_description");
         restaurant.setRestaurant_price_ship(i.getDoubleExtra("rest_priceship", 0));
         int reviews_number = i.getIntExtra("rest_reviews_number", 0);
@@ -148,6 +150,7 @@ public class ChooseDishes extends AppCompatActivity {
         customer.setCustomerPhone(p.getPhone());
         customer.setCustomerID(Welcome.getDbKey());
         customer.setCustomerPhoto(p.getBitmapProf());
+        customer.setNotificationId(p.getNotificationId());
     }
 
 
@@ -333,7 +336,10 @@ public class ChooseDishes extends AppCompatActivity {
             orderID.setValue(order);
             Toast.makeText(ctx, R.string.order_succesfull, Toast.LENGTH_LONG).show();
             setResult(RESULT_OK);
-            finish();
+
+            String body = getString(R.string.notification_new_order, customer.getCustomerName());
+            HTTPRequestBuilder request = new HTTPRequestBuilder(this, restaurant.getNotificationId(), "DamnEat", body, this);
+            request.sendRequest();
         }
     }
 
@@ -371,4 +377,13 @@ public class ChooseDishes extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onPostSuccess() {
+        finish();
+    }
+
+    @Override
+    public void onPostFailure() {
+        finish();
+    }
 }

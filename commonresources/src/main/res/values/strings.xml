@@ -125,5 +125,13 @@
     <string name="copyright" translatable="false">© DamnEat - 2019</string>
     <string name="no_reviews">There are no reviews</string>
     <string name="find_deliverer">Track your order</string>
+    <string name="notification_order_accepted">%s accepted your order</string>
+    <string name="notification_new_order">%s has placed a new order</string>
+    <string name="notification_order_shipped">Your order has been shipped</string>
+    <string name="notification_assign_deliverer">You\'ve got a new delivery from %s</string>
+    <string name="notification_order_rejected">%s rejected your order</string>
+    <string name="notification_order_confirmed">%s received his order</string>
+    <string name="notification_deliverer_accepted">%s accepted your delivery</string>
+    <string name="notification_pick_deliverer">%s has picked you for a delivery</string>
 
 </resources>

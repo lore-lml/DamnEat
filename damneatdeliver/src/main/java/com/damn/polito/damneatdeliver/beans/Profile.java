@@ -7,6 +7,7 @@ public class Profile {
     private String phone;
     private String description;
     private String bitmapProf;
+    private String notificationId;
     private Boolean state;
     private Double latitude, longitude;
     private Long positionTime;
@@ -105,4 +106,11 @@ public class Profile {
         this.longitude = longitude;
     }
 
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
+    }
 }

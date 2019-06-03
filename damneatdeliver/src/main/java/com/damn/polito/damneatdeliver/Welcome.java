@@ -48,7 +48,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -344,6 +346,24 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
     private void setListeners() {
         Utility.firstON = false;
         setOrderListener();
+        setTokenListener();
+    }
+
+    private void setTokenListener() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        return;
+                    }
+                    // Get new Instance ID token
+                    if(task.getResult() != null) {
+                        String token = task.getResult().getToken();
+                        if(!token.equals(profile.getNotificationId())){
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("deliverers/"+ Welcome.getDbKey() +"/info/notificationId");
+                            ref.setValue(token);
+                        }
+                    }
+                });
     }
 
     private void setOrderListener() {
@@ -379,8 +399,10 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                 assert o != null;
                 if(!o.getState().equals("confirmed") && !o.getState().equals("rejected") && !o.getState().equals("reassign"))
                     return;
-
                 o.setId(key);
+                int pos = orders.indexOf(o);
+                if(pos != -1)
+                    orders.remove(pos);
                 ((LinkedList<Order>)orders).addFirst(o);
 
                 if(selectedId == R.id.nav_reservations)
@@ -737,6 +759,10 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         }
         orderQuery.removeEventListener(ordersChildListener);
         orderRef.removeEventListener(orderListener);
+        try {
+            FirebaseInstanceId.getInstance().deleteInstanceId();
+        } catch (IOException ignored) {
+        }
     }
 
 }

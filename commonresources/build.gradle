@@ -43,4 +43,5 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
     implementation 'com.google.android.gms:play-services-measurement-base:16.5.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.android.volley:volley:1.1.1'
 }
