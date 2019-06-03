@@ -38,5 +38,5 @@
     <string name="deliverer">Corriere:\n %s</string>
     <string name="specific_restaurant_review_title">%s - Recensioni</string>
     <string name="deliverer_phone">Telefono:</string>
-    <string name="my_position">Fine corsa</string>
+    <string name="my_position">Indirizzo di consegna</string>
 </resources>

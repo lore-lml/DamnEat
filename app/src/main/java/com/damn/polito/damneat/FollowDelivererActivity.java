@@ -4,6 +4,7 @@ package com.damn.polito.damneat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -140,6 +141,9 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             if(place2==null) {
                 place2 = new MarkerOptions().position(latLng).title(name)
                         .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)));
+                Bitmap biker = BitmapFactory.decodeResource(getResources(), R.drawable.bikerfinal);
+                BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(biker);
+                place2.icon(markerIcon);
                 markerBike = mMap.addMarker(place2);
                 markerBike.setPosition(latLng);
             }else markerBike.setPosition(latLng);
