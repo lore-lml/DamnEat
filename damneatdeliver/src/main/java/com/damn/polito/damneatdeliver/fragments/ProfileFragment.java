@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.damn.polito.commonresources.FirebaseLogin;
 import com.damn.polito.commonresources.Utility;
+import com.damn.polito.commonresources.notifications.HTTPRequestBuilder;
 import com.damn.polito.damneatdeliver.Analytics;
 import com.damn.polito.damneatdeliver.EditProfile;
 import com.damn.polito.damneatdeliver.Welcome;

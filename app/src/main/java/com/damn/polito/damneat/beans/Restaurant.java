@@ -15,6 +15,7 @@ public class Restaurant implements Comparable<Restaurant>{
     private String phone;
     private String description;
     private String mail;
+    private String notificationId;
 
     private List<String> categories = new ArrayList<>();
     private double priceShip;
@@ -119,6 +120,14 @@ public class Restaurant implements Comparable<Restaurant>{
 
     public long getLongitude() {
         return longitude;
+    }
+
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 
     public boolean favorite() {

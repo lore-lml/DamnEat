@@ -13,6 +13,7 @@ public class Deliverer implements Serializable {
     private boolean state, expanded = false;
     private int distance;
     private Long positionTime;
+    private String notificationId;
 
     private String key;
 
@@ -146,6 +147,14 @@ public class Deliverer implements Serializable {
 
     public void setPositionTime(Long positionTime) {
         this.positionTime = positionTime;
+    }
+
+    public String getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(String notificationId) {
+        this.notificationId = notificationId;
     }
 }
 
