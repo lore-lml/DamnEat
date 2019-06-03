@@ -86,6 +86,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 i.putExtra("name", selected.getDelivererName());
                 i.putExtra("photo", selected.getDelivererPhoto());
                 i.putExtra("key", selected.getDelivererID());
+                i.putExtra("customer_address", selected.getCustomer().getCustomerAddress());
                 ctx.startActivity(i);
             });
         }

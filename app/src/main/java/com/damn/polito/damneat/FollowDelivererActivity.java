@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneat.adapters.CustomInfoMarkerAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -27,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +39,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -53,6 +60,10 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     private MarkerOptions place1, place2;
     private String key, name;
     private Bitmap photo;
+    private ValueEventListener profListener;
+    private DatabaseReference dbRef;
+    private String customerAddress;
+    private Marker markerBike;
 
 
     @Override
@@ -63,20 +74,19 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        key = getIntent().getExtras().getString("key");
-            getLatLng(key);
-        name = getIntent().getExtras().getString("name");
-        photo = getIntent().getExtras().getParcelable("photo");
+        key = getIntent().getStringExtra("key");
+        startDelivererPosition();
+        name = getIntent().getStringExtra("name");
+        customerAddress = getIntent().getStringExtra("customer_address");
+        photo = Utility.StringToBitMap(getIntent().getStringExtra("photo"));
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("unchecked")
@@ -89,30 +99,47 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
                 location.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         currLoc = (Location) task.getResult();
-
-                        MarkerOptions marker = new MarkerOptions().position(latLng).title(name)
-                                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)))
-                                ;
-                        mMap.addMarker(marker);
-//                        moveCamera(new LatLng(deliverer.getLatitude(), deliverer.getLongitude()), DEFAULT_ZOOM, deliverer);
+                        //                        moveCamera(new LatLng(deliverer.getLatitude(), deliverer.getLongitude()), DEFAULT_ZOOM, deliverer);
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
 
-                        place1 = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()))
-                                .title(getString(R.string.my_position));
-                        if (latLng != null) {
-                            place2 = new MarkerOptions().position(latLng)
-                                .title(name);
-                            mMap.addMarker(place2);
+                        try {
+                            place1 = new MarkerOptions().position(getCustomerPosition())
+                                    .title(getString(R.string.my_position));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            place1 = null;
                         }
+
 
                     } else {
                         makeText(FollowDelivererActivity.this, "Unable to get current Location", LENGTH_LONG).show();
                     }
                 });
             }
-        } catch (SecurityException e) {
+        } catch (SecurityException ignored) {
+        }
+    }
 
+    private LatLng getCustomerPosition() throws IOException {
+        Geocoder coder = new Geocoder(this, Locale.ITALY);
+        List<Address> pos = coder.getFromLocationName(customerAddress+", Torino",1);
+        double latitude = pos.get(0).getLatitude();
+        double longitude = pos.get(0).getLongitude();
+        return new LatLng(latitude, longitude);
+    }
+
+    private void setDelivererPosition(){
+
+        if(mMap==null)
+            return;
+        if (latLng != null) {
+            if(place2==null) {
+                place2 = new MarkerOptions().position(latLng).title(name)
+                        .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)));
+                markerBike = mMap.addMarker(place2);
+                markerBike.setPosition(latLng);
+            }else markerBike.setPosition(latLng);
         }
     }
 
@@ -131,12 +158,12 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
     public void onMapReady(GoogleMap googleMap) {
 //        Toast.makeText(MapsActivity.this, "Map is ready", Toast.LENGTH_LONG).show();
         mMap = googleMap;
+        mMap.clear();
 
         if (mLocGranted) {
             getDeviceLocation();
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
                 return;
             }
             mMap.setMyLocationEnabled(true);
@@ -151,20 +178,22 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
             return false;
         });
 
-        if(mMap!=null)
-            mMap.clear();
-        mMap = googleMap;
-        Drawable bike = getResources().getDrawable(R.drawable.bikerfinal, null);
-        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(bike);
+        if(place1!=null)
+            mMap.addMarker(place1);
 
-        if(currLoc==null || place2==null)
+        if(place2==null)
             return;
-        place2.icon(markerIcon);
 
-        mMap.addMarker(place1);
-        mMap.addMarker(place2);
+
+
+        //mMap.addMarker(place2);
+
+        animateCamera();
+
+    }
+
+    private void animateCamera(){
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(midPoint(place1,place2), 13));
-
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(place1.getPosition());
         builder.include(place2.getPosition());
@@ -172,6 +201,8 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
         mMap.animateCamera(cameraUpdate);
     }
+
+
 
     public LatLng midPoint(MarkerOptions m1,MarkerOptions m2){
         return new LatLng((m1.getPosition().latitude+m2.getPosition().latitude)/2,(m1.getPosition().longitude+m2.getPosition().longitude)/2);
@@ -194,26 +225,24 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 
     private  void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocGranted = false;
 
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUESt_CODE: {
-
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            mLocGranted = false;
-                            return;
-                        }
+        if (requestCode == LOCATION_PERMISSION_REQUESt_CODE) {
+            if (grantResults.length > 0) {
+                for (int grantResult : grantResults) {
+                    if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                        return;
                     }
-                    mLocGranted = true;
-                    initMap();
                 }
+                mLocGranted = true;
+                initMap();
             }
         }
     }
@@ -227,16 +256,16 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-    public static void getLatLng(String key) {
+    public void startDelivererPosition() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        String Key_del_deliverer = key;
-        DatabaseReference dbRef = database.getReference("/deliverers/" + (Key_del_deliverer) + "/info");
-        ValueEventListener profListener = dbRef.addValueEventListener(new ValueEventListener() {
+        dbRef = database.getReference("/deliverers/" + key + "/info");
+        profListener = dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Deliverer d = dataSnapshot.getValue(Deliverer.class);
                 if (d != null) {
                     latLng = new LatLng(d.getLatitude(), d.getLongitude());
+                    setDelivererPosition();
                 }
             }
 
@@ -245,6 +274,13 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(dbRef!=null && profListener!=null)
+            dbRef.removeEventListener(profListener);
     }
 }
 
