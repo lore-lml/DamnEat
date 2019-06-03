@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.damneat.adapters.CustomInfoMarkerAdapter;
+import com.damn.polito.damneat.fragments.OrderFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -57,12 +58,7 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-//        deliverer = Welcome.getDeliverer();
-
-        place1 = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()))
-                .title(deliverer.getName());
-        place2 = new MarkerOptions().position(new LatLng(deliverer.getLongitude(), deliverer.getLongitude()))
-                .title(deliverer.getName());
+        deliverer = OrderFragment.getDeliverer();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -90,9 +86,14 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
 //                                .icon(getMarkerIconFromDrawable(getResources().getDrawable(R.drawable.ic_bike, null)))
 //                                ;
 //                        mMap.addMarker(marker);
-                        moveCamera(new LatLng(deliverer.getLatitude(), deliverer.getLongitude()), DEFAULT_ZOOM, deliverer);
+//                        moveCamera(new LatLng(deliverer.getLatitude(), deliverer.getLongitude()), DEFAULT_ZOOM, deliverer);
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
+
+                        place1 = new MarkerOptions().position(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()))
+                                .title(deliverer.getName());
+                        place2 = new MarkerOptions().position(new LatLng(deliverer.getLongitude(), deliverer.getLongitude()))
+                                .title(deliverer.getName());
 
                     } else {
                         makeText(FollowDelivererActivity.this, "Unable to get current Location", LENGTH_LONG).show();

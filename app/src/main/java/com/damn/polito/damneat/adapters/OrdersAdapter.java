@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Customer;
+import com.damn.polito.commonresources.beans.Deliverer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
@@ -283,5 +284,13 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
                 e.printStackTrace();
             }
         }
+    }
+
+    //TODO:Implementare funzione per ritornare il deliverer da tracciare,
+    //      funzione chiamata all'interno di FollowDelivererActivity
+    public static Deliverer getDeliverer() {
+        Deliverer deliverer = null;
+
+        return deliverer;
     }
 }
