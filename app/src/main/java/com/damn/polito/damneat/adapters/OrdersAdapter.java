@@ -149,7 +149,14 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
             else holder.delivery_time.setText(ctx.getString(R.string.delivery_time, delivery_time));
 
             if(selected.getState().toLowerCase().equals("ordered") || selected.getState().toLowerCase().equals("accepted")|| selected.getState().toLowerCase().equals("reassign")) {
-                holder.deliverer_photo.setVisibility(View.INVISIBLE);
+                holder.deliverer_photo.setVisibility(View.VISIBLE);
+
+                if (selected.getRestaurant().getPhoto() == null)
+                    holder.deliverer_photo.setImageBitmap(default_image);
+                else if(selected.getRestaurant().getPhoto().equals("NO_PHOTO"))
+                    holder.deliverer_photo.setImageBitmap(default_image);
+                else
+                    holder.deliverer_photo.setImageBitmap(Utility.StringToBitMap(selected.getRestaurant().getPhoto()));
                 holder.deliverer_name.setVisibility(View.INVISIBLE);
                 holder.state.setText(ctx.getString(R.string.ordered));
             } else {
