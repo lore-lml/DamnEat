@@ -37,4 +37,5 @@
     <string name="incomplete_review">Devi valutare entrambi i campi</string>
     <string name="deliverer">Corriere:\n %s</string>
     <string name="specific_restaurant_review_title">%s - Recensioni</string>
+    <string name="deliverer_phone">Telefono:</string>
 </resources>

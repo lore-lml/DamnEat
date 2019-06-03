@@ -1,4 +1,4 @@
-package com.damn.polito.damneatrestaurant.adapters;
+package com.damn.polito.damneat.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,11 +8,9 @@ import android.widget.TextView;
 
 import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Deliverer;
-import com.damn.polito.damneatrestaurant.R;
+import com.damn.polito.damneat.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
-
-import org.w3c.dom.Text;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

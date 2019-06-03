@@ -23,6 +23,7 @@ import com.damn.polito.commonresources.beans.Customer;
 import com.damn.polito.commonresources.beans.Dish;
 import com.damn.polito.commonresources.beans.Order;
 import com.damn.polito.commonresources.beans.RateObject;
+import com.damn.polito.damneat.FollowDelivererActivity;
 import com.damn.polito.damneat.R;
 import com.damn.polito.damneat.RateRestaurant;
 import com.damn.polito.damneat.Welcome;
@@ -80,9 +81,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.OrderViewH
         if(holder.btnDeliverer != null) {
             holder.btnDeliverer.setVisibility(View.GONE);
             holder.btnDeliverer.setOnClickListener(v->{
-                Intent i = new Intent(/*ctx, Activity.class*/);
-                //Eventuali putExtra
-                //ctx.startActivity(i);
+                Intent i = new Intent(ctx, FollowDelivererActivity.class);
+                //putextra
+                ctx.startActivity(i);
             });
         }
 

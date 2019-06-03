@@ -38,4 +38,7 @@
     <string name="incomplete_review">You need to rate both fields</string>
     <string name="deliverer">Deliverer:\n %s</string>
     <string name="specific_restaurant_review_title">%s - Reviews</string>
+    <string name="deliverer_phone">Phone:</string>
+    <string name="distance_meter" translatable="false">%d m</string>
+    <string name="distance_km" translatable="false">%.1f km</string>
 </resources>

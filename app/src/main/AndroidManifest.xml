@@ -38,6 +38,12 @@
             android:name=".EditProfile"
             android:parentActivityName=".Welcome"
             android:screenOrientation="portrait" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_key_API" />
+
+        <activity
+            android:name=".FollowDelivererActivity" />
     </application>
 
 </manifest>
