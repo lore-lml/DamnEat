@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.damn.polito.commonresources.Utility;
 import com.damn.polito.commonresources.beans.Order;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -91,7 +92,7 @@ public class Analytics extends AppCompatActivity {
 
 
             HashMap<String, String> resultsMap = new HashMap<>();
-            resultsMap.put("First Line", time.toString());
+            resultsMap.put("First Line", Utility.dateString(time));
             resultsMap.put("Second Line", df.format(km)+" Km");
             resultsMap.put("Third Line", dfPrice.format(price)+" €");
             listItems.add(resultsMap);
