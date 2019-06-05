@@ -105,7 +105,8 @@ public class ProfileFragment extends Fragment{
                         .edit().putString("profile", Utility.BitMapToString(profileBitmap)).apply();
             }
 
-        }
+        }else if(prof.getMail() != null)
+            intent.putExtra("mail", prof.getMail());
         startActivityForResult(intent, 1);
     }
 
@@ -122,7 +123,11 @@ public class ProfileFragment extends Fragment{
     }
 
     private void loadData(){
-        if(!Welcome.accountExist) return;
+        if(!Welcome.accountExist){
+            prof.setMail(PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .getString("user_email", null));
+            return;
+        }
         prof = Welcome.getProfile();
     }
 
@@ -224,6 +229,7 @@ public class ProfileFragment extends Fragment{
                 return true;
             case R.id.item_disconnect:
                 FirebaseLogin.logout((Activity) ctx);
+                Welcome.accountExist = false;
                 ((Activity) ctx).finish();
                 return true;
             case R.id.item_statistics:

@@ -19,6 +19,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.Utility;
@@ -57,7 +60,7 @@ import java.util.List;
 
 public class Welcome extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<LocationSettingsResult> {
     //STATIC VARIABLES
-    private static boolean logged;
+    public static boolean logged;
     private static final int ONE_MINUTE = 1000 * 60 ;
     private static final int TEN_MINUTES = 1000 * 60 * 10  ;
     private static Profile profile;
@@ -85,6 +88,8 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
 
     //UI WIDGET
     private BottomNavigationView navigation;
+    private ProgressBar buffer;
+    private FrameLayout container;
     private Integer selectedId = null;
     private String orderKey;
 
@@ -203,6 +208,10 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
         currentOrder = new Order();
         currentOrder.setState("empty");
         navigation = findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
+        container = findViewById(R.id.fragment_container);
+        container.setVisibility(View.GONE);
+        buffer = findViewById(R.id.welcome_pb);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         navigation.setSelectedItemId(R.id.nav_current);
@@ -269,6 +278,9 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
                 if (user != null) {
+                    PreferenceManager.getDefaultSharedPreferences(this).edit()
+                            .putString("user_email", user.getEmail())
+                            .putString("user_name", user.getDisplayName()).apply();
                     Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
                     //set button signout
                     //b.setEnabled(true);
@@ -333,6 +345,10 @@ public class Welcome extends AppCompatActivity implements GoogleApiClient.Connec
                 if (currentFragment != null)
                     if (selectedId == R.id.nav_current)
                         currentFragment.update();
+
+                navigation.setVisibility(View.VISIBLE);
+                container.setVisibility(View.VISIBLE);
+                buffer.setVisibility(View.GONE);
             }
 
             @Override

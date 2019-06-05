@@ -44,13 +44,12 @@ public class ProfileFragment extends Fragment{
 
     private String defaultValue;
     private ImageView profileImage;
-    private TextView name, mail, description, address, phone;
+    private TextView name, mail, description, phone;
     private Bitmap profileBitmap;
     private boolean empty = true;
     private Context ctx;
 
     private FirebaseDatabase database;
-    private String dbKey;
 
     @Nullable
     @Override
@@ -86,9 +85,9 @@ public class ProfileFragment extends Fragment{
         Intent intent = new Intent(ctx, EditProfile.class);
 
         //Se il profilo esisteva, passa le informazioni a EditProfile
+        intent.putExtra("name", name.getText().toString().trim());
+        intent.putExtra("mail", mail.getText().toString().trim());
         if (!empty && !name.getText().toString().trim().equals(defaultValue)) {
-            intent.putExtra("name", name.getText().toString().trim());
-            intent.putExtra("mail", mail.getText().toString().trim());
             intent.putExtra("phone", phone.getText().toString().trim());
             intent.putExtra("description", description.getText().toString().trim());
             intent.putExtra("image", profileImage.getDrawable().toString());
@@ -174,8 +173,9 @@ public class ProfileFragment extends Fragment{
             }
             empty = false;
         }else{
-            name.setText(defaultValue);
-            mail.setText(defaultValue);
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+            name.setText(pref.getString("user_name", ""));
+            mail.setText(pref.getString("user_email", ""));
             phone.setText(defaultValue);
             description.setText(defaultValue);
         }
@@ -224,7 +224,7 @@ public class ProfileFragment extends Fragment{
                     FirebaseLogin.logout((Activity) ctx);
                     ((Activity) ctx).finish();
                 });
-
+                Welcome.logged = false;
                 return true;
             case R.id.item_statistics:
                 showAnalytics();

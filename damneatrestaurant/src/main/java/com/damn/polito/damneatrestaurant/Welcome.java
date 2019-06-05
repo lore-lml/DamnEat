@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
@@ -71,6 +72,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     //UI WIDGET
     private BottomNavigationView navigation;
+    private ProgressBar buffer;
     private View notificationBadge;
     private Integer selectedId = null;
 
@@ -108,6 +110,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
         FirebaseLogin.init();
 
         navigation = findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
+        buffer = findViewById(R.id.welcome_pb);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         database = FirebaseDatabase.getInstance();
@@ -138,6 +142,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //show email on toast
                 if(user != null) {
+                    PreferenceManager.getDefaultSharedPreferences(this).edit()
+                            .putString("user_email", user.getEmail()).apply();
                     Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
                     //set button signout
                     //b.setEnabled(true);
@@ -184,6 +190,9 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                 }else if(selectedId == R.id.nav_profile)
                     if(profile!=null)
                         profileFragment.updateProfile();
+
+                navigation.setVisibility(View.VISIBLE);
+                buffer.setVisibility(View.GONE);
 
             }
             @Override

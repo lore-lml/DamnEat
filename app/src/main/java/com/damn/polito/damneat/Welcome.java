@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.damn.polito.commonresources.FirebaseLogin;
@@ -61,6 +62,7 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
     //UI Widget
     private BottomNavigationView navigation;
+    private ProgressBar buffer;
     private View notificationBadge;
     private Integer selectedId = null;
     
@@ -115,6 +117,8 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
 
 
         navigation = findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
+        buffer = findViewById(R.id.welcome_pb);
         navigation.setOnNavigationItemSelectedListener(navListener);
         fragmentManager = getSupportFragmentManager();
         database = FirebaseDatabase.getInstance();
@@ -140,9 +144,11 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
             if(resultCode==RESULT_OK){
                 //get user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                //show email on toast
                 if(user !=  null) {
-                    Toast.makeText(this, "" + user.getEmail(), Toast.LENGTH_LONG).show();
+                    PreferenceManager.getDefaultSharedPreferences(this).edit()
+                            .putString("user_email", user.getEmail())
+                            .putString("user_name", user.getDisplayName()).apply();
+                    Toast.makeText(this, user.getEmail(), Toast.LENGTH_LONG).show();
                     //set button signout
                     //b.setEnabled(true);
                     FirebaseLogin.storeData(user, this);
@@ -200,6 +206,9 @@ public class Welcome extends AppCompatActivity implements NotificationListener {
                             restaurantFragment.onChildChanged(r);
                     }
                 }
+
+                navigation.setVisibility(View.VISIBLE);
+                buffer.setVisibility(View.GONE);
             }
 
             @Override

@@ -103,6 +103,9 @@ public class ProfileFragment extends Fragment {
                         .edit().putString("profile", Utility.BitMapToString(profileBitmap)).apply();
             }
 
+        }else{
+            intent.putExtra("name", prof.getName());
+            intent.putExtra("mail", prof.getMail());
         }
         startActivityForResult(intent, 1);
     }
@@ -187,7 +190,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private void loadData() {
-        if(!Welcome.accountExist) return;
+        if(!Welcome.accountExist) {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+            prof.setMail(pref.getString("user_email", null));
+            prof.setName(pref.getString("user_name", null));
+            return;
+        }
         prof = Welcome.getProfile();
     }
 
