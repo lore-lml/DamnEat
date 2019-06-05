@@ -17,7 +17,7 @@
             android:id="@+id/card_opacity"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:alpha="0.3"
+            android:alpha="0.2"
             android:backgroundTint="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
