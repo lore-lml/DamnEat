@@ -147,8 +147,10 @@ public class ProfileFragment extends Fragment{
             profileBitmap = Utility.StringToBitMap(bitmapProf);
             pref.edit().remove("profile").apply();
         }
-
-        storeProfileOnFirebase(new Profile(name,mail,phone,description,bitmapProf));
+        Profile prof = new Profile(name,mail,phone,description,bitmapProf);
+        if(Welcome.getProfile()!=null)
+            prof.setNotificationId(Welcome.getProfile().getNotificationId());
+        storeProfileOnFirebase(prof);
 
         this.name.setText(name);
         this.mail.setText(mail);

@@ -180,6 +180,7 @@ public class ProfileFragment extends Fragment{
         if(Welcome.getProfile() != null) {
             prof.setReviews(Welcome.getProfile().getReviews());
             prof.setTotalRate(Welcome.getProfile().getTotalRate());
+            prof.setNotificationId(Welcome.getProfile().getNotificationId());
         }
         storeProfileOnFirebase(prof);
     }

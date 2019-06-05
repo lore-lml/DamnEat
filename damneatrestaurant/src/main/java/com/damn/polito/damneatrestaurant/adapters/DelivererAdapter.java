@@ -208,6 +208,7 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
     private static void pickDeliverer(int position) {
         Deliverer current = deliverers.get(position);
         DatabaseReference dbRef = database.getReference("/deliverers_liberi/");
+        Deliverer deliverer = deliverers.get(position);
         dbRef.runTransaction(new Transaction.Handler() {
             @NonNull
             @Override
@@ -262,9 +263,10 @@ public class DelivererAdapter extends RecyclerView.Adapter<DelivererAdapter.Deli
                 };
 
                 String body = ctx.getString(R.string.notification_pick_deliverer, order.getRestaurant().getRestaurantName());
-                HTTPRequestBuilder request = new HTTPRequestBuilder(ctx, FindDelivererActivity.getNotificationId(deliverers.get(position).getKey()),
+                HTTPRequestBuilder request = new HTTPRequestBuilder(ctx, FindDelivererActivity.getNotificationId(deliverer.getKey()),
                         "DamnEat", body, callback);
                 request.sendRequest();
+
             }
         });
     }

@@ -137,8 +137,10 @@ public class ProfileFragment extends Fragment {
 
         //CARICO I DATI SU FIREBASE
         prof = new Profile(name,mail,phone,description,address,bitmapProf);
-        if(Welcome.getProfile() != null)
+        if(Welcome.getProfile() != null) {
             prof.sFavoriteRestaurantsSet(Welcome.getProfile().favouriteRestaurantsSet());
+            prof.setNotificationId(Welcome.getProfile().getNotificationId());
+        }
         storeProfileOnFirebase(prof);
     }
 

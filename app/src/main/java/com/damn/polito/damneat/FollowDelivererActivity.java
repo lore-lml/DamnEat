@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.damn.polito.commonresources.Haversine;
 import com.damn.polito.commonresources.Utility;
@@ -116,8 +117,8 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
                 location.addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         currLoc = (Location) task.getResult();
-
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
+                        if(currLoc!=null)
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currLoc.getLatitude(), currLoc.getLongitude()), DEFAULT_ZOOM));
 
                     } else {
                         makeText(FollowDelivererActivity.this, "Unable to get current Location", LENGTH_LONG).show();
@@ -187,10 +188,13 @@ public class FollowDelivererActivity extends AppCompatActivity implements OnMapR
         }
         mMap.setOnMarkerClickListener(marker -> {
             if (markerBike.equals(marker)){
-                double distance = Haversine.distance(chosen.getLatitude(), chosen.getLongitude(), deliveryAddress.getLatitude(), deliveryAddress.getLongitude())*1000;
-                CustomInfoMarkerAdapter adapter = new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo, distance);
-                adapter.setDistance(distance);
-                mMap.setInfoWindowAdapter(adapter);
+                if(chosen!=null && deliveryAddress!=null) {
+                    double distance = Haversine.distance(chosen.getLatitude(), chosen.getLongitude(), deliveryAddress.getLatitude(), deliveryAddress.getLongitude()) * 1000;
+                    CustomInfoMarkerAdapter adapter = new CustomInfoMarkerAdapter(FollowDelivererActivity.this, name, photo, distance);
+                    adapter.setDistance(distance);
+                    mMap.setInfoWindowAdapter(adapter);
+                }
+                else Toast.makeText(this, R.string.no_internet, LENGTH_LONG).show();
             }
             else mMap.setInfoWindowAdapter(new CustomInfoMarkerAdapter(FollowDelivererActivity.this, Welcome.getProfile().getName(), Utility.StringToBitMap(Welcome.getProfile().getBitmapProf()), Welcome.getProfile().getAddress()));
 

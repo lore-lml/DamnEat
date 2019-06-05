@@ -747,8 +747,8 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
         acceptButton.setVisibility(GONE);
         rejectButton.setVisibility(GONE);
         accept_question.setVisibility(GONE);
-        distance.setVisibility(GONE);
-        bikerIcon.setVisibility(GONE);
+        distance.setVisibility(View.INVISIBLE);
+        bikerIcon.setVisibility(View.INVISIBLE);
         date.setVisibility(GONE);
 //        id.setVisibility(GONE);
     }
@@ -820,7 +820,7 @@ public class CurrentFragment extends  Fragment implements OnMapReadyCallback,Tas
             if(gmap!=null)
                 gmap.clear();
             gmap = googleMap;
-            if(Welcome.getProfile()!= null && Welcome.getProfile().getLatitude()!=null){
+            if(Welcome.getProfile()!= null && Welcome.getProfile().getLatitude()!=null && Welcome.getProfile().getLongitude()!=null){
                 LatLng latLng = new LatLng(Welcome.getProfile().getLatitude(),Welcome.getProfile().getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
